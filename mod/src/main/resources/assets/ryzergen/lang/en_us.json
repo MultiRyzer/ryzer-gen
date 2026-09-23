@@ -1,4 +1,36 @@
 {
   "itemGroup.ryzergen": "Ryzer Gen",
-  "item.ryzergen.graphite": "Graphite"
+  "item.ryzergen.graphite": "Graphite",
+
+  "block.ryzergen.uranium_ore": "Uranium Ore",
+  "block.ryzergen.deepslate_uranium_ore": "Deepslate Uranium Ore",
+  "block.ryzergen.lead_ore": "Lead Ore",
+  "block.ryzergen.deepslate_lead_ore": "Deepslate Lead Ore",
+  "block.ryzergen.silver_ore": "Silver Ore",
+  "block.ryzergen.deepslate_silver_ore": "Deepslate Silver Ore",
+  "block.ryzergen.aluminium_ore": "Aluminium Ore",
+  "block.ryzergen.deepslate_aluminium_ore": "Deepslate Aluminium Ore",
+  "block.ryzergen.fluorite_ore": "Fluorite Ore",
+  "block.ryzergen.deepslate_fluorite_ore": "Deepslate Fluorite Ore",
+  "block.ryzergen.salt_ore": "Salt Ore",
+  "block.ryzergen.deepslate_salt_ore": "Deepslate Salt Ore",
+  "block.ryzergen.tungsten_ore": "Tungsten Ore",
+  "block.ryzergen.deepslate_tungsten_ore": "Deepslate Tungsten Ore",
+  "block.ryzergen.monazite_ore": "Monazite Ore",
+  "block.ryzergen.deepslate_monazite_ore": "Deepslate Monazite Ore",
+
+  "item.ryzergen.raw_uranium": "Raw Uranium",
+  "item.ryzergen.raw_lead": "Raw Lead",
+  "item.ryzergen.raw_silver": "Raw Silver",
+  "item.ryzergen.raw_aluminium": "Raw Aluminium",
+  "item.ryzergen.fluorite": "Fluorite",
+  "item.ryzergen.salt": "Salt",
+  "item.ryzergen.raw_tungsten": "Raw Tungsten",
+  "item.ryzergen.raw_monazite": "Raw Monazite",
+
+  "item.ryzergen.uranium_ingot": "Uranium Ingot",
+  "item.ryzergen.lead_ingot": "Lead Ingot",
+  "item.ryzergen.silver_ingot": "Silver Ingot",
+  "item.ryzergen.aluminium_ingot": "Aluminium Ingot",
+  "item.ryzergen.tungsten_ingot": "Tungsten Ingot"
 }

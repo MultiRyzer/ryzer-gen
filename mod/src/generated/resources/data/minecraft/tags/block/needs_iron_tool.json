@@ -1,0 +1,12 @@
+{
+  "values": [
+    "ryzergen:uranium_ore",
+    "ryzergen:deepslate_uranium_ore",
+    "ryzergen:silver_ore",
+    "ryzergen:deepslate_silver_ore",
+    "ryzergen:tungsten_ore",
+    "ryzergen:deepslate_tungsten_ore",
+    "ryzergen:monazite_ore",
+    "ryzergen:deepslate_monazite_ore"
+  ]
+}

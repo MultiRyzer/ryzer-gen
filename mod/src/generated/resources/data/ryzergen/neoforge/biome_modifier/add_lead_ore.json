@@ -1,0 +1,6 @@
+{
+  "type": "ryzergen:configurable_ore",
+  "biomes": "#minecraft:is_overworld",
+  "features": "ryzergen:lead_ore",
+  "ore": "lead"
+}
