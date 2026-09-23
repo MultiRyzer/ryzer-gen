@@ -24,6 +24,8 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [ ] Ghost placement preview
 - [ ] Placeholder textures, then proper 16x16 art
 - [ ] Recipes and config values
+- [ ] Basic radiation (dose, effects, config toggle)
+- [ ] Dosimeter ring with Curios slot support and inventory fallback
 
 ## Milestone 1b: Home battery
 - [ ] Home battery stack cabinet with 6 module slots and segment model

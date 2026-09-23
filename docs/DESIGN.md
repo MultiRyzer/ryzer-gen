@@ -231,22 +231,45 @@ Simple rule: each module adds both capacity and charge/discharge rate. The chemi
 - **SMES (superconducting magnetic energy storage):** a real technology that stores energy in the magnetic field of a superconducting coil and charges or discharges almost instantly.
 - Uses the yttrium superconductors and cryogenic cooling from the fusion tier. Where Dyson swarm power gets stored.
 
-## 13. Anti-grind rules
+## 13. Radiation
+
+Radiation is on by default (config toggle to turn it off). It exists to make the machines feel dangerous and the protective gear feel special, not to punish players.
+
+### Sources
+- Raw uranium and thorium in the inventory (low).
+- Depleted cores and waste (medium), until stored in shielded casks.
+- Running reactors, within a short radius (low to high by tier).
+- Meltdowns (severe, lingering area).
+
+### Effects
+- Players build up a dose while exposed. Dose fades slowly over time away from sources.
+- Rising dose applies escalating effects: weakness, then nausea, then damage. Never an instant kill outside a meltdown.
+
+### The dosimeter ring
+- A craftable accessory worn in a ring or necklace slot via **Curios** (the accessory API ATM10 uses). Mods like Accessories also support Curios items through their compatibility layer.
+- Without an accessory mod installed, carrying it in the inventory counts, so the mod stays fully playable standalone.
+- Real basis: nuclear workers really do wear ring and badge dosimeters. The one fudge: real dosimeters only measure dose, while ours also protects.
+- Shows a small HUD gauge with current exposure, and clicks like a Geiger counter near sources.
+- Upgraded, not replaced: new tier materials are added to the same ring (lead lining, then silicon carbide, then tungsten) to protect against stronger sources. No crafting a new ring each tier.
+- Multiplayer: a friend without a ring is at risk around your reactor, which makes the ring feel earned.
+
+## 14. Anti-grind rules
 
 - Structure blocks are cheap. Cost lives in the interesting parts.
 - Tiers unlock through milestones, not resource piles.
 - Test designs in the planner before building.
 - Any repeated manual action should be replaced by automation soon after the player understands it.
 
-## 14. Compatibility
+## 15. Compatibility
 
 - Standard NeoForge energy (FE).
 - Works with Mekanism steam and fluids where it makes sense.
 - EMI and JEI recipe display.
 - All recipes data driven so pack makers can change them.
-- Config for meltdowns, flares, sun dimming and balance values.
+- Config for radiation, meltdowns, flares, sun dimming and balance values.
+- Curios integration for the dosimeter ring (optional dependency).
 
-## 15. Naming and IP
+## 16. Naming and IP
 
 - All names, models and textures original.
 - Real-world inspirations can be credited on the mod page, not used as item names.
