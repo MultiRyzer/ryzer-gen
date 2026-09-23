@@ -4,10 +4,10 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 
 ## Milestone 0: Setup
 - [ ] Install Java 21 JDK and IntelliJ IDEA Community (if not already)
-- [ ] Create the mod project from the NeoForge 1.21.1 template into `mod/`
+- [x] Create the mod project from the NeoForge 1.21.1 template into `mod/`
 - [x] Pick a mod name and mod ID (Ryzer Gen, `ryzergen`)
-- [ ] Confirm `runClient` launches a test world with the mod loaded
-- [ ] First commit to Git (optional: push to a private GitHub repo)
+- [x] Confirm `runClient` launches a test world with the mod loaded
+- [x] First commit to Git (optional: push to a private GitHub repo)
 
 ## Milestone 1: Microreactor (first playable)
 - [ ] Ores needed for tier 1 (uranium, lead) with worldgen, common tags and config toggles
