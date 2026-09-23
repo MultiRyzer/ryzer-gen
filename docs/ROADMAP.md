@@ -5,7 +5,7 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 ## Milestone 0: Setup
 - [ ] Install Java 21 JDK and IntelliJ IDEA Community (if not already)
 - [ ] Create the mod project from the NeoForge 1.21.1 template into `mod/`
-- [ ] Pick a mod name and mod ID
+- [x] Pick a mod name and mod ID (Ryzer Gen, `ryzergen`)
 - [ ] Confirm `runClient` launches a test world with the mod loaded
 - [ ] First commit to Git (optional: push to a private GitHub repo)
 

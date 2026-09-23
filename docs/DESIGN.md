@@ -1,6 +1,12 @@
-# Design Doc
+# Ryzer Gen: Design Doc
 
 Status: draft v0.1, 23 Sep 2026
+
+## 0. Identity
+
+- **Name:** Ryzer Gen ("Ryzer" after the author's online name, "Gen" for power generation).
+- **Mod ID:** `ryzergen`
+- **Target:** Minecraft 1.21.1, NeoForge.
 
 ## 1. Pitch
 
@@ -269,7 +275,15 @@ Radiation is on by default (config toggle to turn it off). It exists to make the
 - Config for radiation, meltdowns, flares, sun dimming and balance values.
 - Curios integration for the dosimeter ring (optional dependency).
 
-## 16. Naming and IP
+## 16. Art style
+
+- **Direction:** "Oritech-lite". Chunky industrial machines with visible pipes, panels and chutes, but built from standard block models instead of heavy animated models.
+- Standard JSON block models (made of boxes, editable in Blockbench) and 16x16 textures.
+- Multiblocks swap to one combined model when assembled, which delivers most of the Oritech feel.
+- Animation kept light: particles, glowing textures, a few moving parts where they matter (fans, pumps).
+- Key showpiece models (fusion reactor, sail launcher) can be upgraded to animated models later, or handed to an artist, without changing any code design.
+
+## 17. Naming and IP
 
 - All names, models and textures original.
 - Real-world inspirations can be credited on the mod page, not used as item names.

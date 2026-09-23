@@ -1,4 +1,6 @@
-# Reactor Mod (working title)
+# Ryzer Gen
+
+Mod ID: `ryzergen`
 
 A NeoForge mod for Minecraft 1.21.1 (the version ATM10 runs on) about power progression through physics: from a small portable microreactor, through a real fuel cycle and fission, up to a Dyson swarm around a sun you can walk on.
 
