@@ -27,9 +27,50 @@ Most reactor mods have one answer to "how do I get more power": build it bigger.
 
 Later ideas kept on file (not in scope yet): aneutronic fusion, antimatter storage, Kugelblitz black hole power.
 
-## 4. Tier 1: Microreactor
+## 4. Materials and ores
+
+Compatibility rule: every recipe asks for common tags (`c:ingots/uranium`, `c:ingots/lead` and so on), never a specific mod's item. That way material from All The Ores, Mekanism or Modern Industrialization all works.
+
+| Material | Real-world role | Source |
+|---|---|---|
+| Uranium | Main fuel | Shared tag. We also ship our own ore so the mod works standalone; packs merge it automatically. Powah's uraninite is accepted as uranium too |
+| Lead | Radiation shielding | Shared tag |
+| Steel | Structure | Shared tag |
+| Graphite | Moderator, fuel coating | Made from coal or charcoal, no ore |
+| Silicon carbide | Hard ceramic layer in TRISO fuel | Made from sand and graphite, no ore |
+| Lithium | Breeds tritium for fusion | Shared tag plus our own recipe |
+| Fluorite | Uranium processing | Shared tag |
+| Iridium, platinum | Late game fusion and sun gear | Shared tag |
+| Thorium | Thorium fuel path | Our one new ore: thorium-bearing monazite, tagged to merge with Modern Industrialization's monazite. Our machines extract thorium from anyone's monazite |
+
+Deliberately skipped: zirconium and spodumene ores. Accurate, but they add ore clutter. Handled as processing steps instead.
+
+## 5. Tier 1: Microreactor
 
 Inspired by the new generation of transportable microreactors. It gets its own original name and look in the mod, not a real product's name.
+
+### Crafting (draft, balance TBD)
+
+Target: buildable in the early game, after iron and a blast furnace, before diamonds. Structure is cheap; the fuel is where the cost sits.
+
+Intermediates:
+- **Graphite:** coal or charcoal block in a blast furnace.
+- **Silicon carbide:** sand plus graphite in a blast furnace.
+- **TRISO pellets:** uranium ingot, graphite and silicon carbide. Based on real TRISO fuel: a uranium kernel coated in carbon and silicon carbide layers.
+
+Structure blocks:
+| Block | Qty in structure | Draft recipe |
+|---|---|---|
+| Reactor casing | 4 | Steel, lead and stone. Makes 4 per craft |
+| Reactor core | 1 | Casing, graphite and steel |
+| Control unit | 1 | Casing, redstone, gold and glass |
+| Port | 2 | Casing, copper and redstone |
+
+Fuel and tools:
+- **Sealed fuel core:** TRISO pellets packed in graphite inside a steel shell. Slots into the reactor core. When depleted it is swapped out whole (no topping up), and the old one becomes the depleted core for the fuel cycle.
+- **Wrench:** iron and steel. Used for pack-up, port config and disassembly.
+
+Uranium is rare in All The Ores worldgen, so fuel cores should be where most uranium goes, and a single core should last a long time.
 
 ### Structure
 - 2x2x2 cube, 8 blocks, fits in the corner of a starter base with room for pipes.
@@ -54,7 +95,7 @@ Inspired by the new generation of transportable microreactors. It gets its own o
 ### The hook
 When the core runs out, the player gets a depleted core they cannot use yet. That curiosity pulls them into the fuel cycle.
 
-## 5. Tier 2: Fuel cycle
+## 6. Tier 2: Fuel cycle
 
 Real basis: spent uranium fuel is roughly 95% uranium, about 1% plutonium and about 4% fission products (the actual waste). Microreactor fuel is TRISO (tiny kernels sealed in ceramic and carbon), which is famously hard to reprocess. That gives us a real reason for an extra step.
 
@@ -65,7 +106,7 @@ Real basis: spent uranium fuel is roughly 95% uranium, about 1% plutonium and ab
 
 Processing the first depleted core unlocks the fission reactor.
 
-## 6. Tier 3: Modular fission reactor
+## 7. Tier 3: Modular fission reactor
 
 - Multiblock with a flexible size, but size is not the main lever. Layout is.
 - Fuel rods next to moderators run hotter and more efficiently. Coolant channels remove heat. Bad designs overheat.
@@ -74,19 +115,19 @@ Processing the first depleted core unlocks the fission reactor.
 - Different fuels behave differently (hot and fast, slow and stable, breeding).
 - Meltdowns are configurable, from "shuts down and loses fuel" to full crater.
 
-## 7. Tier 4: Breeder and thorium
+## 8. Tier 4: Breeder and thorium
 
 - Breeder reactor: produces more fissile fuel than it consumes. Needs more active management (flow rates, temperatures), with optional redstone or computer control.
 - Thorium path: thorium is not a fuel itself but breeds U-233. An alternative route with its own trade-offs.
 
-## 8. Tier 5: Fusion
+## 9. Tier 5: Fusion
 
 - Deuterium-tritium tokamak.
 - Tritium is bred from lithium in your fission reactors, tying the tiers together.
 - Gameplay: keep the plasma stable, manage wear on components from neutron damage.
 - Hard to run, huge payoff.
 
-## 9. Tier 6: Dyson swarm
+## 10. Tier 6: Dyson swarm
 
 ### The sun dimension
 - A bright yellow, glowing superflat world. Framed as a "stabilised photosphere" layer, since the real sun has no surface.
@@ -116,14 +157,14 @@ Processing the first depleted core unlocks the fission reactor.
 - A full swarm dims the overworld sun. Off by default, since it affects crops and mob spawning.
 - Shared server-wide swarm for multiplayer.
 
-## 10. Anti-grind rules
+## 11. Anti-grind rules
 
 - Structure blocks are cheap. Cost lives in the interesting parts.
 - Tiers unlock through milestones, not resource piles.
 - Test designs in the planner before building.
 - Any repeated manual action should be replaced by automation soon after the player understands it.
 
-## 11. Compatibility
+## 12. Compatibility
 
 - Standard NeoForge energy (FE).
 - Works with Mekanism steam and fluids where it makes sense.
@@ -131,7 +172,7 @@ Processing the first depleted core unlocks the fission reactor.
 - All recipes data driven so pack makers can change them.
 - Config for meltdowns, flares, sun dimming and balance values.
 
-## 12. Naming and IP
+## 13. Naming and IP
 
 - All names, models and textures original.
 - Real-world inspirations can be credited on the mod page, not used as item names.
