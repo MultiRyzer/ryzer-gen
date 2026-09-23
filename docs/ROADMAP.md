@@ -10,6 +10,8 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [ ] First commit to Git (optional: push to a private GitHub repo)
 
 ## Milestone 1: Microreactor (first playable)
+- [ ] Ores needed for tier 1 (uranium, lead) with worldgen, common tags and config toggles
+- [ ] Steel and graphite recipes
 - [ ] Register reactor heart, reactor machine unit, coolant block and packed microreactor
 - [ ] Multiblock detection for the 4-block layout (heart in any position)
 - [ ] Snap assembly: combined model, particles, sound
@@ -24,6 +26,7 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [ ] Recipes and config values
 
 ## Milestone 2: Fuel cycle
+- [ ] Fluorite ore
 - [ ] Core cracker, reprocessor, fuel fabricator
 - [ ] Recovered uranium, plutonium, waste, MOX fuel items
 - [ ] Waste storage block

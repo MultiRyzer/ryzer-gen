@@ -29,27 +29,43 @@ Later ideas kept on file (not in scope yet): aneutronic fusion, antimatter stora
 
 ## 4. Materials and ores
 
-Compatibility rule: every recipe asks for common tags (`c:ingots/uranium`, `c:ingots/lead` and so on), never a specific mod's item. That way material from All The Ores, Mekanism or Modern Industrialization all works.
+Two goals that work together:
+1. **Standalone:** the mod ships every ore it uses, so it is fully playable with no other mods installed.
+2. **Pack friendly:** every ore and material uses the shared common tags (`c:ores/uranium`, `c:raw_materials/uranium`, `c:ingots/uranium`, `c:dusts/uranium` and so on), and every recipe asks for the tag, never our own item. Material from All The Ores, Mekanism or Modern Industrialization works in our machines, and ours works in theirs.
 
-| Material | Real-world role | Source |
+### Ores we ship
+
+| Ore | Real-world role in the mod | Overlaps with |
 |---|---|---|
-| Uranium | Main fuel | Shared tag. We also ship our own ore so the mod works standalone; packs merge it automatically. Powah's uraninite is accepted as uranium too |
-| Lead | Radiation shielding | Shared tag |
-| Steel | Structure | Shared tag |
-| Graphite | Moderator, fuel coating | Made from coal or charcoal, no ore |
-| Silicon carbide | Hard ceramic layer in TRISO fuel | Made from sand and graphite, no ore |
-| Lithium | Breeds tritium for fusion | Shared tag plus our own recipe |
-| Fluorite | Uranium processing | Shared tag |
-| Iridium, platinum | Late game fusion and sun gear | Shared tag |
-| Tungsten | Fusion plasma-facing wall (as in real tokamaks) | Our own ore, tagged `c:ores/tungsten` so it merges with Modern Industrialization and other mods that add it |
-| Silver | Fission control rods | Shared tag |
-| Salt | Source of sodium for breeder coolant | Shared tag |
-| Aluminium | Solar sail film | Shared tag |
-| Thorium | Thorium fuel path | New ore: thorium-bearing monazite, tagged to merge with Modern Industrialization's monazite. Our machines extract thorium from anyone's monazite |
+| Uranium | Main fuel | All The Ores, Mekanism, Modern Industrialization. Powah's uraninite is accepted as uranium too |
+| Lead | Radiation shielding | All The Ores, Mekanism |
+| Silver | Fission control rods | All The Ores |
+| Aluminium | Solar sail film | All The Ores |
+| Fluorite | Uranium processing | All The Ores, Mekanism |
+| Salt | Sodium for breeder coolant, lithium from brine | All The Ores |
+| Tungsten | Fusion plasma-facing wall (as in real tokamaks) | Modern Industrialization and others |
+| Monazite | Thorium and yttrium source | Modern Industrialization (ours also yields thorium) |
 
-We add two ores in total: monazite and tungsten. Everything else comes from shared tags or processing.
+Iron, copper, gold, redstone, coal and sand come from vanilla.
 
-Deliberately skipped: zirconium and spodumene ores. Accurate, but they add ore clutter. Handled as processing steps instead.
+### Pack integration
+- Each ore's worldgen can be switched off in the config, so pack authors can keep one source per ore.
+- Worldgen is data driven, so vein size, height and rarity can be changed with a datapack.
+- Duplicate items merge cleanly with unification mods like Almost Unified, since all tags match.
+
+### Made, not mined
+
+| Material | Role | Made from |
+|---|---|---|
+| Steel | Structure | Iron and coal (our own recipe, plus any mod's steel via tag) |
+| Graphite | Moderator, fuel coating | Coal or charcoal block in a blast furnace |
+| Silicon carbide | TRISO fuel layer, hardened circuits | Sand and graphite |
+| Silicon | Circuits and solar cells | Sand in a powered furnace |
+| Lithium | Breeds tritium for fusion | Extracted from salt brine (real lithium mostly comes from brine) |
+| Sodium | Breeder coolant | Split from salt |
+| Thorium, yttrium | Thorium fuel, superconductors | Extracted from monazite |
+
+Deliberately skipped: zirconium and spodumene ores, and iridium and platinum. Accurate or useful, but not needed, and fewer ores means less clutter.
 
 ## 5. Progression spine
 
