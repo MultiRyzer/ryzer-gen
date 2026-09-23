@@ -1,0 +1,6 @@
+{
+  "type": "ryzergen:configurable_ore",
+  "biomes": "#minecraft:is_overworld",
+  "features": "ryzergen:uranium_ore",
+  "ore": "uranium"
+}

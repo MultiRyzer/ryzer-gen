@@ -10,7 +10,7 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] First commit to Git (optional: push to a private GitHub repo)
 
 ## Milestone 1: Microreactor (first playable)
-- [ ] Ores needed for tier 1 (uranium, lead) with worldgen, common tags and config toggles
+- [x] Ores needed for tier 1 (uranium, lead) with worldgen, common tags and config toggles (all 8 ores done, with placeholder textures)
 - [ ] Steel and graphite recipes
 - [ ] Register reactor heart, reactor machine unit, coolant block and packed microreactor
 - [ ] Multiblock detection for the 4-block layout (heart in any position)
