@@ -61,9 +61,13 @@ Inspired by the new generation of transportable microreactors. It gets its own o
 - Ghost preview: holding a heart or unit shows a faint outline of where the other blocks go.
 
 ### Input and output
-- Once assembled, any face of any block accepts cables and pipes. The machine units pass everything through to the heart.
-- Wrench a face to set it: energy out, coolant in, or heat/steam out.
-- Right-click any block to open the GUI.
+- Like Oritech's multiblocks, the assembled model has fixed, visible connection chutes. Pipes and cables only connect at those points, not on any face.
+- The machine faces the way the player was facing when they placed the heart, so the chutes always end up in predictable spots.
+- Draft chute layout (to be settled when we model it):
+  - **Energy out:** a cable socket low on the back.
+  - **Coolant in:** an intake chute on top.
+  - **Heat/steam out:** an outlet on one side, used later when steam matters.
+- Front face carries the display panel. Right-click any block to open the GUI.
 
 ### Running it
 - The heart holds one sealed fuel core. No topping up. Steady modest power for a long time, then it depletes.
@@ -87,7 +91,7 @@ Blocks:
 
 Fuel and tools:
 - **Sealed fuel core:** TRISO pellets packed in graphite inside a steel shell. Goes into the heart. When depleted it is swapped out whole, and the old one becomes the depleted core for the fuel cycle.
-- **Wrench:** iron and steel. Used for pack-up, face config and disassembly.
+- **Wrench:** iron and steel. Used for pack-up and disassembly.
 
 Uranium is rare in All The Ores worldgen, so fuel cores should be where most uranium goes, and a single core should last a long time.
 

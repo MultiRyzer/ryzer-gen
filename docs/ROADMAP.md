@@ -17,7 +17,7 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [ ] Energy generation, fuel life, depletion into a depleted core
 - [ ] Simple heat model with coolant bonus
 - [ ] Control unit GUI (charge, temperature, output, on/off, redstone)
-- [ ] Face configuration with the wrench
+- [ ] Fixed connection chutes on the assembled model
 - [ ] Wrench pack-up and unfold, keeping charge
 - [ ] Ghost placement preview
 - [ ] Placeholder textures, then proper 16x16 art
