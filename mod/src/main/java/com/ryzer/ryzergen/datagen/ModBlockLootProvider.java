@@ -28,6 +28,7 @@ public class ModBlockLootProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
+        dropSelf(ModBlocks.ALLOY_SMELTER.get());
         for (OreType ore : OreType.values()) {
             Item drop = ModItems.ORE_DROPS.get(ore).get();
             for (Block block : List.of(ModBlocks.STONE_ORES.get(ore).get(), ModBlocks.DEEPSLATE_ORES.get(ore).get())) {

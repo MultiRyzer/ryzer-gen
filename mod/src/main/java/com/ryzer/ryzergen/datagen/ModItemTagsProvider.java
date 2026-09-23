@@ -1,6 +1,7 @@
 package com.ryzer.ryzergen.datagen;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.material.ModTags;
 import com.ryzer.ryzergen.material.OreType;
 import com.ryzer.ryzergen.registry.ModItems;
 import net.minecraft.core.HolderLookup;
@@ -20,6 +21,9 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
+        tag(ModTags.INGOTS_STEEL).add(ModItems.STEEL_INGOT.get());
+        tag(Tags.Items.INGOTS).addTag(ModTags.INGOTS_STEEL);
+
         for (OreType ore : OreType.values()) {
             copy(ore.oreBlockTag(), ore.oreItemTag());
 

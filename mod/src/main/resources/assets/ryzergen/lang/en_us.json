@@ -1,6 +1,8 @@
 {
   "itemGroup.ryzergen": "Ryzer Gen",
   "item.ryzergen.graphite": "Graphite",
+  "item.ryzergen.steel_ingot": "Steel Ingot",
+  "block.ryzergen.alloy_smelter": "Alloy Smelter",
 
   "block.ryzergen.uranium_ore": "Uranium Ore",
   "block.ryzergen.deepslate_uranium_ore": "Deepslate Uranium Ore",

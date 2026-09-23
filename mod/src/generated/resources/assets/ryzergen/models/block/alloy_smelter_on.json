@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "ryzergen:block/alloy_smelter_front_on",
+    "side": "ryzergen:block/alloy_smelter_side",
+    "top": "ryzergen:block/alloy_smelter_top"
+  }
+}
