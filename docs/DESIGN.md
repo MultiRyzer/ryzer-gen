@@ -63,9 +63,9 @@ Iron, copper, gold, redstone, coal and sand come from vanilla.
 
 | Material | Role | Made from |
 |---|---|---|
-| Steel | Structure | Iron and coal (our own recipe, plus any mod's steel via tag) |
-| Graphite | Moderator, fuel coating | Coal or charcoal block in a blast furnace |
-| Silicon carbide | TRISO fuel layer, hardened circuits | Sand and graphite |
+| Steel | Structure | Iron ingot and coal or charcoal in the alloy smelter (plus any mod's steel via tag) |
+| Graphite | Moderator, fuel coating | Coal or charcoal block in a blast furnace (1 block makes 1 graphite) |
+| Silicon carbide | TRISO fuel layer, hardened circuits | Sand and graphite in the alloy smelter |
 | Silicon | Circuits and solar cells | Sand in a powered furnace |
 | Lithium | Breeds tritium for fusion | Extracted from salt brine (real lithium mostly comes from brine) |
 | Sodium | Breeder coolant | Split from salt |
@@ -124,9 +124,13 @@ Inspired by the new generation of transportable microreactors. It gets its own o
 
 Target: buildable in the early game, after iron and a blast furnace, before diamonds. The structure is cheap; the fuel is where the cost sits.
 
+Machine:
+- **Alloy smelter:** the mod's first machine. A furnace with two input slots that burns ordinary furnace fuel, since there is no power yet. Crafted from a furnace, bricks and iron. Pipes connect like a furnace: inputs on top, fuel on the sides, output from the bottom.
+
 Intermediates:
+- **Steel:** iron ingot plus coal or charcoal in the alloy smelter.
 - **Graphite:** coal or charcoal block in a blast furnace.
-- **Silicon carbide:** sand plus graphite in a blast furnace.
+- **Silicon carbide:** sand plus graphite in the alloy smelter (a blast furnace only takes one input).
 - **TRISO pellets:** uranium ingot, graphite and silicon carbide. Based on real TRISO fuel: a uranium kernel coated in carbon and silicon carbide layers.
 
 Fuel note: the real Unity microreactor that inspired this uses standard uranium dioxide fuel with helium coolant and water as the moderator. We use TRISO on purpose, as used by other microreactor designs, because it gives the fuel cycle a real reason for the cracking step.

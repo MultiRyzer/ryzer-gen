@@ -13,7 +13,9 @@ import java.util.Map;
 public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(RyzerGen.MOD_ID);
 
+    public static final DeferredItem<BlockItem> ALLOY_SMELTER = ITEMS.registerSimpleBlockItem(ModBlocks.ALLOY_SMELTER);
     public static final DeferredItem<Item> GRAPHITE = ITEMS.registerSimpleItem("graphite");
+    public static final DeferredItem<Item> STEEL_INGOT = ITEMS.registerSimpleItem("steel_ingot");
 
     public static final Map<OreType, DeferredItem<BlockItem>> STONE_ORES = new EnumMap<>(OreType.class);
     public static final Map<OreType, DeferredItem<BlockItem>> DEEPSLATE_ORES = new EnumMap<>(OreType.class);
