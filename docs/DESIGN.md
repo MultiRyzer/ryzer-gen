@@ -18,7 +18,7 @@ Most reactor mods have one answer to "how do I get more power": build it bigger.
 
 | Tier | Machine | Real-world basis | New mechanic it teaches |
 |---|---|---|---|
-| 1 | Microreactor | Transportable "nuclear battery" microreactors, TRISO fuel | Heat, fuel life, basic output |
+| 1 | Microreactor (4-block) | Transportable "nuclear battery" microreactors, TRISO fuel | Heat, fuel life, basic output |
 | 2 | Fuel cycle | Reprocessing, MOX fuel (as done in France) | Spent fuel is the next fuel |
 | 3 | Modular fission reactor | Conventional fission, moderators and coolant | Layout design |
 | 4 | Breeder and thorium | Fast breeder reactors, thorium to U-233 | Making more fuel than you burn |
@@ -47,49 +47,52 @@ Deliberately skipped: zirconium and spodumene ores. Accurate, but they add ore c
 
 ## 5. Tier 1: Microreactor
 
-Inspired by the new generation of transportable microreactors. It gets its own original name and look in the mod, not a real product's name.
+Inspired by the new generation of transportable microreactors. It gets its own original name and look in the mod, not a real product's name. Meant to feel like a basic early machine, in the spirit of Oritech's small early multiblocks: simple to build, no layout rules to learn.
+
+### Structure
+- 4 blocks: 1 wide, 2 deep, 2 high. Fits in the corner of a starter base with room for pipes and cables.
+- Made of 1 **reactor heart** and 3 **reactor machine units**.
+- The heart can go in any of the 4 positions. The units fill the rest.
+- All faces are the outside of the machine, so there is no hidden "core" block to place awkwardly inside.
+
+### Assembly
+- When the fourth block is placed, the structure snaps together: short animation, particles, sound, and the 4 blocks render as one machine model.
+- Breaking any block drops it back to separate pieces.
+- Ghost preview: holding a heart or unit shows a faint outline of where the other blocks go.
+
+### Input and output
+- Once assembled, any face of any block accepts cables and pipes. The machine units pass everything through to the heart.
+- Wrench a face to set it: energy out, coolant in, or heat/steam out.
+- Right-click any block to open the GUI.
+
+### Running it
+- The heart holds one sealed fuel core. No topping up. Steady modest power for a long time, then it depletes.
+- Heat matters a little: water or coolant nearby raises output, boxing it in stone throttles it.
+- GUI: fuel left, temperature, output, on/off. Redstone controllable.
 
 ### Crafting (draft, balance TBD)
 
-Target: buildable in the early game, after iron and a blast furnace, before diamonds. Structure is cheap; the fuel is where the cost sits.
+Target: buildable in the early game, after iron and a blast furnace, before diamonds. The structure is cheap; the fuel is where the cost sits.
 
 Intermediates:
 - **Graphite:** coal or charcoal block in a blast furnace.
 - **Silicon carbide:** sand plus graphite in a blast furnace.
 - **TRISO pellets:** uranium ingot, graphite and silicon carbide. Based on real TRISO fuel: a uranium kernel coated in carbon and silicon carbide layers.
 
-Structure blocks:
+Blocks:
 | Block | Qty in structure | Draft recipe |
 |---|---|---|
-| Reactor casing | 4 | Steel, lead and stone. Makes 4 per craft |
-| Reactor core | 1 | Casing, graphite and steel |
-| Control unit | 1 | Casing, redstone, gold and glass |
-| Port | 2 | Casing, copper and redstone |
+| Reactor heart | 1 | Steel, lead, graphite, redstone and glass |
+| Reactor machine unit | 3 | Steel, lead and copper |
 
 Fuel and tools:
-- **Sealed fuel core:** TRISO pellets packed in graphite inside a steel shell. Slots into the reactor core. When depleted it is swapped out whole (no topping up), and the old one becomes the depleted core for the fuel cycle.
-- **Wrench:** iron and steel. Used for pack-up, port config and disassembly.
+- **Sealed fuel core:** TRISO pellets packed in graphite inside a steel shell. Goes into the heart. When depleted it is swapped out whole, and the old one becomes the depleted core for the fuel cycle.
+- **Wrench:** iron and steel. Used for pack-up, face config and disassembly.
 
 Uranium is rare in All The Ores worldgen, so fuel cores should be where most uranium goes, and a single core should last a long time.
 
-### Structure
-- 2x2x2 cube, 8 blocks, fits in the corner of a starter base with room for pipes.
-- Bottom layer: 4 reactor casing blocks (cheap, iron and concrete style).
-- Top layer: 1 reactor core, 1 control unit, 2 port blocks.
-
-### Assembly
-- When the last block is placed, the structure snaps together: short animation, particles, sound, and the 8 blocks render as one model.
-- Breaking any block drops it back to separate pieces.
-- Ghost preview: holding a microreactor block shows a faint outline of where the others go.
-
-### Running it
-- Sealed core. No refuelling. Steady modest power for a long time, then it depletes.
-- Heat matters a little: water or coolant around it raises output, boxing it in stone throttles it.
-- Control unit GUI: charge left, temperature, output, on/off. Redstone controllable.
-- Ports: each port can be set to energy out, coolant in, or heat/steam out.
-
 ### Portability
-- Shift right-click with a wrench to pack it into a single "packed microreactor" item that keeps its charge.
+- Shift right-click with a wrench to pack it into a single "packed microreactor" item that keeps its fuel.
 - Place it anywhere to unfold it again. Good for outposts, other dimensions and moving contraptions.
 
 ### The hook

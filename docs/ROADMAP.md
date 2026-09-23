@@ -10,14 +10,14 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [ ] First commit to Git (optional: push to a private GitHub repo)
 
 ## Milestone 1: Microreactor (first playable)
-- [ ] Register the 5 block types: casing, core, control unit, port, packed item
-- [ ] Multiblock detection for the 2x2x2 layout
+- [ ] Register reactor heart, reactor machine unit and packed microreactor
+- [ ] Multiblock detection for the 4-block layout (heart in any position)
 - [ ] Snap assembly: combined model, particles, sound
 - [ ] Break any block to disassemble
 - [ ] Energy generation, fuel life, depletion into a depleted core
 - [ ] Simple heat model with coolant bonus
 - [ ] Control unit GUI (charge, temperature, output, on/off, redstone)
-- [ ] Port configuration
+- [ ] Face configuration with the wrench
 - [ ] Wrench pack-up and unfold, keeping charge
 - [ ] Ghost placement preview
 - [ ] Placeholder textures, then proper 16x16 art
