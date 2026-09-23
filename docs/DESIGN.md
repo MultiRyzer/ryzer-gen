@@ -51,8 +51,9 @@ Inspired by the new generation of transportable microreactors. It gets its own o
 
 ### Structure
 - 4 blocks: 1 wide, 2 deep, 2 high. Fits in the corner of a starter base with room for pipes and cables.
-- Made of 1 **reactor heart** and 3 **reactor machine units**.
-- The heart can go in any of the 4 positions. The units fill the rest.
+- Made of 1 **reactor heart**, 2 **reactor machine units** and 1 **coolant block** (name pending).
+- The heart can go in any of the 4 positions; the units and coolant block fill the rest.
+- The coolant block is the player's first introduction to coolant blocks, which become a proper building block in later reactor tiers.
 - All faces are the outside of the machine, so there is no hidden "core" block to place awkwardly inside.
 
 ### Assembly
@@ -82,15 +83,15 @@ Intermediates:
 - **Graphite:** coal or charcoal block in a blast furnace.
 - **Silicon carbide:** sand plus graphite in a blast furnace.
 - **TRISO pellets:** uranium ingot, graphite and silicon carbide. Based on real TRISO fuel: a uranium kernel coated in carbon and silicon carbide layers.
-- **Coolant block (name pending):** copper and a water bucket (draft). Introduced here as a heart ingredient so players meet it early; it becomes a proper building block in later reactor tiers.
 
 Fuel note: the real Unity microreactor that inspired this uses standard uranium dioxide fuel with helium coolant and water as the moderator. We use TRISO on purpose, as used by other microreactor designs, because it gives the fuel cycle a real reason for the cracking step.
 
 Blocks:
 | Block | Qty in structure | Draft recipe |
 |---|---|---|
-| Reactor heart | 1 | Steel, lead, graphite, redstone, glass and 1 coolant block |
-| Reactor machine unit | 3 | Steel, lead and copper |
+| Reactor heart | 1 | Steel, lead, graphite, redstone and glass |
+| Reactor machine unit | 2 | Steel, lead and copper |
+| Coolant block (name pending) | 1 | Copper and a water bucket (draft) |
 
 Fuel and tools:
 - **Sealed fuel core:** TRISO pellets packed in graphite inside a steel shell. Goes into the heart. When depleted it is swapped out whole, and the old one becomes the depleted core for the fuel cycle.
