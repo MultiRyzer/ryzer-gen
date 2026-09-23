@@ -10,7 +10,7 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [ ] First commit to Git (optional: push to a private GitHub repo)
 
 ## Milestone 1: Microreactor (first playable)
-- [ ] Register reactor heart, reactor machine unit and packed microreactor
+- [ ] Register reactor heart, reactor machine unit, coolant block and packed microreactor
 - [ ] Multiblock detection for the 4-block layout (heart in any position)
 - [ ] Snap assembly: combined model, particles, sound
 - [ ] Break any block to disassemble
