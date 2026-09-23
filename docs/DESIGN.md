@@ -207,14 +207,38 @@ Processing the first depleted core unlocks the fission reactor.
 - A full swarm dims the overworld sun. Off by default, since it affects crops and mob spawning.
 - Shared server-wide swarm for multiplayer.
 
-## 12. Anti-grind rules
+## 12. Energy storage
+
+Goal: batteries that look and grow like real ones, instead of one block recoloured per tier. Progress comes from adding modules and switching to better chemistries, not crafting a new block.
+
+Simple rule: each module adds both capacity and charge/discharge rate. The chemistry decides how much. No separate inverter block.
+
+### Tier 1: Home battery stack
+- A 2-block-tall cabinet, like a stackable home battery.
+- Right-click a battery module into it and one more segment appears on the model, up to 6.
+- Shift right-click removes the top module, so modules can be moved or swapped.
+- Chemistries, swapped into the same stack:
+  - **Lead-acid modules:** available early (lead is a tier 1 material). Older off-grid homes really used these.
+  - **LFP (lithium iron phosphate) modules:** unlocked once the electrolyser makes lithium. What most modern home batteries use. Much higher capacity and rate.
+
+### Tier 2: Container battery (grid scale)
+- A shipping-container-sized multiblock. Original design, based on the idea of real container batteries.
+- Place the container frame, then fill the rack slots along the walls with battery racks. Racks appear visibly as they are added.
+- A **thermal management block** is required, part of the coolant block family. Real grid batteries need active cooling.
+- Chemistries: LFP racks, then **sodium-ion racks**, a real, cheaper grid chemistry. Sodium comes from salt electrolysis.
+
+### Endgame: Superconducting storage
+- **SMES (superconducting magnetic energy storage):** a real technology that stores energy in the magnetic field of a superconducting coil and charges or discharges almost instantly.
+- Uses the yttrium superconductors and cryogenic cooling from the fusion tier. Where Dyson swarm power gets stored.
+
+## 13. Anti-grind rules
 
 - Structure blocks are cheap. Cost lives in the interesting parts.
 - Tiers unlock through milestones, not resource piles.
 - Test designs in the planner before building.
 - Any repeated manual action should be replaced by automation soon after the player understands it.
 
-## 13. Compatibility
+## 14. Compatibility
 
 - Standard NeoForge energy (FE).
 - Works with Mekanism steam and fluids where it makes sense.
@@ -222,7 +246,7 @@ Processing the first depleted core unlocks the fission reactor.
 - All recipes data driven so pack makers can change them.
 - Config for meltdowns, flares, sun dimming and balance values.
 
-## 14. Naming and IP
+## 15. Naming and IP
 
 - All names, models and textures original.
 - Real-world inspirations can be credited on the mod page, not used as item names.

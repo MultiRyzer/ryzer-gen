@@ -10,3 +10,6 @@ Decisions still to make. Move them into DESIGN.md once settled.
 6. **Beyond the swarm.** Do aneutronic fusion, antimatter or Kugelblitz ever come in, or does the mod end at the sun?
 7. **Microreactor fuel.** Does a new reactor come with its first fuel core, or does the player craft one separately?
 8. **Coolant block name.** Technical name pending.
+9. **Middle battery tier.** A fridge-sized commercial cabinet between the home stack and the container, or go straight from house to container?
+10. **Radiation.** Should uranium, waste and running reactors be radioactive (shielding, hazmat suit)? Config toggle either way.
+11. **Power-spending machines.** Add things like an automated miner or powered tools and armour, or keep the mod to power and processing?
