@@ -18,6 +18,8 @@ From `mod/` (Java 21 required):
 - `./gradlew runClient` launches a test client with the mod loaded.
 - `./gradlew build` compiles and packages the jar.
 
+On this machine Gradle fails with "Unable to establish loopback connection" because Java cannot create its internal socket in the default temp folder. Prefix Gradle commands with `JAVA_TOOL_OPTIONS='-Djdk.net.unixdomain.tmpdir=C:\jtmp'` (the folder `C:\jtmp` must exist), and run them outside the sandbox.
+
 Registration uses `DeferredRegister` in `com.ryzer.ryzergen.registry` (`ModItems`, `ModCreativeTabs`), wired up in `RyzerGen`. Every new item goes in the Ryzer Gen creative tab automatically. Add a lang entry in `en_us.json` and an item model for every new item.
 
 ## Writing rules
