@@ -25,6 +25,11 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [ ] Placeholder textures, then proper 16x16 art
 - [ ] Recipes and config values
 
+## Milestone 1b: Home battery
+- [ ] Home battery stack cabinet with 6 module slots and segment model
+- [ ] Lead-acid module
+- [ ] Basic cables
+
 ## Milestone 2: Fuel cycle
 - [ ] Fluorite ore
 - [ ] Core cracker, reprocessor, fuel fabricator
