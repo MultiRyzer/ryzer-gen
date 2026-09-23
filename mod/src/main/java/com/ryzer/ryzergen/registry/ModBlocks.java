@@ -1,6 +1,7 @@
 package com.ryzer.ryzergen.registry;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlock;
 import com.ryzer.ryzergen.material.OreType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DropExperienceBlock;
@@ -13,6 +14,9 @@ import java.util.Map;
 
 public final class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(RyzerGen.MOD_ID);
+
+    public static final DeferredBlock<AlloySmelterBlock> ALLOY_SMELTER = BLOCKS.register("alloy_smelter",
+            () -> new AlloySmelterBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FURNACE)));
 
     public static final Map<OreType, DeferredBlock<DropExperienceBlock>> STONE_ORES = new EnumMap<>(OreType.class);
     public static final Map<OreType, DeferredBlock<DropExperienceBlock>> DEEPSLATE_ORES = new EnumMap<>(OreType.class);

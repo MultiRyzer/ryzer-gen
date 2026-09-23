@@ -1,0 +1,15 @@
+{
+  "type": "ryzergen:alloying",
+  "first": {
+    "count": 1,
+    "tag": "c:ingots/iron"
+  },
+  "result": {
+    "count": 1,
+    "id": "ryzergen:steel_ingot"
+  },
+  "second": {
+    "count": 1,
+    "tag": "minecraft:coals"
+  }
+}

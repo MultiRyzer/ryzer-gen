@@ -1,18 +1,26 @@
 package com.ryzer.ryzergen.datagen;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.material.ModTags;
 import com.ryzer.ryzergen.material.OreType;
+import com.ryzer.ryzergen.recipe.AlloyingRecipe;
 import com.ryzer.ryzergen.registry.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -24,6 +32,27 @@ public class ModRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ALLOY_SMELTER.get())
+                .pattern("III")
+                .pattern("BFB")
+                .pattern("BBB")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('B', Items.BRICKS)
+                .define('F', Items.FURNACE)
+                .unlockedBy("has_furnace", has(Items.FURNACE))
+                .save(output);
+
+        // Steel: iron with a little carbon from coal or charcoal.
+        output.accept(id("steel_ingot_from_alloying"), new AlloyingRecipe(
+                SizedIngredient.of(Tags.Items.INGOTS_IRON, 1),
+                SizedIngredient.of(ItemTags.COALS, 1),
+                new ItemStack(ModItems.STEEL_INGOT.get()),
+                AlloyingRecipe.DEFAULT_COOKING_TIME), null);
+
+        // Graphite: carbon baked at high heat, so blast furnace only.
+        blast(output, Tags.Items.STORAGE_BLOCKS_COAL, ModItems.GRAPHITE.get(), "graphite_from_coal_block");
+        blast(output, ModTags.STORAGE_BLOCKS_CHARCOAL, ModItems.GRAPHITE.get(), "graphite_from_charcoal_block");
+
         for (OreType ore : OreType.values()) {
             if (ore.hasIngot()) {
                 Item ingot = ModItems.INGOTS.get(ore).get();
@@ -38,6 +67,12 @@ public class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_input", has(input))
                 .save(output, id(name + "_smelting"));
         SimpleCookingRecipeBuilder.blasting(Ingredient.of(input), RecipeCategory.MISC, result, 0.7f, 100)
+                .unlockedBy("has_input", has(input))
+                .save(output, id(name + "_blasting"));
+    }
+
+    private static void blast(RecipeOutput output, TagKey<Item> input, Item result, String name) {
+        SimpleCookingRecipeBuilder.blasting(Ingredient.of(input), RecipeCategory.MISC, result, 0.1f, 200)
                 .unlockedBy("has_input", has(input))
                 .save(output, id(name + "_blasting"));
     }

@@ -11,7 +11,8 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 
 ## Milestone 1: Microreactor (first playable)
 - [x] Ores needed for tier 1 (uranium, lead) with worldgen, common tags and config toggles (all 8 ores done, with placeholder textures)
-- [ ] Steel and graphite recipes
+- [x] Alloy smelter (fuel burning, two inputs)
+- [x] Steel and graphite recipes
 - [ ] Register reactor heart, reactor machine unit, coolant block and packed microreactor
 - [ ] Multiblock detection for the 4-block layout (heart in any position)
 - [ ] Snap assembly: combined model, particles, sound
@@ -23,6 +24,7 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [ ] Wrench pack-up and unfold, keeping charge
 - [ ] Ghost placement preview
 - [ ] Placeholder textures, then proper 16x16 art
+  - [ ] **To do:** rebuild every texture so far. The current ones are generated placeholders and not good enough: all 16 ore blocks, raw drops, fluorite, salt, ingots, steel, graphite, and the alloy smelter block faces and GUI.
 - [ ] Recipes and config values
 - [ ] Basic radiation (dose, effects, config toggle)
 - [ ] Dosimeter ring with Curios slot support and inventory fallback

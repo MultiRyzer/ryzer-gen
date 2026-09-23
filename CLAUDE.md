@@ -17,12 +17,13 @@ From `mod/` (Java 21 required):
 
 - `./gradlew runClient` launches a test client with the mod loaded.
 - `./gradlew build` compiles and packages the jar.
+- `./gradlew runData` runs datagen into `src/generated/resources/`. Commit the generated files. Rerun it after changing anything under `datagen/`.
 
 On this machine Gradle fails with "Unable to establish loopback connection" because Java cannot create its internal socket in the default temp folder. Prefix Gradle commands with `JAVA_TOOL_OPTIONS='-Djdk.net.unixdomain.tmpdir=C:\jtmp'` (the folder `C:\jtmp` must exist), and run them outside the sandbox.
 
-- `./gradlew runData` runs datagen into `src/generated/resources/`. Commit the generated files. Rerun it after changing anything under `datagen/`.
-
 Registration uses `DeferredRegister` in `com.ryzer.ryzergen.registry`, wired up in `RyzerGen`. Every new item goes in the Ryzer Gen creative tab automatically. Lang entries are hand-written in `src/main/resources/assets/ryzergen/lang/en_us.json`. Models, blockstates, loot tables, tags, recipes and worldgen come from datagen (`com.ryzer.ryzergen.datagen`), not hand-written JSON.
+
+Machines live in `com.ryzer.ryzergen.machine.<name>` (block, block entity, menu, screen). The alloy smelter is the template: `ItemStackHandler` inventory exposed through the item handler capability, `ContainerData` for progress, a custom recipe type in `com.ryzer.ryzergen.recipe`. GUI textures go in `textures/gui/`. Tier 1 machines burn furnace fuel, because nothing is powered before the microreactor.
 
 Ores are driven by the `OreType` enum: adding an entry there gives stone and deepslate ore blocks, drops, ingots, tags, loot and smelting. Vein size and rarity live in `ModWorldGenProvider`. Each ore has a worldgen toggle in the common config (`ryzergen-common.toml`), applied by the `ryzergen:configurable_ore` biome modifier. IDs and names use British "aluminium", but common tags use "aluminum" because that is what other mods use.
 
