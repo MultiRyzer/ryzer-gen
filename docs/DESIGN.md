@@ -41,11 +41,34 @@ Compatibility rule: every recipe asks for common tags (`c:ingots/uranium`, `c:in
 | Lithium | Breeds tritium for fusion | Shared tag plus our own recipe |
 | Fluorite | Uranium processing | Shared tag |
 | Iridium, platinum | Late game fusion and sun gear | Shared tag |
-| Thorium | Thorium fuel path | Our one new ore: thorium-bearing monazite, tagged to merge with Modern Industrialization's monazite. Our machines extract thorium from anyone's monazite |
+| Tungsten | Fusion plasma-facing wall (as in real tokamaks) | Our own ore, tagged `c:ores/tungsten` so it merges with Modern Industrialization and other mods that add it |
+| Silver | Fission control rods | Shared tag |
+| Salt | Source of sodium for breeder coolant | Shared tag |
+| Aluminium | Solar sail film | Shared tag |
+| Thorium | Thorium fuel path | New ore: thorium-bearing monazite, tagged to merge with Modern Industrialization's monazite. Our machines extract thorium from anyone's monazite |
+
+We add two ores in total: monazite and tungsten. Everything else comes from shared tags or processing.
 
 Deliberately skipped: zirconium and spodumene ores. Accurate, but they add ore clutter. Handled as processing steps instead.
 
-## 5. Tier 1: Microreactor
+## 5. Progression spine
+
+Rule 1: **no compression recipes.** A higher tier never needs a stack of the tier below. It needs different materials made by a new process.
+
+Rule 2: **power gating.** The machine that makes the next tier's key material runs on the current tier's power. You cannot make it until you can power it.
+
+| Tier | Generator | Key component | New material and process | Circuit |
+|---|---|---|---|---|
+| 1 | Microreactor | Reactor heart | Steel, lead, graphite (blast furnace) | Basic control board: iron, copper, redstone |
+| 2 | Fuel cycle machines (run on microreactor power) | Precision parts | Silicon wafers from sand in a powered furnace; fluorite for uranium processing | Advanced board: steel, gold, silicon |
+| 3 | Fission reactor | Control rod assembly | Silver alloy control rods (real rods use silver, indium and cadmium); MOX fuel from tier 2 | Hardened board: silicon carbide and lead (radiation-hard electronics) |
+| 4 | Breeder reactor | Sodium coolant loop | Sodium split from salt using fission power (real fast breeders are sodium cooled); thorium from monazite | Hardened board |
+| 5 | Fusion reactor | Superconducting magnet coil, plasma-facing wall | Yttrium from monazite for superconductors; tritium bred from lithium in the breeder; tungsten for the plasma wall | Cryogenic board: superconducting wiring |
+| 6 | Dyson swarm | Solar sail, receiver dish | Aluminium film sails; silicon solar cells | Photonic board |
+
+Circuits follow their own logic: basic, advanced, radiation-hardened, cryogenic, photonic. Each tier's circuit needs something only the previous tier made possible.
+
+## 6. Tier 1: Microreactor
 
 Inspired by the new generation of transportable microreactors. It gets its own original name and look in the mod, not a real product's name. Meant to feel like a basic early machine, in the spirit of Oritech's small early multiblocks: simple to build, no layout rules to learn.
 
@@ -106,7 +129,7 @@ Uranium is rare in All The Ores worldgen, so fuel cores should be where most ura
 ### The hook
 When the core runs out, the player gets a depleted core they cannot use yet. That curiosity pulls them into the fuel cycle.
 
-## 6. Tier 2: Fuel cycle
+## 7. Tier 2: Fuel cycle
 
 Real basis: spent uranium fuel is roughly 95% uranium, about 1% plutonium and about 4% fission products (the actual waste). Microreactor fuel is TRISO (tiny kernels sealed in ceramic and carbon), which is famously hard to reprocess. That gives us a real reason for an extra step.
 
@@ -117,7 +140,7 @@ Real basis: spent uranium fuel is roughly 95% uranium, about 1% plutonium and ab
 
 Processing the first depleted core unlocks the fission reactor.
 
-## 7. Tier 3: Modular fission reactor
+## 8. Tier 3: Modular fission reactor
 
 - Multiblock with a flexible size, but size is not the main lever. Layout is.
 - Fuel rods next to moderators run hotter and more efficiently. Coolant channels remove heat. Bad designs overheat.
@@ -126,19 +149,19 @@ Processing the first depleted core unlocks the fission reactor.
 - Different fuels behave differently (hot and fast, slow and stable, breeding).
 - Meltdowns are configurable, from "shuts down and loses fuel" to full crater.
 
-## 8. Tier 4: Breeder and thorium
+## 9. Tier 4: Breeder and thorium
 
 - Breeder reactor: produces more fissile fuel than it consumes. Needs more active management (flow rates, temperatures), with optional redstone or computer control.
 - Thorium path: thorium is not a fuel itself but breeds U-233. An alternative route with its own trade-offs.
 
-## 9. Tier 5: Fusion
+## 10. Tier 5: Fusion
 
 - Deuterium-tritium tokamak.
 - Tritium is bred from lithium in your fission reactors, tying the tiers together.
 - Gameplay: keep the plasma stable, manage wear on components from neutron damage.
 - Hard to run, huge payoff.
 
-## 10. Tier 6: Dyson swarm
+## 11. Tier 6: Dyson swarm
 
 ### The sun dimension
 - A bright yellow, glowing superflat world. Framed as a "stabilised photosphere" layer, since the real sun has no surface.
@@ -168,14 +191,14 @@ Processing the first depleted core unlocks the fission reactor.
 - A full swarm dims the overworld sun. Off by default, since it affects crops and mob spawning.
 - Shared server-wide swarm for multiplayer.
 
-## 11. Anti-grind rules
+## 12. Anti-grind rules
 
 - Structure blocks are cheap. Cost lives in the interesting parts.
 - Tiers unlock through milestones, not resource piles.
 - Test designs in the planner before building.
 - Any repeated manual action should be replaced by automation soon after the player understands it.
 
-## 12. Compatibility
+## 13. Compatibility
 
 - Standard NeoForge energy (FE).
 - Works with Mekanism steam and fluids where it makes sense.
@@ -183,7 +206,7 @@ Processing the first depleted core unlocks the fission reactor.
 - All recipes data driven so pack makers can change them.
 - Config for meltdowns, flares, sun dimming and balance values.
 
-## 13. Naming and IP
+## 14. Naming and IP
 
 - All names, models and textures original.
 - Real-world inspirations can be credited on the mod page, not used as item names.
