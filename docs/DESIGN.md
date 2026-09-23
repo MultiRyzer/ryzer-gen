@@ -82,11 +82,14 @@ Intermediates:
 - **Graphite:** coal or charcoal block in a blast furnace.
 - **Silicon carbide:** sand plus graphite in a blast furnace.
 - **TRISO pellets:** uranium ingot, graphite and silicon carbide. Based on real TRISO fuel: a uranium kernel coated in carbon and silicon carbide layers.
+- **Coolant block (name pending):** copper and a water bucket (draft). Introduced here as a heart ingredient so players meet it early; it becomes a proper building block in later reactor tiers.
+
+Fuel note: the real Unity microreactor that inspired this uses standard uranium dioxide fuel with helium coolant and water as the moderator. We use TRISO on purpose, as used by other microreactor designs, because it gives the fuel cycle a real reason for the cracking step.
 
 Blocks:
 | Block | Qty in structure | Draft recipe |
 |---|---|---|
-| Reactor heart | 1 | Steel, lead, graphite, redstone and glass |
+| Reactor heart | 1 | Steel, lead, graphite, redstone, glass and 1 coolant block |
 | Reactor machine unit | 3 | Steel, lead and copper |
 
 Fuel and tools:

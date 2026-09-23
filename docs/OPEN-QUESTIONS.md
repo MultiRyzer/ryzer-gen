@@ -9,3 +9,4 @@ Decisions still to make. Move them into DESIGN.md once settled.
 5. **Energy scale.** How much FE per tick for each tier, so it sits well alongside Mekanism and Powah in ATM10.
 6. **Beyond the swarm.** Do aneutronic fusion, antimatter or Kugelblitz ever come in, or does the mod end at the sun?
 7. **Microreactor fuel.** Does a new reactor come with its first fuel core, or does the player craft one separately?
+8. **Coolant block name.** Technical name pending.
