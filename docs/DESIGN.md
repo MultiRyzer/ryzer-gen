@@ -152,7 +152,7 @@ Real basis: spent uranium fuel is roughly 95% uranium, about 1% plutonium and ab
 1. **Core cracker:** breaks the TRISO casing on depleted cores.
 2. **Reprocessor:** splits the result into recovered uranium, plutonium and waste.
 3. **Fuel fabricator:** combines plutonium and uranium into MOX fuel for the fission reactor.
-4. **Waste storage:** a simple, low-effort cask or vault. Enough to feel real, never a chore.
+4. **Waste storage:** a simple, low-effort cask or vault. Enough to feel real, never a chore. Waste does not emit radiation, so storage is about tidiness and realism, not survival.
 
 Processing the first depleted core unlocks the fission reactor.
 
@@ -236,10 +236,10 @@ Simple rule: each module adds both capacity and charge/discharge rate. The chemi
 Radiation is on by default (config toggle to turn it off). It exists to make the machines feel dangerous and the protective gear feel special, not to punish players.
 
 ### Sources
-- Raw uranium and thorium in the inventory (low).
-- Depleted cores and waste (medium), until stored in shielded casks.
-- Running reactors, within a short radius (low to high by tier).
-- Meltdowns (severe, lingering area).
+- **Only running reactors**, within a short radius (low to high by tier).
+- **Meltdowns**, which leave a severe, lingering area. This is still the reactor, just after it has gone wrong.
+- Ores, raw materials, fuel cores, depleted cores and waste are all safe to carry and mine. A player 10 minutes in who finds uranium is never affected.
+- Real basis: natural uranium ore is only weakly radioactive, so safe mining is close to reality. Treating spent fuel as safe to handle is a deliberate simplification.
 
 ### Effects
 - Players build up a dose while exposed. Dose fades slowly over time away from sources.
