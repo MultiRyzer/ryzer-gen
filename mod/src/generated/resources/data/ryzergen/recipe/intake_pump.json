@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:bucket"
+    },
+    "C": {
+      "tag": "c:ingots/copper"
+    },
+    "P": {
+      "tag": "c:circuits/basic"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "SBS",
+    "CRC",
+    "SPS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:intake_pump"
+  }
+}

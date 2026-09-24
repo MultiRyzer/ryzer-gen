@@ -3,6 +3,10 @@ package com.ryzer.ryzergen.registry;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.battery.HomeBatteryBlockEntity;
 import com.ryzer.ryzergen.cable.EnergyCableBlockEntity;
+import com.ryzer.ryzergen.cable.FluidPipeBlockEntity;
+import com.ryzer.ryzergen.machine.pump.IntakePumpBlockEntity;
+import com.ryzer.ryzergen.storage.PressureTankBlockEntity;
+import com.ryzer.ryzergen.cable.ItemPipeBlockEntity;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlockEntity;
 import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterBlockEntity;
 import com.ryzer.ryzergen.machine.microreactor.ReactorHeartBlockEntity;
@@ -26,6 +30,27 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnergyCableBlockEntity>> ENERGY_CABLE =
             BLOCK_ENTITIES.register("energy_cable",
                     () -> BlockEntityType.Builder.of(EnergyCableBlockEntity::new, ModBlocks.ENERGY_CABLE.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ItemPipeBlockEntity>> ITEM_PIPE =
+            BLOCK_ENTITIES.register("item_pipe",
+                    () -> BlockEntityType.Builder.of(ItemPipeBlockEntity::new, ModBlocks.ITEM_PIPE.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<IntakePumpBlockEntity>> INTAKE_PUMP =
+            BLOCK_ENTITIES.register("intake_pump",
+                    () -> BlockEntityType.Builder.of(IntakePumpBlockEntity::new, ModBlocks.INTAKE_PUMP.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PressureTankBlockEntity>> PRESSURE_TANK =
+            BLOCK_ENTITIES.register("pressure_tank",
+                    () -> BlockEntityType.Builder.of(PressureTankBlockEntity::new,
+                            ModBlocks.PRESSURE_TANK.get(), ModBlocks.FLUID_TANK.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluidPipeBlockEntity>> FLUID_PIPE =
+            BLOCK_ENTITIES.register("fluid_pipe",
+                    () -> BlockEntityType.Builder.of(FluidPipeBlockEntity::liquid, ModBlocks.FLUID_PIPE.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluidPipeBlockEntity>> GAS_PIPE =
+            BLOCK_ENTITIES.register("gas_pipe",
+                    () -> BlockEntityType.Builder.of(FluidPipeBlockEntity::gas, ModBlocks.GAS_PIPE.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HomeBatteryBlockEntity>> HOME_BATTERY =
             BLOCK_ENTITIES.register("home_battery",

@@ -14,8 +14,10 @@ public enum MicroreactorPort {
     ENERGY_OUT(MicroreactorSlot.LOWER_BACK, Side.BACK),
     /** Intake chute on top. */
     COOLANT_IN(MicroreactorSlot.UPPER_BACK, Side.UP),
-    /** Outlet on the right-hand side. Modelled now, connected once steam is a thing. */
-    STEAM_OUT(MicroreactorSlot.LOWER_BACK, Side.RIGHT);
+    /** Steam outlet on the right-hand side: the boiled coolant leaves here as steam. */
+    STEAM_OUT(MicroreactorSlot.LOWER_BACK, Side.RIGHT),
+    /** Fuel hatch on the lid: fresh cores go in, and the reactor pushes spent ones back out. */
+    FUEL(MicroreactorSlot.UPPER_FRONT, Side.UP);
 
     private enum Side { BACK, UP, RIGHT }
 

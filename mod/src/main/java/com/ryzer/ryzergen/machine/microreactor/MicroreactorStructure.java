@@ -1,5 +1,7 @@
 package com.ryzer.ryzergen.machine.microreactor;
 
+import com.ryzer.ryzergen.advancement.Milestone;
+import com.ryzer.ryzergen.registry.ModTriggers;
 import com.ryzer.ryzergen.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -73,6 +75,7 @@ public final class MicroreactorStructure {
         level.playSound(null, centre.x, centre.y, centre.z, SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 0.5F, 1.6F);
         level.sendParticles(ParticleTypes.ELECTRIC_SPARK, centre.x, centre.y, centre.z, 30, 0.45, 0.8, 0.8, 0.05);
         level.sendParticles(ParticleTypes.CLOUD, centre.x, centre.y + 1.0, centre.z, 6, 0.3, 0.1, 0.6, 0.01);
+        ModTriggers.MILESTONE.get().triggerNearby(level, centre, Milestone.MICROREACTOR_FORMED);
     }
 
     /** Called when a formed part is removed. The other three go back to separate pieces. */

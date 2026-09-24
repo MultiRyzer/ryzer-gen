@@ -4,6 +4,8 @@ Machines are 3D box models built in datagen; this draws their own textures, and 
 Run from the repo root:
     python art/tools/machine_textures.py
 """
+import math
+
 from pixelart import *  # noqa: F401,F403
 
 
@@ -103,39 +105,54 @@ def thick_line(x0, y0, x1, y1, width):
 
 # ---------------------------------------------------------------- cables and wrench
 
-def cable_block():
-    """Insulated cable. Arms map rows 5 to 10 along their length (see the cable model), so the red
-    core stripe runs unbroken from end to end."""
+# A pipe family shares one shape; the body and band colours say what it carries, as the port rings
+# do: orange items, blue liquids, white gases. Keys: body (fill, light, shade, dark) and band (lit, dim).
+PIPES = {
+    # Energy cable: an insulated graphite body with the red energy band.
+    'energy_cable': (('S', 'b', 'T', 'U'), ('x', '8')),
+    'item_pipe': (('F', 'A', 'I', 'J'), ('X', 'Z')),
+    'fluid_pipe': (('F', 'A', 'I', 'J'), ('i', 'f')),
+    # Steam lines are pressure-rated steel: the reactor vessel's gunmetal, with a white band.
+    'gas_pipe': (('u', 's', 'z', 'T'), ('A', 'I')),
+}
+
+
+def pipe_block(name):
+    """A pipe: the body lit along the top edge, with the band running its length. Arms map rows 5
+    to 10, as on the cable."""
+    (fill, light, shade, dark), (lit, dim) = PIPES[name]
     t = Tex()
-    t.rect(0, 0, 15, 15, 'S')
-    t.rect(0, 5, 15, 5, 'b')
-    t.rect(0, 6, 15, 6, 'S')
-    t.rect(0, 7, 15, 7, 'x')
-    t.rect(0, 8, 15, 8, '8')
-    t.rect(0, 9, 15, 9, 'S')
-    t.rect(0, 10, 15, 10, 'T')
+    t.rect(0, 0, 15, 15, fill)
+    t.rect(0, 5, 15, 5, light)
+    t.rect(0, 6, 15, 6, 'E' if fill == 'F' else light)
+    t.rect(0, 7, 15, 7, lit)
+    t.rect(0, 8, 15, 8, dim)
+    t.rect(0, 9, 15, 9, shade)
+    t.rect(0, 10, 15, 10, dark)
     return t
 
 
-def cable_core():
-    """The junction box where arms meet: graphite with a bevel and a small red terminal."""
+def pipe_core(name):
+    """The junction: a box with a crisp bevel and a small hub in the band colour."""
+    (fill, light, shade, dark), (lit, dim) = PIPES[name]
     t = Tex()
-    t.rect(0, 0, 15, 15, 'S')
-    t.rect(5, 5, 10, 5, 'b')
-    t.rect(5, 5, 5, 10, 'b')
-    t.rect(5, 10, 10, 10, 'T')
-    t.rect(10, 5, 10, 10, 'T')
-    t.rect(7, 7, 8, 8, '8')
-    t.set(7, 7, 'x')
+    t.rect(0, 0, 15, 15, fill)
+    t.rect(5, 5, 10, 5, light)
+    t.rect(5, 5, 5, 10, light)
+    t.rect(5, 10, 10, 10, dark)
+    t.rect(10, 5, 10, 10, dark)
+    t.rect(7, 7, 8, 8, dim)
+    t.set(7, 7, lit)
     return t
 
 
-def cable_flange():
-    """Extract flange: an 8 x 8 graphite plate with the red energy ring, like a port."""
+def pipe_flange(name):
+    """Extract flange: the cable's graphite plate with the pipe's ring colour."""
+    lit = PIPES[name][1][0]
     t = Tex()
     t.rect(0, 0, 15, 15, 'S')
     t.rect(4, 4, 11, 11, 'U')
-    t.rect(5, 5, 10, 10, 'x')
+    t.rect(5, 5, 10, 10, lit)
     t.rect(6, 6, 9, 9, 'T')
     t.rect(7, 7, 8, 8, 'U')
     t.rect(4, 4, 11, 4, 'b')
@@ -143,60 +160,97 @@ def cable_flange():
     return t
 
 
-def cable_item():
-    """A thick coil of insulated cable with its red core showing along the loop and a bare copper end."""
-    loop = ellipse(7.5, 7.5, 6.6, 5.6) - ellipse(7.5, 7.5, 3.6, 2.8)
-    tail = {(x, y) for x, y in thick_line(11.5, 11.5, 14.5, 14.5, 1)}
-    filled = loop | tail
-    t = shape_item(filled, 'S', 'b', 'T')
-    # The red core: a line round the middle of the band.
-    for x, y in loop:
-        r = ((x + 0.5 - 7.5) / 5.1) ** 2 + ((y + 0.5 - 7.5) / 4.2) ** 2
-        if 0.86 <= r <= 1.12:
-            t.set(x, y, 'x' if y < 8 else '8')
-    # Bare copper conductor at the end of the tail.
-    for x, y in ((14, 14), (15, 15), (14, 15), (15, 14)):
-        if (x, y) in filled:
-            t.set(x, y, 'R' if (x + y) % 2 else 'e')
-    return t
+
+def lit(nx, ny):
+    """How much a surface facing (nx, ny) catches the light, which comes from the top left: 1 facing
+    it, -1 facing away."""
+    n = math.hypot(nx, ny) or 1
+    return (-nx - ny) / (n * math.sqrt(2))
 
 
 def wrench_item():
-    """An open-ended spanner. A three-pixel shaft runs diagonally into a round head, and the jaw is
-    cut along the same line, so it opens towards the top right. The lower shaft has an orange grip."""
-    band = lambda x, y: 14 <= x + y <= 16
-    shaft = {(x, y) for x in range(1, 11) for y in range(16) if band(x, y)}
-    head = disc(11.5, 3.5, 3.6)
-    slot = {(x, y) for x in range(12, 16) for y in range(16) if band(x, y)}
-    filled = {(x, y) for x, y in (shaft | head) - slot if 0 <= x < 16 and 0 <= y < 16}
-    t = shape_item(filled, 'J', 'E', 'b', highlight='A')
-    for x, y in filled:
-        if x <= 5:
-            lit = (x - 1, y) not in filled or (x, y - 1) not in filled
-            shade = (x + 1, y) not in filled or (x, y + 1) not in filled
-            t.set(x, y, 'e' if lit and not shade else 'Z' if shade and not lit else 'X')
+    """A compact open-ended spanner, drawn diagonally in the tech-mod way and kept slim like
+    Mekanism's tools: a steel head with a clear jaw opening to the top right and a lit rim, a
+    two-pixel shaft, an orange collar with a small cyan status light, a wrapped graphite grip and a
+    steel end cap."""
+    x0, y0, x1, y1 = 2.6, 13.4, 8.6, 7.4
+    cx, cy, r = 10.9, 5.1, 2.95
+    along = lambda x, y: ((x - x0) * (x1 - x0) + (y - y0) * (y1 - y0)) / ((x1 - x0) ** 2 + (y1 - y0) ** 2)
+    cells = set()
+    for y in range(16):
+        for x in range(16):
+            px, py = x + 0.5, y + 0.5
+            a = min(1, max(0, along(px, py)))
+            qx, qy = x0 + (x1 - x0) * a, y0 + (y1 - y0) * a
+            on_shaft = math.hypot(px - qx, py - qy) <= 0.8
+            on_head = math.hypot(px - cx, py - cy) <= r
+            # The jaw: a slot from the middle of the head out to the top right.
+            ux, uy = (px - cx) / 1.4142, (cy - py) / 1.4142
+            jaw = (ux + uy) > -0.2 and abs(ux - uy) <= 1.1
+            if (on_shaft or on_head) and not (on_head and jaw):
+                cells.add((x, y))
+    t = shape_item(cells, 'F', 'E', 'J')
+    for x, y in cells:
+        a = along(x + 0.5, y + 0.5)
+        edge_lit = (x - 1, y) not in cells or (x, y - 1) not in cells
+        edge_shade = (x + 1, y) not in cells or (x, y + 1) not in cells
+        head = math.hypot(x + 0.5 - cx, y + 0.5 - cy) <= r
+        if a < 0.08:
+            # Steel end cap.
+            t.set(x, y, 'E' if edge_lit else 'I')
+        elif a < 0.5:
+            # Grip, wrapped: lighter turns every other step along it.
+            wrap = int(a * 11) % 2 == 0
+            t.set(x, y, 'b' if wrap else 'T')
+        elif a < 0.66:
+            t.set(x, y, 'e' if edge_lit and not edge_shade else 'Z' if edge_shade and not edge_lit else 'X')
+        elif head and edge_lit and not edge_shade:
+            t.set(x, y, 'A')
+    # The bite stays open: no outline inside the jaw, so it reads as a gap, not a hole.
+    for y in range(16):
+        for x in range(16):
+            ux, uy = (x + 0.5 - cx) / 1.4142, (cy - y - 0.5) / 1.4142
+            if (x, y) not in cells and (ux + uy) > 0.3 and abs(ux - uy) <= 1.5:
+                t.px[y][x] = None
+    # The status light on the collar: its middle pixel on the lit side.
+    collar = sorted(((x, y) for x, y in cells if 0.5 <= along(x + 0.5, y + 0.5) < 0.66), key=lambda p: p[0] - p[1])
+    if collar:
+        x, y = collar[len(collar) // 2]
+        t.set(x, y, 'i')
     return t
 
 
 def dosimeter_ring():
-    """A steel ring seen at an angle, with a faceted fluorite crystal set on top (the dosimeter chip)."""
-    band = ellipse(8, 10.5, 6.5, 4.2) - ellipse(8, 10.8, 4.3, 2.3)
-    t = shape_item(band, 'J', 'E', 'b', highlight='A')
-    # The far side of the band sits in shadow.
-    for x, y in band:
-        if y < 10 and 4 < x < 12 and t.px[y][x] == PAL['J']:
-            t.set(x, y, 'I')
-    # Setting and crystal: a small faceted gem in purple with a fluorescent cyan edge.
-    t.stamp(5, 1, [
-        '..UUUU..',
-        '.U3443U.',
-        'U234432U',
-        'U123321U',
-        '.U1221U.',
-        '.UJUUJU.',
+    """A green band seen at a tilt, as magic mods draw their rings: two pixels thick, lit from the
+    top left with no black outline (its darkest green is the edge), and a fluorite crystal (the
+    dosimeter chip) in a small steel setting breaking the silhouette at the top left."""
+    cx, cy = 8.3, 8.7
+    tilt = math.radians(-38)
+    cos, sin = math.cos(tilt), math.sin(tilt)
+    t = Tex()
+    for y in range(16):
+        for x in range(16):
+            px, py = x + 0.5 - cx, y + 0.5 - cy
+            u = px * cos + py * sin
+            v = -px * sin + py * cos
+            outer = math.sqrt((u / 6.6) ** 2 + (v / 5.4) ** 2)
+            inner = math.sqrt((u / 4.3) ** 2 + (v / 3.1) ** 2)
+            if outer > 1 or inner <= 1:
+                continue
+            # Near the inner edge the band's surface faces the hole; near the outer edge, away from it.
+            facing = -1 if inner - 1 < 1 - outer else 1
+            light = lit(px * facing, py * facing)
+            t.set(x, y, 'n' if light > 0.55 else '7' if light > 0.05 else '6' if light > -0.5 else '5')
+    t.set(3, 10, 'N')
+    t.set(12, 7, 'N')
+    # The setting and the fluorite chip.
+    t.stamp(2, 2, [
+        '.A3.',
+        '3442',
+        '3422',
+        'J21J',
+        '.JJ.',
     ])
-    t.set(8, 2, 'j')
-    t.set(7, 3, 'i')
     return t
 
 
@@ -256,10 +310,6 @@ TEXTURES = {
     'block/machine/smelter_window_on': lambda: smelter_window(True),
     'block/machine/lamp_off': lambda: lamp(False),
     'block/machine/lamp_on': lambda: lamp(True),
-    'block/energy_cable': cable_block,
-    'block/energy_cable_flange': cable_flange,
-    'block/energy_cable_core': cable_core,
-    'item/energy_cable': cable_item,
     'item/wrench': wrench_item,
     'item/dosimeter_ring': dosimeter_ring,
     'block/machine/module_lead_acid': module_front,
@@ -267,6 +317,12 @@ TEXTURES = {
     'item/lead_acid_module': lead_acid_module_item,
     'item/home_battery': home_battery_item,
 }
+
+# Every pipe, energy cable included, from the one family. Their items show the block itself.
+for _name in PIPES:
+    TEXTURES['block/' + _name] = lambda n=_name: pipe_block(n)
+    TEXTURES['block/' + _name + '_core'] = lambda n=_name: pipe_core(n)
+    TEXTURES['block/' + _name + '_flange'] = lambda n=_name: pipe_flange(n)
 
 
 def main():

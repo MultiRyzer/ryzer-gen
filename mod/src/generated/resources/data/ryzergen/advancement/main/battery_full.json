@@ -1,0 +1,30 @@
+{
+  "parent": "ryzergen:main/home_battery",
+  "criteria": {
+    "battery_full": {
+      "conditions": {
+        "milestone": "battery_full"
+      },
+      "trigger": "ryzergen:milestone"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.battery_full.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:lead_acid_module"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.battery_full.title"
+    }
+  },
+  "requirements": [
+    [
+      "battery_full"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -20,7 +20,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.ALLOY_SMELTER.get(), ModBlocks.ELECTRIC_ALLOY_SMELTER.get(), ModBlocks.ENERGY_CABLE.get(), ModBlocks.HOME_BATTERY.get(),
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.ALLOY_SMELTER.get(), ModBlocks.ELECTRIC_ALLOY_SMELTER.get(), ModBlocks.ENERGY_CABLE.get(), ModBlocks.ITEM_PIPE.get(), ModBlocks.FLUID_PIPE.get(), ModBlocks.GAS_PIPE.get(), ModBlocks.INTAKE_PUMP.get(), ModBlocks.PRESSURE_TANK.get(), ModBlocks.FLUID_TANK.get(), ModBlocks.HOME_BATTERY.get(),
                 ModBlocks.REACTOR_HEART.get(), ModBlocks.REACTOR_MACHINE_UNIT.get(), ModBlocks.COOLANT_JACKET.get());
 
         for (OreType ore : OreType.values()) {

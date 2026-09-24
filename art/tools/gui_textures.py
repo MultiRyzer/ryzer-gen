@@ -437,6 +437,20 @@ def home_battery():
     return t
 
 
+def intake_pump():
+    """Energy and water gauges, the readout screen, and a redstone keycap (sprites at 176,0 and 192,0)."""
+    t = Tex(SIZE)
+    panel(t, PANEL_W, 104)
+    recess(t, 4, 16, 168, 84, 'S', 'U', 'A')
+    well(t, 10, 21, 10, 74)
+    well(t, 24, 21, 14, 74)
+    screen(t, 44, 21, 122, 56)
+    t.rect(47, 35, 162, 35, 'f')
+    keycap(t, 176, 0, False)
+    keycap(t, 192, 0, True)
+    return t
+
+
 def cable():
     """Cable panel, drawn for six extract rows plus the footer. The rows are drawn in code, and the
     screen shows only as many as the cable has, then this texture's bottom edge."""
@@ -453,6 +467,7 @@ def main():
     publish('gui/electric_alloy_smelter', electric_alloy_smelter())
     publish('gui/home_battery', home_battery())
     publish('gui/cable', cable())
+    publish('gui/intake_pump', intake_pump())
 
 
 if __name__ == '__main__':
