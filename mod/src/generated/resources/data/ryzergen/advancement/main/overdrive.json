@@ -1,0 +1,29 @@
+{
+  "parent": "ryzergen:main/microreactor",
+  "criteria": {
+    "safeties_off": {
+      "conditions": {
+        "milestone": "safeties_off"
+      },
+      "trigger": "ryzergen:milestone"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.overdrive.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:reactor_machine_unit"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.overdrive.title"
+    }
+  },
+  "requirements": [
+    [
+      "safeties_off"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

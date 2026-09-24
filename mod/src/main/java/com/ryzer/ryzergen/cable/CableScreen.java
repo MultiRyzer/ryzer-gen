@@ -16,12 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Cable panel: one row per extract side, with the block it pulls from, a bar of the current rate
- * against the cable's limit, and a footer with the limit and how many machines it feeds. The panel
+ * Cable and pipe panel: one row per extract side, with the block it pulls from, a bar of the current
+ * rate against the limit, and a footer with the limit and how many machines it feeds. The panel
  * grows with the rows: the texture (art/tools/gui_textures.py, cable) is drawn for six, and the
  * screen shows its top part and then its bottom edge.
  */
-public class EnergyCableScreen extends AbstractContainerScreen<EnergyCableMenu> {
+public class CableScreen extends AbstractContainerScreen<CableMenu> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "textures/gui/cable.png");
     private static final int LABEL = 0xFF2B3036;
@@ -40,13 +40,16 @@ public class EnergyCableScreen extends AbstractContainerScreen<EnergyCableMenu> 
     private static final int BAR_X = 22;
     private static final int BAR_Y = 13;
     private static final int BAR_H = 5;
-    /** Rates are averaged over a second, so round-robin delivery does not make the numbers flicker. */
+    /**
+     * A second of samples, so round-robin delivery does not make the numbers flicker. Energy shows
+     * their average per tick; items move in bursts, so they show the total per second.
+     */
     private static final int SAMPLES = 20;
 
     private final int[][] samples = new int[6][SAMPLES];
     private int sample;
 
-    public EnergyCableScreen(EnergyCableMenu menu, Inventory inventory, Component title) {
+    public CableScreen(CableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         imageWidth = 176;
         imageHeight = TEXTURE_H;
@@ -95,7 +98,11 @@ public class EnergyCableScreen extends AbstractContainerScreen<EnergyCableMenu> 
         for (int value : samples[dir.get3DDataValue()]) {
             total += value;
         }
-        return (int) Math.round(total / (double) SAMPLES);
+        return menu.kind().perSecond() ? (int) total : (int) Math.round(total / (double) SAMPLES);
+    }
+
+    private String key(String name) {
+        return "gui.ryzergen." + menu.kind().langKey() + "." + name;
     }
 
     @Override
@@ -120,7 +127,7 @@ public class EnergyCableScreen extends AbstractContainerScreen<EnergyCableMenu> 
             int barW = ROW_W - BAR_X - 4;
             graphics.fill(barX, y + BAR_Y, barX + barW, y + BAR_Y + BAR_H, 0xFF2B3036);
             float fraction = max == 0 ? 0 : average(sides.get(row)) / (float) max;
-            GuiGauges.glowHorizontal(graphics, barX, y + BAR_Y, barW, BAR_H, fraction, GuiGauges.ENERGY);
+            GuiGauges.glowHorizontal(graphics, barX, y + BAR_Y, barW, BAR_H, fraction, menu.kind().colour());
             for (int tick = 1; tick < 4; tick++) {
                 graphics.fill(barX + barW * tick / 4, y + BAR_Y, barX + barW * tick / 4 + 1, y + BAR_Y + BAR_H, 0x50000000);
             }
@@ -162,22 +169,22 @@ public class EnergyCableScreen extends AbstractContainerScreen<EnergyCableMenu> 
             Direction dir = sides.get(row);
             int y = rowY(row);
             int current = average(dir);
-            String value = Component.translatable("gui.ryzergen.cable.rate", String.format("%,d", current), String.format("%,d", max)).getString();
+            // The current rate only: the limit is in the footer and the bar shows how close it is.
+            String value = Component.translatable(key("rate"), String.format("%,d", current)).getString();
             int valueX = ROW_X + ROW_W - 4 - font.width(value);
             graphics.drawString(font, value, valueX, y + 3, current > 0 ? VALUE : DIM, false);
             String name = font.plainSubstrByWidth(sourceName(dir).getString(), valueX - ROW_X - BAR_X - 4);
             graphics.drawString(font, name, ROW_X + BAR_X, y + 3, NAME, false);
         }
         int footer = rowY(sides.size());
-        graphics.drawString(font, Component.translatable("gui.ryzergen.cable.max", String.format("%,d", max)), ROW_X + 4, footer + 3, VALUE, false);
+        graphics.drawString(font, Component.translatable(key("max"), String.format("%,d", max)), ROW_X + 4, footer + 3, VALUE, false);
+        // What the network reaches, amber when it reaches nothing. Batteries only exist on energy networks.
         int receivers = menu.receivers();
-        graphics.drawString(font, Component.translatable(receivers == 1 ? "gui.ryzergen.cable.receivers.one" : "gui.ryzergen.cable.receivers", receivers),
-                ROW_X + 4, footer + 12, receivers > 0 ? NAME : 0xFFF0A030, false);
         int buffers = menu.buffers();
-        if (buffers > 0) {
-            Component stored = Component.translatable(buffers == 1 ? "gui.ryzergen.cable.buffers.one" : "gui.ryzergen.cable.buffers", buffers);
-            graphics.drawString(font, stored, ROW_X + ROW_W - 4 - font.width(stored), footer + 12, 0xFF44D65E, false);
-        }
+        Component network = buffers > 0
+                ? Component.translatable(key("network_buffers"), receivers, buffers)
+                : Component.translatable(key("network"), receivers);
+        graphics.drawString(font, network, ROW_X + 4, footer + 12, receivers + buffers > 0 ? NAME : 0xFFF0A030, false);
     }
 
     @Override
@@ -194,7 +201,7 @@ public class EnergyCableScreen extends AbstractContainerScreen<EnergyCableMenu> 
                         sourceName(dir),
                         Component.translatable("gui.ryzergen.cable.side", Component.translatable("gui.ryzergen.direction." + dir.getName()))
                                 .withStyle(style -> style.withColor(0xFF9AA3AE)),
-                        Component.translatable("gui.ryzergen.cable.average").withStyle(style -> style.withColor(0xFF9AA3AE))),
+                        Component.translatable(key("average")).withStyle(style -> style.withColor(0xFF9AA3AE))),
                         mouseX, mouseY);
             }
         }

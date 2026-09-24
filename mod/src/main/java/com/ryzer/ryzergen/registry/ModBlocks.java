@@ -3,6 +3,12 @@ package com.ryzer.ryzergen.registry;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.battery.HomeBatteryBlock;
 import com.ryzer.ryzergen.cable.EnergyCableBlock;
+import com.ryzer.ryzergen.cable.FluidPipeBlock;
+import com.ryzer.ryzergen.machine.pump.IntakePumpBlock;
+import com.ryzer.ryzergen.storage.FluidTankBlock;
+import com.ryzer.ryzergen.storage.PressureTankBlock;
+import com.ryzer.ryzergen.cable.GasPipeBlock;
+import com.ryzer.ryzergen.cable.ItemPipeBlock;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlock;
 import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterBlock;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorPartBlock;
@@ -33,6 +39,20 @@ public final class ModBlocks {
             () -> new ReactorHeartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).pushReaction(PushReaction.BLOCK).lightLevel(ModBlocks::microreactorLight)));
     public static final DeferredBlock<EnergyCableBlock> ENERGY_CABLE = BLOCKS.register("energy_cable",
             () -> new EnergyCableBlock(BlockBehaviour.Properties.of().strength(0.5F).sound(SoundType.METAL).noOcclusion()));
+    public static final DeferredBlock<ItemPipeBlock> ITEM_PIPE = BLOCKS.register("item_pipe",
+            () -> new ItemPipeBlock(BlockBehaviour.Properties.of().strength(0.5F).sound(SoundType.METAL).noOcclusion()));
+    public static final DeferredBlock<FluidPipeBlock> FLUID_PIPE = BLOCKS.register("fluid_pipe",
+            () -> new FluidPipeBlock(BlockBehaviour.Properties.of().strength(0.5F).sound(SoundType.METAL).noOcclusion()));
+    public static final DeferredBlock<GasPipeBlock> GAS_PIPE = BLOCKS.register("gas_pipe",
+            () -> new GasPipeBlock(BlockBehaviour.Properties.of().strength(0.5F).sound(SoundType.METAL).noOcclusion()));
+    public static final DeferredBlock<IntakePumpBlock> INTAKE_PUMP = BLOCKS.register("intake_pump",
+            () -> new IntakePumpBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+    public static final DeferredBlock<PressureTankBlock> PRESSURE_TANK = BLOCKS.register("pressure_tank",
+            () -> new PressureTankBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
+                    .isViewBlocking((state, level, pos) -> false)));
+    public static final DeferredBlock<FluidTankBlock> FLUID_TANK = BLOCKS.register("fluid_tank",
+            () -> new FluidTankBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BLOCK).noOcclusion()
+                    .isViewBlocking((state, level, pos) -> false)));
     public static final DeferredBlock<HomeBatteryBlock> HOME_BATTERY = BLOCKS.register("home_battery",
             () -> new HomeBatteryBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
                     .pushReaction(PushReaction.BLOCK)));

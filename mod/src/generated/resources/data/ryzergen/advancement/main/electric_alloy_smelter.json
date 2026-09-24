@@ -1,0 +1,33 @@
+{
+  "parent": "ryzergen:main/microreactor",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:electric_alloy_smelter"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.electric_alloy_smelter.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:electric_alloy_smelter"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.electric_alloy_smelter.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

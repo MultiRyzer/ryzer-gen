@@ -164,6 +164,10 @@ public class HomeBatteryBlockEntity extends BlockEntity implements MenuProvider 
         return Math.max(1, (int) Math.ceil((double) energy * HomeBatteryBlock.CHARGE_STEPS / capacity));
     }
 
+    public boolean isFull() {
+        return modules.size() >= MAX_MODULES;
+    }
+
     /** Slots a module into the next free bay, bringing its charge with it. False if the stack is full. */
     public boolean addModule(ItemStack stack) {
         if (modules.size() >= MAX_MODULES || !(stack.getItem() instanceof BatteryModuleItem module)) {

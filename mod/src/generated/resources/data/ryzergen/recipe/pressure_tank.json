@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "SGS",
+    "G G",
+    "SGS"
+  ],
+  "result": {
+    "count": 2,
+    "id": "ryzergen:pressure_tank"
+  }
+}

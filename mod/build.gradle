@@ -39,6 +39,11 @@ repositories {
         url = 'https://maven.wispforest.io/releases/'
     }
     maven {
+        // JEI, the recipe viewer ATM10 ships.
+        name = 'BlameJared'
+        url = 'https://maven.blamejared.com/'
+    }
+    maven {
         // Forgified Fabric API base, which Accessories needs on NeoForge.
         name = 'Sinytra'
         url = 'https://maven.su5ed.dev/releases/'
@@ -131,23 +136,23 @@ configurations {
 }
 
 dependencies {
-    // EMI recipe viewer, in the dev client only. localRuntime keeps it out of the published mod,
-    // so it never becomes a dependency (design rule 9: optional integrations stay optional).
-    localRuntime "dev.emi:emi-neoforge:${emi_version}"
-    // Compile against EMI for our optional plugin (compat/emi). Only loaded when EMI is installed.
+    // Recipe viewers. We compile against both for our optional plugins (compat/emi, compat/jei), each
+    // only loaded when its viewer is installed. The dev client runs one of them, picked by
+    // dev_recipe_viewer in gradle.properties (EMI would also read the JEI plugin, doubling recipes).
+    // localRuntime keeps them out of the published mod (design rule 9: optional stays optional).
     compileOnly "dev.emi:emi-neoforge:${emi_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    if (project.dev_recipe_viewer == 'jei') {
+        localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    } else {
+        localRuntime "dev.emi:emi-neoforge:${emi_version}"
+    }
 
     // Accessories: the dosimeter ring can be worn in its ring slot. Optional (design rule 9): the mod
     // only calls it through compat/accessories when it is loaded, and the ring also works carried.
     compileOnly "io.wispforest:accessories-neoforge:${accessories_version}"
     localRuntime "io.wispforest:accessories-neoforge:${accessories_version}"
-
-    // Example optional mod dependency with JEI
-    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
-    // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
-    // compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
-    // We add the full version to localRuntime, not runtimeOnly, so that we do not publish a dependency on it
-    // localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
 
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
