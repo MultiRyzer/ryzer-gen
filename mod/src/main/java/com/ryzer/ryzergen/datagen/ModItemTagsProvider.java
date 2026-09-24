@@ -29,6 +29,14 @@ public class ModItemTagsProvider extends ItemTagsProvider {
         tag(ModTags.GEMS_SILICON_CARBIDE).add(ModItems.SILICON_CARBIDE.get());
         tag(ModTags.MICROREACTOR_FUEL).add(ModItems.SEALED_FUEL_CORE.get());
         tag(ModTags.CIRCUITS_BASIC).add(ModItems.BASIC_CONTROL_BOARD.get());
+        tag(ModTags.CIRCUITS_ADVANCED).add(ModItems.ADVANCED_CONTROL_BOARD.get());
+        tag(ModTags.SILICON).add(ModItems.SILICON.get());
+        tag(ModTags.STORAGE_BLOCKS_GRAPHITE).add(ModItems.GRAPHITE_BLOCK.get());
+        tag(Tags.Items.STORAGE_BLOCKS).addTag(ModTags.STORAGE_BLOCKS_GRAPHITE);
+        tag(ModTags.INGOTS_PLUTONIUM).add(ModItems.PLUTONIUM_INGOT.get());
+        tag(ModTags.NUGGETS_PLUTONIUM).add(ModItems.PLUTONIUM_NUGGET.get());
+        tag(Tags.Items.INGOTS).addTag(ModTags.INGOTS_PLUTONIUM);
+        tag(Tags.Items.NUGGETS).addTag(ModTags.NUGGETS_PLUTONIUM);
         // Wearable in Accessories' ring slot (and Curios', for packs that use it). Harmless if neither is installed.
         tag(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("accessories", "ring"))).add(ModItems.DOSIMETER_RING.get());
         tag(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("curios", "ring"))).add(ModItems.DOSIMETER_RING.get());

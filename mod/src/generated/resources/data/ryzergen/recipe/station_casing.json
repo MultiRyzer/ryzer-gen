@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "tag": "minecraft:stone_bricks"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "BSB",
+    "SBS",
+    "BSB"
+  ],
+  "result": {
+    "count": 32,
+    "id": "ryzergen:station_casing"
+  }
+}

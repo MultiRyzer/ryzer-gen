@@ -58,17 +58,28 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 
 ## Milestone 2: Fuel cycle
 - [x] Fluorite ore (shipped with the other ores in milestone 1)
-- [ ] Core cracker, reprocessor, fuel fabricator
-- [ ] Recovered uranium, plutonium, waste, MOX fuel items
-- [ ] Waste storage block
-- [ ] Unlock trigger for the fission reactor
+- [x] Silicon (electric alloy smelter only), advanced control board, plutonium, spent kernels, fission waste, MOX and uranium fuel rod items
+- [ ] Core Cracker
+- [ ] Reprocessor (spent kernels + fluorite + water: 1 uranium ingot, 1 plutonium nugget, 1 waste)
+- [ ] Fuel Fabricator (MOX rods, uranium rods, TRISO pellets from uranium)
+- [ ] Waste Cask
+- [ ] Advancements ("Closing the Loop"), JEI and EMI pages, a test pass through the whole loop
 
-## Milestone 3: Modular fission reactor
-- [ ] Shared machine framework (energy, fluids, GUI, upgrades) reused from here on
-- [ ] Multiblock with layout-based heat and efficiency
-- [ ] Planner block
-- [ ] Fuel types with different behaviour
-- [ ] Configurable meltdowns
+## Milestone 3: Fission power station
+- [x] Block map drawn and previewed (`art/tools/fission_concept.py`): a 12-wide round tower, 11 high, glass chamber, the roof one giant turbine inside an open steam stack
+- [x] Parts (casing, glass, turbine rotor, control core), recipes, ghost outline and snap-together forming
+- [x] Formed look: the core draws the station from the exported design, rotor spinning, steam from the stack
+- [ ] Draw the static body from a cached GPU buffer (it is about 22,000 faces)
+- [x] Auto-build: feed the control core the parts and it builds the station itself
+- [x] Core grid GUI (plan tools, heat tints, live readout, plan preview)
+- [x] Layout rules reworked: local coolant, moderators for fuel economy, load-driven temperature; planning stats, per-channel tooltips and a rating against the best layouts (`art/tools/core_optimiser.py`)
+- [x] Heat, fuel burn, spent rods, turbine and FE out; water, fuel and energy ports at the base; SCRAM at 900°C
+- [x] Silver control rods and graphite block moderators
+- [x] Output port for spent rods (later waste); fuel rods keep their burn when taken out
+- [x] Overdrive: safeties off for about 50% more power, flux tilt countdown, unstable core, meltdown with config toggle
+- [ ] Better moderators than graphite (decided later)
+- [ ] Fuel rod recipes (the Fuel Fabricator, milestone 2)
+- [ ] Advancements, JEI and EMI pages, its own alarm sound
 
 ## Milestone 4: Sun dimension prototype
 - [ ] Superflat glowing dimension and portal

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:circuits/advanced"
+    },
+    "G": {
+      "tag": "c:ingots/graphite"
+    },
+    "L": {
+      "tag": "c:ingots/lead"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "LAL",
+    "GSG",
+    "LAL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:station_core"
+  }
+}

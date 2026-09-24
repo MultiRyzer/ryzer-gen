@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "ryzergen:block/station_casing"
+    }
+  }
+}
