@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "c:ingots/graphite"
+    },
+    "P": {
+      "item": "ryzergen:triso_pellets"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "SPS",
+    "PGP",
+    "SPS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:sealed_fuel_core"
+  }
+}

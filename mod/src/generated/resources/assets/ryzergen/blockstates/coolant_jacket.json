@@ -1,0 +1,154 @@
+{
+  "variants": {
+    "facing=east,running=false,slot=lower_back": {
+      "model": "ryzergen:block/microreactor_lower_back",
+      "y": 90
+    },
+    "facing=east,running=false,slot=lower_front": {
+      "model": "ryzergen:block/microreactor_lower_front",
+      "y": 90
+    },
+    "facing=east,running=false,slot=none": {
+      "model": "ryzergen:block/coolant_jacket",
+      "y": 90
+    },
+    "facing=east,running=false,slot=upper_back": {
+      "model": "ryzergen:block/microreactor_upper_back",
+      "y": 90
+    },
+    "facing=east,running=false,slot=upper_front": {
+      "model": "ryzergen:block/microreactor_upper_front",
+      "y": 90
+    },
+    "facing=east,running=true,slot=lower_back": {
+      "model": "ryzergen:block/microreactor_lower_back_running",
+      "y": 90
+    },
+    "facing=east,running=true,slot=lower_front": {
+      "model": "ryzergen:block/microreactor_lower_front_running",
+      "y": 90
+    },
+    "facing=east,running=true,slot=none": {
+      "model": "ryzergen:block/coolant_jacket",
+      "y": 90
+    },
+    "facing=east,running=true,slot=upper_back": {
+      "model": "ryzergen:block/microreactor_upper_back_running",
+      "y": 90
+    },
+    "facing=east,running=true,slot=upper_front": {
+      "model": "ryzergen:block/microreactor_upper_front_running",
+      "y": 90
+    },
+    "facing=north,running=false,slot=lower_back": {
+      "model": "ryzergen:block/microreactor_lower_back"
+    },
+    "facing=north,running=false,slot=lower_front": {
+      "model": "ryzergen:block/microreactor_lower_front"
+    },
+    "facing=north,running=false,slot=none": {
+      "model": "ryzergen:block/coolant_jacket"
+    },
+    "facing=north,running=false,slot=upper_back": {
+      "model": "ryzergen:block/microreactor_upper_back"
+    },
+    "facing=north,running=false,slot=upper_front": {
+      "model": "ryzergen:block/microreactor_upper_front"
+    },
+    "facing=north,running=true,slot=lower_back": {
+      "model": "ryzergen:block/microreactor_lower_back_running"
+    },
+    "facing=north,running=true,slot=lower_front": {
+      "model": "ryzergen:block/microreactor_lower_front_running"
+    },
+    "facing=north,running=true,slot=none": {
+      "model": "ryzergen:block/coolant_jacket"
+    },
+    "facing=north,running=true,slot=upper_back": {
+      "model": "ryzergen:block/microreactor_upper_back_running"
+    },
+    "facing=north,running=true,slot=upper_front": {
+      "model": "ryzergen:block/microreactor_upper_front_running"
+    },
+    "facing=south,running=false,slot=lower_back": {
+      "model": "ryzergen:block/microreactor_lower_back",
+      "y": 180
+    },
+    "facing=south,running=false,slot=lower_front": {
+      "model": "ryzergen:block/microreactor_lower_front",
+      "y": 180
+    },
+    "facing=south,running=false,slot=none": {
+      "model": "ryzergen:block/coolant_jacket",
+      "y": 180
+    },
+    "facing=south,running=false,slot=upper_back": {
+      "model": "ryzergen:block/microreactor_upper_back",
+      "y": 180
+    },
+    "facing=south,running=false,slot=upper_front": {
+      "model": "ryzergen:block/microreactor_upper_front",
+      "y": 180
+    },
+    "facing=south,running=true,slot=lower_back": {
+      "model": "ryzergen:block/microreactor_lower_back_running",
+      "y": 180
+    },
+    "facing=south,running=true,slot=lower_front": {
+      "model": "ryzergen:block/microreactor_lower_front_running",
+      "y": 180
+    },
+    "facing=south,running=true,slot=none": {
+      "model": "ryzergen:block/coolant_jacket",
+      "y": 180
+    },
+    "facing=south,running=true,slot=upper_back": {
+      "model": "ryzergen:block/microreactor_upper_back_running",
+      "y": 180
+    },
+    "facing=south,running=true,slot=upper_front": {
+      "model": "ryzergen:block/microreactor_upper_front_running",
+      "y": 180
+    },
+    "facing=west,running=false,slot=lower_back": {
+      "model": "ryzergen:block/microreactor_lower_back",
+      "y": 270
+    },
+    "facing=west,running=false,slot=lower_front": {
+      "model": "ryzergen:block/microreactor_lower_front",
+      "y": 270
+    },
+    "facing=west,running=false,slot=none": {
+      "model": "ryzergen:block/coolant_jacket",
+      "y": 270
+    },
+    "facing=west,running=false,slot=upper_back": {
+      "model": "ryzergen:block/microreactor_upper_back",
+      "y": 270
+    },
+    "facing=west,running=false,slot=upper_front": {
+      "model": "ryzergen:block/microreactor_upper_front",
+      "y": 270
+    },
+    "facing=west,running=true,slot=lower_back": {
+      "model": "ryzergen:block/microreactor_lower_back_running",
+      "y": 270
+    },
+    "facing=west,running=true,slot=lower_front": {
+      "model": "ryzergen:block/microreactor_lower_front_running",
+      "y": 270
+    },
+    "facing=west,running=true,slot=none": {
+      "model": "ryzergen:block/coolant_jacket",
+      "y": 270
+    },
+    "facing=west,running=true,slot=upper_back": {
+      "model": "ryzergen:block/microreactor_upper_back_running",
+      "y": 270
+    },
+    "facing=west,running=true,slot=upper_front": {
+      "model": "ryzergen:block/microreactor_upper_front_running",
+      "y": 270
+    }
+  }
+}

@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.registry;
 
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlockEntity;
+import com.ryzer.ryzergen.machine.microreactor.ReactorHeartBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -14,6 +15,10 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AlloySmelterBlockEntity>> ALLOY_SMELTER =
             BLOCK_ENTITIES.register("alloy_smelter",
                     () -> BlockEntityType.Builder.of(AlloySmelterBlockEntity::new, ModBlocks.ALLOY_SMELTER.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ReactorHeartBlockEntity>> REACTOR_HEART =
+            BLOCK_ENTITIES.register("reactor_heart",
+                    () -> BlockEntityType.Builder.of(ReactorHeartBlockEntity::new, ModBlocks.REACTOR_HEART.get()).build(null));
 
     private ModBlockEntities() {}
 }

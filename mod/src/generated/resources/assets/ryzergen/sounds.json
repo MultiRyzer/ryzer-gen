@@ -1,0 +1,21 @@
+{
+  "microreactor_alarm": {
+    "sounds": [
+      {
+        "attenuation_distance": 64,
+        "name": "ryzergen:microreactor_alarm"
+      }
+    ],
+    "subtitle": "subtitles.ryzergen.microreactor_alarm"
+  },
+  "microreactor_hum": {
+    "sounds": [
+      {
+        "name": "block/beacon/ambient",
+        "pitch": 0.55,
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.ryzergen.microreactor_hum"
+  }
+}
