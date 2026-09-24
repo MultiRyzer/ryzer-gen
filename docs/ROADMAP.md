@@ -13,18 +13,19 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] Ores needed for tier 1 (uranium, lead) with worldgen, common tags and config toggles (all 8 ores done, with placeholder textures)
 - [x] Alloy smelter (fuel burning, two inputs)
 - [x] Steel and graphite recipes
-- [ ] Register reactor heart, reactor machine unit, coolant block and packed microreactor
-- [ ] Multiblock detection for the 4-block layout (heart in any position)
-- [ ] Snap assembly: combined model, particles, sound
-- [ ] Break any block to disassemble
-- [ ] Energy generation, fuel life, depletion into a depleted core
-- [ ] Simple heat model with coolant bonus
-- [ ] Control unit GUI (charge, temperature, output, on/off, redstone)
-- [ ] Fixed connection chutes on the assembled model
-- [ ] Wrench pack-up and unfold, keeping charge
-- [ ] Ghost placement preview
+- [x] Register reactor heart, reactor machine unit and coolant block
+- [x] Multiblock detection for the 4-block layout (heart in any position)
+- [x] Snap assembly: combined model, particles, sound (no motion animation yet)
+- [x] Break any block to disassemble
+- [x] Energy generation, fuel life, depletion into a depleted core
+- [x] Simple heat model with coolant bonus (the "boxed in stone throttles it" part is still to do)
+- [x] Control unit GUI (charge, temperature, output, on/off, redstone; fuel slot waits for the fuel core)
+- [x] Fixed connection chutes on the assembled model (energy and coolant connected, steam modelled only)
+- [x] Ghost placement preview (outlines, suggested parts and a facing arrow while holding a part)
 - [ ] Placeholder textures, then proper 16x16 art
-  - [ ] **To do:** rebuild every texture so far. The current ones are generated placeholders and not good enough: all 16 ore blocks, raw drops, fluorite, salt, ingots, steel, graphite, and the alloy smelter block faces and GUI.
+  - [x] Ores, raw drops, fluorite, salt, ingots and steel rebuilt on vanilla bases (`art/tools/material_textures.py`)
+  - [x] Microreactor parts, formed machine, GUI and fuel items in the modern house style
+  - [ ] **To do:** the alloy smelter block faces and GUI are still placeholders
 - [ ] Recipes and config values
 - [ ] Basic radiation (dose, effects, config toggle)
 - [ ] Dosimeter ring with Curios slot support and inventory fallback

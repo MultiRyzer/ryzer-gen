@@ -2,13 +2,19 @@ package com.ryzer.ryzergen;
 
 import com.mojang.logging.LogUtils;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlockEntity;
+import com.ryzer.ryzergen.machine.microreactor.MicroreactorPort;
+import com.ryzer.ryzergen.machine.microreactor.MicroreactorStructure;
+import com.ryzer.ryzergen.machine.microreactor.ReactorHeartBlockEntity;
 import com.ryzer.ryzergen.registry.ModBiomeModifiers;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
 import com.ryzer.ryzergen.registry.ModBlocks;
 import com.ryzer.ryzergen.registry.ModCreativeTabs;
+import com.ryzer.ryzergen.registry.ModDataComponents;
 import com.ryzer.ryzergen.registry.ModItems;
 import com.ryzer.ryzergen.registry.ModMenus;
 import com.ryzer.ryzergen.registry.ModRecipes;
+import com.ryzer.ryzergen.registry.ModSounds;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -25,6 +31,8 @@ public class RyzerGen {
     public RyzerGen(IEventBus modEventBus, ModContainer modContainer) {
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
+        ModDataComponents.COMPONENTS.register(modEventBus);
+        ModSounds.SOUNDS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModMenus.MENUS.register(modEventBus);
         ModRecipes.TYPES.register(modEventBus);
@@ -39,5 +47,16 @@ public class RyzerGen {
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.ALLOY_SMELTER.get(),
                 AlloySmelterBlockEntity::getItemHandler);
+
+        // Microreactor ports: any part can end up in a port's slot, so these go on all three blocks.
+        Block[] microreactorParts = {ModBlocks.REACTOR_HEART.get(), ModBlocks.REACTOR_MACHINE_UNIT.get(), ModBlocks.COOLANT_JACKET.get()};
+        event.registerBlock(Capabilities.EnergyStorage.BLOCK, (level, pos, state, be, side) -> {
+            ReactorHeartBlockEntity heart = MicroreactorStructure.heartForPort(level, pos, state, MicroreactorPort.ENERGY_OUT, side);
+            return heart == null ? null : heart.energyOutput();
+        }, microreactorParts);
+        event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
+            ReactorHeartBlockEntity heart = MicroreactorStructure.heartForPort(level, pos, state, MicroreactorPort.COOLANT_IN, side);
+            return heart == null ? null : heart.coolantInput();
+        }, microreactorParts);
     }
 }

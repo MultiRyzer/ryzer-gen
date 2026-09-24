@@ -11,6 +11,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -52,6 +53,33 @@ public class ModRecipeProvider extends RecipeProvider {
         // Graphite: carbon baked at high heat, so blast furnace only.
         blast(output, Tags.Items.STORAGE_BLOCKS_COAL, ModItems.GRAPHITE.get(), "graphite_from_coal_block");
         blast(output, ModTags.STORAGE_BLOCKS_CHARCOAL, ModItems.GRAPHITE.get(), "graphite_from_charcoal_block");
+
+        // Silicon carbide: silica and carbon baked together, the Acheson process.
+        output.accept(id("silicon_carbide_from_alloying"), new AlloyingRecipe(
+                SizedIngredient.of(Tags.Items.SANDS, 1),
+                SizedIngredient.of(ModTags.INGOTS_GRAPHITE, 1),
+                new ItemStack(ModItems.SILICON_CARBIDE.get()),
+                AlloyingRecipe.DEFAULT_COOKING_TIME), null);
+
+        // TRISO: a uranium kernel coated in carbon and silicon carbide layers.
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.TRISO_PELLETS.get(), 2)
+                .requires(OreType.URANIUM.ingotTag())
+                .requires(ModTags.INGOTS_GRAPHITE)
+                .requires(ModTags.INGOTS_GRAPHITE)
+                .requires(ModTags.GEMS_SILICON_CARBIDE)
+                .unlockedBy("has_uranium", has(OreType.URANIUM.ingotTag()))
+                .save(output);
+
+        // Sealed fuel core: pellets packed in graphite inside a steel shell.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SEALED_FUEL_CORE.get())
+                .pattern("SPS")
+                .pattern("PGP")
+                .pattern("SPS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('P', ModItems.TRISO_PELLETS.get())
+                .define('G', ModTags.INGOTS_GRAPHITE)
+                .unlockedBy("has_triso_pellets", has(ModItems.TRISO_PELLETS.get()))
+                .save(output);
 
         for (OreType ore : OreType.values()) {
             if (ore.hasIngot()) {

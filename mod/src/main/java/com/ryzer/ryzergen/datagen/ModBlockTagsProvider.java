@@ -20,7 +20,8 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.ALLOY_SMELTER.get());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.ALLOY_SMELTER.get(),
+                ModBlocks.REACTOR_HEART.get(), ModBlocks.REACTOR_MACHINE_UNIT.get(), ModBlocks.COOLANT_JACKET.get());
 
         for (OreType ore : OreType.values()) {
             Block stone = ModBlocks.STONE_ORES.get(ore).get();

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "ryzergen:block/reactor_machine_unit_front",
+    "side": "ryzergen:block/reactor_machine_unit_side",
+    "top": "ryzergen:block/reactor_machine_unit_top"
+  }
+}

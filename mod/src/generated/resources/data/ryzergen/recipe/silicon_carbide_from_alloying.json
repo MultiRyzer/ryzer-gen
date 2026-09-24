@@ -1,0 +1,15 @@
+{
+  "type": "ryzergen:alloying",
+  "first": {
+    "count": 1,
+    "tag": "c:sands"
+  },
+  "result": {
+    "count": 1,
+    "id": "ryzergen:silicon_carbide"
+  },
+  "second": {
+    "count": 1,
+    "tag": "c:ingots/graphite"
+  }
+}

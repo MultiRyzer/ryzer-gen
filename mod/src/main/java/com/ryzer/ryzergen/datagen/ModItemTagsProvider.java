@@ -22,6 +22,9 @@ public class ModItemTagsProvider extends ItemTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         tag(ModTags.INGOTS_STEEL).add(ModItems.STEEL_INGOT.get());
+        tag(ModTags.INGOTS_GRAPHITE).add(ModItems.GRAPHITE.get());
+        tag(ModTags.GEMS_SILICON_CARBIDE).add(ModItems.SILICON_CARBIDE.get());
+        tag(ModTags.MICROREACTOR_FUEL).add(ModItems.SEALED_FUEL_CORE.get());
         tag(Tags.Items.INGOTS).addTag(ModTags.INGOTS_STEEL);
 
         for (OreType ore : OreType.values()) {

@@ -21,7 +21,40 @@ public final class Config {
         BUILDER.pop();
     }
 
+    // Placeholder balance until the energy scale is settled (see OPEN-QUESTIONS.md).
+    public static final ModConfigSpec.IntValue MICROREACTOR_OUTPUT;
+    public static final ModConfigSpec.IntValue MICROREACTOR_FUEL_LIFE;
+    public static final ModConfigSpec.IntValue MICROREACTOR_COOLANT_USE;
+    public static final ModConfigSpec.BooleanValue MICROREACTOR_MELTDOWNS;
+    public static final ModConfigSpec.DoubleValue MICROREACTOR_MELTDOWN_POWER;
+
+    static {
+        BUILDER.comment("Microreactor balance.").push("microreactor");
+        MICROREACTOR_OUTPUT = BUILDER
+                .comment("FE per tick running dry at operating temperature. Water adds about 28%, overdrive about 85%.")
+                .defineInRange("output", 200, 1, 1_000_000);
+        MICROREACTOR_FUEL_LIFE = BUILDER
+                .comment("How long one sealed fuel core burns, in ticks (72000 is one hour of running).")
+                .defineInRange("fuel_life", 72_000, 20, Integer.MAX_VALUE);
+        MICROREACTOR_COOLANT_USE = BUILDER
+                .comment("Water boiled off per tick while running with coolant, in mB.")
+                .defineInRange("coolant_use", 1, 0, 1000);
+        MICROREACTOR_MELTDOWNS = BUILDER
+                .comment("With the safeties off, losing coolant makes the reactor explode. Off: the interlock re-arms itself instead.",
+                        "A reactor with its safeties on can never melt down.")
+                .define("meltdowns", true);
+        MICROREACTOR_MELTDOWN_POWER = BUILDER
+                .comment("Meltdown explosion strength (TNT is 4).")
+                .defineInRange("meltdown_power", 5.0, 0.0, 20.0);
+        BUILDER.pop();
+    }
+
     public static final ModConfigSpec SPEC = BUILDER.build();
+
+    /** A config value, or its default before the config has loaded (tooltips can ask very early). */
+    public static int get(ModConfigSpec.IntValue value) {
+        return SPEC.isLoaded() ? value.get() : value.getDefault();
+    }
 
     /** Unknown ore IDs (for example from a datapack typo) stay enabled rather than silently vanishing. */
     public static boolean isOreGenerationEnabled(String oreId) {
