@@ -27,6 +27,7 @@ public final class DataGenerators {
 
         generator.addProvider(event.includeClient(), new ModBlockStateProvider(output, existingFiles));
         generator.addProvider(event.includeClient(), new ModItemModelProvider(output, existingFiles));
+        generator.addProvider(event.includeClient(), new ModSoundProvider(output, existingFiles));
 
         generator.addProvider(event.includeServer(), new ModWorldGenProvider(output, lookup));
         generator.addProvider(event.includeServer(), new LootTableProvider(output, Set.of(),
