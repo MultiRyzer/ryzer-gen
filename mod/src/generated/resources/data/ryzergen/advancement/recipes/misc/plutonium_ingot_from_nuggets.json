@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_plutonium": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:nuggets/plutonium"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ryzergen:plutonium_ingot_from_nuggets"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_plutonium"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ryzergen:plutonium_ingot_from_nuggets"
+    ]
+  }
+}

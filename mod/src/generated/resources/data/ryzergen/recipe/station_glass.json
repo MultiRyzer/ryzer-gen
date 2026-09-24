@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "GGG",
+    "SGS",
+    "GGG"
+  ],
+  "result": {
+    "count": 16,
+    "id": "ryzergen:station_glass"
+  }
+}

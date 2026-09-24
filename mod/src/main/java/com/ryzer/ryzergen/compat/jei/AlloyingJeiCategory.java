@@ -47,7 +47,8 @@ public class AlloyingJeiCategory implements IRecipeCategory<RecipeHolder<Alloyin
 
     @Override
     public int getHeight() {
-        return 42;
+        // Room for an "Electric only" line under the cook time.
+        return 52;
     }
 
     @Override
@@ -71,5 +72,8 @@ public class AlloyingJeiCategory implements IRecipeCategory<RecipeHolder<Alloyin
         builder.addAnimatedRecipeArrowWidget(cookingTime).setPosition(44, 9);
         builder.addText(Component.translatable("gui.jei.category.smelting.time.seconds", cookingTime / 20F), 38, 32)
                 .setColor(0xFF808080);
+        if (holder.value().electricOnly()) {
+            builder.addText(Component.translatable("jei.ryzergen.alloying.electric_only"), 0, 43).setColor(0xFFC0392B);
+        }
     }
 }
