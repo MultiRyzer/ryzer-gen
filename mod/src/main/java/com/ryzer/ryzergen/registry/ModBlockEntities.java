@@ -1,6 +1,7 @@
 package com.ryzer.ryzergen.registry;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.battery.HomeBatteryBlockEntity;
 import com.ryzer.ryzergen.cable.EnergyCableBlockEntity;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlockEntity;
 import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterBlockEntity;
@@ -25,6 +26,10 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnergyCableBlockEntity>> ENERGY_CABLE =
             BLOCK_ENTITIES.register("energy_cable",
                     () -> BlockEntityType.Builder.of(EnergyCableBlockEntity::new, ModBlocks.ENERGY_CABLE.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HomeBatteryBlockEntity>> HOME_BATTERY =
+            BLOCK_ENTITIES.register("home_battery",
+                    () -> BlockEntityType.Builder.of(HomeBatteryBlockEntity::new, ModBlocks.HOME_BATTERY.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ReactorHeartBlockEntity>> REACTOR_HEART =
             BLOCK_ENTITIES.register("reactor_heart",
