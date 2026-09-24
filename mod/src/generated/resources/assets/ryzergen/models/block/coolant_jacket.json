@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "ryzergen:block/coolant_jacket_front",
+    "side": "ryzergen:block/coolant_jacket_side",
+    "top": "ryzergen:block/coolant_jacket_top"
+  }
+}

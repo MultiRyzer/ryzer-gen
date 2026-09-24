@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ryzergen:sealed_fuel_core"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_triso_pellets": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:triso_pellets"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_triso_pellets"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ryzergen:sealed_fuel_core"
+    ]
+  }
+}

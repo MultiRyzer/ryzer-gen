@@ -104,21 +104,39 @@ Inspired by the new generation of transportable microreactors. It gets its own o
 ### Assembly
 - When the fourth block is placed, the structure snaps together: short animation, particles, sound, and the 4 blocks render as one machine model.
 - Breaking any block drops it back to separate pieces.
-- Ghost preview: holding a heart or unit shows a faint outline of where the other blocks go.
+- Ghost preview: while holding any part, each unformed heart nearby shows outlines where the other three blocks go, with the suggested part floating in each (machine units above and behind the heart, the coolant jacket at the upper back under the intake), and an arrow on the ground for the way the machine will face. Filled spaces turn green, blocked ones red.
 
 ### Input and output
 - Like Oritech's multiblocks, the assembled model has fixed, visible connection chutes. Pipes and cables only connect at those points, not on any face.
 - The machine faces the way the player was facing when they placed the heart, so the chutes always end up in predictable spots.
-- Draft chute layout (to be settled when we model it):
-  - **Energy out:** a cable socket low on the back.
-  - **Coolant in:** an intake chute on top.
-  - **Heat/steam out:** an outlet on one side, used later when steam matters.
+- Port layout (machine facing north):
+  - **Energy out:** cable socket on the back face of the lower back block. The machine pushes energy out, so it works with cables that do not pull (Mekanism's included).
+  - **Coolant in:** intake chute on the top face of the upper back block. Accepts water only, and pipes cannot drain it.
+  - **Heat/steam out:** outlet on the right-hand face of the lower back block. Modelled, connected later when steam matters.
+- Every port is a 10x10 flange flush with the block face, centred, around an 8x8 socket. That seats the common 6x6 pipes and cables (Pipez, Mekanism) and their 8x8 end plates. The ring colour says what it carries: red energy, blue coolant, white steam.
+- Ports use the standard NeoForge energy and fluid capabilities, only on the port face and only while formed.
 - Front face carries the display panel. Right-click any block to open the GUI.
 
 ### Running it
 - The heart holds one sealed fuel core. No topping up. Steady modest power for a long time, then it depletes.
-- Heat matters a little: water or coolant nearby raises output, boxing it in stone throttles it.
-- GUI: fuel left, temperature, output, on/off. Redstone controllable.
+- The core carries its own burn time, so it can be taken out and put back without losing fuel. When spent it turns into a depleted core in the slot.
+- Heat model: the core makes a fixed thermal power, and a heat engine turns part of it into FE. Efficiency is 55% of the Carnot limit, 1 - T_cold / T_hot. With water the cold side is near 20°C; dry, the jacket sheds heat to hot air, so the cold side sits near 250°C. A cold core converts almost nothing, so output ramps as it heats.
+  - Dry: settles at 700°C, about 25% efficient, 200 FE/t (the config value).
+  - Water: settles at 450°C, about 33% efficient, about 257 FE/t, boiling off 1 mB per tick.
+  - The GUI shows efficiency live, with a bar coloured by mode.
+- Safety override (overdrive): the interlocks can be switched off (shift-click, on purpose). The control rods come further out for 30% more fission power, and the core settles at 650°C. The steam leaves superheated, so the turbine reaches 66% of the Carnot limit instead of 55%: 45% efficient overall, about 460 FE/t (nearly double the water-cooled output). The cost: double water use and 30% faster fuel burn. Real basis: supercritical power stations reach about 45% with superheated steam.
+  - Lose the water in overdrive and the core runs away (2°C per tick). An alarm sounds, the status flashes COOLANT LOSS and smoke pours out. At 1000°C it melts down: the machine and core are destroyed in an explosion (power 5 by default).
+  - The player has about 9 seconds to switch off, re-arm the safeties or add water. In follow-load mode a full energy buffer also saves it, since the reactor stands by; in dump mode it does not.
+  - Config: meltdowns can be turned off, in which case the interlock re-arms itself on coolant loss. With the safeties on, the microreactor can never melt down.
+  - Real basis: a loss-of-coolant accident with the automatic scram disabled. The explosion is an honest fudge for a steam explosion.
+  - Radiation from meltdowns waits for the radiation milestone.
+- Excess power, a toggle in the GUI:
+  - Follow load (default): when the energy buffer is full the reactor stands by and saves fuel.
+  - Dump: it keeps running on a full buffer and vents the surplus as a steam plume from the steam outlet. It burns fuel nonstop, so it keeps making depleted cores (and later by-products) with no power consumer attached. Real basis: the steam dump (turbine bypass) valves that let a pressurised-water reactor run on when the turbine cannot take its power.
+- Still to do: boxing it in stone throttles it.
+- Running shows: Cherenkov glow in the porthole (emissive, block light 9), a low hum, steam wisps from the coolant intake.
+- GUI: fuel left, temperature, output, energy, coolant, on/off. Redstone controllable.
+- Balance lives in the common config: output (200 FE/t default), fuel life (72,000 ticks, one hour of running), coolant use.
 
 ### Crafting (draft, balance TBD)
 
@@ -131,7 +149,7 @@ Intermediates:
 - **Steel:** iron ingot plus coal or charcoal in the alloy smelter.
 - **Graphite:** coal or charcoal block in a blast furnace.
 - **Silicon carbide:** sand plus graphite in the alloy smelter (a blast furnace only takes one input).
-- **TRISO pellets:** uranium ingot, graphite and silicon carbide. Based on real TRISO fuel: a uranium kernel coated in carbon and silicon carbide layers.
+- **TRISO pellets:** 1 uranium ingot, 2 graphite and 1 silicon carbide make 2 pellets. Based on real TRISO fuel: a uranium kernel coated in carbon and silicon carbide layers.
 
 Fuel note: the real Unity microreactor that inspired this uses standard uranium dioxide fuel with helium coolant and water as the moderator. We use TRISO on purpose, as used by other microreactor designs, because it gives the fuel cycle a real reason for the cracking step.
 
@@ -142,15 +160,10 @@ Blocks:
 | Reactor machine unit | 2 | Steel, lead and copper |
 | Coolant block (name pending) | 1 | Copper and a water bucket (draft) |
 
-Fuel and tools:
-- **Sealed fuel core:** TRISO pellets packed in graphite inside a steel shell. Goes into the heart. When depleted it is swapped out whole, and the old one becomes the depleted core for the fuel cycle.
-- **Wrench:** iron and steel. Used for pack-up and disassembly.
+Fuel:
+- **Sealed fuel core:** 4 TRISO pellets packed round graphite inside a 4-steel shell (so 2 uranium per core). Goes into the heart. When depleted it is swapped out whole, and the old one becomes the depleted core for the fuel cycle.
 
 Uranium is rare in All The Ores worldgen, so fuel cores should be where most uranium goes, and a single core should last a long time.
-
-### Portability
-- Shift right-click with a wrench to pack it into a single "packed microreactor" item that keeps its fuel.
-- Place it anywhere to unfold it again. Good for outposts, other dimensions and moving contraptions.
 
 ### The hook
 When the core runs out, the player gets a depleted core they cannot use yet. That curiosity pulls them into the fuel cycle.

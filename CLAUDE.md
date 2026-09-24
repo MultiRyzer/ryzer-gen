@@ -31,7 +31,7 @@ Ores are driven by the `OreType` enum: adding an entry there gives stone and dee
 
 - **Never use em dashes**, in docs, code comments, lang strings, commit messages or chat. Use a colon, comma, full stop or brackets instead.
 - Plain, short sentences. British spelling where it already appears (aluminium, stabilised).
-- All names, models and textures are original. Real-world products and projects can inspire things and be credited on the mod page, but never become item names.
+- All names and models are original, and so are machine textures. Material textures (ores, raw drops, ingots, gems) follow the common modding practice of building on vanilla: ores draw our own mineral clusters over vanilla stone and deepslate, and items gradient-map vanilla shapes onto our colours (`material_textures.py`, which reads vanilla from the Minecraft jar at run time; never copy vanilla files into the repo). Real-world products and projects can inspire things and be credited on the mod page, but never become item names.
 
 ## Design rules
 
@@ -52,3 +52,16 @@ These come from `docs/DESIGN.md`. Check any new feature against them.
 ## Art style
 
 "Oritech-lite": chunky industrial machines with visible pipes, panels and chutes, built from standard JSON block models (Blockbench boxes) and 16x16 textures. Multiblocks swap to one combined model when assembled. Keep animation light: particles, glowing textures, the odd moving part.
+
+No GeckoLib (it would be a hard dependency). A formed multiblock is designed as one list of boxes in datagen (see `MicroreactorModel`), which is cut into one model per block so lighting and culling stay normal. Boxes use small tiling material textures (mapped by position) plus decals at one texel per pixel. Future moving parts go on a block entity renderer.
+
+Textures are drawn in Python under `art/tools/` (no PIL needed). `pixelart.py` holds the shared palette, canvas and house-style helpers; each machine or GUI gets its own script that imports it and calls `publish()`. After `runData`, `python art/tools/model_preview.py --scale 14 OUT.png MODEL@dx,dy,dz ...` renders the generated models isometrically, which is the quickest way to check a model before launching the game.
+
+House style, set by the microreactor (carry it to every new machine):
+- Clean and modern (Applied Energistics or Oritech, not Tekkit): flat, noise-free panels with crisp one-pixel bevels. No rivets, grime or scuffs. Use the modern ramp in `pixelart.py` (casing greys A to J, graphite b to U, gunmetal s to z, cyan f/i/j, orange X/Z).
+- Materials: light grey casing with a shallow inset, graphite trim for skids and rings, mid gunmetal for reactor vessels, clean copper for pipes and fins, orange accent for small hardware (clips, lugs), yellow on graphite hazard stripes on bases. Each tile is one panel, so every block face reads as a neat plate.
+- Light strips: thin cyan strips set into rings and roof lines, emissive while the machine runs and dim when it is off. Screens are always emissive; portholes glow only while running.
+- Ports: a 10x10 flange flush with the block face around an 8x8 socket, centred. Ring colour: red energy, blue coolant/fluid, white steam. Capabilities only on the port face, only while formed.
+- GUIs (`gui_textures.py`): light casing panel with cut corners and a crisp bevel, a graphite machine bay, near-black gauge wells, a dark readout screen with cyan text and row icons, graphite buttons, a cyan light line above the player inventory. Gauge fills are drawn in code (lit gradients; fluids use their own animated texture), never pixel art. Power and redstone buttons use the shared `RedstoneMode`. Labels in dark graphite, values in cyan, status in green, amber, orange or red.
+- Buttons: 3D keycaps (lit top edge, shaded face, dark front lip). Power glows green with a soft halo when on, dim red when off. Redstone buttons render vanilla items (gunpowder ignored, redstone high, redstone torch low), as Mekanism does.
+- Audio: our own sound events, so packs can replace them. Sounds are prepared in Python (`alarm_sound.py`, needs numpy and soundfile) from sources in `art/sounds/source/`, and shipped as mono Ogg Vorbis in `assets/ryzergen/sounds/`. Avoid short sounds on a fast server-side repeat; loop a clip on the client instead and bend its pitch to show urgency. Credit third-party sources on the mod page.

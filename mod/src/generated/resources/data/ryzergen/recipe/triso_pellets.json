@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "c:ingots/uranium"
+    },
+    {
+      "tag": "c:ingots/graphite"
+    },
+    {
+      "tag": "c:ingots/graphite"
+    },
+    {
+      "tag": "c:gems/silicon_carbide"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "id": "ryzergen:triso_pellets"
+  }
+}

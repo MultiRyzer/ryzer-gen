@@ -15,3 +15,7 @@ runs/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Python (art/tools)
+__pycache__/
+*.pyc
