@@ -1,6 +1,9 @@
 package com.ryzer.ryzergen.datagen;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.battery.BatteryChemistry;
+import com.ryzer.ryzergen.battery.HomeBatteryBlock;
+import com.ryzer.ryzergen.battery.HomeBatteryBlockEntity;
 import com.ryzer.ryzergen.cable.CableSide;
 import com.ryzer.ryzergen.cable.EnergyCableBlock;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlock;
@@ -12,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
@@ -22,6 +26,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class ModBlockStateProvider extends BlockStateProvider {
     /** Shared by all three part blocks, since a formed quarter looks the same whatever part it is. */
@@ -39,6 +44,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         alloySmelter();
         electricAlloySmelter();
         energyCable();
+        homeBattery();
         microreactorPart(ModBlocks.REACTOR_HEART.get(), "reactor_heart");
         microreactorPart(ModBlocks.REACTOR_MACHINE_UNIT.get(), "reactor_machine_unit");
         microreactorPart(ModBlocks.COOLANT_JACKET.get(), "coolant_jacket");
@@ -115,6 +121,92 @@ public class ModBlockStateProvider extends BlockStateProvider {
      * them, a raised window onto the heating coil (glowing when working), vents on the sides and
      * the energy port on the back. Built facing north and turned into place.
      */
+    /**
+     * Home battery: a two-high cabinet drawn as one 16 x 32 design and cut per block. A trim plinth
+     * and cap, a light casing body, graphite posts framing a recessed bay column, the energy port on
+     * the back. Each module is its own small model, added by the multipart when its bay is filled;
+     * bays are 4 pixels apart, three per block, so none crosses the join.
+     */
+    private void homeBattery() {
+        Block block = ModBlocks.HOME_BATTERY.get();
+        BoxModel cabinet = new BoxModel();
+        cabinet.add("trim", 1, 0, 1, 15, 2, 15);
+        cabinet.add("frame", 2, 2, 3, 14, 30, 14);
+        cabinet.add("trim", 1, 2, 2, 3, 30, 4);
+        cabinet.add("trim", 13, 2, 2, 15, 30, 4);
+        cabinet.add("body", 3, 3, 2.5F, 13, 29, 3);
+        cabinet.add("trim", 1, 30, 1, 15, 32, 15);
+        cabinet.add("glow_off", 3, 30.5F, 0.9F, 13, 31, 1);
+        cabinet.add("trim", 4, 5, 14, 12, 13, 15);
+        cabinet.add("trim", 3, 4, 15, 13, 14, 16).decal(Direction.SOUTH, "port_energy");
+        Function<String, ResourceLocation> textures = texture -> switch (texture) {
+            case "frame" -> modLoc("block/microreactor/steel");
+            case "trim" -> modLoc("block/microreactor/steel_dark");
+            case "port_energy", "glow", "glow_off" -> modLoc("block/microreactor/" + texture);
+            default -> modLoc("block/machine/" + texture);
+        };
+        ModelFile[] halves = new ModelFile[2];
+        for (DoubleBlockHalf half : DoubleBlockHalf.values()) {
+            BlockModelBuilder model = models().getBuilder("home_battery_" + half.getSerializedName())
+                    .parent(models().getExistingFile(mcLoc("block/block")));
+            cabinet.build(model, "frame", textures, half == DoubleBlockHalf.LOWER ? 0 : 16);
+            halves[half.ordinal()] = model;
+        }
+        ModelFile[] modules = new ModelFile[HomeBatteryBlockEntity.MAX_MODULES];
+        for (int bay = 0; bay < modules.length; bay++) {
+            BoxModel plate = new BoxModel();
+            float y = 4 + 4 * bay;
+            plate.add("module_case", 3.5F, y, 1.8F, 12.5F, y + 3, 2.5F).decal(Direction.NORTH, "module_lead_acid");
+            BlockModelBuilder model = models().getBuilder("home_battery_lead_acid_" + (bay + 1))
+                    .parent(models().getExistingFile(mcLoc("block/block")));
+            plate.build(model, "module_case", textures, bay < 3 ? 0 : 16);
+            modules[bay] = model;
+        }
+        // Charge bar: 8 LED segments up the front of the right-hand post, 3 pixels apart, 4 per block.
+        // Each has a lit (emissive) and an unlit model; the charge property picks which.
+        ModelFile[][] leds = new ModelFile[2][HomeBatteryBlock.CHARGE_STEPS];
+        for (int step = 0; step < HomeBatteryBlock.CHARGE_STEPS; step++) {
+            for (int lit = 0; lit < 2; lit++) {
+                BoxModel led = new BoxModel();
+                float y = 4 + 3 * step;
+                BoxModel.Box box = led.add(lit == 1 ? "glow" : "glow_off", 13.5F, y, 1.8F, 14.5F, y + 2, 2);
+                if (lit == 1) {
+                    box.glow(Direction.NORTH).glow(Direction.EAST).glow(Direction.WEST).glow(Direction.UP).glow(Direction.DOWN);
+                }
+                BlockModelBuilder model = models().getBuilder("home_battery_charge_" + (step + 1) + (lit == 1 ? "_lit" : ""))
+                        .parent(models().getExistingFile(mcLoc("block/block")));
+                led.build(model, lit == 1 ? "glow" : "glow_off", textures, step < 4 ? 0 : 16);
+                leds[lit][step] = model;
+            }
+        }
+        MultiPartBlockStateBuilder builder = getMultipartBuilder(block);
+        for (Direction facing : Direction.Plane.HORIZONTAL) {
+            int y = ((int) facing.toYRot() + 180) % 360;
+            for (int step = 0; step < HomeBatteryBlock.CHARGE_STEPS; step++) {
+                DoubleBlockHalf half = step < 4 ? DoubleBlockHalf.LOWER : DoubleBlockHalf.UPPER;
+                Integer[] litLevels = java.util.stream.IntStream.rangeClosed(step + 1, HomeBatteryBlock.CHARGE_STEPS).boxed().toArray(Integer[]::new);
+                Integer[] darkLevels = java.util.stream.IntStream.rangeClosed(0, step).boxed().toArray(Integer[]::new);
+                builder.part().modelFile(leds[1][step]).rotationY(y).addModel()
+                        .condition(HomeBatteryBlock.FACING, facing).condition(HomeBatteryBlock.HALF, half)
+                        .condition(HomeBatteryBlock.CHARGE, litLevels).end();
+                builder.part().modelFile(leds[0][step]).rotationY(y).addModel()
+                        .condition(HomeBatteryBlock.FACING, facing).condition(HomeBatteryBlock.HALF, half)
+                        .condition(HomeBatteryBlock.CHARGE, darkLevels).end();
+            }
+            for (DoubleBlockHalf half : DoubleBlockHalf.values()) {
+                builder.part().modelFile(halves[half.ordinal()]).rotationY(y).addModel()
+                        .condition(HomeBatteryBlock.FACING, facing).condition(HomeBatteryBlock.HALF, half).end();
+                for (int i = 0; i < 3; i++) {
+                    int bay = i + (half == DoubleBlockHalf.LOWER ? 0 : 3);
+                    builder.part().modelFile(modules[bay]).rotationY(y).addModel()
+                            .condition(HomeBatteryBlock.FACING, facing).condition(HomeBatteryBlock.HALF, half)
+                            .condition(HomeBatteryBlock.SEGMENTS.get(i), BatteryChemistry.LEAD_ACID).end();
+                }
+            }
+        }
+        itemModels().withExistingParent("home_battery", mcLoc("item/generated")).texture("layer0", modLoc("item/home_battery"));
+    }
+
     private void electricAlloySmelter() {
         Block block = ModBlocks.ELECTRIC_ALLOY_SMELTER.get();
         ModelFile off = electricSmelterModel("electric_alloy_smelter", false);

@@ -50,6 +50,8 @@ public final class Config {
     }
 
     public static final ModConfigSpec.IntValue CABLE_RATE;
+    public static final ModConfigSpec.IntValue LEAD_ACID_CAPACITY;
+    public static final ModConfigSpec.IntValue LEAD_ACID_RATE;
     public static final ModConfigSpec.BooleanValue RADIATION_ENABLED;
     public static final ModConfigSpec.DoubleValue RADIATION_STRENGTH;
 
@@ -58,6 +60,15 @@ public final class Config {
         CABLE_RATE = BUILDER
                 .comment("FE per tick an energy cable moves from each input (a pushing generator or an extract side).")
                 .defineInRange("energy_rate", 1_000, 1, Integer.MAX_VALUE);
+        BUILDER.pop();
+
+        BUILDER.comment("Home battery. Each module adds capacity and charge rate; a cabinet holds up to 6.").push("battery");
+        LEAD_ACID_CAPACITY = BUILDER
+                .comment("FE one lead-acid module holds.")
+                .defineInRange("lead_acid_capacity", 200_000, 1, 100_000_000);
+        LEAD_ACID_RATE = BUILDER
+                .comment("FE per tick one lead-acid module can charge or discharge.")
+                .defineInRange("lead_acid_rate", 500, 1, 1_000_000);
         BUILDER.pop();
 
         BUILDER.comment("Radiation. Only running reactors and meltdowns emit it.").push("radiation");

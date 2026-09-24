@@ -1,6 +1,7 @@
 package com.ryzer.ryzergen.registry;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.battery.HomeBatteryBlock;
 import com.ryzer.ryzergen.cable.EnergyCableBlock;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlock;
 import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterBlock;
@@ -32,6 +33,9 @@ public final class ModBlocks {
             () -> new ReactorHeartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).pushReaction(PushReaction.BLOCK).lightLevel(ModBlocks::microreactorLight)));
     public static final DeferredBlock<EnergyCableBlock> ENERGY_CABLE = BLOCKS.register("energy_cable",
             () -> new EnergyCableBlock(BlockBehaviour.Properties.of().strength(0.5F).sound(SoundType.METAL).noOcclusion()));
+    public static final DeferredBlock<HomeBatteryBlock> HOME_BATTERY = BLOCKS.register("home_battery",
+            () -> new HomeBatteryBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
+                    .pushReaction(PushReaction.BLOCK)));
     public static final DeferredBlock<MicroreactorPartBlock> REACTOR_MACHINE_UNIT = BLOCKS.register("reactor_machine_unit",
             () -> new MicroreactorPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).pushReaction(PushReaction.BLOCK).lightLevel(ModBlocks::microreactorLight)));
     public static final DeferredBlock<MicroreactorPartBlock> COOLANT_JACKET = BLOCKS.register("coolant_jacket",

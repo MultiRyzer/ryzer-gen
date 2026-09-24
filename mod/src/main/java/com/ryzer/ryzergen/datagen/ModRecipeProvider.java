@@ -88,6 +88,27 @@ public class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_fluorite", has(OreType.FLUORITE.dropTag()))
                 .save(output);
 
+        // Home battery: the cabinet is cheap; the cost sits in the modules (design section 12).
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.HOME_BATTERY.get())
+                .pattern("III")
+                .pattern("C C")
+                .pattern("IBI")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('B', ModTags.CIRCUITS_BASIC)
+                .unlockedBy("has_basic_control_board", has(ModTags.CIRCUITS_BASIC))
+                .save(output);
+        // Lead-acid: lead plates in an electrolyte (redstone stands in for the acid), with a copper terminal.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LEAD_ACID_MODULE.get())
+                .pattern(" C ")
+                .pattern("LRL")
+                .pattern("LLL")
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .define('L', OreType.LEAD.ingotTag())
+                .unlockedBy("has_lead", has(OreType.LEAD.ingotTag()))
+                .save(output);
+
         // Steel: iron with a little carbon from coal or charcoal.
         output.accept(id("steel_ingot_from_alloying"), new AlloyingRecipe(
                 SizedIngredient.of(Tags.Items.INGOTS_IRON, 1),
