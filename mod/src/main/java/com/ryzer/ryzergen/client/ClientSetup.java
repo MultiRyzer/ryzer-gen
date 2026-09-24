@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.client;
 
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterScreen;
+import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterScreen;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorScreen;
 import com.ryzer.ryzergen.registry.ModMenus;
 import net.neoforged.api.distmarker.Dist;
@@ -14,6 +15,7 @@ public final class ClientSetup {
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenus.ALLOY_SMELTER.get(), AlloySmelterScreen::new);
+        event.register(ModMenus.ELECTRIC_ALLOY_SMELTER.get(), ElectricAlloySmelterScreen::new);
         event.register(ModMenus.MICROREACTOR.get(), MicroreactorScreen::new);
     }
 

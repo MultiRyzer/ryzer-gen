@@ -15,6 +15,10 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
 
     @Override
     public void registerSounds() {
+        // A short, dry tick: the note block's hi-hat pitched right up.
+        add(ModSounds.DOSIMETER_CLICK, definition()
+                .subtitle("subtitles.ryzergen.dosimeter_click")
+                .with(sound(ResourceLocation.withDefaultNamespace("note/hat")).pitch(2.0F).volume(0.5F)));
         // A low, steady hum: the beacon's drone pitched well down.
         add(ModSounds.MICROREACTOR_HUM, definition()
                 .subtitle("subtitles.ryzergen.microreactor_hum")

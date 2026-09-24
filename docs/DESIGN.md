@@ -64,7 +64,7 @@ Iron, copper, gold, redstone, coal and sand come from vanilla.
 | Material | Role | Made from |
 |---|---|---|
 | Steel | Structure | Iron ingot and coal or charcoal in the alloy smelter (plus any mod's steel via tag) |
-| Graphite | Moderator, fuel coating | Coal or charcoal block in a blast furnace (1 block makes 1 graphite) |
+| Graphite | Moderator, fuel coating | Coal or charcoal block in a blast furnace (1 block makes 3 graphite) |
 | Silicon carbide | TRISO fuel layer, hardened circuits | Sand and graphite in the alloy smelter |
 | Silicon | Circuits and solar cells | Sand in a powered furnace |
 | Lithium | Breeds tritium for fusion | Extracted from salt brine (real lithium mostly comes from brine) |
@@ -120,7 +120,7 @@ Inspired by the new generation of transportable microreactors. It gets its own o
 ### Running it
 - The heart holds one sealed fuel core. No topping up. Steady modest power for a long time, then it depletes.
 - The core carries its own burn time, so it can be taken out and put back without losing fuel. When spent it turns into a depleted core in the slot.
-- Heat model: the core makes a fixed thermal power, and a heat engine turns part of it into FE. Efficiency is 55% of the Carnot limit, 1 - T_cold / T_hot. With water the cold side is near 20°C; dry, the jacket sheds heat to hot air, so the cold side sits near 250°C. A cold core converts almost nothing, so output ramps as it heats.
+- Heat model: the core makes a fixed thermal power, and a heat engine turns part of it into FE. Efficiency is 55% of the Carnot limit, 1 - T_cold / T_hot. With water the cold side is near 20°C; dry, the jacket sheds heat to hot air, so the cold side sits near 250°C. Each mode's efficiency is the Carnot figure at its own operating temperature, scaled by warm-up (full from 400°C), so dry is always lowest, water higher, overdrive highest, even while a hot core is cooling down.
   - Dry: settles at 700°C, about 25% efficient, 200 FE/t (the config value).
   - Water: settles at 450°C, about 33% efficient, about 257 FE/t, boiling off 1 mB per tick.
   - The GUI shows efficiency live, with a bar coloured by mode.
@@ -133,12 +133,11 @@ Inspired by the new generation of transportable microreactors. It gets its own o
 - Excess power, a toggle in the GUI:
   - Follow load (default): when the energy buffer is full the reactor stands by and saves fuel.
   - Dump: it keeps running on a full buffer and vents the surplus as a steam plume from the steam outlet. It burns fuel nonstop, so it keeps making depleted cores (and later by-products) with no power consumer attached. Real basis: the steam dump (turbine bypass) valves that let a pressurised-water reactor run on when the turbine cannot take its power.
-- Still to do: boxing it in stone throttles it.
 - Running shows: Cherenkov glow in the porthole (emissive, block light 9), a low hum, steam wisps from the coolant intake.
 - GUI: fuel left, temperature, output, energy, coolant, on/off. Redstone controllable.
 - Balance lives in the common config: output (200 FE/t default), fuel life (72,000 ticks, one hour of running), coolant use.
 
-### Crafting (draft, balance TBD)
+### Crafting (first pass, being play-tested)
 
 Target: buildable in the early game, after iron and a blast furnace, before diamonds. The structure is cheap; the fuel is where the cost sits.
 
@@ -147,18 +146,21 @@ Machine:
 
 Intermediates:
 - **Steel:** iron ingot plus coal or charcoal in the alloy smelter.
-- **Graphite:** coal or charcoal block in a blast furnace.
+- **Graphite:** coal or charcoal block in a blast furnace, 3 per block. A fuel core needs 7 graphite, so about 21 coal or charcoal.
+- **Basic control board:** 2 redstone, 1 copper and 3 iron (`RCR / III`). Tagged `c:circuits/basic`, so Mekanism's basic control circuit works in its place.
 - **Silicon carbide:** sand plus graphite in the alloy smelter (a blast furnace only takes one input).
 - **TRISO pellets:** 1 uranium ingot, 2 graphite and 1 silicon carbide make 2 pellets. Based on real TRISO fuel: a uranium kernel coated in carbon and silicon carbide layers.
 
 Fuel note: the real Unity microreactor that inspired this uses standard uranium dioxide fuel with helium coolant and water as the moderator. We use TRISO on purpose, as used by other microreactor designs, because it gives the fuel cycle a real reason for the cracking step.
 
 Blocks:
-| Block | Qty in structure | Draft recipe |
+| Block | Qty in structure | Recipe |
 |---|---|---|
-| Reactor heart | 1 | Steel, lead, graphite, redstone and glass |
-| Reactor machine unit | 2 | Steel, lead and copper |
-| Coolant block (name pending) | 1 | Copper and a water bucket (draft) |
+| Reactor heart | 1 | 4 lead, 2 steel, 1 graphite, 1 glass, 1 basic control board (`LGL / S#S / LBL`) |
+| Reactor machine unit | 2 | 2 steel, 2 copper, 1 lead (`.S. / CLC / .S.`) |
+| Coolant jacket | 1 | 8 copper and a water bucket, which comes back empty (`CCC / CWC / CCC`) |
+
+Whole machine: 6 lead, 6 steel, 12 copper, 1 graphite, a board, glass and a bucket of water. Cheap enough before diamonds; the lasting cost is uranium for fuel.
 
 Fuel:
 - **Sealed fuel core:** 4 TRISO pellets packed round graphite inside a 4-steel shell (so 2 uranium per core). Goes into the heart. When depleted it is swapped out whole, and the old one becomes the depleted core for the fuel cycle.
@@ -268,9 +270,18 @@ Radiation is on by default (config toggle to turn it off). It exists to make the
 - Players build up a dose while exposed. Dose fades slowly over time away from sources.
 - Rising dose applies escalating effects: weakness, then nausea, then damage. Never an instant kill outside a meltdown.
 
+### Numbers (first pass, being play-tested)
+- Dose rate (mSv/s) = source strength / distance squared, out to 16 blocks. Checked once a second per player.
+- Microreactor strength: 20 running, 50 in overdrive, 120 during a coolant loss. A meltdown leaves a site of strength 250 that fades to nothing over 20 minutes (saved with the world). Right next to a running reactor that is about 9 mSv/s: weakness in about 10 seconds, damage within a minute. Distance and shielding are the answer.
+- Shielding along the line from source to head: each solid block halves the rate, water takes 20%, lead blocks (`c:storage_blocks/lead`) take 90%. The reactor's own blocks count as the source, not a shield. Real basis: inverse-square falloff and attenuation; lead is the best common shield.
+- Dose thresholds: 100 mSv weakness; 250 adds hunger and bouts of nausea; 500 adds radiation damage, half a heart every 4 seconds, ignoring armour. Dose caps at 1000.
+- Recovery: 0.5 mSv/s once the rate drops below 0.05. Dose resets on death. Creative and spectator players are exempt.
+- Config: `radiation.enabled` and `radiation.strength` (a multiplier).
+
 ### The dosimeter ring
-- A craftable accessory worn in a ring or necklace slot via **Curios** (the accessory API ATM10 uses). Mods like Accessories also support Curios items through their compatibility layer.
-- Without an accessory mod installed, carrying it in the inventory counts, so the mod stays fully playable standalone.
+- A craftable ring worn in the **Accessories** ring slot (tagged `accessories:ring`, and `curios:ring` for packs that use Curios). Recipe: a fluorite chip in an iron band (`.F. / I.I / .I.`); fluorite (calcium fluoride) is a real thermoluminescent dosimeter material.
+- Without an accessory mod installed, carrying it anywhere in the inventory counts, so the mod stays fully playable standalone.
+- The plain ring blocks 25% of the dose.
 - Real basis: nuclear workers really do wear ring and badge dosimeters. The one fudge: real dosimeters only measure dose, while ours also protects.
 - Shows a small HUD gauge with current exposure, and clicks like a Geiger counter near sources.
 - Upgraded, not replaced: new tier materials are added to the same ring (lead lining, then silicon carbide, then tungsten) to protect against stronger sources. No crafting a new ring each tier.
@@ -290,7 +301,7 @@ Radiation is on by default (config toggle to turn it off). It exists to make the
 - EMI and JEI recipe display.
 - All recipes data driven so pack makers can change them.
 - Config for radiation, meltdowns, flares, sun dimming and balance values.
-- Curios integration for the dosimeter ring (optional dependency).
+- Accessories integration for the dosimeter ring (optional dependency; the ring also works carried).
 
 ## 16. Art style
 

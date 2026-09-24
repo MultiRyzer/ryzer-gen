@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Inventory;
 public class AlloySmelterScreen extends AbstractContainerScreen<AlloySmelterMenu> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "textures/gui/alloy_smelter.png");
+    private static final int LABEL = 0xFF2B3036;
 
     public AlloySmelterScreen(AlloySmelterMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -32,6 +33,13 @@ public class AlloySmelterScreen extends AbstractContainerScreen<AlloySmelterMenu
         }
         int arrow = Mth.ceil(menu.cookProgress() * 24);
         graphics.blit(TEXTURE, leftPos + 79, topPos + 34, 176, 14, arrow, 17);
+    }
+
+    /** Dark graphite labels on the light casing panel, as on every Ryzer Gen GUI. */
+    @Override
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+        graphics.drawString(font, title, titleLabelX, titleLabelY, LABEL, false);
+        graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, LABEL, false);
     }
 
     @Override
