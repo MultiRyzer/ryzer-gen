@@ -32,9 +32,16 @@ public final class CableNetwork {
         version++;
     }
 
-    /** Every non-cable face the cables joined to {@code start} are connected to (extract sides excluded). */
-    public static List<Endpoint> endpoints(Level level, BlockPos start) {
+    /**
+     * What a scan found: every non-cable face the joined cables connect to (extract sides excluded),
+     * and the leader, one cable picked the same way from anywhere in the group so that network-wide
+     * work runs once per tick.
+     */
+    public record Scan(List<Endpoint> endpoints, BlockPos leader) {}
+
+    public static Scan scan(Level level, BlockPos start) {
         List<Endpoint> endpoints = new ArrayList<>();
+        BlockPos leader = start;
         Set<BlockPos> seen = new HashSet<>();
         ArrayDeque<BlockPos> queue = new ArrayDeque<>();
         queue.add(start);
@@ -44,6 +51,9 @@ public final class CableNetwork {
             BlockState state = level.getBlockState(pos);
             if (!(state.getBlock() instanceof EnergyCableBlock)) {
                 continue;
+            }
+            if (pos.asLong() < leader.asLong()) {
+                leader = pos;
             }
             for (Direction dir : Direction.values()) {
                 CableSide side = state.getValue(EnergyCableBlock.SIDES.get(dir));
@@ -60,6 +70,6 @@ public final class CableNetwork {
                 }
             }
         }
-        return endpoints;
+        return new Scan(endpoints, leader);
     }
 }

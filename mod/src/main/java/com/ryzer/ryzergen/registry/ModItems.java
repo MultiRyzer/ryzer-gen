@@ -1,6 +1,8 @@
 package com.ryzer.ryzergen.registry;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.battery.BatteryChemistry;
+import com.ryzer.ryzergen.battery.BatteryModuleItem;
 import com.ryzer.ryzergen.item.WrenchItem;
 import com.ryzer.ryzergen.radiation.DosimeterRingItem;
 import com.ryzer.ryzergen.machine.microreactor.FuelCoreItem;
@@ -20,6 +22,9 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> ELECTRIC_ALLOY_SMELTER = ITEMS.registerSimpleBlockItem(ModBlocks.ELECTRIC_ALLOY_SMELTER);
     public static final DeferredItem<BlockItem> ENERGY_CABLE = ITEMS.registerSimpleBlockItem(ModBlocks.ENERGY_CABLE);
     public static final DeferredItem<WrenchItem> WRENCH = ITEMS.registerItem("wrench", WrenchItem::new);
+    public static final DeferredItem<BlockItem> HOME_BATTERY = ITEMS.registerSimpleBlockItem(ModBlocks.HOME_BATTERY);
+    public static final DeferredItem<BatteryModuleItem> LEAD_ACID_MODULE = ITEMS.registerItem("lead_acid_module",
+            properties -> new BatteryModuleItem(BatteryChemistry.LEAD_ACID, properties));
     public static final DeferredItem<DosimeterRingItem> DOSIMETER_RING = ITEMS.registerItem("dosimeter_ring", DosimeterRingItem::new);
     public static final DeferredItem<Item> GRAPHITE = ITEMS.registerSimpleItem("graphite");
     public static final DeferredItem<Item> STEEL_INGOT = ITEMS.registerSimpleItem("steel_ingot");

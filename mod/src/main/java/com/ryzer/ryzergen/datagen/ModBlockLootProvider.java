@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.datagen;
 
+import com.ryzer.ryzergen.battery.HomeBatteryBlock;
 import com.ryzer.ryzergen.material.OreType;
 import com.ryzer.ryzergen.registry.ModBlocks;
 import com.ryzer.ryzergen.registry.ModItems;
@@ -12,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
@@ -31,6 +33,9 @@ public class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.ALLOY_SMELTER.get());
         dropSelf(ModBlocks.ELECTRIC_ALLOY_SMELTER.get());
         dropSelf(ModBlocks.ENERGY_CABLE.get());
+        // Only the lower half drops the cabinet; its modules drop from the block entity.
+        add(ModBlocks.HOME_BATTERY.get(), createSinglePropConditionTable(ModBlocks.HOME_BATTERY.get(),
+                HomeBatteryBlock.HALF, DoubleBlockHalf.LOWER));
         dropSelf(ModBlocks.REACTOR_HEART.get());
         dropSelf(ModBlocks.REACTOR_MACHINE_UNIT.get());
         dropSelf(ModBlocks.COOLANT_JACKET.get());

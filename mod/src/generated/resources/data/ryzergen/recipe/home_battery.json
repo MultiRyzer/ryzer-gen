@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "tag": "c:circuits/basic"
+    },
+    "C": {
+      "tag": "c:ingots/copper"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "pattern": [
+    "III",
+    "C C",
+    "IBI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:home_battery"
+  }
+}

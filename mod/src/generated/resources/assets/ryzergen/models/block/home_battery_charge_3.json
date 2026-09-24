@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#glow_off"
+        },
+        "east": {
+          "texture": "#glow_off"
+        },
+        "north": {
+          "texture": "#glow_off"
+        },
+        "south": {
+          "texture": "#glow_off"
+        },
+        "up": {
+          "texture": "#glow_off"
+        },
+        "west": {
+          "texture": "#glow_off"
+        }
+      },
+      "from": [
+        13.5,
+        10,
+        1.8
+      ],
+      "to": [
+        14.5,
+        12,
+        2
+      ]
+    }
+  ],
+  "textures": {
+    "glow_off": "ryzergen:block/microreactor/glow_off",
+    "particle": "ryzergen:block/microreactor/glow_off"
+  }
+}

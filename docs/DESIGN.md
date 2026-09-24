@@ -104,7 +104,7 @@ Inspired by the new generation of transportable microreactors. It gets its own o
 ### Assembly
 - When the fourth block is placed, the structure snaps together: short animation, particles, sound, and the 4 blocks render as one machine model.
 - Breaking any block drops it back to separate pieces.
-- Ghost preview: while holding any part, each unformed heart nearby shows outlines where the other three blocks go, with the suggested part floating in each (machine units above and behind the heart, the coolant jacket at the upper back under the intake), and an arrow on the ground for the way the machine will face. Filled spaces turn green, blocked ones red.
+- Ghost preview: while holding any part, each unformed heart nearby shows outlines where the other three blocks go, with the suggested part floating in each (machine units above and behind the heart, the coolant jacket at the upper back under the intake). Filled spaces turn green, blocked ones red.
 
 ### Input and output
 - Like Oritech's multiblocks, the assembled model has fixed, visible connection chutes. Pipes and cables only connect at those points, not on any face.
@@ -129,7 +129,7 @@ Inspired by the new generation of transportable microreactors. It gets its own o
   - The player has about 9 seconds to switch off, re-arm the safeties or add water. In follow-load mode a full energy buffer also saves it, since the reactor stands by; in dump mode it does not.
   - Config: meltdowns can be turned off, in which case the interlock re-arms itself on coolant loss. With the safeties on, the microreactor can never melt down.
   - Real basis: a loss-of-coolant accident with the automatic scram disabled. The explosion is an honest fudge for a steam explosion.
-  - Radiation from meltdowns waits for the radiation milestone.
+  - A meltdown leaves a radiation site that fades over 20 minutes (see section 13).
 - Excess power, a toggle in the GUI:
   - Follow load (default): when the energy buffer is full the reactor stands by and saves fuel.
   - Dump: it keeps running on a full buffer and vents the surplus as a steam plume from the steam outlet. It burns fuel nonstop, so it keeps making depleted cores (and later by-products) with no power consumer attached. Real basis: the steam dump (turbine bypass) valves that let a pressurised-water reactor run on when the turbine cannot take its power.
@@ -245,6 +245,13 @@ Simple rule: each module adds both capacity and charge/discharge rate. The chemi
 - Chemistries, swapped into the same stack:
   - **Lead-acid modules:** available early (lead is a tier 1 material). Older off-grid homes really used these.
   - **LFP (lithium iron phosphate) modules:** unlocked once the electrolyser makes lithium. What most modern home batteries use. Much higher capacity and rate.
+- Built (first pass):
+  - Lead-acid module: 200,000 FE and 500 FE/t each (config), so a full cabinet holds 1.2M FE at 3,000 FE/t. Recipe `.C. / LRL / LLL` (5 lead, a copper terminal, redstone standing in for the acid).
+  - Cabinet: `III / C.C / IBI` (iron, copper, a basic board). Cheap; the cost is in the modules.
+  - A module carries its share of the charge when taken out (shown as a bar on the item), so energy moves with it and swapping chemistries loses nothing.
+  - On a cable network the battery is a buffer, as in Mekanism: machines are served first and the battery takes the surplus, and when the sources fall short the network tops machines up from the battery. One plain cable does both, no wrench needed. Any block that both accepts and gives energy counts as a buffer, so other mods' storage works the same way. A cable side set to extract still pulls from it. Both directions are limited by the combined module rate. Right-click with an empty hand opens a readout; there is no inventory to fill.
+  - Placed and broken like a door; the lower half holds the contents.
+  - A charge bar of 8 cyan LED segments runs up the front post, lit (emissive) in eighths of the charge, so you can read how full it is from across the room.
 
 ### Tier 2: Container battery (grid scale)
 - A shipping-container-sized multiblock. Original design, based on the idea of real container batteries.

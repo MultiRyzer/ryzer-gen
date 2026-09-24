@@ -17,5 +17,10 @@ public final class ModDataComponents {
             COMPONENTS.registerComponentType("fuel_left",
                     builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
 
+    /** FE held by an item, such as a battery module taken out of its cabinet. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> STORED_ENERGY =
+            COMPONENTS.registerComponentType("stored_energy",
+                    builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
     private ModDataComponents() {}
 }

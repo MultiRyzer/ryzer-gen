@@ -1,0 +1,1028 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_1_lit"
+      },
+      "when": {
+        "charge": "1|2|3|4|5|6|7|8",
+        "facing": "north",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_1"
+      },
+      "when": {
+        "charge": "0",
+        "facing": "north",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_2_lit"
+      },
+      "when": {
+        "charge": "2|3|4|5|6|7|8",
+        "facing": "north",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_2"
+      },
+      "when": {
+        "charge": "0|1",
+        "facing": "north",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_3_lit"
+      },
+      "when": {
+        "charge": "3|4|5|6|7|8",
+        "facing": "north",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_3"
+      },
+      "when": {
+        "charge": "0|1|2",
+        "facing": "north",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_4_lit"
+      },
+      "when": {
+        "charge": "4|5|6|7|8",
+        "facing": "north",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_4"
+      },
+      "when": {
+        "charge": "0|1|2|3",
+        "facing": "north",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_5_lit"
+      },
+      "when": {
+        "charge": "5|6|7|8",
+        "facing": "north",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_5"
+      },
+      "when": {
+        "charge": "0|1|2|3|4",
+        "facing": "north",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_6_lit"
+      },
+      "when": {
+        "charge": "6|7|8",
+        "facing": "north",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_6"
+      },
+      "when": {
+        "charge": "0|1|2|3|4|5",
+        "facing": "north",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_7_lit"
+      },
+      "when": {
+        "charge": "7|8",
+        "facing": "north",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_7"
+      },
+      "when": {
+        "charge": "0|1|2|3|4|5|6",
+        "facing": "north",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_8_lit"
+      },
+      "when": {
+        "charge": "8",
+        "facing": "north",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_8"
+      },
+      "when": {
+        "charge": "0|1|2|3|4|5|6|7",
+        "facing": "north",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_upper"
+      },
+      "when": {
+        "facing": "north",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_4"
+      },
+      "when": {
+        "facing": "north",
+        "half": "upper",
+        "segment_1": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_5"
+      },
+      "when": {
+        "facing": "north",
+        "half": "upper",
+        "segment_2": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_6"
+      },
+      "when": {
+        "facing": "north",
+        "half": "upper",
+        "segment_3": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lower"
+      },
+      "when": {
+        "facing": "north",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_1"
+      },
+      "when": {
+        "facing": "north",
+        "half": "lower",
+        "segment_1": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_2"
+      },
+      "when": {
+        "facing": "north",
+        "half": "lower",
+        "segment_2": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_3"
+      },
+      "when": {
+        "facing": "north",
+        "half": "lower",
+        "segment_3": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_1_lit",
+        "y": 90
+      },
+      "when": {
+        "charge": "1|2|3|4|5|6|7|8",
+        "facing": "east",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_1",
+        "y": 90
+      },
+      "when": {
+        "charge": "0",
+        "facing": "east",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_2_lit",
+        "y": 90
+      },
+      "when": {
+        "charge": "2|3|4|5|6|7|8",
+        "facing": "east",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_2",
+        "y": 90
+      },
+      "when": {
+        "charge": "0|1",
+        "facing": "east",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_3_lit",
+        "y": 90
+      },
+      "when": {
+        "charge": "3|4|5|6|7|8",
+        "facing": "east",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_3",
+        "y": 90
+      },
+      "when": {
+        "charge": "0|1|2",
+        "facing": "east",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_4_lit",
+        "y": 90
+      },
+      "when": {
+        "charge": "4|5|6|7|8",
+        "facing": "east",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_4",
+        "y": 90
+      },
+      "when": {
+        "charge": "0|1|2|3",
+        "facing": "east",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_5_lit",
+        "y": 90
+      },
+      "when": {
+        "charge": "5|6|7|8",
+        "facing": "east",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_5",
+        "y": 90
+      },
+      "when": {
+        "charge": "0|1|2|3|4",
+        "facing": "east",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_6_lit",
+        "y": 90
+      },
+      "when": {
+        "charge": "6|7|8",
+        "facing": "east",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_6",
+        "y": 90
+      },
+      "when": {
+        "charge": "0|1|2|3|4|5",
+        "facing": "east",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_7_lit",
+        "y": 90
+      },
+      "when": {
+        "charge": "7|8",
+        "facing": "east",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_7",
+        "y": 90
+      },
+      "when": {
+        "charge": "0|1|2|3|4|5|6",
+        "facing": "east",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_8_lit",
+        "y": 90
+      },
+      "when": {
+        "charge": "8",
+        "facing": "east",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_8",
+        "y": 90
+      },
+      "when": {
+        "charge": "0|1|2|3|4|5|6|7",
+        "facing": "east",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_upper",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_4",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "half": "upper",
+        "segment_1": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_5",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "half": "upper",
+        "segment_2": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_6",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "half": "upper",
+        "segment_3": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lower",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_1",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "half": "lower",
+        "segment_1": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_2",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "half": "lower",
+        "segment_2": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_3",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "half": "lower",
+        "segment_3": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_1_lit",
+        "y": 180
+      },
+      "when": {
+        "charge": "1|2|3|4|5|6|7|8",
+        "facing": "south",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_1",
+        "y": 180
+      },
+      "when": {
+        "charge": "0",
+        "facing": "south",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_2_lit",
+        "y": 180
+      },
+      "when": {
+        "charge": "2|3|4|5|6|7|8",
+        "facing": "south",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_2",
+        "y": 180
+      },
+      "when": {
+        "charge": "0|1",
+        "facing": "south",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_3_lit",
+        "y": 180
+      },
+      "when": {
+        "charge": "3|4|5|6|7|8",
+        "facing": "south",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_3",
+        "y": 180
+      },
+      "when": {
+        "charge": "0|1|2",
+        "facing": "south",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_4_lit",
+        "y": 180
+      },
+      "when": {
+        "charge": "4|5|6|7|8",
+        "facing": "south",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_4",
+        "y": 180
+      },
+      "when": {
+        "charge": "0|1|2|3",
+        "facing": "south",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_5_lit",
+        "y": 180
+      },
+      "when": {
+        "charge": "5|6|7|8",
+        "facing": "south",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_5",
+        "y": 180
+      },
+      "when": {
+        "charge": "0|1|2|3|4",
+        "facing": "south",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_6_lit",
+        "y": 180
+      },
+      "when": {
+        "charge": "6|7|8",
+        "facing": "south",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_6",
+        "y": 180
+      },
+      "when": {
+        "charge": "0|1|2|3|4|5",
+        "facing": "south",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_7_lit",
+        "y": 180
+      },
+      "when": {
+        "charge": "7|8",
+        "facing": "south",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_7",
+        "y": 180
+      },
+      "when": {
+        "charge": "0|1|2|3|4|5|6",
+        "facing": "south",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_8_lit",
+        "y": 180
+      },
+      "when": {
+        "charge": "8",
+        "facing": "south",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_8",
+        "y": 180
+      },
+      "when": {
+        "charge": "0|1|2|3|4|5|6|7",
+        "facing": "south",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_upper",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_4",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "half": "upper",
+        "segment_1": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_5",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "half": "upper",
+        "segment_2": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_6",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "half": "upper",
+        "segment_3": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lower",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_1",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "half": "lower",
+        "segment_1": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_2",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "half": "lower",
+        "segment_2": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_3",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "half": "lower",
+        "segment_3": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_1_lit",
+        "y": 270
+      },
+      "when": {
+        "charge": "1|2|3|4|5|6|7|8",
+        "facing": "west",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_1",
+        "y": 270
+      },
+      "when": {
+        "charge": "0",
+        "facing": "west",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_2_lit",
+        "y": 270
+      },
+      "when": {
+        "charge": "2|3|4|5|6|7|8",
+        "facing": "west",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_2",
+        "y": 270
+      },
+      "when": {
+        "charge": "0|1",
+        "facing": "west",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_3_lit",
+        "y": 270
+      },
+      "when": {
+        "charge": "3|4|5|6|7|8",
+        "facing": "west",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_3",
+        "y": 270
+      },
+      "when": {
+        "charge": "0|1|2",
+        "facing": "west",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_4_lit",
+        "y": 270
+      },
+      "when": {
+        "charge": "4|5|6|7|8",
+        "facing": "west",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_4",
+        "y": 270
+      },
+      "when": {
+        "charge": "0|1|2|3",
+        "facing": "west",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_5_lit",
+        "y": 270
+      },
+      "when": {
+        "charge": "5|6|7|8",
+        "facing": "west",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_5",
+        "y": 270
+      },
+      "when": {
+        "charge": "0|1|2|3|4",
+        "facing": "west",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_6_lit",
+        "y": 270
+      },
+      "when": {
+        "charge": "6|7|8",
+        "facing": "west",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_6",
+        "y": 270
+      },
+      "when": {
+        "charge": "0|1|2|3|4|5",
+        "facing": "west",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_7_lit",
+        "y": 270
+      },
+      "when": {
+        "charge": "7|8",
+        "facing": "west",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_7",
+        "y": 270
+      },
+      "when": {
+        "charge": "0|1|2|3|4|5|6",
+        "facing": "west",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_8_lit",
+        "y": 270
+      },
+      "when": {
+        "charge": "8",
+        "facing": "west",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_charge_8",
+        "y": 270
+      },
+      "when": {
+        "charge": "0|1|2|3|4|5|6|7",
+        "facing": "west",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_upper",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "half": "upper"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_4",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "half": "upper",
+        "segment_1": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_5",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "half": "upper",
+        "segment_2": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_6",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "half": "upper",
+        "segment_3": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lower",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "half": "lower"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_1",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "half": "lower",
+        "segment_1": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_2",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "half": "lower",
+        "segment_2": "lead_acid"
+      }
+    },
+    {
+      "apply": {
+        "model": "ryzergen:block/home_battery_lead_acid_3",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "half": "lower",
+        "segment_3": "lead_acid"
+      }
+    }
+  ]
+}

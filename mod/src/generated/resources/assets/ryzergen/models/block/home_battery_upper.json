@@ -1,0 +1,193 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "east": {
+          "texture": "#frame"
+        },
+        "north": {
+          "texture": "#frame"
+        },
+        "south": {
+          "texture": "#frame"
+        },
+        "up": {
+          "texture": "#frame"
+        },
+        "west": {
+          "texture": "#frame"
+        }
+      },
+      "from": [
+        2,
+        0,
+        3
+      ],
+      "to": [
+        14,
+        14,
+        14
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "texture": "#trim"
+        },
+        "north": {
+          "texture": "#trim"
+        },
+        "south": {
+          "texture": "#trim"
+        },
+        "up": {
+          "texture": "#trim"
+        },
+        "west": {
+          "texture": "#trim"
+        }
+      },
+      "from": [
+        1,
+        0,
+        2
+      ],
+      "to": [
+        3,
+        14,
+        4
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "texture": "#trim"
+        },
+        "north": {
+          "texture": "#trim"
+        },
+        "south": {
+          "texture": "#trim"
+        },
+        "up": {
+          "texture": "#trim"
+        },
+        "west": {
+          "texture": "#trim"
+        }
+      },
+      "from": [
+        13,
+        0,
+        2
+      ],
+      "to": [
+        15,
+        14,
+        4
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "texture": "#body"
+        },
+        "north": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        }
+      },
+      "from": [
+        3,
+        0,
+        2.5
+      ],
+      "to": [
+        13,
+        13,
+        3
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#trim"
+        },
+        "east": {
+          "texture": "#trim"
+        },
+        "north": {
+          "texture": "#trim"
+        },
+        "south": {
+          "texture": "#trim"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#trim"
+        },
+        "west": {
+          "texture": "#trim"
+        }
+      },
+      "from": [
+        1,
+        14,
+        1
+      ],
+      "to": [
+        15,
+        16,
+        15
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#glow_off"
+        },
+        "east": {
+          "texture": "#glow_off"
+        },
+        "north": {
+          "texture": "#glow_off"
+        },
+        "south": {
+          "texture": "#glow_off"
+        },
+        "up": {
+          "texture": "#glow_off"
+        },
+        "west": {
+          "texture": "#glow_off"
+        }
+      },
+      "from": [
+        3,
+        14.5,
+        0.9
+      ],
+      "to": [
+        13,
+        15,
+        1
+      ]
+    }
+  ],
+  "textures": {
+    "body": "ryzergen:block/machine/body",
+    "frame": "ryzergen:block/microreactor/steel",
+    "glow_off": "ryzergen:block/microreactor/glow_off",
+    "particle": "ryzergen:block/microreactor/steel",
+    "trim": "ryzergen:block/microreactor/steel_dark"
+  }
+}

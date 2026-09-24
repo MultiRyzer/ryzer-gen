@@ -200,6 +200,56 @@ def dosimeter_ring():
     return t
 
 
+# ---------------------------------------------------------------- home battery
+
+def module_front():
+    """9 x 3 front plate of a lead-acid module: orange terminal, lead-grey case, a green charge lamp."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 's')
+    t.stamp(0, 0, [
+        'XeIIIIIII',
+        'ZXssssssn',
+        'ZZuuuuuuu',
+    ])
+    return t
+
+
+def module_case():
+    """The module's sides and top: plain lead grey."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 's')
+    t.rect(0, 15, 15, 15, 'u')
+    return t
+
+
+def lead_acid_module_item():
+    """A lead-acid battery: gunmetal case with an orange + terminal and a graphite - terminal."""
+    case = {(x, y) for x in range(2, 14) for y in range(5, 14)}
+    terminals = {(x, y) for x in (4, 5, 10, 11) for y in (3, 4)}
+    t = shape_item(case | terminals, 's', 'J', 'u', highlight='I')
+    for x, y in terminals:
+        t.set(x, y, 'X' if x < 8 else 'T')
+    t.set(4, 3, 'e')
+    t.rect(3, 8, 12, 9, 'z')
+    t.rect(3, 8, 5, 9, 'X')
+    return t
+
+
+def home_battery_item():
+    """A tall cabinet with its bay column, three modules fitted."""
+    body = {(x, y) for x in range(4, 12) for y in range(1, 15)}
+    t = shape_item(body, 'F', 'A', 'J', highlight='A')
+    t.rect(4, 1, 11, 1, 'S')
+    t.rect(4, 14, 11, 14, 'S')
+    t.rect(5, 3, 10, 12, 'T')
+    for y in (4, 6, 8, 10, 12):
+        t.rect(5, y, 10, y, 'U')
+    for y in (7, 9, 11):
+        t.rect(6, y, 9, y, 's')
+        t.set(6, y, 'X')
+    return t
+
+
 TEXTURES = {
     'block/machine/body': machine_body,
     'block/machine/smelter_window': lambda: smelter_window(False),
@@ -212,6 +262,10 @@ TEXTURES = {
     'item/energy_cable': cable_item,
     'item/wrench': wrench_item,
     'item/dosimeter_ring': dosimeter_ring,
+    'block/machine/module_lead_acid': module_front,
+    'block/machine/module_case': module_case,
+    'item/lead_acid_module': lead_acid_module_item,
+    'item/home_battery': home_battery_item,
 }
 
 

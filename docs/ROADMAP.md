@@ -3,7 +3,7 @@
 Build in thin, playable slices. Each milestone should load in game and be tested before the next starts.
 
 ## Milestone 0: Setup
-- [ ] Install Java 21 JDK and IntelliJ IDEA Community (if not already)
+- [x] Install Java 21 JDK (IntelliJ IDEA optional)
 - [x] Create the mod project from the NeoForge 1.21.1 template into `mod/`
 - [x] Pick a mod name and mod ID (Ryzer Gen, `ryzergen`)
 - [x] Confirm `runClient` launches a test world with the mod loaded
@@ -37,9 +37,11 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] Electric alloy smelter (FE, twice as fast, same recipes)
 
 ## Milestone 1b: Home battery
-- [ ] Home battery stack cabinet with 6 module slots and segment model
-- [ ] Lead-acid module
+- [x] Home battery stack cabinet with 6 module slots and segment model
+- [x] Lead-acid module
 - [x] Basic cables (Pipez style: auto-connect, wrench to extract or disconnect) and the wrench
+  - [x] Cable panel: right-click a cable with an extract side (empty hand) to see each source, its current rate against the max, and how many machines it feeds
+  - [x] Batteries act as network buffers: machines first, surplus into storage, shortfalls drawn back out
 
 ## Milestone 2: Fuel cycle
 - [x] Fluorite ore (shipped with the other ores in milestone 1)

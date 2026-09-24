@@ -424,10 +424,35 @@ def electric_alloy_smelter():
     return t
 
 
+def home_battery():
+    """Readout only (modules go in by hand): a charge gauge, the readout screen, six module bays."""
+    t = Tex(SIZE)
+    panel(t, PANEL_W, 112)
+    recess(t, 4, 16, 168, 92, 'S', 'U', 'A')
+    well(t, 10, 21, 14, 80)
+    screen(t, 30, 21, 84, 60)
+    t.rect(33, 49, 110, 49, 'f')
+    for bay in range(6):
+        recess(t, 120, 21 + bay * 13, 46, 11, 'U', 'U', 'b')
+    return t
+
+
+def cable():
+    """Cable panel, drawn for six extract rows plus the footer. The rows are drawn in code, and the
+    screen shows only as many as the cable has, then this texture's bottom edge."""
+    t = Tex(SIZE)
+    h = 194
+    panel(t, PANEL_W, h)
+    recess(t, 4, 16, 168, h - 20, 'S', 'U', 'A')
+    return t
+
+
 def main():
     publish('gui/microreactor', microreactor())
     publish('gui/alloy_smelter', alloy_smelter())
     publish('gui/electric_alloy_smelter', electric_alloy_smelter())
+    publish('gui/home_battery', home_battery())
+    publish('gui/cable', cable())
 
 
 if __name__ == '__main__':

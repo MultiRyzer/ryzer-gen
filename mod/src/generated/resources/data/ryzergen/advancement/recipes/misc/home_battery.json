@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_basic_control_board": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:circuits/basic"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ryzergen:home_battery"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_basic_control_board"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ryzergen:home_battery"
+    ]
+  }
+}

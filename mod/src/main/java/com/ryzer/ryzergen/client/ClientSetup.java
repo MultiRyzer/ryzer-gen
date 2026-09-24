@@ -1,6 +1,8 @@
 package com.ryzer.ryzergen.client;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.battery.HomeBatteryScreen;
+import com.ryzer.ryzergen.cable.EnergyCableScreen;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterScreen;
 import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterScreen;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorScreen;
@@ -16,6 +18,8 @@ public final class ClientSetup {
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenus.ALLOY_SMELTER.get(), AlloySmelterScreen::new);
         event.register(ModMenus.ELECTRIC_ALLOY_SMELTER.get(), ElectricAlloySmelterScreen::new);
+        event.register(ModMenus.ENERGY_CABLE.get(), EnergyCableScreen::new);
+        event.register(ModMenus.HOME_BATTERY.get(), HomeBatteryScreen::new);
         event.register(ModMenus.MICROREACTOR.get(), MicroreactorScreen::new);
     }
 

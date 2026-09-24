@@ -37,6 +37,23 @@ public final class GuiGauges {
         graphics.fill(x, top, x + w, top + 1, ARGB.lighten(colour, 0.55F));
     }
 
+    /** A lit bar that fills from the left: bright top to dark base, a bright leading edge and a band of light drifting right. */
+    public static void glowHorizontal(GuiGraphics graphics, int x, int y, int w, int h, float fraction, int colour) {
+        int fill = Math.round(Mth.clamp(fraction, 0, 1) * w);
+        if (fill <= 0) {
+            return;
+        }
+        int right = x + fill;
+        graphics.fillGradient(x, y, right, y + h, colour, ARGB.darken(colour, 0.45F));
+        graphics.enableScissor(x, y, right, y + h);
+        int band = x + (int) (Util.getMillis() / 30 % (w + 16)) - 8;
+        graphics.fill(band, y, band + 6, y + h, 0x30FFFFFF);
+        graphics.fill(band + 1, y, band + 5, y + h, 0x20FFFFFF);
+        graphics.disableScissor();
+        graphics.fill(x, y, right, y + 1, ARGB.lighten(colour, 0.35F));
+        graphics.fill(right - 1, y, right, y + h, ARGB.lighten(colour, 0.55F));
+    }
+
     /** A fluid gauge drawn with the fluid's own animated texture and tint. */
     public static void fluid(GuiGraphics graphics, int x, int y, int w, int h, float fraction, Fluid fluid) {
         int fill = Math.round(Mth.clamp(fraction, 0, 1) * h);

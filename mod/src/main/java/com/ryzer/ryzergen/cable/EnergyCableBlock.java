@@ -4,6 +4,10 @@ import com.mojang.serialization.MapCodec;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -17,6 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -161,6 +166,23 @@ public class EnergyCableBlock extends BaseEntityBlock {
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
+    /** An empty hand opens the panel for a cable that extracts; otherwise, a hint. */
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!player.getMainHandItem().isEmpty()) {
+            // Holding something (more cable, say): let it place instead of opening the panel.
+            return InteractionResult.PASS;
+        }
+        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+            if (state.getValues().containsValue(CableSide.EXTRACT) && level.getBlockEntity(pos) instanceof EnergyCableBlockEntity cable) {
+                serverPlayer.openMenu(cable, buffer -> buffer.writeBlockPos(pos));
+            } else {
+                player.displayClientMessage(Component.translatable("message.ryzergen.cable.no_extract"), true);
+            }
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new EnergyCableBlockEntity(pos, state);
@@ -168,7 +190,8 @@ public class EnergyCableBlock extends BaseEntityBlock {
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide || !state.getValues().containsValue(CableSide.EXTRACT)) {
+        // Every cable ticks, not just extractors: one per network (its leader) draws on the batteries.
+        if (level.isClientSide) {
             return null;
         }
         return createTickerHelper(type, ModBlockEntities.ENERGY_CABLE.get(), EnergyCableBlockEntity::serverTick);
