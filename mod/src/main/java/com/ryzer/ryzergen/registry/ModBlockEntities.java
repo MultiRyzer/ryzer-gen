@@ -4,6 +4,8 @@ import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.battery.HomeBatteryBlockEntity;
 import com.ryzer.ryzergen.cable.EnergyCableBlockEntity;
 import com.ryzer.ryzergen.cable.FluidPipeBlockEntity;
+import com.ryzer.ryzergen.creative.CreativeSourceBlockEntity;
+import com.ryzer.ryzergen.machine.fission.StationCoreBlockEntity;
 import com.ryzer.ryzergen.machine.pump.IntakePumpBlockEntity;
 import com.ryzer.ryzergen.storage.PressureTankBlockEntity;
 import com.ryzer.ryzergen.cable.ItemPipeBlockEntity;
@@ -43,6 +45,15 @@ public final class ModBlockEntities {
             BLOCK_ENTITIES.register("pressure_tank",
                     () -> BlockEntityType.Builder.of(PressureTankBlockEntity::new,
                             ModBlocks.PRESSURE_TANK.get(), ModBlocks.FLUID_TANK.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StationCoreBlockEntity>> STATION_CORE =
+            BLOCK_ENTITIES.register("station_core",
+                    () -> BlockEntityType.Builder.of(StationCoreBlockEntity::new, ModBlocks.STATION_CORE.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreativeSourceBlockEntity>> CREATIVE_SOURCE =
+            BLOCK_ENTITIES.register("creative_source",
+                    () -> BlockEntityType.Builder.of(CreativeSourceBlockEntity::new,
+                            ModBlocks.CREATIVE_BATTERY.get(), ModBlocks.CREATIVE_WATER_TANK.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluidPipeBlockEntity>> FLUID_PIPE =
             BLOCK_ENTITIES.register("fluid_pipe",

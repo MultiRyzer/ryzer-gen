@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "ryzergen:block/creative_top",
+    "side": "ryzergen:block/creative_water_tank_side",
+    "top": "ryzergen:block/creative_top"
+  }
+}

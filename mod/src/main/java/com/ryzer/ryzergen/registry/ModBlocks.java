@@ -3,7 +3,11 @@ package com.ryzer.ryzergen.registry;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.battery.HomeBatteryBlock;
 import com.ryzer.ryzergen.cable.EnergyCableBlock;
+import com.ryzer.ryzergen.creative.CreativeSourceBlock;
+import com.ryzer.ryzergen.creative.CreativeWaterTankBlock;
 import com.ryzer.ryzergen.cable.FluidPipeBlock;
+import com.ryzer.ryzergen.machine.fission.StationCoreBlock;
+import com.ryzer.ryzergen.machine.fission.StationPartBlock;
 import com.ryzer.ryzergen.machine.pump.IntakePumpBlock;
 import com.ryzer.ryzergen.storage.FluidTankBlock;
 import com.ryzer.ryzergen.storage.PressureTankBlock;
@@ -14,6 +18,7 @@ import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterBlock;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorPartBlock;
 import com.ryzer.ryzergen.machine.microreactor.ReactorHeartBlock;
 import com.ryzer.ryzergen.material.OreType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -53,6 +58,24 @@ public final class ModBlocks {
     public static final DeferredBlock<FluidTankBlock> FLUID_TANK = BLOCKS.register("fluid_tank",
             () -> new FluidTankBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BLOCK).noOcclusion()
                     .isViewBlocking((state, level, pos) -> false)));
+    // Fission station parts (design section 8). All noOcclusion: once formed they stop drawing
+    // themselves and the core draws the station, so they must not hide their neighbours' faces.
+    public static final DeferredBlock<StationPartBlock> STATION_CASING = BLOCKS.register("station_casing",
+            () -> new StationPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+    public static final DeferredBlock<StationPartBlock> STATION_GLASS = BLOCKS.register("station_glass",
+            () -> new StationPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS).strength(1.5F).noOcclusion()
+                    .isViewBlocking((state, level, pos) -> false)));
+    public static final DeferredBlock<StationPartBlock> TURBINE_ROTOR = BLOCKS.register("turbine_rotor",
+            () -> new StationPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+    public static final DeferredBlock<StationCoreBlock> STATION_CORE = BLOCKS.register("station_core",
+            () -> new StationCoreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+    public static final DeferredBlock<Block> GRAPHITE_BLOCK = BLOCKS.registerSimpleBlock("graphite_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK));
+    // Creative-only test blocks (no recipe): endless power and endless water.
+    public static final DeferredBlock<CreativeSourceBlock> CREATIVE_BATTERY = BLOCKS.register("creative_battery",
+            () -> new CreativeSourceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
+    public static final DeferredBlock<CreativeWaterTankBlock> CREATIVE_WATER_TANK = BLOCKS.register("creative_water_tank",
+            () -> new CreativeWaterTankBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
     public static final DeferredBlock<HomeBatteryBlock> HOME_BATTERY = BLOCKS.register("home_battery",
             () -> new HomeBatteryBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
                     .pushReaction(PushReaction.BLOCK)));

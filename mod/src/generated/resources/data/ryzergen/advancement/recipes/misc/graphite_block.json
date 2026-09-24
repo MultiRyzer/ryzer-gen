@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_graphite": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:ingots/graphite"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ryzergen:graphite_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_graphite"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ryzergen:graphite_block"
+    ]
+  }
+}

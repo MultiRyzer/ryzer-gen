@@ -57,6 +57,10 @@ public final class Config {
     public static final ModConfigSpec.IntValue PUMP_RATE;
     public static final ModConfigSpec.IntValue PUMP_ENERGY;
     public static final ModConfigSpec.IntValue TANK_CAPACITY;
+    public static final ModConfigSpec.IntValue STATION_OUTPUT;
+    public static final ModConfigSpec.BooleanValue STATION_MELTDOWNS;
+    public static final ModConfigSpec.DoubleValue STATION_MELTDOWN_POWER;
+    public static final ModConfigSpec.IntValue STATION_TILT_SECONDS;
     public static final ModConfigSpec.IntValue FLUID_TANK_CAPACITY;
     public static final ModConfigSpec.IntValue STEAM_PER_WATER;
     public static final ModConfigSpec.IntValue LEAD_ACID_CAPACITY;
@@ -109,6 +113,21 @@ public final class Config {
         LEAD_ACID_RATE = BUILDER
                 .comment("FE per tick one lead-acid module can charge or discharge.")
                 .defineInRange("lead_acid_rate", 500, 1, 1_000_000);
+        BUILDER.pop();
+
+        BUILDER.comment("Fission power station.").push("fission_station");
+        STATION_OUTPUT = BUILDER
+                .comment("Percent of the normal heat each fuel rod makes, and each coolant channel carries (so also power out).")
+                .defineInRange("output_percent", 100, 1, 10_000);
+        STATION_MELTDOWNS = BUILDER
+                .comment("With the safeties off, a core left unstable or overheating explodes. Off: the interlock re-arms itself and SCRAMs instead.")
+                .define("meltdowns", true);
+        STATION_MELTDOWN_POWER = BUILDER
+                .comment("Meltdown explosion strength (TNT is 4).")
+                .defineInRange("meltdown_power", 8.0, 0.0, 20.0);
+        STATION_TILT_SECONDS = BUILDER
+                .comment("In overdrive, how long a fuel channel may sit without a live rod before the core goes unstable.")
+                .defineInRange("flux_tilt_seconds", 300, 10, 3600);
         BUILDER.pop();
 
         BUILDER.comment("Radiation. Only running reactors and meltdowns emit it.").push("radiation");

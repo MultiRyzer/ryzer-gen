@@ -149,9 +149,11 @@ public class AlloySmelterBlockEntity extends BlockEntity implements MenuProvider
         if (a.isEmpty() || b.isEmpty()) {
             return null;
         }
+        // Burning fuel cannot reach the heat of an electric-only recipe.
         return level.getRecipeManager()
                 .getRecipeFor(ModRecipes.ALLOYING_TYPE.get(), new AlloyingRecipe.Input(a, b), level)
                 .map(RecipeHolder::value)
+                .filter(recipe -> !recipe.electricOnly())
                 .orElse(null);
     }
 

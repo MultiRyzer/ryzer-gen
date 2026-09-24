@@ -135,6 +135,69 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('G', Tags.Items.GLASS_BLOCKS)
                 .unlockedBy("has_copper", has(Tags.Items.INGOTS_COPPER))
                 .save(output);
+
+        // Fission station. The shell is cheap structure (rule 3): steel-framed concrete-like casing
+        // and reinforced glass, many per craft. The cost is in the core (advanced boards, so the fuel
+        // cycle comes first) and in what goes into the reactor.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.STATION_CASING.get(), 32)
+                .pattern("BSB")
+                .pattern("SBS")
+                .pattern("BSB")
+                .define('B', ItemTags.STONE_BRICKS)
+                .define('S', ModTags.INGOTS_STEEL)
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.STATION_GLASS.get(), 16)
+                .pattern("GGG")
+                .pattern("SGS")
+                .pattern("GGG")
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .define('S', ModTags.INGOTS_STEEL)
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(output);
+        // Turbine rotor: steel blades round a copper-wound generator shaft.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.TURBINE_ROTOR.get())
+                .pattern("SCS")
+                .pattern("CRC")
+                .pattern("SCS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(output);
+        // Control core: lead shielding round advanced boards, with graphite for the neutron sensors.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.STATION_CORE.get())
+                .pattern("LAL")
+                .pattern("GSG")
+                .pattern("LAL")
+                .define('L', OreType.LEAD.ingotTag())
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .define('G', ModTags.INGOTS_GRAPHITE)
+                .define('S', ModTags.INGOTS_STEEL)
+                .unlockedBy("has_advanced_board", has(ModTags.CIRCUITS_ADVANCED))
+                .save(output);
+
+        // Graphite block: nine graphite, and back. The fission station's moderator.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GRAPHITE_BLOCK.get())
+                .pattern("GGG")
+                .pattern("GGG")
+                .pattern("GGG")
+                .define('G', ModTags.INGOTS_GRAPHITE)
+                .unlockedBy("has_graphite", has(ModTags.INGOTS_GRAPHITE))
+                .save(output);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.GRAPHITE.get(), 9)
+                .requires(ModTags.STORAGE_BLOCKS_GRAPHITE)
+                .unlockedBy("has_graphite_block", has(ModTags.STORAGE_BLOCKS_GRAPHITE))
+                .save(output, id("graphite_from_block"));
+        // Control rod: silver (real control rods are silver, indium and cadmium) in a steel sleeve.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CONTROL_ROD.get())
+                .pattern("A")
+                .pattern("S")
+                .pattern("A")
+                .define('A', OreType.SILVER.ingotTag())
+                .define('S', ModTags.INGOTS_STEEL)
+                .unlockedBy("has_silver", has(OreType.SILVER.ingotTag()))
+                .save(output);
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.WRENCH.get())
                 .pattern("S S")
                 .pattern(" I ")
@@ -237,6 +300,37 @@ public class ModRecipeProvider extends RecipeProvider {
                 SizedIngredient.of(ModTags.INGOTS_GRAPHITE, 1),
                 new ItemStack(ModItems.SILICON_CARBIDE.get()),
                 AlloyingRecipe.DEFAULT_COOKING_TIME), null);
+
+        // Silicon: silica reduced with carbon in an arc furnace (carbothermic reduction), far hotter
+        // than burning fuel reaches, so electric only.
+        output.accept(id("silicon_from_alloying"), new AlloyingRecipe(
+                SizedIngredient.of(Tags.Items.SANDS, 1),
+                SizedIngredient.of(ItemTags.COALS, 1),
+                new ItemStack(ModItems.SILICON.get()),
+                300, true), null);
+
+        // Tier 2 circuit: a silicon chip on a steel board with gold contacts.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ADVANCED_CONTROL_BOARD.get())
+                .pattern("GSG")
+                .pattern("TTT")
+                .define('G', Tags.Items.INGOTS_GOLD)
+                .define('S', ModTags.SILICON)
+                .define('T', ModTags.INGOTS_STEEL)
+                .unlockedBy("has_silicon", has(ModTags.SILICON))
+                .save(output);
+
+        // Plutonium ingots and nuggets, back and forth.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.PLUTONIUM_INGOT.get())
+                .pattern("NNN")
+                .pattern("NNN")
+                .pattern("NNN")
+                .define('N', ModTags.NUGGETS_PLUTONIUM)
+                .unlockedBy("has_plutonium", has(ModTags.NUGGETS_PLUTONIUM))
+                .save(output, id("plutonium_ingot_from_nuggets"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.PLUTONIUM_NUGGET.get(), 9)
+                .requires(ModTags.INGOTS_PLUTONIUM)
+                .unlockedBy("has_plutonium", has(ModTags.INGOTS_PLUTONIUM))
+                .save(output, id("plutonium_nuggets_from_ingot"));
 
         // TRISO: a uranium kernel coated in carbon and silicon carbide layers.
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.TRISO_PELLETS.get(), 2)
