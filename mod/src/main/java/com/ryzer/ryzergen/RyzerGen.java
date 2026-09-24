@@ -1,6 +1,8 @@
 package com.ryzer.ryzergen;
 
 import com.mojang.logging.LogUtils;
+import com.ryzer.ryzergen.battery.HomeBatteryBlock;
+import com.ryzer.ryzergen.battery.HomeBatteryBlockEntity;
 import com.ryzer.ryzergen.cable.EnergyCableBlockEntity;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlockEntity;
 import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterBlockEntity;
@@ -65,6 +67,11 @@ public class RyzerGen {
                 ElectricAlloySmelterBlockEntity::getEnergy);
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, ModBlockEntities.ENERGY_CABLE.get(),
                 EnergyCableBlockEntity::energyFor);
+        // Either half of the battery cabinet reaches the storage in the lower half.
+        event.registerBlock(Capabilities.EnergyStorage.BLOCK, (level, pos, state, be, side) -> {
+            HomeBatteryBlockEntity battery = HomeBatteryBlock.battery(level, pos, state);
+            return battery == null ? null : battery.energy();
+        }, ModBlocks.HOME_BATTERY.get());
 
         // Microreactor ports: any part can end up in a port's slot, so these go on all three blocks.
         Block[] microreactorParts = {ModBlocks.REACTOR_HEART.get(), ModBlocks.REACTOR_MACHINE_UNIT.get(), ModBlocks.COOLANT_JACKET.get()};
