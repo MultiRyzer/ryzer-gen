@@ -1,6 +1,8 @@
 package com.ryzer.ryzergen.registry;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.item.WrenchItem;
+import com.ryzer.ryzergen.radiation.DosimeterRingItem;
 import com.ryzer.ryzergen.machine.microreactor.FuelCoreItem;
 import com.ryzer.ryzergen.material.OreType;
 import net.minecraft.world.item.BlockItem;
@@ -15,8 +17,14 @@ public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(RyzerGen.MOD_ID);
 
     public static final DeferredItem<BlockItem> ALLOY_SMELTER = ITEMS.registerSimpleBlockItem(ModBlocks.ALLOY_SMELTER);
+    public static final DeferredItem<BlockItem> ELECTRIC_ALLOY_SMELTER = ITEMS.registerSimpleBlockItem(ModBlocks.ELECTRIC_ALLOY_SMELTER);
+    public static final DeferredItem<BlockItem> ENERGY_CABLE = ITEMS.registerSimpleBlockItem(ModBlocks.ENERGY_CABLE);
+    public static final DeferredItem<WrenchItem> WRENCH = ITEMS.registerItem("wrench", WrenchItem::new);
+    public static final DeferredItem<DosimeterRingItem> DOSIMETER_RING = ITEMS.registerItem("dosimeter_ring", DosimeterRingItem::new);
     public static final DeferredItem<Item> GRAPHITE = ITEMS.registerSimpleItem("graphite");
     public static final DeferredItem<Item> STEEL_INGOT = ITEMS.registerSimpleItem("steel_ingot");
+    /** Tier 1 circuit: iron, copper and redstone. */
+    public static final DeferredItem<Item> BASIC_CONTROL_BOARD = ITEMS.registerSimpleItem("basic_control_board");
 
     // Microreactor fuel chain: silicon carbide, TRISO pellets, sealed fuel core, depleted core.
     public static final DeferredItem<Item> SILICON_CARBIDE = ITEMS.registerSimpleItem("silicon_carbide");

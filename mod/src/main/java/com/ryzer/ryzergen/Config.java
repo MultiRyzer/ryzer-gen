@@ -49,6 +49,27 @@ public final class Config {
         BUILDER.pop();
     }
 
+    public static final ModConfigSpec.IntValue CABLE_RATE;
+    public static final ModConfigSpec.BooleanValue RADIATION_ENABLED;
+    public static final ModConfigSpec.DoubleValue RADIATION_STRENGTH;
+
+    static {
+        BUILDER.comment("Cables.").push("cables");
+        CABLE_RATE = BUILDER
+                .comment("FE per tick an energy cable moves from each input (a pushing generator or an extract side).")
+                .defineInRange("energy_rate", 1_000, 1, Integer.MAX_VALUE);
+        BUILDER.pop();
+
+        BUILDER.comment("Radiation. Only running reactors and meltdowns emit it.").push("radiation");
+        RADIATION_ENABLED = BUILDER
+                .comment("Players take a radiation dose near running reactors and meltdown sites.")
+                .define("enabled", true);
+        RADIATION_STRENGTH = BUILDER
+                .comment("Multiplies every dose rate. 0.5 halves radiation, 2 doubles it.")
+                .defineInRange("strength", 1.0, 0.0, 100.0);
+        BUILDER.pop();
+    }
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     /** A config value, or its default before the config has loaded (tooltips can ask very early). */

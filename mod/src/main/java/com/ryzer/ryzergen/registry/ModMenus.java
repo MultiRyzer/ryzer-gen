@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.registry;
 
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterMenu;
+import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterMenu;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.flag.FeatureFlags;
@@ -14,6 +15,9 @@ public final class ModMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<AlloySmelterMenu>> ALLOY_SMELTER =
             MENUS.register("alloy_smelter", () -> new MenuType<>(AlloySmelterMenu::new, FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<ElectricAlloySmelterMenu>> ELECTRIC_ALLOY_SMELTER =
+            MENUS.register("electric_alloy_smelter", () -> new MenuType<>(ElectricAlloySmelterMenu::new, FeatureFlags.DEFAULT_FLAGS));
 
     public static final DeferredHolder<MenuType<?>, MenuType<MicroreactorMenu>> MICROREACTOR =
             MENUS.register("microreactor", () -> new MenuType<>(MicroreactorMenu::new, FeatureFlags.DEFAULT_FLAGS));

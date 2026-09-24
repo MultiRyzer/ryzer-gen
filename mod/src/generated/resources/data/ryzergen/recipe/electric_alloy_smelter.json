@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "ryzergen:alloy_smelter"
+    },
+    "B": {
+      "tag": "c:circuits/basic"
+    },
+    "C": {
+      "tag": "c:ingots/copper"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "SBS",
+    "CAC",
+    "SCS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:electric_alloy_smelter"
+  }
+}

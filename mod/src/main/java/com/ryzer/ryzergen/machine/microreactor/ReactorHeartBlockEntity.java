@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.machine.microreactor;
 
 import com.ryzer.ryzergen.Config;
 import com.ryzer.ryzergen.machine.RedstoneMode;
+import com.ryzer.ryzergen.radiation.RadiationSources;
 import com.ryzer.ryzergen.material.ModTags;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
 import com.ryzer.ryzergen.registry.ModItems;
@@ -73,6 +74,8 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
     public static final int COOLED_TEMPERATURE = 450;
     public static final int UNCOOLED_TEMPERATURE = 700;
     public static final int OVERDRIVE_TEMPERATURE = 650;
+    /** Output reaches full strength from this core temperature up. */
+    private static final int WARM_TEMPERATURE = 400;
     /** Where a dry core in overdrive is heading. It melts down on the way, at MAX_TEMPERATURE. */
     private static final int RUNAWAY_TEMPERATURE = 1_200;
     /** Cold side of the heat engine: water near ambient, or hot air through a dry jacket. */
@@ -89,6 +92,14 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
     private static final int OVERDRIVE_BURN = 13;
     /** The core's burn time is written back to the item this often, so the GUI and item stay in step. */
     private static final int FUEL_SYNC_TICKS = 20;
+
+    /** Dose rate in mSv/s one block from the core (see Radiation): running, overdrive, runaway, meltdown site. */
+    public static final float RUNNING_RADIATION = 20;
+    public static final float OVERDRIVE_RADIATION = 50;
+    public static final float COOLANT_LOSS_RADIATION = 120;
+    public static final float MELTDOWN_RADIATION = 250;
+    /** A meltdown site fades over 20 minutes. */
+    public static final long MELTDOWN_FADE_TICKS = 24_000;
 
     /** What the readout screen says. */
     public enum Status {
@@ -329,6 +340,11 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         }
         if (running) {
             heart.run(cooled);
+            RadiationSources.emit((ServerLevel) level, MicroreactorStructure.centre(origin, facing), switch (heart.status) {
+                case COOLANT_LOSS -> COOLANT_LOSS_RADIATION;
+                case OVERDRIVE -> OVERDRIVE_RADIATION;
+                default -> RUNNING_RADIATION;
+            });
         }
         if (heart.status == Status.COOLANT_LOSS) {
             heart.alarm((ServerLevel) level, origin, facing);
@@ -372,7 +388,12 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
     private void run(boolean cooled) {
         boolean overdrive = !safeties;
         double thermalPower = Config.get(Config.MICROREACTOR_OUTPUT) / REFERENCE_EFFICIENCY * (overdrive ? OVERDRIVE_POWER : 1);
-        double eff = efficiency(temperature, cooled, overdrive && cooled);
+        // Each mode's efficiency is the Carnot figure at its own operating temperature, scaled only by
+        // warm-up. Using the live temperature instead made efficiency fall while water cooled a hot
+        // core down, which read backwards: dry is always lowest, water higher, overdrive highest.
+        int operating = !cooled ? UNCOOLED_TEMPERATURE : overdrive ? OVERDRIVE_TEMPERATURE : COOLED_TEMPERATURE;
+        double warmup = Mth.clamp((temperature - AMBIENT_TEMPERATURE) / (double) (WARM_TEMPERATURE - AMBIENT_TEMPERATURE), 0, 1);
+        double eff = efficiency(operating, cooled, overdrive && cooled) * warmup;
         efficiency = (int) Math.round(eff * 1000);
         generation = (int) Math.round(thermalPower * eff);
         energy.generate(generation);
@@ -426,6 +447,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         }
         level.explode(null, centre.x, centre.y, centre.z, Config.MICROREACTOR_MELTDOWN_POWER.get().floatValue(),
                 true, Level.ExplosionInteraction.BLOCK);
+        RadiationSources.contaminate(level, centre, MELTDOWN_RADIATION, MELTDOWN_FADE_TICKS);
     }
 
     private int fuelPermille() {

@@ -29,6 +29,8 @@ public class ModBlockLootProvider extends BlockLootSubProvider {
     @Override
     protected void generate() {
         dropSelf(ModBlocks.ALLOY_SMELTER.get());
+        dropSelf(ModBlocks.ELECTRIC_ALLOY_SMELTER.get());
+        dropSelf(ModBlocks.ENERGY_CABLE.get());
         dropSelf(ModBlocks.REACTOR_HEART.get());
         dropSelf(ModBlocks.REACTOR_MACHINE_UNIT.get());
         dropSelf(ModBlocks.COOLANT_JACKET.get());

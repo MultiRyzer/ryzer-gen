@@ -28,6 +28,21 @@ sourceSets.main.resources {
 
 repositories {
     // Add here additional repositories if required by some of the dependencies below.
+    maven {
+        // EMI, the recipe viewer used in the dev client.
+        name = 'TerraformersMC'
+        url = 'https://maven.terraformersmc.com/'
+    }
+    maven {
+        // Accessories (and its library owo-lib), for the dosimeter ring's slot.
+        name = 'wispforest'
+        url = 'https://maven.wispforest.io/releases/'
+    }
+    maven {
+        // Forgified Fabric API base, which Accessories needs on NeoForge.
+        name = 'Sinytra'
+        url = 'https://maven.su5ed.dev/releases/'
+    }
 }
 
 base {
@@ -116,6 +131,17 @@ configurations {
 }
 
 dependencies {
+    // EMI recipe viewer, in the dev client only. localRuntime keeps it out of the published mod,
+    // so it never becomes a dependency (design rule 9: optional integrations stay optional).
+    localRuntime "dev.emi:emi-neoforge:${emi_version}"
+    // Compile against EMI for our optional plugin (compat/emi). Only loaded when EMI is installed.
+    compileOnly "dev.emi:emi-neoforge:${emi_version}"
+
+    // Accessories: the dosimeter ring can be worn in its ring slot. Optional (design rule 9): the mod
+    // only calls it through compat/accessories when it is loaded, and the ring also works carried.
+    compileOnly "io.wispforest:accessories-neoforge:${accessories_version}"
+    localRuntime "io.wispforest:accessories-neoforge:${accessories_version}"
+
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
