@@ -1,0 +1,58 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "rotation": 90,
+          "texture": "#cable",
+          "uv": [
+            0.0,
+            5.0,
+            5.0,
+            11.0
+          ]
+        },
+        "east": {
+          "texture": "#cable",
+          "uv": [
+            0.0,
+            5.0,
+            5.0,
+            11.0
+          ]
+        },
+        "north": {
+          "texture": "#core"
+        },
+        "up": {
+          "rotation": 90,
+          "texture": "#cable",
+          "uv": [
+            0.0,
+            5.0,
+            5.0,
+            11.0
+          ]
+        },
+        "west": {
+          "texture": "#cable"
+        }
+      },
+      "from": [
+        5,
+        5,
+        0
+      ],
+      "to": [
+        11,
+        11,
+        5
+      ]
+    }
+  ],
+  "textures": {
+    "cable": "ryzergen:block/gas_pipe",
+    "core": "ryzergen:block/gas_pipe_core",
+    "particle": "ryzergen:block/gas_pipe"
+  }
+}

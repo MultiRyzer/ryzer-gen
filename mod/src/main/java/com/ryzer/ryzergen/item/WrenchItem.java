@@ -1,11 +1,12 @@
 package com.ryzer.ryzergen.item;
 
+import com.ryzer.ryzergen.cable.CableBlock;
+import com.ryzer.ryzergen.cable.CableBlockEntity;
 import com.ryzer.ryzergen.cable.CableNetwork;
 import com.ryzer.ryzergen.cable.CableSide;
-import com.ryzer.ryzergen.cable.EnergyCableBlock;
-import com.ryzer.ryzergen.cable.EnergyCableBlockEntity;
-import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlock;
-import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterBlock;
+import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.machine.microreactor.MicroreactorPartBlock;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -19,11 +20,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Configures cables the way Pipez does: right-click a side to switch it between delivering and
- * extracting, shift-right-click to disconnect or reconnect it. Also turns the alloy smelters.
+ * Configures cables and pipes the way Pipez does: right-click a side to switch it between delivering and
+ * extracting, shift-right-click to disconnect or reconnect it. Also turns machines round.
  */
 public class WrenchItem extends Item {
     public WrenchItem(Properties properties) {
@@ -36,7 +39,7 @@ public class WrenchItem extends Item {
         BlockPos pos = context.getClickedPos();
         BlockState state = level.getBlockState(pos);
         Player player = context.getPlayer();
-        if (state.getBlock() instanceof EnergyCableBlock cable) {
+        if (state.getBlock() instanceof CableBlock cable) {
             if (!level.isClientSide) {
                 Direction side = clickedSide(context);
                 boolean sneaking = player != null && player.isShiftKeyDown();
@@ -48,15 +51,39 @@ public class WrenchItem extends Item {
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
-        if (state.getBlock() instanceof AlloySmelterBlock || state.getBlock() instanceof ElectricAlloySmelterBlock) {
+        if (canTurn(state)) {
             if (!level.isClientSide) {
-                Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
-                level.setBlock(pos, state.setValue(HorizontalDirectionalBlock.FACING, facing.getClockWise()), Block.UPDATE_ALL);
+                turn(level, pos, state);
                 level.playSound(null, pos, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.4F, 1.6F);
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
         return InteractionResult.PASS;
+    }
+
+    /**
+     * Any of our machines with a horizontal facing turns, so new machines get this for free. The
+     * microreactor's parts do not: its ports and layout are fixed to the way it was built.
+     */
+    private static boolean canTurn(BlockState state) {
+        return state.hasProperty(HorizontalDirectionalBlock.FACING)
+                && RyzerGen.MOD_ID.equals(BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace())
+                && !(state.getBlock() instanceof MicroreactorPartBlock);
+    }
+
+    /** A quarter turn clockwise. Both halves of a two-high machine turn together. */
+    private static void turn(Level level, BlockPos pos, BlockState state) {
+        Direction facing = state.getValue(HorizontalDirectionalBlock.FACING).getClockWise();
+        level.setBlock(pos, state.setValue(HorizontalDirectionalBlock.FACING, facing), Block.UPDATE_ALL);
+        level.invalidateCapabilities(pos);
+        if (state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {
+            BlockPos other = state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
+            BlockState otherState = level.getBlockState(other);
+            if (otherState.is(state.getBlock())) {
+                level.setBlock(other, otherState.setValue(HorizontalDirectionalBlock.FACING, facing), Block.UPDATE_ALL);
+                level.invalidateCapabilities(other);
+            }
+        }
     }
 
     /**
@@ -81,15 +108,15 @@ public class WrenchItem extends Item {
         return hit.z > 0 ? Direction.SOUTH : Direction.NORTH;
     }
 
-    private static Component toggleConnection(EnergyCableBlock cable, Level level, BlockPos pos, Direction side) {
-        if (!(level.getBlockEntity(pos) instanceof EnergyCableBlockEntity entity)) {
+    private static Component toggleConnection(CableBlock cable, Level level, BlockPos pos, Direction side) {
+        if (!(level.getBlockEntity(pos) instanceof CableBlockEntity<?> entity)) {
             return null;
         }
         boolean disconnect = !entity.isDisabled(side);
         entity.setDisabled(side, disconnect);
         // Disconnecting from another cable disconnects both ends, so they stay apart.
         BlockPos other = pos.relative(side);
-        if (level.getBlockEntity(other) instanceof EnergyCableBlockEntity neighbour) {
+        if (level.getBlockState(other).is(cable) && level.getBlockEntity(other) instanceof CableBlockEntity<?> neighbour) {
             neighbour.setDisabled(side.getOpposite(), disconnect);
             BlockState otherState = level.getBlockState(other);
             level.setBlock(other, cable.connect(otherState, level, other), Block.UPDATE_ALL);
@@ -99,12 +126,12 @@ public class WrenchItem extends Item {
     }
 
     private static Component toggleExtract(BlockState state, Level level, BlockPos pos, Direction side) {
-        CableSide current = state.getValue(EnergyCableBlock.SIDES.get(side));
-        if (current == CableSide.NONE || level.getBlockState(pos.relative(side)).getBlock() instanceof EnergyCableBlock) {
+        CableSide current = state.getValue(CableBlock.SIDES.get(side));
+        if (current == CableSide.NONE || level.getBlockState(pos.relative(side)).getBlock() instanceof CableBlock) {
             return Component.translatable("message.ryzergen.cable.no_machine");
         }
         CableSide next = current == CableSide.EXTRACT ? CableSide.CONNECTED : CableSide.EXTRACT;
-        level.setBlock(pos, state.setValue(EnergyCableBlock.SIDES.get(side), next), Block.UPDATE_ALL);
+        level.setBlock(pos, state.setValue(CableBlock.SIDES.get(side), next), Block.UPDATE_ALL);
         CableNetwork.changed();
         level.invalidateCapabilities(pos);
         return Component.translatable(next == CableSide.EXTRACT ? "message.ryzergen.cable.extract" : "message.ryzergen.cable.insert");

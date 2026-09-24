@@ -1,11 +1,13 @@
 package com.ryzer.ryzergen.datagen;
 
+import com.ryzer.ryzergen.storage.PressureTankBlock;
+import com.ryzer.ryzergen.machine.pump.IntakePumpBlock;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.battery.BatteryChemistry;
 import com.ryzer.ryzergen.battery.HomeBatteryBlock;
 import com.ryzer.ryzergen.battery.HomeBatteryBlockEntity;
+import com.ryzer.ryzergen.cable.CableBlock;
 import com.ryzer.ryzergen.cable.CableSide;
-import com.ryzer.ryzergen.cable.EnergyCableBlock;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlock;
 import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterBlock;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorPartBlock;
@@ -43,7 +45,13 @@ public class ModBlockStateProvider extends BlockStateProvider {
         ModBlocks.DEEPSLATE_ORES.values().forEach(ore -> simpleBlockWithItem(ore.get(), cubeAll(ore.get())));
         alloySmelter();
         electricAlloySmelter();
-        energyCable();
+        cable(ModBlocks.ENERGY_CABLE.get(), "energy_cable");
+        cable(ModBlocks.ITEM_PIPE.get(), "item_pipe");
+        cable(ModBlocks.FLUID_PIPE.get(), "fluid_pipe");
+        cable(ModBlocks.GAS_PIPE.get(), "gas_pipe");
+        intakePump();
+        tank(ModBlocks.PRESSURE_TANK.get(), "pressure_tank", "steel");
+        tank(ModBlocks.FLUID_TANK.get(), "fluid_tank", "copper");
         homeBattery();
         microreactorPart(ModBlocks.REACTOR_HEART.get(), "reactor_heart");
         microreactorPart(ModBlocks.REACTOR_MACHINE_UNIT.get(), "reactor_machine_unit");
@@ -83,16 +91,16 @@ public class ModBlockStateProvider extends BlockStateProvider {
      * Cable: a multipart of a 6 x 6 core, one arm per connected side, and an 8 x 8 flange on
      * extract sides. Arms and flanges are modelled pointing north and turned into place.
      */
-    private void energyCable() {
-        Block block = ModBlocks.ENERGY_CABLE.get();
-        ResourceLocation cable = modLoc("block/energy_cable");
-        ResourceLocation coreTexture = modLoc("block/energy_cable_core");
-        ResourceLocation flange = modLoc("block/energy_cable_flange");
+    /** An energy cable or item pipe: a core, an arm per connected side and a flange per extract side. */
+    private void cable(Block block, String name) {
+        ResourceLocation cable = modLoc("block/" + name);
+        ResourceLocation coreTexture = modLoc("block/" + name + "_core");
+        ResourceLocation flange = modLoc("block/" + name + "_flange");
         // The core is a plain junction box. Arms map the cable texture's stripe band (rows 5 to 10)
         // along their length with explicit UVs, so one continuous stripe runs the whole way.
-        ModelFile core = models().getBuilder("energy_cable_core").texture("particle", cable).texture("core", coreTexture)
+        ModelFile core = models().getBuilder(name + "_core").texture("particle", cable).texture("core", coreTexture)
                 .element().from(5, 5, 5).to(11, 11, 11).textureAll("#core").end();
-        ModelFile arm = models().getBuilder("energy_cable_arm").texture("particle", cable)
+        ModelFile arm = models().getBuilder(name + "_arm").texture("particle", cable)
                 .texture("cable", cable).texture("core", coreTexture)
                 .element().from(5, 5, 0).to(11, 11, 5)
                 .face(Direction.NORTH).texture("#core").uvs(5, 5, 11, 11).end()
@@ -101,18 +109,30 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 .face(Direction.UP).texture("#cable").uvs(0, 5, 5, 11).rotation(ModelBuilder.FaceRotation.CLOCKWISE_90).end()
                 .face(Direction.DOWN).texture("#cable").uvs(0, 5, 5, 11).rotation(ModelBuilder.FaceRotation.CLOCKWISE_90).end()
                 .end();
-        ModelFile plate = models().getBuilder("energy_cable_flange").texture("particle", cable).texture("flange", flange)
+        ModelFile plate = models().getBuilder(name + "_flange").texture("particle", cable).texture("flange", flange)
                 .element().from(4, 4, 0).to(12, 12, 1).textureAll("#flange").end();
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block).part().modelFile(core).addModel().end();
         for (Direction dir : Direction.values()) {
             int x = dir == Direction.UP ? 270 : dir == Direction.DOWN ? 90 : 0;
             int y = dir.getAxis().isHorizontal() ? ((int) dir.toYRot() + 180) % 360 : 0;
             builder.part().modelFile(arm).rotationX(x).rotationY(y).addModel()
-                    .condition(EnergyCableBlock.SIDES.get(dir), CableSide.CONNECTED, CableSide.EXTRACT).end();
+                    .condition(CableBlock.SIDES.get(dir), CableSide.CONNECTED, CableSide.EXTRACT).end();
             builder.part().modelFile(plate).rotationX(x).rotationY(y).addModel()
-                    .condition(EnergyCableBlock.SIDES.get(dir), CableSide.EXTRACT).end();
+                    .condition(CableBlock.SIDES.get(dir), CableSide.EXTRACT).end();
         }
-        itemModels().withExistingParent("energy_cable", mcLoc("item/generated")).texture("layer0", modLoc("item/energy_cable"));
+        // The item is the pipe itself, as in Pipez: a straight run with the band along it and the core
+        // texture on the ends, so every kind is easy to tell apart in the inventory.
+        ModelFile straight = models().getBuilder(name + "_inventory").parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("particle", cable).texture("cable", cable).texture("core", coreTexture)
+                .element().from(5, 5, 0).to(11, 11, 16)
+                .face(Direction.NORTH).texture("#core").uvs(5, 5, 11, 11).end()
+                .face(Direction.SOUTH).texture("#core").uvs(5, 5, 11, 11).end()
+                .face(Direction.EAST).texture("#cable").uvs(0, 5, 16, 11).end()
+                .face(Direction.WEST).texture("#cable").uvs(0, 5, 16, 11).end()
+                .face(Direction.UP).texture("#cable").uvs(0, 5, 16, 11).rotation(ModelBuilder.FaceRotation.CLOCKWISE_90).end()
+                .face(Direction.DOWN).texture("#cable").uvs(0, 5, 16, 11).rotation(ModelBuilder.FaceRotation.CLOCKWISE_90).end()
+                .end();
+        itemModels().getBuilder(name).parent(straight);
     }
 
     /**
@@ -241,6 +261,125 @@ public class ModBlockStateProvider extends BlockStateProvider {
             case "grille", "port_energy" -> modLoc("block/microreactor/" + texture);
             default -> modLoc("block/machine/" + texture);
         });
+        return model;
+    }
+
+    private void intakePump() {
+        Block block = ModBlocks.INTAKE_PUMP.get();
+        ModelFile off = intakePumpModel("intake_pump", false);
+        ModelFile on = intakePumpModel("intake_pump_on", true);
+        horizontalBlock(block, state -> state.getValue(IntakePumpBlock.RUNNING) ? on : off);
+        simpleBlockItem(block, off);
+    }
+
+    /**
+     * Intake pump, facing north: a hazard-striped skid, a strainer with intake grilles low down (where
+     * the water comes in), the pump casing at the front with a light strip, the gunmetal motor behind
+     * it, the energy port on the back and the blue water port on top.
+     */
+    private ModelFile intakePumpModel(String name, boolean running) {
+        BoxModel boxes = new BoxModel();
+        boxes.add("steel_dark", 0, 0, 0, 16, 2, 16).sides("hazard");
+        boxes.add("steel", 1, 2, 1, 15, 7, 15);
+        boxes.add("steel", 0.5F, 3, 3, 1, 6, 13).decal(Direction.WEST, "grille");
+        boxes.add("steel", 15, 3, 3, 15.5F, 6, 13).decal(Direction.EAST, "grille");
+        boxes.add("steel", 3, 3, 0.5F, 13, 6, 1).decal(Direction.NORTH, "grille");
+        boxes.add("steel_dark", 0.5F, 7, 0.5F, 15.5F, 8, 15.5F);
+        // Pump casing at the front, with a light strip round it.
+        boxes.add("steel", 3, 8, 1, 13, 14, 8);
+        boxes.add(running ? "glow" : "glow_off", 2.9F, 12.25F, 0.9F, 13.1F, 12.75F, 8);
+        // Motor behind it: a gunmetal drum, two overlapping boxes for a rounded look.
+        boxes.add("lead", 4, 8, 8, 12, 14, 15);
+        boxes.add("lead", 3, 9, 8, 13, 13, 15);
+        // Energy port on the back.
+        boxes.add("steel_dark", 3, 3, 15, 13, 13, 16).decal(Direction.SOUTH, "port_energy");
+        // Water out: a copper riser to the blue port on top.
+        boxes.add("copper", 5, 14, 5, 11, 15, 11);
+        boxes.add("steel_dark", 3, 15, 3, 13, 16, 13).decal(Direction.UP, "port_coolant");
+        BlockModelBuilder model = models().getBuilder(name).parent(models().getExistingFile(mcLoc("block/block")));
+        boxes.build(model, "steel", texture -> modLoc("block/microreactor/" + texture));
+        return model;
+    }
+
+    /**
+     * Pressure tank (steel walls) and fluid tank (copper walls). On its own: posts at the corners, a sight glass in each side, a hazard-striped
+     * base and a cap. In a tower, each block is drawn as the north-west corner (outside faces north
+     * and west) and turned into place, with its glass at the inner edge, so the four corners share one
+     * sight glass down the middle of each face, running the full height. Base and cap only on the
+     * bottom and top layers.
+     */
+    private void tank(Block block, String name, String wall) {
+        BoxModel single = new BoxModel();
+        single.add("steel_dark", 0, 0, 0, 16, 2, 16).sides("hazard");
+        single.add("steel_dark", 0, 14, 0, 16, 16, 16).face(Direction.UP, "steel");
+        for (float x : new float[] {0, 14}) {
+            for (float z : new float[] {0, 14}) {
+                single.add("steel_dark", x, 2, z, x + 2, 14, z + 2);
+            }
+        }
+        single.add(wall, 2, 2, 0, 6, 14, 1);
+        single.add(wall, 10, 2, 0, 14, 14, 1);
+        single.add("glass", 6, 2, 0.5F, 10, 14, 1).face(Direction.SOUTH, "liner");
+        single.add(wall, 2, 2, 15, 6, 14, 16);
+        single.add(wall, 10, 2, 15, 14, 14, 16);
+        single.add("glass", 6, 2, 15, 10, 14, 15.5F).face(Direction.NORTH, "liner");
+        single.add(wall, 0, 2, 2, 1, 14, 6);
+        single.add(wall, 0, 2, 10, 1, 14, 14);
+        single.add("glass", 0.5F, 2, 6, 1, 14, 10).face(Direction.EAST, "liner");
+        single.add(wall, 15, 2, 2, 16, 14, 6);
+        single.add(wall, 15, 2, 10, 16, 14, 14);
+        single.add("glass", 15, 2, 6, 15.5F, 14, 10).face(Direction.WEST, "liner");
+        ModelFile singleModel = tankModel(name, single);
+
+        Map<PressureTankBlock.Layer, ModelFile> tower = new EnumMap<>(PressureTankBlock.Layer.class);
+        for (PressureTankBlock.Layer layer : PressureTankBlock.Layer.values()) {
+            boolean base = layer == PressureTankBlock.Layer.BOTTOM || layer == PressureTankBlock.Layer.SINGLE;
+            boolean cap = layer == PressureTankBlock.Layer.TOP || layer == PressureTankBlock.Layer.SINGLE;
+            float y1 = base ? 2 : 0;
+            float y2 = cap ? 14 : 16;
+            BoxModel corner = new BoxModel();
+            if (base) {
+                corner.add("steel_dark", 0, 0, 0, 16, 2, 16).sides("hazard");
+            }
+            if (cap) {
+                corner.add("steel_dark", 0, 14, 0, 16, 16, 16).face(Direction.UP, "steel");
+            }
+            corner.add("steel_dark", 0, y1, 0, 2, y2, 2);
+            corner.add(wall, 2, y1, 0, 12, y2, 1);
+            corner.add("glass", 12, y1, 0.5F, 16, y2, 1).face(Direction.SOUTH, "liner");
+            corner.add(wall, 0, y1, 2, 1, y2, 12);
+            corner.add("glass", 0.5F, y1, 12, 1, y2, 16).face(Direction.EAST, "liner");
+            tower.put(layer, tankModel(name + "_" + layer.getSerializedName(), corner));
+        }
+
+        getVariantBuilder(block).forAllStates(state -> {
+            PressureTankBlock.Corner corner = state.getValue(PressureTankBlock.CORNER);
+            if (corner == PressureTankBlock.Corner.NONE) {
+                return ConfiguredModel.builder().modelFile(singleModel).build();
+            }
+            int rotation = switch (corner) {
+                case NORTH_EAST -> 90;
+                case SOUTH_EAST -> 180;
+                case SOUTH_WEST -> 270;
+                default -> 0;
+            };
+            return ConfiguredModel.builder().modelFile(tower.get(state.getValue(PressureTankBlock.LAYER))).rotationY(rotation).build();
+        });
+        simpleBlockItem(block, singleModel);
+    }
+
+    private ModelFile tankModel(String name, BoxModel boxes) {
+        BlockModelBuilder model = models().getBuilder(name).parent(models().getExistingFile(mcLoc("block/block")));
+        boxes.build(model, "steel", texture -> switch (texture) {
+            case "glass" -> modLoc("block/machine/tank_glass");
+            case "liner" -> modLoc("block/microreactor/steel_dark");
+            default -> modLoc("block/microreactor/" + texture);
+        });
+        // The sight glass is clear with opaque glare streaks, drawn as cutout. Translucent glass would
+        // write depth and hide the translucent steam behind it. Each pane's inner face is a dark liner:
+        // from outside it faces away and is culled, so you see through the near pane to the far pane's
+        // liner, dark behind the steam.
+        model.renderType("cutout");
         return model;
     }
 

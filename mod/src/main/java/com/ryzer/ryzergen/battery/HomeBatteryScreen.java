@@ -70,7 +70,7 @@ public class HomeBatteryScreen extends AbstractContainerScreen<HomeBatteryMenu> 
         for (int bay = 0; bay < HomeBatteryBlockEntity.MAX_MODULES; bay++) {
             BatteryChemistry module = menu.module(bay);
             Component name = Component.translatable("gui.ryzergen.battery.chemistry." + module.getSerializedName());
-            graphics.drawString(font, name, BAY_X + 8, bayY(bay) + 1, module == BatteryChemistry.EMPTY ? 0xFF4D545D : 0xFF1D2126, false);
+            graphics.drawString(font, name, BAY_X + 7, bayY(bay) + 1, module == BatteryChemistry.EMPTY ? 0xFF4D545D : 0xFF1D2126, false);
         }
     }
 

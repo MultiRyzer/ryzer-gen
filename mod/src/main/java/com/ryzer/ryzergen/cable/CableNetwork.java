@@ -3,6 +3,7 @@ package com.ryzer.ryzergen.cable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayDeque;
@@ -41,6 +42,8 @@ public final class CableNetwork {
 
     public static Scan scan(Level level, BlockPos start) {
         List<Endpoint> endpoints = new ArrayList<>();
+        // Only cables of the starting cable's own kind join up: energy cables and item pipes never mix.
+        Block kind = level.getBlockState(start).getBlock();
         BlockPos leader = start;
         Set<BlockPos> seen = new HashSet<>();
         ArrayDeque<BlockPos> queue = new ArrayDeque<>();
@@ -49,19 +52,19 @@ public final class CableNetwork {
         while (!queue.isEmpty() && seen.size() < 4096) {
             BlockPos pos = queue.poll();
             BlockState state = level.getBlockState(pos);
-            if (!(state.getBlock() instanceof EnergyCableBlock)) {
+            if (!state.is(kind)) {
                 continue;
             }
             if (pos.asLong() < leader.asLong()) {
                 leader = pos;
             }
             for (Direction dir : Direction.values()) {
-                CableSide side = state.getValue(EnergyCableBlock.SIDES.get(dir));
+                CableSide side = state.getValue(CableBlock.SIDES.get(dir));
                 if (side == CableSide.NONE) {
                     continue;
                 }
                 BlockPos next = pos.relative(dir);
-                if (level.getBlockState(next).getBlock() instanceof EnergyCableBlock) {
+                if (level.getBlockState(next).is(kind)) {
                     if (seen.add(next)) {
                         queue.add(next);
                     }

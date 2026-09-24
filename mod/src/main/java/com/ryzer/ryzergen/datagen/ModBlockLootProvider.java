@@ -33,6 +33,12 @@ public class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.ALLOY_SMELTER.get());
         dropSelf(ModBlocks.ELECTRIC_ALLOY_SMELTER.get());
         dropSelf(ModBlocks.ENERGY_CABLE.get());
+        dropSelf(ModBlocks.ITEM_PIPE.get());
+        dropSelf(ModBlocks.FLUID_PIPE.get());
+        dropSelf(ModBlocks.GAS_PIPE.get());
+        dropSelf(ModBlocks.INTAKE_PUMP.get());
+        dropSelf(ModBlocks.PRESSURE_TANK.get());
+        dropSelf(ModBlocks.FLUID_TANK.get());
         // Only the lower half drops the cabinet; its modules drop from the block entity.
         add(ModBlocks.HOME_BATTERY.get(), createSinglePropConditionTable(ModBlocks.HOME_BATTERY.get(),
                 HomeBatteryBlock.HALF, DoubleBlockHalf.LOWER));

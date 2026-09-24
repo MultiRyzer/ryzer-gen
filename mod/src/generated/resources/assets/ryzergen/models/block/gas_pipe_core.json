@@ -1,0 +1,40 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#core"
+        },
+        "east": {
+          "texture": "#core"
+        },
+        "north": {
+          "texture": "#core"
+        },
+        "south": {
+          "texture": "#core"
+        },
+        "up": {
+          "texture": "#core"
+        },
+        "west": {
+          "texture": "#core"
+        }
+      },
+      "from": [
+        5,
+        5,
+        5
+      ],
+      "to": [
+        11,
+        11,
+        11
+      ]
+    }
+  ],
+  "textures": {
+    "core": "ryzergen:block/gas_pipe_core",
+    "particle": "ryzergen:block/gas_pipe"
+  }
+}

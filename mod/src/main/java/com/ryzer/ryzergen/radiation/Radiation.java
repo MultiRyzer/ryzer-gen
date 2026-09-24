@@ -15,19 +15,31 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
- * Player radiation (design rule 10). Once a second each player takes the dose rate from every source
+ * Radiation (design rule 10), for players and mobs alike. Once a second each player takes the dose rate from every source
  * nearby: strength over distance squared, cut by whatever stands in between. Dose builds while
  * exposed and slowly recovers away from sources. Effects escalate slowly and never kill outright
  * outside a meltdown.
+ *
+ * <p>Mobs work the same way, checked once a second around each source rather than per mob, so
+ * they cost nothing away from reactors. Their recovery is worked out when they are next exposed.
+ * Strong sources make no-go zones for mobs and can run mob farms.
  *
  * <p>Real basis: dose rate falls off with the square of distance, and shielding attenuates it; lead
  * is by far the best common shield. The recovery is a gameplay fudge.
@@ -63,22 +75,54 @@ public final class Radiation {
         PacketDistributor.sendToPlayer(player, new RadiationPayload(dose, rate));
     }
 
+    /** Once a second, every mob near a source takes its dose. */
+    @SubscribeEvent
+    public static void levelTick(LevelTickEvent.Post event) {
+        if (!(event.getLevel() instanceof ServerLevel level) || level.getGameTime() % 20 != 0
+                || !Config.RADIATION_ENABLED.get() || !Config.RADIATION_MOBS.get()) {
+            return;
+        }
+        List<RadiationSources.Source> sources = RadiationSources.sources(level);
+        if (sources.isEmpty()) {
+            return;
+        }
+        Set<Mob> exposed = new HashSet<>();
+        for (RadiationSources.Source source : sources) {
+            exposed.addAll(level.getEntitiesOfClass(Mob.class, new AABB(BlockPos.containing(source.pos())).inflate(RANGE)));
+        }
+        long now = level.getGameTime();
+        for (Mob mob : exposed) {
+            float rate = sourceRate(level, sources, mob.getEyePosition());
+            // Recovery since the last dose, at the players' rate.
+            long since = now - mob.getData(ModAttachments.RADIATION_EXPOSED);
+            float dose = Math.max(0, mob.getData(ModAttachments.RADIATION_DOSE) - RECOVERY * since / 20F);
+            dose = Math.min(MAX_DOSE, dose + rate);
+            mob.setData(ModAttachments.RADIATION_DOSE, dose);
+            mob.setData(ModAttachments.RADIATION_EXPOSED, now);
+            applyEffects(mob, dose);
+        }
+    }
+
     /** mSv per second at the player's head, after shielding and the dosimeter ring. */
     public static float doseRate(ServerLevel level, ServerPlayer player) {
-        Vec3 eye = player.getEyePosition();
+        float total = sourceRate(level, RadiationSources.sources(level), player.getEyePosition());
+        if (DosimeterRingItem.isWorn(player)) {
+            total *= 1 - DosimeterRingItem.PROTECTION;
+        }
+        return total;
+    }
+
+    /** mSv per second at a point from every source in range, after shielding and the config multiplier. */
+    private static float sourceRate(ServerLevel level, List<RadiationSources.Source> sources, Vec3 eye) {
         float total = 0;
-        for (RadiationSources.Source source : RadiationSources.sources(level)) {
+        for (RadiationSources.Source source : sources) {
             double distSq = Math.max(1, source.pos().distanceToSqr(eye));
             if (distSq > RANGE * RANGE) {
                 continue;
             }
             total += (float) (source.strength() / distSq * shielding(level, source.pos(), eye));
         }
-        total *= Config.RADIATION_STRENGTH.get().floatValue();
-        if (DosimeterRingItem.isWorn(player)) {
-            total *= 1 - DosimeterRingItem.PROTECTION;
-        }
-        return total;
+        return total * Config.RADIATION_STRENGTH.get().floatValue();
     }
 
     /**
@@ -111,19 +155,29 @@ public final class Radiation {
         return factor;
     }
 
-    /** Weakness, then nausea and hunger, then slow damage. Refreshed each second while the dose is high. */
-    private static void applyEffects(ServerPlayer player, float dose) {
+    /**
+     * Weakness, then sickness, then slow damage. Refreshed each second while the dose is high. Players
+     * get hunger and bouts of nausea; mobs, which neither eat nor see straight anyway, slow down.
+     */
+    private static void applyEffects(LivingEntity entity, float dose) {
         if (dose >= WEAKNESS) {
-            player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0, true, false, true));
+            entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0, true, false, true));
         }
         if (dose >= SICKNESS) {
-            player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 60, 0, true, false, true));
-            if (player.tickCount % 200 == 0) {
-                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 120, 0, true, false, true));
+            if (entity instanceof ServerPlayer) {
+                entity.addEffect(new MobEffectInstance(MobEffects.HUNGER, 60, 0, true, false, true));
+                if (entity.tickCount % 200 == 0) {
+                    entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 120, 0, true, false, true));
+                }
+            } else {
+                entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0, true, false, true));
             }
         }
-        if (dose >= DAMAGE && player.tickCount % 80 == 0) {
-            player.hurt(new DamageSource(player.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+        // Every 4 seconds for players (checked each tick of the second they are processed); mobs are
+        // processed once a second, so they take it on every fourth.
+        boolean hurtNow = entity instanceof ServerPlayer ? entity.tickCount % 80 == 0 : entity.level().getGameTime() % 80 == 0;
+        if (dose >= DAMAGE && hurtNow) {
+            entity.hurt(new DamageSource(entity.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
                     .getHolderOrThrow(ModDamageTypes.RADIATION)), 1);
         }
     }

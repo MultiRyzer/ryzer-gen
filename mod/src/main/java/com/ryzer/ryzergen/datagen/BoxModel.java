@@ -28,12 +28,27 @@ final class BoxModel {
         final float[] from;
         final float[] to;
         final Map<Direction, String> decals = new EnumMap<>(Direction.class);
+        /** Faces in a different tiling material from the rest of the box, such as hazard stripes. */
+        final Map<Direction, String> faces = new EnumMap<>(Direction.class);
         final Set<Direction> glowing = EnumSet.noneOf(Direction.class);
 
         Box(String material, float x1, float y1, float z1, float x2, float y2, float z2) {
             this.material = material;
             this.from = new float[] {x1, y1, z1};
             this.to = new float[] {x2, y2, z2};
+        }
+
+        Box face(Direction dir, String material) {
+            faces.put(dir, material);
+            return this;
+        }
+
+        /** The four sides in another material, as on a hazard-striped skid. */
+        Box sides(String material) {
+            for (Direction dir : SIDES) {
+                faces.put(dir, material);
+            }
+            return this;
         }
 
         Box decal(Direction dir, String texture) {
@@ -76,6 +91,7 @@ final class BoxModel {
             float[] to = {box.to[0], y2, box.to[2]};
             model.texture(box.material, texture.apply(box.material));
             box.decals.values().forEach(name -> model.texture(name, texture.apply(name)));
+            box.faces.values().forEach(name -> model.texture(name, texture.apply(name)));
             ModelBuilder<BlockModelBuilder>.ElementBuilder element = model.element()
                     .from(from[0], from[1] - yOffset, from[2]).to(to[0], to[1] - yOffset, to[2]);
             for (Direction dir : Direction.values()) {
@@ -91,7 +107,7 @@ final class BoxModel {
                     float[] uv = decalUv(dir, box, from, to);
                     face.texture("#" + decal).uvs(uv[0], uv[1], uv[2], uv[3]);
                 } else {
-                    face.texture("#" + box.material);
+                    face.texture("#" + box.faces.getOrDefault(dir, box.material));
                 }
                 if (box.glowing.contains(dir)) {
                     face.emissivity(15, 15);

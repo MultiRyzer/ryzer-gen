@@ -1,0 +1,33 @@
+{
+  "parent": "ryzergen:main/triso_pellets",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:sealed_fuel_core"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.sealed_fuel_core.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:sealed_fuel_core"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.sealed_fuel_core.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

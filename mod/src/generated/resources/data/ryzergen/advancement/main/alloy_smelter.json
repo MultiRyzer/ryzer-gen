@@ -1,0 +1,33 @@
+{
+  "parent": "ryzergen:main/root",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:alloy_smelter"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.alloy_smelter.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:alloy_smelter"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.alloy_smelter.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

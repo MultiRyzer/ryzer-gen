@@ -1,0 +1,33 @@
+{
+  "parent": "ryzergen:main/silicon_carbide",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:triso_pellets"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.triso_pellets.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:triso_pellets"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.triso_pellets.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
