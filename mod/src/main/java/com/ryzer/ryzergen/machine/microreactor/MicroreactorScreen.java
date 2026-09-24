@@ -2,24 +2,21 @@ package com.ryzer.ryzergen.machine.microreactor;
 
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.ARGB;
+import com.ryzer.ryzergen.client.GuiGauges;
 import com.ryzer.ryzergen.machine.RedstoneMode;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 
 import java.util.List;
 
@@ -127,58 +124,16 @@ public class MicroreactorScreen extends AbstractContainerScreen<MicroreactorMenu
         }
     }
 
-    /**
-     * A lit gauge, in the spirit of Mekanism's: a smooth gradient from a bright top to a dark base,
-     * a bright surface line, and a soft band of light drifting up through it.
-     */
     private void glowGauge(GuiGraphics graphics, int x, float fraction, int colour) {
-        int h = Math.round(Mth.clamp(fraction, 0, 1) * GAUGE_H);
-        if (h <= 0) {
-            return;
-        }
-        int x0 = leftPos + x;
-        int bottom = topPos + GAUGE_Y + GAUGE_H;
-        int top = bottom - h;
-        graphics.fillGradient(x0, top, x0 + 8, bottom, colour, ARGB.darken(colour, 0.45F));
-        graphics.enableScissor(x0, top, x0 + 8, bottom);
-        int band = bottom - (int) (Util.getMillis() / 45 % (GAUGE_H + 16)) + 8;
-        graphics.fillGradient(x0, band - 8, x0 + 8, band, 0x00FFFFFF, 0x38FFFFFF);
-        graphics.fillGradient(x0, band, x0 + 8, band + 8, 0x38FFFFFF, 0x00FFFFFF);
-        graphics.disableScissor();
-        graphics.fill(x0, top, x0 + 8, top + 1, ARGB.lighten(colour, 0.55F));
+        GuiGauges.glow(graphics, leftPos + x, topPos + GAUGE_Y, 8, GAUGE_H, fraction, colour);
     }
 
-    /** A fluid gauge drawn with the fluid's own animated texture and tint, filling from the bottom. */
     private void fluidGauge(GuiGraphics graphics, int x, float fraction, Fluid fluid) {
-        int h = Math.round(Mth.clamp(fraction, 0, 1) * GAUGE_H);
-        if (h <= 0) {
-            return;
-        }
-        IClientFluidTypeExtensions fluidClient = IClientFluidTypeExtensions.of(fluid);
-        TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
-                .apply(fluidClient.getStillTexture());
-        int tint = fluidClient.getTintColor();
-        float r = (tint >> 16 & 0xFF) / 255F;
-        float g = (tint >> 8 & 0xFF) / 255F;
-        float b = (tint & 0xFF) / 255F;
-        int x0 = leftPos + x;
-        int bottom = topPos + GAUGE_Y + GAUGE_H;
-        graphics.enableScissor(x0, bottom - h, x0 + 8, bottom);
-        for (int y = bottom - 8; y > bottom - h - 8; y -= 8) {
-            graphics.blit(x0, y, 0, 8, 8, sprite, r, g, b, 1F);
-        }
-        graphics.disableScissor();
-        graphics.fill(x0, bottom - h, x0 + 8, bottom - h + 1, 0x60FFFFFF);
+        GuiGauges.fluid(graphics, leftPos + x, topPos + GAUGE_Y, 8, GAUGE_H, fraction, fluid);
     }
 
-    /** Glass over a gauge: a highlight down the left and the scale ticks on top of the fill. */
     private void glass(GuiGraphics graphics, int x) {
-        int x0 = leftPos + x;
-        int y0 = topPos + GAUGE_Y;
-        graphics.fill(x0, y0, x0 + 1, y0 + GAUGE_H, 0x28FFFFFF);
-        for (int y = y0 + 5; y < y0 + GAUGE_H; y += 6) {
-            graphics.fill(x0 + 6, y, x0 + 8, y + 1, (y - y0 + 1) % 12 == 0 ? 0x70000000 : 0x40000000);
-        }
+        GuiGauges.glass(graphics, leftPos + x, topPos + GAUGE_Y, 8, GAUGE_H);
     }
 
     /**

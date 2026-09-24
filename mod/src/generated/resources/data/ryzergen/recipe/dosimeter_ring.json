@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "tag": "c:gems/fluorite"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "pattern": [
+    " F ",
+    "I I",
+    " I "
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:dosimeter_ring"
+  }
+}

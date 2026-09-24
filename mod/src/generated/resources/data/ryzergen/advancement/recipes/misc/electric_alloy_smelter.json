@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_alloy_smelter": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:alloy_smelter"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ryzergen:electric_alloy_smelter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_alloy_smelter"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ryzergen:electric_alloy_smelter"
+    ]
+  }
+}

@@ -19,6 +19,10 @@ From `mod/` (Java 21 required):
 - `./gradlew build` compiles and packages the jar.
 - `./gradlew runData` runs datagen into `src/generated/resources/`. Commit the generated files. Rerun it after changing anything under `datagen/`.
 
+The dev client also loads EMI (recipe viewer) and Accessories (ring slot for the dosimeter) through `localRuntime` in `build.gradle`, versions in `gradle.properties`. Neither is ever a dependency of the published mod: compat code lives in `compat/<mod>` and only touches the other mod after checking it is loaded (or, for EMI, through its own entrypoint).
+
+Shared machine pieces: `machine/MachineEnergyStorage` (receive-only FE buffer), `machine/RedstoneMode`, `client/GuiGauges` (lit and fluid gauges), and in the art tools `part_frame` for block faces. Cables live in `cable/`, radiation in `radiation/`.
+
 On this machine Gradle fails with "Unable to establish loopback connection" because Java cannot create its internal socket in the default temp folder. Prefix Gradle commands with `JAVA_TOOL_OPTIONS='-Djdk.net.unixdomain.tmpdir=C:\jtmp'` (the folder `C:\jtmp` must exist), and run them outside the sandbox.
 
 Registration uses `DeferredRegister` in `com.ryzer.ryzergen.registry`, wired up in `RyzerGen`. Every new item goes in the Ryzer Gen creative tab automatically. Lang entries are hand-written in `src/main/resources/assets/ryzergen/lang/en_us.json`. Models, blockstates, loot tables, tags, recipes and worldgen come from datagen (`com.ryzer.ryzergen.datagen`), not hand-written JSON.

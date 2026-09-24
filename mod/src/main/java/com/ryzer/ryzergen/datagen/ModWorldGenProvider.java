@@ -1,6 +1,8 @@
 package com.ryzer.ryzergen.datagen;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.registry.ModDamageTypes;
+import net.minecraft.world.damagesource.DamageType;
 import com.ryzer.ryzergen.material.OreType;
 import com.ryzer.ryzergen.registry.ModBlocks;
 import com.ryzer.ryzergen.world.ConfigurableOreBiomeModifier;
@@ -75,7 +77,9 @@ public class ModWorldGenProvider extends DatapackBuiltinEntriesProvider {
         super(output, registries, new RegistrySetBuilder()
                 .add(Registries.CONFIGURED_FEATURE, ModWorldGenProvider::configuredFeatures)
                 .add(Registries.PLACED_FEATURE, ModWorldGenProvider::placedFeatures)
-                .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ModWorldGenProvider::biomeModifiers),
+                .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ModWorldGenProvider::biomeModifiers)
+                .add(Registries.DAMAGE_TYPE, context -> context.register(ModDamageTypes.RADIATION,
+                        new DamageType("ryzergen.radiation", 0.0F))),
                 Set.of(RyzerGen.MOD_ID));
     }
 

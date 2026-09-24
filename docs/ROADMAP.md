@@ -10,7 +10,7 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] First commit to Git (optional: push to a private GitHub repo)
 
 ## Milestone 1: Microreactor (first playable)
-- [x] Ores needed for tier 1 (uranium, lead) with worldgen, common tags and config toggles (all 8 ores done, with placeholder textures)
+- [x] Ores needed for tier 1 (uranium, lead) with worldgen, common tags and config toggles (all 8 ores done)
 - [x] Alloy smelter (fuel burning, two inputs)
 - [x] Steel and graphite recipes
 - [x] Register reactor heart, reactor machine unit and coolant block
@@ -18,25 +18,31 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] Snap assembly: combined model, particles, sound (no motion animation yet)
 - [x] Break any block to disassemble
 - [x] Energy generation, fuel life, depletion into a depleted core
-- [x] Simple heat model with coolant bonus (the "boxed in stone throttles it" part is still to do)
-- [x] Control unit GUI (charge, temperature, output, on/off, redstone; fuel slot waits for the fuel core)
+- [x] Simple heat model with coolant bonus
+- [x] Control unit GUI (fuel, temperature, output, efficiency, energy, coolant, on/off, redstone, dump and safety controls)
 - [x] Fixed connection chutes on the assembled model (energy and coolant connected, steam modelled only)
-- [x] Ghost placement preview (outlines, suggested parts and a facing arrow while holding a part)
+- [x] Ghost placement preview (outlines and suggested parts while holding a part)
 - [ ] Placeholder textures, then proper 16x16 art
   - [x] Ores, raw drops, fluorite, salt, ingots and steel rebuilt on vanilla bases (`art/tools/material_textures.py`)
   - [x] Microreactor parts, formed machine, GUI and fuel items in the modern house style
-  - [ ] **To do:** the alloy smelter block faces and GUI are still placeholders
-- [ ] Recipes and config values
-- [ ] Basic radiation (dose, effects, config toggle)
-- [ ] Dosimeter ring with Curios slot support and inventory fallback
+  - [x] Alloy smelter GUI in the house style
+  - [ ] **To do:** the alloy smelter block faces are still placeholders
+  - [ ] **To do:** revisit the dosimeter ring and wrench item textures (fine for now, could be better)
+- [x] Recipes and config values (first pass: board, heart, units, jacket, graphite 3 per block; play-testing)
+- [x] Overdrive (safeties off, 45% efficiency) with coolant-loss meltdown, alarm and config toggle
+- [x] Dump mode to keep burning fuel on a full buffer
+- [x] EMI support: alloying recipes and tag names (optional, loads only with EMI)
+- [x] Basic radiation (dose, inverse-square falloff, shielding, effects, meltdown sites, config toggle)
+- [x] Dosimeter ring with Accessories slot support and inventory fallback (HUD gauge, Geiger clicks, 25% protection)
+- [x] Electric alloy smelter (FE, twice as fast, same recipes)
 
 ## Milestone 1b: Home battery
 - [ ] Home battery stack cabinet with 6 module slots and segment model
 - [ ] Lead-acid module
-- [ ] Basic cables
+- [x] Basic cables (Pipez style: auto-connect, wrench to extract or disconnect) and the wrench
 
 ## Milestone 2: Fuel cycle
-- [ ] Fluorite ore
+- [x] Fluorite ore (shipped with the other ores in milestone 1)
 - [ ] Core cracker, reprocessor, fuel fabricator
 - [ ] Recovered uranium, plutonium, waste, MOX fuel items
 - [ ] Waste storage block
@@ -60,5 +66,5 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - Fusion
 - Sail launcher automation and receiver dish
 - Overworld sky ring, flare events, multiplayer shared swarm
-- Mod integrations (Mekanism, EMI/JEI)
+- Mod integrations (Mekanism, JEI; EMI is done)
 - Public release on CurseForge and Modrinth
