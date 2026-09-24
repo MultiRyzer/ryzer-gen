@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_silicon": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:silicon"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ryzergen:advanced_control_board"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_silicon"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ryzergen:advanced_control_board"
+    ]
+  }
+}

@@ -13,6 +13,13 @@ public final class ModTags {
     public static final TagKey<Item> GEMS_SILICON_CARBIDE = common("gems/silicon_carbide");
     /** Tier 1 circuits. Mekanism's basic control circuit shares this tag. */
     public static final TagKey<Item> CIRCUITS_BASIC = common("circuits/basic");
+    /** Tier 2 circuits. Mekanism's advanced control circuit shares this tag. */
+    public static final TagKey<Item> CIRCUITS_ADVANCED = common("circuits/advanced");
+    /** Silicon as AE2 and others tag it. */
+    public static final TagKey<Item> SILICON = common("silicon");
+    public static final TagKey<Item> INGOTS_PLUTONIUM = common("ingots/plutonium");
+    public static final TagKey<Item> NUGGETS_PLUTONIUM = common("nuggets/plutonium");
+    public static final TagKey<Item> STORAGE_BLOCKS_GRAPHITE = common("storage_blocks/graphite");
     /** Vanilla has no charcoal block, but several mods add one. */
     public static final TagKey<Item> STORAGE_BLOCKS_CHARCOAL = common("storage_blocks/charcoal");
 

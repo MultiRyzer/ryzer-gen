@@ -5,6 +5,7 @@ import com.ryzer.ryzergen.battery.BatteryChemistry;
 import com.ryzer.ryzergen.battery.BatteryModuleItem;
 import com.ryzer.ryzergen.item.WrenchItem;
 import com.ryzer.ryzergen.radiation.DosimeterRingItem;
+import com.ryzer.ryzergen.machine.fission.FuelRodItem;
 import com.ryzer.ryzergen.machine.microreactor.FuelCoreItem;
 import com.ryzer.ryzergen.material.OreType;
 import net.minecraft.world.item.BlockItem;
@@ -27,6 +28,12 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> INTAKE_PUMP = ITEMS.registerSimpleBlockItem(ModBlocks.INTAKE_PUMP);
     public static final DeferredItem<BlockItem> PRESSURE_TANK = ITEMS.registerSimpleBlockItem(ModBlocks.PRESSURE_TANK);
     public static final DeferredItem<BlockItem> FLUID_TANK = ITEMS.registerSimpleBlockItem(ModBlocks.FLUID_TANK);
+    public static final DeferredItem<BlockItem> STATION_CORE = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_CORE);
+    public static final DeferredItem<BlockItem> CREATIVE_BATTERY = ITEMS.registerSimpleBlockItem(ModBlocks.CREATIVE_BATTERY);
+    public static final DeferredItem<BlockItem> CREATIVE_WATER_TANK = ITEMS.registerSimpleBlockItem(ModBlocks.CREATIVE_WATER_TANK);
+    public static final DeferredItem<BlockItem> STATION_CASING = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_CASING);
+    public static final DeferredItem<BlockItem> STATION_GLASS = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_GLASS);
+    public static final DeferredItem<BlockItem> TURBINE_ROTOR = ITEMS.registerSimpleBlockItem(ModBlocks.TURBINE_ROTOR);
     public static final DeferredItem<WrenchItem> WRENCH = ITEMS.registerItem("wrench", WrenchItem::new);
     public static final DeferredItem<BlockItem> HOME_BATTERY = ITEMS.registerSimpleBlockItem(ModBlocks.HOME_BATTERY);
     public static final DeferredItem<BatteryModuleItem> LEAD_ACID_MODULE = ITEMS.registerItem("lead_acid_module",
@@ -44,6 +51,35 @@ public final class ModItems {
     /** Safe to carry (design rule 10). Waits for the fuel cycle's core cracker. */
     public static final DeferredItem<Item> DEPLETED_FUEL_CORE = ITEMS.registerSimpleItem("depleted_fuel_core",
             new Item.Properties().stacksTo(16));
+
+    // Fuel cycle (tier 2): silicon and the advanced board, then what reprocessing makes and the
+    // fuel rods the fabricator presses for the fission reactor.
+    /** Made from sand and coal in the electric alloy smelter only. */
+    public static final DeferredItem<Item> SILICON = ITEMS.registerSimpleItem("silicon");
+    /** Tier 2 circuit: steel, gold and silicon. */
+    public static final DeferredItem<Item> ADVANCED_CONTROL_BOARD = ITEMS.registerSimpleItem("advanced_control_board");
+    /** A cracked depleted core: the fuel kernels, freed from their casing for the reprocessor. */
+    public static final DeferredItem<Item> SPENT_KERNELS = ITEMS.registerSimpleItem("spent_kernels");
+    public static final DeferredItem<Item> PLUTONIUM_NUGGET = ITEMS.registerSimpleItem("plutonium_nugget");
+    public static final DeferredItem<Item> PLUTONIUM_INGOT = ITEMS.registerSimpleItem("plutonium_ingot");
+    /** Fission products set in glass. Safe to carry (design rule 10); goes in the waste cask. */
+    public static final DeferredItem<Item> FISSION_WASTE = ITEMS.registerSimpleItem("fission_waste");
+    /** Fission reactor fuel: burns fast, and its spent rods reprocess into plutonium. */
+    public static final DeferredItem<FuelRodItem> URANIUM_FUEL_ROD = ITEMS.registerItem("uranium_fuel_rod", FuelRodItem::new,
+            new Item.Properties().stacksTo(16));
+    /** Fission reactor fuel: uranium with a nugget of plutonium. Hotter, and lasts much longer. */
+    public static final DeferredItem<FuelRodItem> MOX_FUEL_ROD = ITEMS.registerItem("mox_fuel_rod", FuelRodItem::new,
+            new Item.Properties().stacksTo(16));
+    /** What the fission station's fuel rods become. Safe to carry (rule 10); they go to reprocessing. */
+    public static final DeferredItem<Item> SPENT_URANIUM_ROD = ITEMS.registerSimpleItem("spent_uranium_rod",
+            new Item.Properties().stacksTo(16));
+    public static final DeferredItem<Item> SPENT_MOX_ROD = ITEMS.registerSimpleItem("spent_mox_rod",
+            new Item.Properties().stacksTo(16));
+    /** The fission station's brake: silver soaks up neutrons (tier 3's new material). */
+    public static final DeferredItem<Item> CONTROL_ROD = ITEMS.registerSimpleItem("control_rod",
+            new Item.Properties().stacksTo(16));
+    /** Nine graphite: storage, and the fission station's moderator. */
+    public static final DeferredItem<BlockItem> GRAPHITE_BLOCK = ITEMS.registerSimpleBlockItem(ModBlocks.GRAPHITE_BLOCK);
 
     public static final DeferredItem<BlockItem> REACTOR_HEART = ITEMS.registerSimpleBlockItem(ModBlocks.REACTOR_HEART);
     public static final DeferredItem<BlockItem> REACTOR_MACHINE_UNIT = ITEMS.registerSimpleBlockItem(ModBlocks.REACTOR_MACHINE_UNIT);

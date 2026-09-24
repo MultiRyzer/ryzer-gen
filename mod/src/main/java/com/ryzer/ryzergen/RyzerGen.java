@@ -5,6 +5,10 @@ import com.ryzer.ryzergen.battery.HomeBatteryBlock;
 import com.ryzer.ryzergen.battery.HomeBatteryBlockEntity;
 import com.ryzer.ryzergen.cable.EnergyCableBlockEntity;
 import com.ryzer.ryzergen.cable.FluidPipeBlockEntity;
+import com.ryzer.ryzergen.creative.CreativeSourceBlockEntity;
+import com.ryzer.ryzergen.machine.fission.StationCoreBlockEntity;
+import com.ryzer.ryzergen.machine.fission.StationLayout;
+import com.ryzer.ryzergen.machine.fission.StationStructure;
 import com.ryzer.ryzergen.machine.pump.IntakePumpBlockEntity;
 import com.ryzer.ryzergen.storage.PressureTankBlockEntity;
 import com.ryzer.ryzergen.cable.ItemPipeBlockEntity;
@@ -82,6 +86,31 @@ public class RyzerGen {
                 IntakePumpBlockEntity::energyFor);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.INTAKE_PUMP.get(),
                 IntakePumpBlockEntity::waterFor);
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, ModBlockEntities.CREATIVE_SOURCE.get(),
+                CreativeSourceBlockEntity::energyFor);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.CREATIVE_SOURCE.get(),
+                CreativeSourceBlockEntity::waterFor);
+        // Fission station ports, on a formed station's base: water in, fuel in, power out (pushed,
+        // and cables can also pull) on the front, and spent rods out round the side.
+        event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
+            StationCoreBlockEntity core = StationStructure.coreForPort(level, pos, StationLayout.Port.WATER);
+            return core == null ? null : core.runner().waterPort();
+        }, ModBlocks.STATION_CASING.get());
+        event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
+            StationCoreBlockEntity core = StationStructure.coreForPort(level, pos, StationLayout.Port.FUEL);
+            return core == null ? null : core.runner().fuelPort();
+        }, ModBlocks.STATION_CASING.get());
+        event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
+            StationCoreBlockEntity core = StationStructure.coreForPort(level, pos, StationLayout.Port.OUTPUT);
+            return core == null ? null : core.runner().outputPort();
+        }, ModBlocks.STATION_CASING.get());
+        event.registerBlock(Capabilities.EnergyStorage.BLOCK, (level, pos, state, be, side) -> {
+            StationCoreBlockEntity core = StationStructure.coreForPort(level, pos, StationLayout.Port.ENERGY);
+            return core == null ? null : core.runner().energy();
+        }, ModBlocks.STATION_CASING.get());
+        // The station core takes its parts by pipe while the station is still to be built.
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.STATION_CORE.get(),
+                StationCoreBlockEntity::itemsFor);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.PRESSURE_TANK.get(),
                 PressureTankBlockEntity::fluidFor);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.FLUID_PIPE.get(),

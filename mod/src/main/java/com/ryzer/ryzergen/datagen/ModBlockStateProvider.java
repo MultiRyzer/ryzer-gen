@@ -50,6 +50,12 @@ public class ModBlockStateProvider extends BlockStateProvider {
         cable(ModBlocks.FLUID_PIPE.get(), "fluid_pipe");
         cable(ModBlocks.GAS_PIPE.get(), "gas_pipe");
         intakePump();
+        stationParts();
+        simpleBlockWithItem(ModBlocks.CREATIVE_BATTERY.get(), models().cubeBottomTop("creative_battery",
+                modLoc("block/creative_battery_side"), modLoc("block/creative_top"), modLoc("block/creative_top")));
+        simpleBlockWithItem(ModBlocks.CREATIVE_WATER_TANK.get(), models().cubeBottomTop("creative_water_tank",
+                modLoc("block/creative_water_tank_side"), modLoc("block/creative_top"), modLoc("block/creative_top")));
+        simpleBlockWithItem(ModBlocks.GRAPHITE_BLOCK.get(), cubeAll(ModBlocks.GRAPHITE_BLOCK.get()));
         tank(ModBlocks.PRESSURE_TANK.get(), "pressure_tank", "steel");
         tank(ModBlocks.FLUID_TANK.get(), "fluid_tank", "copper");
         homeBattery();
@@ -381,6 +387,22 @@ public class ModBlockStateProvider extends BlockStateProvider {
         // liner, dark behind the steam.
         model.renderType("cutout");
         return model;
+    }
+
+    /**
+     * Fission station parts, as they look before the station forms (then the core draws it all). The
+     * formed states reuse the same models, which are hidden anyway.
+     */
+    private void stationParts() {
+        simpleBlockWithItem(ModBlocks.STATION_CASING.get(), models().cubeAll("station_casing", modLoc("block/station_casing")));
+        simpleBlockWithItem(ModBlocks.STATION_GLASS.get(),
+                models().cubeAll("station_glass", modLoc("block/station_glass")).renderType("cutout"));
+        simpleBlockWithItem(ModBlocks.TURBINE_ROTOR.get(), models().cubeBottomTop("turbine_rotor",
+                modLoc("block/turbine_rotor_side"), modLoc("block/station_casing"), modLoc("block/turbine_rotor_top")));
+        ModelFile core = models().orientable("station_core", modLoc("block/station_casing"),
+                modLoc("block/station_core_front"), modLoc("block/station_casing"));
+        horizontalBlock(ModBlocks.STATION_CORE.get(), core);
+        simpleBlockItem(ModBlocks.STATION_CORE.get(), core);
     }
 
     private void alloySmelter() {

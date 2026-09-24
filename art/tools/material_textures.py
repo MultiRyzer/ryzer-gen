@@ -198,6 +198,12 @@ INGOT_RAMPS = {
     'steel_ingot': ['1b1f24', '2e343c', '47505b', '65707d', '8791a0', 'a9b3c1', 'cfd6e0'],
     # Graphite is tagged c:ingots/graphite like other reactor mods: a near-black bar with a soft sheen.
     'graphite': ['0c0d0f', '17191c', '23262a', '32363b', '464b52', '62686f', '8a9198'],
+    # Plutonium: a steel-blue metal with a violet cast, bright at the edges, special among the
+    # ingots. Real basis: plutonium in solution is famously blue-violet.
+    'plutonium_ingot': ['0d1026', '1a1f45', '2a3370', '3d4f9e', '5a73c8', '8aa4ec', 'c8d8ff'],
+}
+NUGGET_RAMPS = {
+    'plutonium_nugget': INGOT_RAMPS['plutonium_ingot'],
 }
 RAW_RAMPS = {
     'raw_uranium': ['141a10', '24321a', '3b5226', '5b7a33', '86a84a', 'b8d86a', 'e2f5a0'],
@@ -215,6 +221,12 @@ GEM_RAMPS = {
     'silicon_carbide': ('item/amethyst_shard', ['0d1414', '152426', '1f3a3d', '2a5a5c', '3b8580', '62b8a8', 'b8f0e0']),
     # TRISO pellets: glossy black carbon-coated grains, on the beetroot seeds' little cluster.
     'triso_pellets': ('item/beetroot_seeds', ['0b0b0d', '17181b', '25272b', '363a40', '50555d', '7a8089', 'c4cad2']),
+    # Silicon: a blue-grey metalloid with a bright sheen, on quartz's crystal shape.
+    'silicon': ('item/quartz', ['10141b', '1d2530', '2e3948', '445366', '627590', '8da0bb', 'c9d6ea']),
+    # Spent kernels: the same little cluster as TRISO, its coating burnt and oxidised to rust brown.
+    'spent_kernels': ('item/beetroot_seeds', ['0e0b09', '1d1613', '2f231c', '463427', '634935', '86644a', 'b08d6c']),
+    # Fission waste: fission products set in glass (vitrified), a dark amber lump.
+    'fission_waste': ('item/magma_cream', ['0a0604', '160c06', '24130a', '361d0e', '4f2c14', '7a4a20', 'd59a50']),
 }
 
 
@@ -279,6 +291,10 @@ def main():
         publish(f'item/{name}', gradient_map(vanilla('item/iron_ingot'), ramp))
     for name, ramp in RAW_RAMPS.items():
         publish(f'item/{name}', gradient_map(vanilla('item/raw_iron'), ramp))
+    # Graphite block: coal block's shape in graphite's near-black with a soft sheen.
+    publish('block/graphite_block', gradient_map(vanilla('block/coal_block'), INGOT_RAMPS['graphite']))
+    for name, ramp in NUGGET_RAMPS.items():
+        publish(f'item/{name}', gradient_map(vanilla('item/iron_nugget'), ramp))
     for name, (base, ramp) in GEM_RAMPS.items():
         publish(f'item/{name}', gradient_map(vanilla(base), ramp))
 

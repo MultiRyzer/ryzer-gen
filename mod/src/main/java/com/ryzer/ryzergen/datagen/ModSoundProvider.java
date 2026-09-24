@@ -28,5 +28,9 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         add(ModSounds.MICROREACTOR_ALARM, definition()
                 .subtitle("subtitles.ryzergen.microreactor_alarm")
                 .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "microreactor_alarm")).attenuationDistance(64)));
+        // The fission station's alarm: the same beep for now, lower and heard from further away.
+        add(ModSounds.STATION_ALARM, definition()
+                .subtitle("subtitles.ryzergen.station_alarm")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "microreactor_alarm")).attenuationDistance(96)));
     }
 }

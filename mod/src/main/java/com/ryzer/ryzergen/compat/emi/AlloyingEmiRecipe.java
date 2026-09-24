@@ -12,13 +12,16 @@ import net.minecraft.resources.ResourceLocation;
 /** One alloy smelter recipe in EMI, laid out like the smelter: two inputs over a flame, an arrow, the output. */
 public class AlloyingEmiRecipe extends BasicEmiRecipe {
     private final int cookingTime;
+    private final boolean electricOnly;
 
     public AlloyingEmiRecipe(ResourceLocation id, AlloyingRecipe recipe) {
-        super(RyzerGenEmiPlugin.ALLOYING, id, 96, 42);
+        // An electric-only recipe gets a line under the cook time saying so.
+        super(RyzerGenEmiPlugin.ALLOYING, id, 96, recipe.electricOnly() ? 52 : 42);
         inputs.add(EmiIngredient.of(recipe.first().ingredient(), recipe.first().count()));
         inputs.add(EmiIngredient.of(recipe.second().ingredient(), recipe.second().count()));
         outputs.add(EmiStack.of(recipe.result()));
         cookingTime = recipe.cookingTime();
+        electricOnly = recipe.electricOnly();
     }
 
     @Override
@@ -31,5 +34,8 @@ public class AlloyingEmiRecipe extends BasicEmiRecipe {
         widgets.addFillingArrow(42, 8, cookingTime * 50);
         widgets.addSlot(outputs.get(0), 70, 4).large(true).recipeContext(this);
         widgets.addText(Component.translatable("emi.cooking.time", cookingTime / 20F), 38, 32, 0xFF404040, false);
+        if (electricOnly) {
+            widgets.addText(Component.translatable("jei.ryzergen.alloying.electric_only"), 0, 43, 0xFFC0392B, false);
+        }
     }
 }

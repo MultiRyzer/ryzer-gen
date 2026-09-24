@@ -27,5 +27,14 @@
       }
     ],
     "subtitle": "subtitles.ryzergen.microreactor_hum"
+  },
+  "station_alarm": {
+    "sounds": [
+      {
+        "attenuation_distance": 96,
+        "name": "ryzergen:microreactor_alarm"
+      }
+    ],
+    "subtitle": "subtitles.ryzergen.station_alarm"
   }
 }

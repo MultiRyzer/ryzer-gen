@@ -6,6 +6,8 @@ import com.ryzer.ryzergen.cable.CableScreen;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterScreen;
 import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterScreen;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorScreen;
+import com.ryzer.ryzergen.machine.fission.StationControlScreen;
+import com.ryzer.ryzergen.machine.fission.StationCoreScreen;
 import com.ryzer.ryzergen.machine.pump.IntakePumpScreen;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
 import com.ryzer.ryzergen.registry.ModFluids;
@@ -14,7 +16,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
@@ -31,12 +35,21 @@ public final class ClientSetup {
         event.register(ModMenus.GAS_PIPE.get(), CableScreen::new);
         event.register(ModMenus.HOME_BATTERY.get(), HomeBatteryScreen::new);
         event.register(ModMenus.INTAKE_PUMP.get(), IntakePumpScreen::new);
+        event.register(ModMenus.STATION_CORE.get(), StationCoreScreen::new);
+        event.register(ModMenus.STATION_CONTROL.get(), StationControlScreen::new);
         event.register(ModMenus.MICROREACTOR.get(), MicroreactorScreen::new);
     }
 
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.PRESSURE_TANK.get(), PressureTankRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.STATION_CORE.get(), StationRenderer::new);
+    }
+
+    /** The station's geometry is read from resources, so drop it when they reload. */
+    @SubscribeEvent
+    public static void registerReloadListeners(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener((ResourceManagerReloadListener) manager -> StationGeometry.clear());
     }
 
     /** Steam's look in GUIs and tanks: a pale animated haze. */

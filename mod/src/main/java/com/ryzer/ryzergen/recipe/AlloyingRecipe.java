@@ -18,9 +18,16 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 
-/** Two inputs, in either slot order, cooked into one result in the alloy smelter. */
-public record AlloyingRecipe(SizedIngredient first, SizedIngredient second, ItemStack result, int cookingTime)
+/**
+ * Two inputs, in either slot order, cooked into one result in the alloy smelter. An electric-only
+ * recipe needs more heat than burning fuel gives, so only the electric alloy smelter makes it.
+ */
+public record AlloyingRecipe(SizedIngredient first, SizedIngredient second, ItemStack result, int cookingTime, boolean electricOnly)
         implements Recipe<AlloyingRecipe.Input> {
+
+    public AlloyingRecipe(SizedIngredient first, SizedIngredient second, ItemStack result, int cookingTime) {
+        this(first, second, result, cookingTime, false);
+    }
 
     public static final int DEFAULT_COOKING_TIME = 200;
 
@@ -28,7 +35,8 @@ public record AlloyingRecipe(SizedIngredient first, SizedIngredient second, Item
             SizedIngredient.FLAT_CODEC.fieldOf("first").forGetter(AlloyingRecipe::first),
             SizedIngredient.FLAT_CODEC.fieldOf("second").forGetter(AlloyingRecipe::second),
             ItemStack.CODEC.fieldOf("result").forGetter(AlloyingRecipe::result),
-            ExtraCodecs.POSITIVE_INT.optionalFieldOf("cooking_time", DEFAULT_COOKING_TIME).forGetter(AlloyingRecipe::cookingTime)
+            ExtraCodecs.POSITIVE_INT.optionalFieldOf("cooking_time", DEFAULT_COOKING_TIME).forGetter(AlloyingRecipe::cookingTime),
+            com.mojang.serialization.Codec.BOOL.optionalFieldOf("electric_only", false).forGetter(AlloyingRecipe::electricOnly)
     ).apply(instance, AlloyingRecipe::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, AlloyingRecipe> STREAM_CODEC = StreamCodec.composite(
@@ -36,6 +44,7 @@ public record AlloyingRecipe(SizedIngredient first, SizedIngredient second, Item
             SizedIngredient.STREAM_CODEC, AlloyingRecipe::second,
             ItemStack.STREAM_CODEC, AlloyingRecipe::result,
             ByteBufCodecs.VAR_INT, AlloyingRecipe::cookingTime,
+            ByteBufCodecs.BOOL, AlloyingRecipe::electricOnly,
             AlloyingRecipe::new);
 
     /** True when the first slot holds the first ingredient; false when the player put them in the other way round. */

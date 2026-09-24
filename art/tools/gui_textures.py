@@ -223,11 +223,11 @@ def buttons(t):
     ])
 
 
-def safety_switch(t):
+def safety_switch(t, armed_at=SPRITE_SAFETY_ARMED, disarmed_at=SPRITE_SAFETY_DISARMED):
     """Wide safety interlock switch. Armed: graphite plate, guard cover closed, green lamp.
     Disarmed: hazard stripes, cover flipped up, lever thrown, red lamp."""
     w, h = SAFETY_SWITCH[2], SAFETY_SWITCH[3]
-    for (x, y), armed in ((SPRITE_SAFETY_ARMED, True), (SPRITE_SAFETY_DISARMED, False)):
+    for (x, y), armed in ((armed_at, True), (disarmed_at, False)):
         t.rect(x, y, x + w - 1, y + h - 1, 'U')
         if armed:
             t.rect(x + 1, y + 1, x + w - 2, y + h - 2, 'b')
@@ -451,6 +451,59 @@ def intake_pump():
     return t
 
 
+def station_core():
+    """Fission station control core: the parts store (3 x 3 slots) on the left, the readout screen
+    on the right (status, a row per part, a progress bar drawn in code), the player's inventory below."""
+    t = Tex(SIZE)
+    panel(t, PANEL_W, SMELTER_H)
+    bx0, by0, bx1, by1 = SMELTER_BAY
+    recess(t, bx0, by0, bx1 - bx0 + 1, by1 - by0 + 1, 'S', 'U', 'A')
+    for row in range(3):
+        for col in range(3):
+            slot(t, 7 + col * 18, 17 + row * 18)
+    screen(t, 66, 16, 104, 55)
+    t.rect(69, 28, 166, 28, 'f')
+    for row in range(3):
+        for col in range(9):
+            slot(t, 7 + col * 18, 83 + row * 18)
+    for col in range(9):
+        slot(t, 7 + col * 18, 141)
+    return t
+
+
+def station_control():
+    """Fission station controls, 216 wide: the 5 x 5 core grid on the left with the plan tools
+    under it (plan frames, bars and tool icons are drawn in code), the readout screen on the right
+    (live readings above a cyan line, the plan's forecast below), the heat, water and energy wells,
+    the power and redstone keys, and the player's inventory centred at the bottom. Sprites sit
+    below the panel: keycaps at 0,224 and 16,224; power keys (on, on hover, off, off hover) from 32,224;
+    the safety switch (armed, disarmed) at 0,240 and 34,240, sitting in a recess at 103,108."""
+    w = 216
+    t = Tex(SIZE)
+    panel(t, w, 222)
+    recess(t, 4, 13, w - 8, 116, 'S', 'U', 'A')
+    for row in range(5):
+        for col in range(5):
+            slot(t, 7 + col * 18, 17 + row * 18)
+    screen(t, 100, 16, 110, 64)
+    t.rect(103, 39, 206, 39, 'f')
+    for y in (83, 91, 99):
+        well(t, 103, y, 106, 6, ticks=False)
+    inv_x = (w - 162) // 2
+    for row in range(3):
+        for col in range(9):
+            slot(t, inv_x + col * 18, 139 + row * 18)
+    for col in range(9):
+        slot(t, inv_x + col * 18, 197)
+    keycap(t, 0, 224, False)
+    keycap(t, 16, 224, True)
+    for i, (on, hover) in enumerate(((True, False), (True, True), (False, False), (False, True))):
+        power_key(t, 32 + i * 16, 224, on, hover)
+    recess(t, 103, 108, 36, 16, 'U', 'U', 'b')
+    safety_switch(t, (0, 240), (34, 240))
+    return t
+
+
 def cable():
     """Cable panel, drawn for six extract rows plus the footer. The rows are drawn in code, and the
     screen shows only as many as the cable has, then this texture's bottom edge."""
@@ -468,6 +521,8 @@ def main():
     publish('gui/home_battery', home_battery())
     publish('gui/cable', cable())
     publish('gui/intake_pump', intake_pump())
+    publish('gui/station_core', station_core())
+    publish('gui/station_control', station_control())
 
 
 if __name__ == '__main__':

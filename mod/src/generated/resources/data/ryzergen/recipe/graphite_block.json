@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "c:ingots/graphite"
+    }
+  },
+  "pattern": [
+    "GGG",
+    "GGG",
+    "GGG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:graphite_block"
+  }
+}

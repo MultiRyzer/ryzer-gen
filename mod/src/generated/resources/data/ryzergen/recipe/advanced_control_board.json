@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "c:ingots/gold"
+    },
+    "S": {
+      "tag": "c:silicon"
+    },
+    "T": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "GSG",
+    "TTT"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:advanced_control_board"
+  }
+}

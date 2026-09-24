@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "ryzergen:block/station_casing",
+    "side": "ryzergen:block/turbine_rotor_side",
+    "top": "ryzergen:block/turbine_rotor_top"
+  }
+}

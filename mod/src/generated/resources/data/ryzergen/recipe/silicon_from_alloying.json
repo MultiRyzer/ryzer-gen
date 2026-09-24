@@ -1,0 +1,17 @@
+{
+  "type": "ryzergen:alloying",
+  "cooking_time": 300,
+  "electric_only": true,
+  "first": {
+    "count": 1,
+    "tag": "c:sands"
+  },
+  "result": {
+    "count": 1,
+    "id": "ryzergen:silicon"
+  },
+  "second": {
+    "count": 1,
+    "tag": "minecraft:coals"
+  }
+}

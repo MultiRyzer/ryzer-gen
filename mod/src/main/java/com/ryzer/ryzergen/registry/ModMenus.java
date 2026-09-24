@@ -7,6 +7,8 @@ import com.ryzer.ryzergen.cable.CableMenu;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterMenu;
 import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterMenu;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorMenu;
+import com.ryzer.ryzergen.machine.fission.StationControlMenu;
+import com.ryzer.ryzergen.machine.fission.StationCoreMenu;
 import com.ryzer.ryzergen.machine.pump.IntakePumpMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.flag.FeatureFlags;
@@ -42,6 +44,12 @@ public final class ModMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<IntakePumpMenu>> INTAKE_PUMP =
             MENUS.register("intake_pump", () -> new MenuType<>(IntakePumpMenu::new, FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<StationCoreMenu>> STATION_CORE =
+            MENUS.register("station_core", () -> new MenuType<>(StationCoreMenu::new, FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<StationControlMenu>> STATION_CONTROL =
+            MENUS.register("station_control", () -> new MenuType<>(StationControlMenu::new, FeatureFlags.DEFAULT_FLAGS));
 
     public static final DeferredHolder<MenuType<?>, MenuType<HomeBatteryMenu>> HOME_BATTERY =
             MENUS.register("home_battery", () -> new MenuType<>(HomeBatteryMenu::new, FeatureFlags.DEFAULT_FLAGS));
