@@ -1,0 +1,33 @@
+{
+  "parent": "ryzergen:main/root",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:graphite"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.graphite.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:graphite"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.graphite.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

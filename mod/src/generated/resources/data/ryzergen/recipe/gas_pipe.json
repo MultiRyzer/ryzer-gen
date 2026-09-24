@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:ingots/copper"
+    },
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "CGC",
+    "SSS"
+  ],
+  "result": {
+    "count": 8,
+    "id": "ryzergen:gas_pipe"
+  }
+}

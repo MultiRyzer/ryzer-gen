@@ -1,0 +1,31 @@
+{
+  "parent": "ryzergen:main/overdrive",
+  "criteria": {
+    "meltdown": {
+      "conditions": {
+        "milestone": "meltdown"
+      },
+      "trigger": "ryzergen:milestone"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.meltdown.description"
+    },
+    "frame": "challenge",
+    "hidden": true,
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:depleted_fuel_core"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.meltdown.title"
+    }
+  },
+  "requirements": [
+    [
+      "meltdown"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

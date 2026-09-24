@@ -112,8 +112,9 @@ Inspired by the new generation of transportable microreactors. It gets its own o
 - Port layout (machine facing north):
   - **Energy out:** cable socket on the back face of the lower back block. The machine pushes energy out, so it works with cables that do not pull (Mekanism's included).
   - **Coolant in:** intake chute on the top face of the upper back block. Accepts water only, and pipes cannot drain it.
-  - **Heat/steam out:** outlet on the right-hand face of the lower back block. Modelled, connected later when steam matters.
-- Every port is a 10x10 flange flush with the block face, centred, around an 8x8 socket. That seats the common 6x6 pipes and cables (Pipez, Mekanism) and their 8x8 end plates. The ring colour says what it carries: red energy, blue coolant, white steam.
+  - **Steam out:** outlet on the right-hand face of the lower back block. The water the reactor boils leaves as steam (10 mB of steam per mB of water, config), pushed out of the port into a gas pipe or pressure tank. With nothing connected it blows out as a visible plume; running dry there is no steam and no plume. Steam will drive turbines at the next tier.
+  - **Fuel hatch:** on the top face of the upper front block, built like the coolant intake. Fresh cores go in when the slot is free, and the reactor pushes a spent core back out of the same hatch into whatever sits on it, the way the energy port pushes power. So one item pipe from a chest (its chest side set to extract) keeps the reactor fuelled and carries spent cores back to the chest. Only spent cores ever come out, so automation never pulls a core with fuel left in it. Real basis: reactors are refuelled from above.
+- Every port is a 10x10 flange flush with the block face, centred, around an 8x8 socket. That seats the common 6x6 pipes and cables (Pipez, Mekanism) and their 8x8 end plates. The ring colour says what it carries: red energy, blue coolant, white steam, orange items (fuel).
 - Ports use the standard NeoForge energy and fluid capabilities, only on the port face and only while formed.
 - Front face carries the display panel. Right-click any block to open the GUI.
 
@@ -232,6 +233,14 @@ Processing the first depleted core unlocks the fission reactor.
 - A full swarm dims the overworld sun. Off by default, since it affects crops and mob spawning.
 - Shared server-wide swarm for multiplayer.
 
+## 11b. Water, steam and pipes (tier 1)
+
+- **Intake pump:** a one-block machine that sits one block above the water and draws from the water source block directly below it, without ever draining it. 100 mB/t for 10 FE/t (config), energy in at the back, water out of the blue port on top. The microreactor runs dry without water, so its own dry power can start the pump that cools it. Real basis: an intake pump on a lake or river.
+- **Steam:** a gas, stored as a fluid that is lighter than air, tagged `c:steam` and `c:gaseous` so other mods' steam users and tanks take it. No bucket, never placed in the world.
+- **Pipes:** four kinds share one base (auto-connect, wrench to extract or disconnect, a stats panel): energy cables, item pipes, fluid pipes (liquids only, 250 mB/t) and gas pipes (gases only, 1,000 mB/t). Liquids and gases never share a pipe, as in real plants. Band colours match the ports: red energy, orange items, blue liquids, white gases.
+- **Pressure tank:** a steel tank with sight glasses. One block on its own is a small tank (32,000 mB, config). Built as a 2 x 2 footprint and stacked up to 16 high, the blocks join into one tower that pools its gas. A gas fills its whole container instead of sitting at a level, so the steam shows through the glass as a haze that thickens with the pressure. Pipes connect to any outside face. Breaking a block vents that block's share. Real basis: a gas receiver with sight glasses.
+- **Fluid tank:** the pressure tank's twin for liquids (water, lava), with copper walls and 16,000 mB per block (config). Same 2 x 2 towers; the liquid shows through the glass at its level, settled at the bottom, and lava glows. Pressure tanks and fluid tanks never join each other.
+
 ## 12. Energy storage
 
 Goal: batteries that look and grow like real ones, instead of one block recoloured per tier. Progress comes from adding modules and switching to better chemistries, not crafting a new block.
@@ -276,6 +285,7 @@ Radiation is on by default (config toggle to turn it off). It exists to make the
 ### Effects
 - Players build up a dose while exposed. Dose fades slowly over time away from sources.
 - Rising dose applies escalating effects: weakness, then nausea, then damage. Never an instant kill outside a meltdown.
+- Mobs (animals, monsters, villagers, golems) take a dose too, the same way: weakness, then slowness, then slow damage. Strong reactors make no-go zones for mobs, and a shielded reactor room can run a mob farm. Mobs recover away from sources. Config `radiation.affect_mobs` (on by default) turns it off, for packs that want villagers safe near reactors.
 
 ### Numbers (first pass, being play-tested)
 - Dose rate (mSv/s) = source strength / distance squared, out to 16 blocks. Checked once a second per player.
@@ -283,7 +293,7 @@ Radiation is on by default (config toggle to turn it off). It exists to make the
 - Shielding along the line from source to head: each solid block halves the rate, water takes 20%, lead blocks (`c:storage_blocks/lead`) take 90%. The reactor's own blocks count as the source, not a shield. Real basis: inverse-square falloff and attenuation; lead is the best common shield.
 - Dose thresholds: 100 mSv weakness; 250 adds hunger and bouts of nausea; 500 adds radiation damage, half a heart every 4 seconds, ignoring armour. Dose caps at 1000.
 - Recovery: 0.5 mSv/s once the rate drops below 0.05. Dose resets on death. Creative and spectator players are exempt.
-- Config: `radiation.enabled` and `radiation.strength` (a multiplier).
+- Config: `radiation.enabled`, `radiation.strength` (a multiplier) and `radiation.affect_mobs`.
 
 ### The dosimeter ring
 - A craftable ring worn in the **Accessories** ring slot (tagged `accessories:ring`, and `curios:ring` for packs that use Curios). Recipe: a fluorite chip in an iron band (`.F. / I.I / .I.`); fluorite (calcium fluoride) is a real thermoluminescent dosimeter material.

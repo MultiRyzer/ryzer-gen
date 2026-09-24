@@ -1,0 +1,76 @@
+{
+  "variants": {
+    "corner=none,layer=bottom": {
+      "model": "ryzergen:block/fluid_tank"
+    },
+    "corner=none,layer=middle": {
+      "model": "ryzergen:block/fluid_tank"
+    },
+    "corner=none,layer=single": {
+      "model": "ryzergen:block/fluid_tank"
+    },
+    "corner=none,layer=top": {
+      "model": "ryzergen:block/fluid_tank"
+    },
+    "corner=north_east,layer=bottom": {
+      "model": "ryzergen:block/fluid_tank_bottom",
+      "y": 90
+    },
+    "corner=north_east,layer=middle": {
+      "model": "ryzergen:block/fluid_tank_middle",
+      "y": 90
+    },
+    "corner=north_east,layer=single": {
+      "model": "ryzergen:block/fluid_tank_single",
+      "y": 90
+    },
+    "corner=north_east,layer=top": {
+      "model": "ryzergen:block/fluid_tank_top",
+      "y": 90
+    },
+    "corner=north_west,layer=bottom": {
+      "model": "ryzergen:block/fluid_tank_bottom"
+    },
+    "corner=north_west,layer=middle": {
+      "model": "ryzergen:block/fluid_tank_middle"
+    },
+    "corner=north_west,layer=single": {
+      "model": "ryzergen:block/fluid_tank_single"
+    },
+    "corner=north_west,layer=top": {
+      "model": "ryzergen:block/fluid_tank_top"
+    },
+    "corner=south_east,layer=bottom": {
+      "model": "ryzergen:block/fluid_tank_bottom",
+      "y": 180
+    },
+    "corner=south_east,layer=middle": {
+      "model": "ryzergen:block/fluid_tank_middle",
+      "y": 180
+    },
+    "corner=south_east,layer=single": {
+      "model": "ryzergen:block/fluid_tank_single",
+      "y": 180
+    },
+    "corner=south_east,layer=top": {
+      "model": "ryzergen:block/fluid_tank_top",
+      "y": 180
+    },
+    "corner=south_west,layer=bottom": {
+      "model": "ryzergen:block/fluid_tank_bottom",
+      "y": 270
+    },
+    "corner=south_west,layer=middle": {
+      "model": "ryzergen:block/fluid_tank_middle",
+      "y": 270
+    },
+    "corner=south_west,layer=single": {
+      "model": "ryzergen:block/fluid_tank_single",
+      "y": 270
+    },
+    "corner=south_west,layer=top": {
+      "model": "ryzergen:block/fluid_tank_top",
+      "y": 270
+    }
+  }
+}

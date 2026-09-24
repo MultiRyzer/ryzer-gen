@@ -4,6 +4,10 @@ import com.mojang.logging.LogUtils;
 import com.ryzer.ryzergen.battery.HomeBatteryBlock;
 import com.ryzer.ryzergen.battery.HomeBatteryBlockEntity;
 import com.ryzer.ryzergen.cable.EnergyCableBlockEntity;
+import com.ryzer.ryzergen.cable.FluidPipeBlockEntity;
+import com.ryzer.ryzergen.machine.pump.IntakePumpBlockEntity;
+import com.ryzer.ryzergen.storage.PressureTankBlockEntity;
+import com.ryzer.ryzergen.cable.ItemPipeBlockEntity;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlockEntity;
 import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterBlockEntity;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorPort;
@@ -17,8 +21,10 @@ import com.ryzer.ryzergen.registry.ModBlockEntities;
 import com.ryzer.ryzergen.registry.ModBlocks;
 import com.ryzer.ryzergen.registry.ModCreativeTabs;
 import com.ryzer.ryzergen.registry.ModDataComponents;
+import com.ryzer.ryzergen.registry.ModFluids;
 import com.ryzer.ryzergen.registry.ModItems;
 import com.ryzer.ryzergen.registry.ModMenus;
+import com.ryzer.ryzergen.registry.ModTriggers;
 import com.ryzer.ryzergen.registry.ModRecipes;
 import com.ryzer.ryzergen.registry.ModSounds;
 import net.minecraft.world.level.block.Block;
@@ -39,11 +45,14 @@ public class RyzerGen {
     public RyzerGen(IEventBus modEventBus, ModContainer modContainer) {
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
+        ModFluids.TYPES.register(modEventBus);
+        ModFluids.FLUIDS.register(modEventBus);
         ModDataComponents.COMPONENTS.register(modEventBus);
         ModSounds.SOUNDS.register(modEventBus);
         ModAttachments.ATTACHMENTS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModMenus.MENUS.register(modEventBus);
+        ModTriggers.TRIGGERS.register(modEventBus);
         ModRecipes.TYPES.register(modEventBus);
         ModRecipes.SERIALIZERS.register(modEventBus);
         ModCreativeTabs.CREATIVE_TABS.register(modEventBus);
@@ -67,6 +76,18 @@ public class RyzerGen {
                 ElectricAlloySmelterBlockEntity::getEnergy);
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, ModBlockEntities.ENERGY_CABLE.get(),
                 EnergyCableBlockEntity::energyFor);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.ITEM_PIPE.get(),
+                ItemPipeBlockEntity::itemsFor);
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, ModBlockEntities.INTAKE_PUMP.get(),
+                IntakePumpBlockEntity::energyFor);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.INTAKE_PUMP.get(),
+                IntakePumpBlockEntity::waterFor);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.PRESSURE_TANK.get(),
+                PressureTankBlockEntity::fluidFor);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.FLUID_PIPE.get(),
+                FluidPipeBlockEntity::fluidsFor);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.GAS_PIPE.get(),
+                FluidPipeBlockEntity::fluidsFor);
         // Either half of the battery cabinet reaches the storage in the lower half.
         event.registerBlock(Capabilities.EnergyStorage.BLOCK, (level, pos, state, be, side) -> {
             HomeBatteryBlockEntity battery = HomeBatteryBlock.battery(level, pos, state);
@@ -82,6 +103,17 @@ public class RyzerGen {
         event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
             ReactorHeartBlockEntity heart = MicroreactorStructure.heartForPort(level, pos, state, MicroreactorPort.COOLANT_IN, side);
             return heart == null ? null : heart.coolantInput();
+        }, microreactorParts);
+        // Steam outlet: pipes can drain it, and the reactor pushes into them too. The capability is a
+        // fluid handler, like the coolant intake; only the port face differs.
+        event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
+            ReactorHeartBlockEntity heart = MicroreactorStructure.heartForPort(level, pos, state, MicroreactorPort.STEAM_OUT, side);
+            return heart == null ? null : heart.steamOutput();
+        }, microreactorParts);
+        // Fuel hatch on the lid: fresh cores go in, spent ones come out.
+        event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
+            ReactorHeartBlockEntity heart = MicroreactorStructure.heartForPort(level, pos, state, MicroreactorPort.FUEL, side);
+            return heart == null ? null : heart.fuelPort();
         }, microreactorParts);
     }
 }

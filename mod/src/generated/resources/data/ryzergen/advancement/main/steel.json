@@ -1,0 +1,33 @@
+{
+  "parent": "ryzergen:main/alloy_smelter",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:steel_ingot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.steel.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:steel_ingot"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.steel.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

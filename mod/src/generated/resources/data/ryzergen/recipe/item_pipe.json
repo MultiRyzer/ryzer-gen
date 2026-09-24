@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "H": {
+      "item": "minecraft:hopper"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "pattern": [
+    "GGG",
+    "IHI",
+    "GGG"
+  ],
+  "result": {
+    "count": 8,
+    "id": "ryzergen:item_pipe"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "criteria": {
+    "lead": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:raw_materials/lead"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "uranium": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:raw_materials/uranium"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "ryzergen:textures/block/microreactor/steel_dark.png",
+    "description": {
+      "translate": "advancements.ryzergen.root.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:uranium_ingot"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.ryzergen.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "lead",
+      "uranium"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

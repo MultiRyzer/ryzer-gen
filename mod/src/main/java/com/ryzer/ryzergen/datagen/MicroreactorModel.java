@@ -27,7 +27,7 @@ import java.util.function.Function;
 final class MicroreactorModel {
     static final String[] TEXTURES = {
             "steel", "steel_dark", "lead", "copper", "hazard", "glow", "glow_off", "accent",
-            "screen", "porthole", "porthole_on", "gauge", "grille", "port_energy", "port_coolant", "port_steam",
+            "screen", "porthole", "porthole_on", "gauge", "grille", "port_energy", "port_coolant", "port_steam", "port_fuel",
     };
 
     private static final Direction[] SIDES = {Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST};
@@ -103,7 +103,6 @@ final class MicroreactorModel {
         boxes.add(lightStrip(1.9F, 22.25F, 16.4F, 14.1F, 22.75F, 30.1F, running));
         boxes.add(new Box("lead", 4, 26, 4, 12, 27, 14));
         boxes.add(new Box("lead", 5, 27, 5, 11, 28, 13));
-        boxes.add(new Box("accent", 7, 28, 8, 9, 29, 10));
         // Pressure gauges on both flanks, between the clamp rings.
         boxes.add(new Box("steel", 1.5F, 12, 6, 2, 19, 13).decal(Direction.WEST, "gauge"));
         boxes.add(new Box("steel", 14, 12, 6, 14.5F, 19, 13).decal(Direction.EAST, "gauge"));
@@ -138,6 +137,12 @@ final class MicroreactorModel {
         // Steam out: right-hand side of the lower back block.
         boxes.add(new Box("steel_dark", 14, 4, 20, 15, 12, 28));
         boxes.add(new Box("steel_dark", 15, 3, 19, 16, 13, 29).decal(Direction.EAST, "port_steam"));
+        // Fuel hatch: the top of the upper front block, built like the coolant intake behind it. A
+        // column rises straight off the lid, square with its top tier, with an orange band (items),
+        // and the port sits on top, centred on the block face so pipes seat in it.
+        boxes.add(new Box("steel", 5, 28, 5, 11, 31, 11));
+        boxes.add(new Box("accent", 4.75F, 29.25F, 4.75F, 11.25F, 29.75F, 11.25F));
+        boxes.add(new Box("steel_dark", 3, 31, 3, 13, 32, 13).decal(Direction.UP, "port_fuel"));
         return boxes;
     }
 

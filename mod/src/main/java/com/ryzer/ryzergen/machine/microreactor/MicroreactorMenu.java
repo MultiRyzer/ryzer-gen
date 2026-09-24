@@ -1,5 +1,8 @@
 package com.ryzer.ryzergen.machine.microreactor;
 
+import com.ryzer.ryzergen.advancement.Milestone;
+import com.ryzer.ryzergen.registry.ModTriggers;
+import net.minecraft.server.level.ServerPlayer;
 import com.ryzer.ryzergen.machine.RedstoneMode;
 import com.ryzer.ryzergen.registry.ModBlocks;
 import com.ryzer.ryzergen.registry.ModMenus;
@@ -115,7 +118,12 @@ public class MicroreactorMenu extends AbstractContainerMenu {
         switch (id) {
             case BUTTON_POWER -> heart.togglePower();
             case BUTTON_REDSTONE -> heart.cycleRedstoneMode();
-            case BUTTON_SAFETIES -> heart.toggleSafeties();
+            case BUTTON_SAFETIES -> {
+                heart.toggleSafeties();
+                if (!heart.safetiesArmed() && player instanceof ServerPlayer serverPlayer) {
+                    ModTriggers.MILESTONE.get().trigger(serverPlayer, Milestone.SAFETIES_OFF);
+                }
+            }
             case BUTTON_DUMP -> heart.toggleDump();
             default -> {
                 return false;

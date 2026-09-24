@@ -1,10 +1,16 @@
 package com.ryzer.ryzergen.machine.microreactor;
 
+import com.ryzer.ryzergen.cable.CableBlock;
+import com.ryzer.ryzergen.cable.CableSide;
+import com.ryzer.ryzergen.cable.GasPipeBlock;
+import com.ryzer.ryzergen.advancement.Milestone;
+import com.ryzer.ryzergen.registry.ModTriggers;
 import com.ryzer.ryzergen.Config;
 import com.ryzer.ryzergen.machine.RedstoneMode;
 import com.ryzer.ryzergen.radiation.RadiationSources;
 import com.ryzer.ryzergen.material.ModTags;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
+import com.ryzer.ryzergen.registry.ModFluids;
 import com.ryzer.ryzergen.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,6 +44,8 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,6 +77,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
     public static final int ENERGY_CAPACITY = 100_000;
     public static final int MAX_OUTPUT = 1_000;
     public static final int COOLANT_CAPACITY = 4_000;
+    public static final int STEAM_CAPACITY = 8_000;
     public static final int AMBIENT_TEMPERATURE = 20;
     public static final int MAX_TEMPERATURE = 1_000;
     public static final int COOLED_TEMPERATURE = 450;
@@ -164,7 +173,88 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         }
     };
 
+    /**
+     * The steam the boiling coolant makes, waiting at the steam outlet. The port pushes it into
+     * whatever is connected (a gas pipe, a pressure tank); with nothing there, or the buffer full, it
+     * simply escapes, as it always has.
+     */
+    private final FluidTank steam = new FluidTank(STEAM_CAPACITY, stack -> stack.is(ModFluids.STEAM.get())) {
+        @Override
+        protected void onContentsChanged() {
+            setChanged();
+        }
+    };
+
+    /** What pipes see at the steam outlet: they can drain it but never fill it. */
+    private final IFluidHandler steamOutput = new IFluidHandler() {
+        @Override
+        public int getTanks() {
+            return 1;
+        }
+
+        @Override
+        public FluidStack getFluidInTank(int tank) {
+            return steam.getFluid();
+        }
+
+        @Override
+        public int getTankCapacity(int tank) {
+            return steam.getCapacity();
+        }
+
+        @Override
+        public boolean isFluidValid(int tank, FluidStack stack) {
+            return false;
+        }
+
+        @Override
+        public int fill(FluidStack resource, FluidAction action) {
+            return 0;
+        }
+
+        @Override
+        public FluidStack drain(FluidStack resource, FluidAction action) {
+            return steam.drain(resource, action);
+        }
+
+        @Override
+        public FluidStack drain(int maxDrain, FluidAction action) {
+            return steam.drain(maxDrain, action);
+        }
+    };
+
     private final ItemStackHandler fuel = createFuelSlot(this::setChanged);
+    private final IItemHandler fuelPort = new IItemHandler() {
+        @Override
+        public int getSlots() {
+            return 1;
+        }
+
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            return fuel.getStackInSlot(slot);
+        }
+
+        @Override
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            return stack.is(ModTags.MICROREACTOR_FUEL) ? fuel.insertItem(slot, stack, simulate) : stack;
+        }
+
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            return fuel.getStackInSlot(slot).is(ModItems.DEPLETED_FUEL_CORE.get()) ? fuel.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return 1;
+        }
+
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            return stack.is(ModTags.MICROREACTOR_FUEL);
+        }
+    };
 
     /** What pipes see at the coolant port: they can fill it but never drain it. */
     private final IFluidHandler coolantInput = new IFluidHandler() {
@@ -289,9 +379,25 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         return coolantInput;
     }
 
+    public IFluidHandler steamOutput() {
+        return steamOutput;
+    }
+
     public void togglePower() {
         enabled = !enabled;
         setChanged();
+    }
+
+    public boolean safetiesArmed() {
+        return safeties;
+    }
+
+    /**
+     * What the fuel hatch and chute offer: fresh cores go in when the slot is free, and only a spent
+     * core comes out, so automation never pulls a core that still has fuel in it.
+     */
+    public IItemHandler fuelPort() {
+        return fuelPort;
     }
 
     public void toggleSafeties() {
@@ -354,13 +460,19 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         if (alarmChanged || (heart.status == Status.COOLANT_LOSS && level.getGameTime() % 5 == 0)) {
             level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
         }
-        if (heart.energy.isFull() && heart.dumpExcess && running) {
+        // Steam only exists while water is boiling. With nothing on the steam outlet to take it, it
+        // blows out as a plume; piped away, it stays in the pipe.
+        boolean piped = heart.pushSteam(level, origin, facing);
+        if (running && cooled && !piped) {
             heart.vent((ServerLevel) level, origin, facing);
         }
         if (running != state.getValue(MicroreactorPartBlock.RUNNING)) {
             MicroreactorStructure.setRunning(level, origin, facing, running);
         }
         heart.pushEnergy((ServerLevel) level, origin, facing);
+        if (level.getGameTime() % 20 == 0) {
+            heart.ejectSpentCore(level, origin, facing);
+        }
     }
 
     private void updateTemperature(Status status, boolean cooled) {
@@ -398,7 +510,12 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         generation = (int) Math.round(thermalPower * eff);
         energy.generate(generation);
         if (cooled) {
-            coolant.drain(Config.get(Config.MICROREACTOR_COOLANT_USE) * (overdrive ? 2 : 1), IFluidHandler.FluidAction.EXECUTE);
+            // Boiled water leaves as steam: a fixed amount per mB (real water expands far more, but
+            // this steam is under pressure). What the buffer cannot hold escapes.
+            int boiled = coolant.drain(Config.get(Config.MICROREACTOR_COOLANT_USE) * (overdrive ? 2 : 1),
+                    IFluidHandler.FluidAction.EXECUTE).getAmount();
+            steam.fill(new FluidStack(ModFluids.STEAM.get(), boiled * Config.get(Config.STEAM_PER_WATER)),
+                    IFluidHandler.FluidAction.EXECUTE);
         }
         burnTenths += overdrive ? OVERDRIVE_BURN : BURN;
         if (++fuelTicks >= FUEL_SYNC_TICKS) {
@@ -417,7 +534,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         }
     }
 
-    /** Surplus steam blown out of the steam outlet while dumping. */
+    /** Steam blown out of the steam outlet when nothing is connected to take it. */
     private void vent(ServerLevel level, BlockPos origin, Direction facing) {
         Direction face = MicroreactorPort.STEAM_OUT.face(facing);
         Vec3 port = Vec3.atCenterOf(MicroreactorPort.STEAM_OUT.blockPos(origin, facing)).relative(face, 0.55);
@@ -445,6 +562,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         for (MicroreactorSlot part : MicroreactorSlot.FORMED) {
             level.removeBlock(part.fromOrigin(origin, facing), false);
         }
+        ModTriggers.MILESTONE.get().triggerNearby(level, centre, Milestone.MELTDOWN);
         level.explode(null, centre.x, centre.y, centre.z, Config.MICROREACTOR_MELTDOWN_POWER.get().floatValue(),
                 true, Level.ExplosionInteraction.BLOCK);
         RadiationSources.contaminate(level, centre, MELTDOWN_RADIATION, MELTDOWN_FADE_TICKS);
@@ -481,6 +599,43 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
             return cooled ? Status.OVERDRIVE : Status.COOLANT_LOSS;
         }
         return full ? Status.DUMPING : Status.ONLINE;
+    }
+
+    /**
+     * Pushes steam out of the steam outlet, the same way the energy port pushes power. Returns
+     * whether something is connected there to take it.
+     */
+    private boolean pushSteam(Level level, BlockPos origin, Direction facing) {
+        Direction face = MicroreactorPort.STEAM_OUT.face(facing);
+        BlockPos target = MicroreactorPort.STEAM_OUT.blockPos(origin, facing).relative(face);
+        IFluidHandler receiver = level.getCapability(Capabilities.FluidHandler.BLOCK, target, face.getOpposite());
+        if (receiver != null && !steam.isEmpty()) {
+            steam.drain(receiver.fill(steam.getFluid().copy(), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+        }
+        // A gas pipe set to extract offers nothing to push into (it pulls instead), but it is still
+        // taking the steam away.
+        BlockState pipe = level.getBlockState(target);
+        boolean extracting = pipe.getBlock() instanceof GasPipeBlock
+                && pipe.getValue(CableBlock.SIDES.get(face.getOpposite())) != CableSide.NONE;
+        return receiver != null || extracting;
+    }
+
+    /**
+     * Pushes a spent core up out of the fuel hatch into whatever sits on it (an item pipe, a hopper),
+     * the same way the energy port pushes power. One pipe on the hatch then both brings fresh cores
+     * and takes spent ones away, with no extract side on the reactor.
+     */
+    private void ejectSpentCore(Level level, BlockPos origin, Direction facing) {
+        ItemStack core = fuel.getStackInSlot(0);
+        if (!core.is(ModItems.DEPLETED_FUEL_CORE.get())) {
+            return;
+        }
+        Direction face = MicroreactorPort.FUEL.face(facing);
+        BlockPos target = MicroreactorPort.FUEL.blockPos(origin, facing).relative(face);
+        IItemHandler receiver = level.getCapability(Capabilities.ItemHandler.BLOCK, target, face.getOpposite());
+        if (receiver != null) {
+            fuel.setStackInSlot(0, ItemHandlerHelper.insertItemStacked(receiver, core.copy(), false));
+        }
     }
 
     /**
@@ -552,6 +707,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         super.saveAdditional(tag, registries);
         tag.put("energy", energy.serializeNBT(registries));
         tag.put("coolant", coolant.writeToNBT(registries, new CompoundTag()));
+        tag.put("steam", steam.writeToNBT(registries, new CompoundTag()));
         tag.put("fuel", fuel.serializeNBT(registries));
         tag.putBoolean("enabled", enabled);
         tag.putInt("redstone_mode", redstoneMode.ordinal());
@@ -567,6 +723,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
             energy.deserializeNBT(registries, tag.get("energy"));
         }
         coolant.readFromNBT(registries, tag.getCompound("coolant"));
+        steam.readFromNBT(registries, tag.getCompound("steam"));
         fuel.deserializeNBT(registries, tag.getCompound("fuel"));
         enabled = !tag.contains("enabled") || tag.getBoolean("enabled");
         redstoneMode = RedstoneMode.byId(tag.getInt("redstone_mode"));

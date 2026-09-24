@@ -101,9 +101,22 @@ def face_frame(face, f, t):
     }[face]
 
 
+TURN = {'north': 'east', 'east': 'south', 'south': 'west', 'west': 'north', 'up': 'up', 'down': 'down'}
+
+
+def turn(face, origin, eu, ev, quarters):
+    """A blockstate y rotation: clockwise seen from above, 90 degrees per quarter."""
+    for _ in range(quarters):
+        face = TURN[face]
+        origin = (16 - origin[2], origin[1], origin[0])
+        eu = (-eu[2], eu[1], eu[0])
+        ev = (-ev[2], ev[1], ev[0])
+    return face, origin, eu, ev
+
+
 def collect_faces(models):
     faces = []
-    for name, (dx, dy, dz) in models:
+    for name, (dx, dy, dz), rot in models:
         model = json.load(open(os.path.join(MODELS, name + '.json')))
         textures = model.get('textures', {})
         for el in model.get('elements', []):
@@ -114,6 +127,7 @@ def collect_faces(models):
                     ref = textures[ref[1:]]
                 uv = spec.get('uv') or auto_uv(face, f, t)
                 origin, eu, ev = face_frame(face, f, t)
+                face, origin, eu, ev = turn(face, origin, eu, ev, rot // 90)
                 origin = (origin[0] + dx * 16, origin[1] + dy * 16, origin[2] + dz * 16)
                 faces.append((face, origin, eu, ev, uv, texture(ref), spec.get('rotation', 0)))
     return faces
@@ -201,8 +215,10 @@ def main():
     out, specs = args[0], args[1:]
     models = []
     for spec in specs:
-        name, _, off = spec.partition('@')
-        models.append((name, tuple(int(v) for v in off.split(',')) if off else (0, 0, 0)))
+        # MODEL[@dx,dy,dz[@rotation]], the rotation being a blockstate y rotation in degrees.
+        name, _, rest = spec.partition('@')
+        off, _, rot = rest.partition('@')
+        models.append((name, tuple(int(v) for v in off.split(',')) if off else (0, 0, 0), int(rot) if rot else 0))
     faces = collect_faces(models)
     views = [render(faces, (1, 1), scale), render(faces, (-1, -1), scale)]
     h = max(len(v) for v in views)

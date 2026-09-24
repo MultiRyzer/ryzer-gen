@@ -379,6 +379,7 @@
     "particle": "ryzergen:block/microreactor/steel",
     "port_coolant": "ryzergen:block/microreactor/port_coolant",
     "port_energy": "ryzergen:block/microreactor/port_energy",
+    "port_fuel": "ryzergen:block/microreactor/port_fuel",
     "port_steam": "ryzergen:block/microreactor/port_steam",
     "porthole": "ryzergen:block/microreactor/porthole",
     "porthole_on": "ryzergen:block/microreactor/porthole_on",

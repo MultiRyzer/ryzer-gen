@@ -1,0 +1,33 @@
+{
+  "parent": "ryzergen:main/microreactor",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:home_battery"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.home_battery.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:home_battery"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.home_battery.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

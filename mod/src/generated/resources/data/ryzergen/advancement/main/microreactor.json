@@ -1,0 +1,30 @@
+{
+  "parent": "ryzergen:main/steel",
+  "criteria": {
+    "microreactor_formed": {
+      "conditions": {
+        "milestone": "microreactor_formed"
+      },
+      "trigger": "ryzergen:milestone"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.microreactor.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:reactor_heart"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.microreactor.title"
+    }
+  },
+  "requirements": [
+    [
+      "microreactor_formed"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

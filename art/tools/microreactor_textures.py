@@ -388,6 +388,11 @@ def decal_port_steam():
     return decal_port('A')
 
 
+def decal_port_fuel():
+    """Orange ring: items (fuel cores in and out)."""
+    return decal_port('X')
+
+
 def decal_gauge():
     """Pressure gauge: white face, graphite rim, orange needle."""
     return decal([
@@ -440,6 +445,7 @@ TEXTURES = {
     'block/microreactor/port_energy': decal_port_energy,
     'block/microreactor/port_coolant': decal_port_coolant,
     'block/microreactor/port_steam': decal_port_steam,
+    'block/microreactor/port_fuel': decal_port_fuel,
     'block/microreactor/gauge': decal_gauge,
     'block/microreactor/grille': decal_grille,
 }

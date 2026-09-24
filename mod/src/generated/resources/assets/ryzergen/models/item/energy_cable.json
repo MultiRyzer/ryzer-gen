@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "ryzergen:item/energy_cable"
-  }
+  "parent": "ryzergen:block/energy_cable_inventory"
 }

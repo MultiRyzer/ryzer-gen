@@ -1,0 +1,33 @@
+{
+  "parent": "ryzergen:main/uranium",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:dosimeter_ring"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.dosimeter_ring.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:dosimeter_ring"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.dosimeter_ring.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

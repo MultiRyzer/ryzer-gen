@@ -69,6 +69,72 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('R', Tags.Items.DUSTS_REDSTONE)
                 .unlockedBy("has_copper", has(Tags.Items.INGOTS_COPPER))
                 .save(output);
+
+        // Item pipes: glass tube round a hopper's worth of iron, the hopper being the thing it replaces.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ITEM_PIPE.get(), 8)
+                .pattern("GGG")
+                .pattern("IHI")
+                .pattern("GGG")
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('H', Items.HOPPER)
+                .unlockedBy("has_hopper", has(Items.HOPPER))
+                .save(output);
+
+        // Fluid pipes: glass round copper, with a bucket as the thing they replace.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FLUID_PIPE.get(), 8)
+                .pattern("GGG")
+                .pattern("CBC")
+                .pattern("GGG")
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('B', Items.BUCKET)
+                .unlockedBy("has_bucket", has(Items.BUCKET))
+                .save(output);
+
+        // Gas pipes: steel, since steam lines run under pressure, round a copper core.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GAS_PIPE.get(), 8)
+                .pattern("SSS")
+                .pattern("CGC")
+                .pattern("SSS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(output);
+
+        // Intake pump: a steel casing round a bucket and a copper rotor, with a board to run the motor.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.INTAKE_PUMP.get())
+                .pattern("SBS")
+                .pattern("CRC")
+                .pattern("SPS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('B', Items.BUCKET)
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .define('P', ModTags.CIRCUITS_BASIC)
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(output);
+
+        // Pressure tanks: a steel shell with sight glasses. Structure, so cheap: two per craft.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.PRESSURE_TANK.get(), 2)
+                .pattern("SGS")
+                .pattern("G G")
+                .pattern("SGS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(output);
+
+        // Fluid tanks: copper with sight glasses, like old copper water tanks. Two per craft.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FLUID_TANK.get(), 2)
+                .pattern("CGC")
+                .pattern("G G")
+                .pattern("CGC")
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .unlockedBy("has_copper", has(Tags.Items.INGOTS_COPPER))
+                .save(output);
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.WRENCH.get())
                 .pattern("S S")
                 .pattern(" I ")

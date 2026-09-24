@@ -1,0 +1,34 @@
+{
+  "parent": "ryzergen:main/sealed_fuel_core",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:depleted_fuel_core"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.depleted_fuel_core.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:depleted_fuel_core"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.depleted_fuel_core.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

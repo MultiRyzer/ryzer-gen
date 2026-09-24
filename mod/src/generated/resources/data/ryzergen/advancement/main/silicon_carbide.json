@@ -1,0 +1,33 @@
+{
+  "parent": "ryzergen:main/alloy_smelter",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:silicon_carbide"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.silicon_carbide.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:silicon_carbide"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.silicon_carbide.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

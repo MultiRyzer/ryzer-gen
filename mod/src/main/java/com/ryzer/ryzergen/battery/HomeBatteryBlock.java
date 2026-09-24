@@ -1,10 +1,13 @@
 package com.ryzer.ryzergen.battery;
 
 import com.mojang.serialization.MapCodec;
+import com.ryzer.ryzergen.advancement.Milestone;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
+import com.ryzer.ryzergen.registry.ModTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -163,6 +166,9 @@ public class HomeBatteryBlock extends BaseEntityBlock {
             if (battery.addModule(stack)) {
                 stack.consume(1, player);
                 level.playSound(null, pos, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.6F, 1.3F);
+                if (battery.isFull() && player instanceof ServerPlayer serverPlayer) {
+                    ModTriggers.MILESTONE.get().trigger(serverPlayer, Milestone.BATTERY_FULL);
+                }
             } else {
                 player.displayClientMessage(Component.translatable("message.ryzergen.battery.full"), true);
             }
