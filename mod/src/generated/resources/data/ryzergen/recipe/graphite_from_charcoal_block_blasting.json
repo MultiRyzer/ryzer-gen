@@ -1,4 +1,13 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:storage_blocks/charcoal"
+      }
+    }
+  ],
   "type": "minecraft:blasting",
   "category": "misc",
   "cookingtime": 200,
@@ -7,7 +16,7 @@
     "tag": "c:storage_blocks/charcoal"
   },
   "result": {
-    "count": 1,
+    "count": 3,
     "id": "ryzergen:graphite"
   }
 }

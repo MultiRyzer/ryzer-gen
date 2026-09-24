@@ -11,6 +11,8 @@ public final class ModTags {
     /** Graphite as reactor mods tag it. */
     public static final TagKey<Item> INGOTS_GRAPHITE = common("ingots/graphite");
     public static final TagKey<Item> GEMS_SILICON_CARBIDE = common("gems/silicon_carbide");
+    /** Tier 1 circuits. Mekanism's basic control circuit shares this tag. */
+    public static final TagKey<Item> CIRCUITS_BASIC = common("circuits/basic");
     /** Vanilla has no charcoal block, but several mods add one. */
     public static final TagKey<Item> STORAGE_BLOCKS_CHARCOAL = common("storage_blocks/charcoal");
 

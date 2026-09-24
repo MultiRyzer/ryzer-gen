@@ -115,7 +115,7 @@ def collect_faces(models):
                 uv = spec.get('uv') or auto_uv(face, f, t)
                 origin, eu, ev = face_frame(face, f, t)
                 origin = (origin[0] + dx * 16, origin[1] + dy * 16, origin[2] + dz * 16)
-                faces.append((face, origin, eu, ev, uv, texture(ref)))
+                faces.append((face, origin, eu, ev, uv, texture(ref), spec.get('rotation', 0)))
     return faces
 
 
@@ -144,7 +144,7 @@ def render(faces, view, scale):
     ox, oy = pad - minx, pad - miny
     img = [[(40, 44, 52, 255)] * w for _ in range(h)]
     zbuf = [[1e9] * w for _ in range(h)]
-    for face, origin, eu, ev, uv, tex in visible:
+    for face, origin, eu, ev, uv, tex, rotation in visible:
         a = project(origin)
         pu = project(tuple(origin[i] + eu[i] for i in range(3)))
         pv = project(tuple(origin[i] + ev[i] for i in range(3)))
@@ -167,8 +167,12 @@ def render(faces, view, scale):
                 depth = a[2] + s * (pu[2] - a[2]) + t * (pv[2] - a[2])
                 if depth >= zbuf[py][px] - 1e-4:
                     continue
-                u = uv[0] + s * (uv[2] - uv[0])
-                v = uv[1] + t * (uv[3] - uv[1])
+                # Face rotation turns the texture clockwise on the face in 90 degree steps.
+                su, tv = s, t
+                for _ in range(rotation // 90):
+                    su, tv = tv, 1 - su
+                u = uv[0] + su * (uv[2] - uv[0])
+                v = uv[1] + tv * (uv[3] - uv[1])
                 r, g, b, al = tex[min(th - 1, int(v / 16 * th))][min(tw - 1, int(u / 16 * tw))]
                 if al < 128:
                     continue

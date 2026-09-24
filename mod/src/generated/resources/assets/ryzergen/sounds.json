@@ -1,4 +1,14 @@
 {
+  "dosimeter_click": {
+    "sounds": [
+      {
+        "name": "note/hat",
+        "pitch": 2.0,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.ryzergen.dosimeter_click"
+  },
   "microreactor_alarm": {
     "sounds": [
       {

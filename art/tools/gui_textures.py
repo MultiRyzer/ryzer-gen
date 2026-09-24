@@ -313,8 +313,121 @@ def microreactor():
     return t
 
 
+# Alloy smelter layout. Keep in step with AlloySmelterMenu and AlloySmelterScreen.
+SMELTER_H = 166
+SMELTER_BAY = (4, 13, 171, 71)
+SMELTER_INPUTS = ((37, 16), (55, 16))
+SMELTER_FUEL = (46, 52)
+SMELTER_OUTPUT = (111, 30)
+SMELTER_FLAME = (47, 36)
+SMELTER_ARROW = (79, 34)
+SPRITE_FLAME = (176, 0)
+SPRITE_ARROW = (176, 14)
+
+FLAME = [
+    '......#.......',
+    '......##......',
+    '.....###......',
+    '.....####.....',
+    '....#####.....',
+    '....######....',
+    '...#######....',
+    '...########...',
+    '..#########...',
+    '..##########..',
+    '..##########..',
+    '...########...',
+    '....######....',
+    '.....####.....',
+]
+
+
+def flame(t, x0, y0, lit):
+    inside = lambda x, y: 0 <= y < 14 and 0 <= x < 14 and FLAME[y][x] == '#'
+    for y in range(14):
+        for x in range(14):
+            if not inside(x, y):
+                continue
+            edge = not (inside(x - 1, y) and inside(x + 1, y) and inside(x, y - 1) and inside(x, y + 1))
+            if lit:
+                k = 'X' if edge else 'e' if y >= 8 and inside(x - 2, y) and inside(x + 2, y) else 'a'
+            else:
+                k = 'b' if edge else 'S'
+            t.set(x0 + x, y0 + y, k)
+
+
+def arrow(t, x0, y0, lit):
+    """A 24 x 17 progress arrow: a shaft and a head, filled left to right by the screen."""
+    inside = lambda x, y: 0 <= x < 24 and 0 <= y < 17 and ((x <= 14 and 6 <= y <= 10) or (x >= 14 and abs(y - 8) <= 23 - x))
+    for y in range(17):
+        for x in range(24):
+            if not inside(x, y):
+                continue
+            edge = not (inside(x, y - 1) and inside(x, y + 1) and inside(x + 1, y))
+            t.set(x0 + x, y0 + y, ('j' if edge else 'i') if lit else ('b' if edge else 'T'))
+
+
+def alloy_smelter():
+    t = Tex(SIZE)
+    panel(t, PANEL_W, SMELTER_H)
+    bx0, by0, bx1, by1 = SMELTER_BAY
+    recess(t, bx0, by0, bx1 - bx0 + 1, by1 - by0 + 1, 'S', 'U', 'A')
+    for x, y in SMELTER_INPUTS:
+        slot(t, x, y)
+    slot(t, *SMELTER_FUEL)
+    # The large output slot.
+    ox, oy = SMELTER_OUTPUT
+    recess(t, ox, oy, 26, 26, 'J', 'b', 'A')
+    t.rect(ox + 1, oy + 1, ox + 24, oy + 1, 'I')
+    t.rect(ox + 1, oy + 1, ox + 1, oy + 24, 'I')
+    t.rect(ox - 1, oy - 1, ox + 26, oy - 1, 'X')
+    t.rect(ox - 1, oy - 1, ox - 1, oy + 26, 'X')
+    t.rect(ox - 1, oy + 26, ox + 26, oy + 26, 'Z')
+    t.rect(ox + 26, oy - 1, ox + 26, oy + 26, 'Z')
+    flame(t, *SMELTER_FLAME, lit=False)
+    arrow(t, *SMELTER_ARROW, lit=False)
+    for row in range(3):
+        for col in range(9):
+            slot(t, 7 + col * 18, 83 + row * 18)
+    for col in range(9):
+        slot(t, 7 + col * 18, 141)
+    # Lit sprites, drawn over the unlit ones by the screen as the smelter works.
+    flame(t, *SPRITE_FLAME, lit=True)
+    arrow(t, *SPRITE_ARROW, lit=True)
+    return t
+
+
+def electric_alloy_smelter():
+    """Like the fuel smelter, without the fuel slot, with an energy gauge on the right."""
+    t = Tex(SIZE)
+    panel(t, PANEL_W, SMELTER_H)
+    bx0, by0, bx1, by1 = SMELTER_BAY
+    recess(t, bx0, by0, bx1 - bx0 + 1, by1 - by0 + 1, 'S', 'U', 'A')
+    slot(t, 37, 34)
+    slot(t, 55, 34)
+    ox, oy = SMELTER_OUTPUT
+    recess(t, ox, oy, 26, 26, 'J', 'b', 'A')
+    t.rect(ox + 1, oy + 1, ox + 24, oy + 1, 'I')
+    t.rect(ox + 1, oy + 1, ox + 1, oy + 24, 'I')
+    t.rect(ox - 1, oy - 1, ox + 26, oy - 1, 'X')
+    t.rect(ox - 1, oy - 1, ox - 1, oy + 26, 'X')
+    t.rect(ox - 1, oy + 26, ox + 26, oy + 26, 'Z')
+    t.rect(ox + 26, oy - 1, ox + 26, oy + 26, 'Z')
+    arrow(t, *SMELTER_ARROW, lit=False)
+    well(t, 152, 17, 10, 52)
+    for row in range(3):
+        for col in range(9):
+            slot(t, 7 + col * 18, 83 + row * 18)
+    for col in range(9):
+        slot(t, 7 + col * 18, 141)
+    arrow(t, 176, 0, lit=True)
+    return t
+
+
 def main():
     publish('gui/microreactor', microreactor())
+    publish('gui/alloy_smelter', alloy_smelter())
+    publish('gui/electric_alloy_smelter', electric_alloy_smelter())
 
 
 if __name__ == '__main__':

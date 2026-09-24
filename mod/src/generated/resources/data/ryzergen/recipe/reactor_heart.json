@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "tag": "c:ingots/graphite"
+    },
+    "B": {
+      "tag": "c:circuits/basic"
+    },
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "L": {
+      "tag": "c:ingots/lead"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "LGL",
+    "S#S",
+    "LBL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:reactor_heart"
+  }
+}

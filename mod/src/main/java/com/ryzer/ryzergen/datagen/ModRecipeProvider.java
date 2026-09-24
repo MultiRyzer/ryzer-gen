@@ -19,8 +19,12 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.BlastingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.conditions.NotCondition;
+import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 
 import java.util.concurrent.CompletableFuture;
@@ -43,6 +47,47 @@ public class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_furnace", has(Items.FURNACE))
                 .save(output);
 
+        // The powered smelter: the fuel smelter, rebuilt around a heating coil and a control board.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ELECTRIC_ALLOY_SMELTER.get())
+                .pattern("SBS")
+                .pattern("CAC")
+                .pattern("SCS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('B', ModTags.CIRCUITS_BASIC)
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('A', ModItems.ALLOY_SMELTER.get())
+                .unlockedBy("has_alloy_smelter", has(ModItems.ALLOY_SMELTER.get()))
+                .save(output);
+
+        // Cables: copper wire with redstone, insulated in dried kelp. Cheap, as structure should be.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ENERGY_CABLE.get(), 8)
+                .pattern("KKK")
+                .pattern("CRC")
+                .pattern("KKK")
+                .define('K', Items.DRIED_KELP)
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy("has_copper", has(Tags.Items.INGOTS_COPPER))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.WRENCH.get())
+                .pattern("S S")
+                .pattern(" I ")
+                .pattern(" I ")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(output);
+
+        // Dosimeter ring: a fluorite chip (a real thermoluminescent dosimeter material) set in an iron band.
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.DOSIMETER_RING.get())
+                .pattern(" F ")
+                .pattern("I I")
+                .pattern(" I ")
+                .define('F', OreType.FLUORITE.dropTag())
+                .define('I', Tags.Items.INGOTS_IRON)
+                .unlockedBy("has_fluorite", has(OreType.FLUORITE.dropTag()))
+                .save(output);
+
         // Steel: iron with a little carbon from coal or charcoal.
         output.accept(id("steel_ingot_from_alloying"), new AlloyingRecipe(
                 SizedIngredient.of(Tags.Items.INGOTS_IRON, 1),
@@ -50,9 +95,54 @@ public class ModRecipeProvider extends RecipeProvider {
                 new ItemStack(ModItems.STEEL_INGOT.get()),
                 AlloyingRecipe.DEFAULT_COOKING_TIME), null);
 
-        // Graphite: carbon baked at high heat, so blast furnace only.
-        blast(output, Tags.Items.STORAGE_BLOCKS_COAL, ModItems.GRAPHITE.get(), "graphite_from_coal_block");
-        blast(output, ModTags.STORAGE_BLOCKS_CHARCOAL, ModItems.GRAPHITE.get(), "graphite_from_charcoal_block");
+        // Graphite: carbon baked at high heat, so blast furnace only. A block gives 3, so a fuel core
+        // (7 graphite) costs about 21 coal or charcoal rather than a grind.
+        graphite(output, Tags.Items.STORAGE_BLOCKS_COAL, "graphite_from_coal_block");
+        // Vanilla has no charcoal block, so this recipe only loads when some mod adds one.
+        graphite(output.withConditions(new NotCondition(new TagEmptyCondition(ModTags.STORAGE_BLOCKS_CHARCOAL))),
+                ModTags.STORAGE_BLOCKS_CHARCOAL, "graphite_from_charcoal_block");
+
+        // Tier 1 circuit: copper traces and redstone on an iron board.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BASIC_CONTROL_BOARD.get())
+                .pattern("RCR")
+                .pattern("III")
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .unlockedBy("has_redstone", has(Tags.Items.DUSTS_REDSTONE))
+                .save(output);
+
+        // Microreactor. The structure is cheap; the cost sits in the heart and the fuel.
+        // Heart: lead shielding, a steel frame, a graphite moderator core, a porthole and a control board.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.REACTOR_HEART.get())
+                .pattern("LGL")
+                .pattern("S#S")
+                .pattern("LBL")
+                .define('L', OreType.LEAD.ingotTag())
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('#', ModTags.INGOTS_GRAPHITE)
+                .define('B', ModTags.CIRCUITS_BASIC)
+                .unlockedBy("has_basic_control_board", has(ModTags.CIRCUITS_BASIC))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.REACTOR_MACHINE_UNIT.get())
+                .pattern(" S ")
+                .pattern("CLC")
+                .pattern(" S ")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('L', OreType.LEAD.ingotTag())
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(output);
+        // The water bucket comes back empty.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.COOLANT_JACKET.get())
+                .pattern("CCC")
+                .pattern("CWC")
+                .pattern("CCC")
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('W', Tags.Items.BUCKETS_WATER)
+                .unlockedBy("has_copper", has(Tags.Items.INGOTS_COPPER))
+                .save(output);
 
         // Silicon carbide: silica and carbon baked together, the Acheson process.
         output.accept(id("silicon_carbide_from_alloying"), new AlloyingRecipe(
@@ -99,8 +189,9 @@ public class ModRecipeProvider extends RecipeProvider {
                 .save(output, id(name + "_blasting"));
     }
 
-    private static void blast(RecipeOutput output, TagKey<Item> input, Item result, String name) {
-        SimpleCookingRecipeBuilder.blasting(Ingredient.of(input), RecipeCategory.MISC, result, 0.1f, 200)
+    private static void graphite(RecipeOutput output, TagKey<Item> input, String name) {
+        SimpleCookingRecipeBuilder.generic(Ingredient.of(input), RecipeCategory.MISC, new ItemStack(ModItems.GRAPHITE.get(), 3),
+                        0.1f, 200, RecipeSerializer.BLASTING_RECIPE, BlastingRecipe::new)
                 .unlockedBy("has_input", has(input))
                 .save(output, id(name + "_blasting"));
     }

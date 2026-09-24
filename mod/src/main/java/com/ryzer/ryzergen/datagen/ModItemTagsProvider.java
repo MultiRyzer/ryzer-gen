@@ -5,7 +5,10 @@ import com.ryzer.ryzergen.material.ModTags;
 import com.ryzer.ryzergen.material.OreType;
 import com.ryzer.ryzergen.registry.ModItems;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.Tags;
@@ -25,6 +28,10 @@ public class ModItemTagsProvider extends ItemTagsProvider {
         tag(ModTags.INGOTS_GRAPHITE).add(ModItems.GRAPHITE.get());
         tag(ModTags.GEMS_SILICON_CARBIDE).add(ModItems.SILICON_CARBIDE.get());
         tag(ModTags.MICROREACTOR_FUEL).add(ModItems.SEALED_FUEL_CORE.get());
+        tag(ModTags.CIRCUITS_BASIC).add(ModItems.BASIC_CONTROL_BOARD.get());
+        // Wearable in Accessories' ring slot (and Curios', for packs that use it). Harmless if neither is installed.
+        tag(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("accessories", "ring"))).add(ModItems.DOSIMETER_RING.get());
+        tag(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("curios", "ring"))).add(ModItems.DOSIMETER_RING.get());
         tag(Tags.Items.INGOTS).addTag(ModTags.INGOTS_STEEL);
 
         for (OreType ore : OreType.values()) {

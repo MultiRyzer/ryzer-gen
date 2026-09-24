@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "S S",
+    " I ",
+    " I "
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:wrench"
+  }
+}

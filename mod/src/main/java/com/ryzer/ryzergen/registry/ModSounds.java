@@ -18,6 +18,8 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> MICROREACTOR_HUM = register("microreactor_hum");
     /** Coolant-loss alarm while an overdriven core runs away. Looped and pitched up by the client. */
     public static final DeferredHolder<SoundEvent, SoundEvent> MICROREACTOR_ALARM = register("microreactor_alarm");
+    /** One Geiger counter click from the dosimeter ring. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> DOSIMETER_CLICK = register("dosimeter_click");
 
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, name)));

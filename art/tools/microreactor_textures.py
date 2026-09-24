@@ -291,6 +291,38 @@ def decal_porthole_on():
 
 # ---------------------------------------------------------------- fuel chain items
 
+def item_basic_control_board():
+    """Tier 1 circuit: a green board with copper traces, a graphite chip, an LED and gold contacts."""
+    t = Tex()
+    t.rect(1, 3, 14, 12, 'U')
+    t.rect(2, 4, 13, 11, '6')
+    t.rect(2, 4, 13, 4, '7')
+    t.rect(2, 4, 2, 11, '7')
+    t.rect(2, 11, 13, 11, '5')
+    t.rect(13, 4, 13, 11, '5')
+    # Copper traces into the chip.
+    t.rect(3, 7, 5, 7, 'R')
+    t.rect(3, 6, 3, 9, 'R')
+    t.set(3, 6, 'e')
+    t.rect(11, 8, 12, 8, 'R')
+    t.rect(12, 8, 12, 10, 'R')
+    t.rect(4, 10, 6, 10, 'R')
+    # The chip, with its pins.
+    t.rect(6, 6, 10, 9, 'T')
+    t.rect(6, 6, 10, 6, 'b')
+    t.set(6, 6, 'J')
+    for x in (7, 9):
+        t.set(x, 5, 'J')
+        t.set(x, 10, 'J')
+    # A status LED and a redstone dot.
+    t.set(12, 5, 'n')
+    t.set(4, 9, 'x')
+    # Gold edge contacts.
+    for x in (4, 6, 8, 10):
+        t.set(x, 12, 'a')
+    return t
+
+
 CORE_ITEM = [
     '................',
     '.....KKKKKK.....',
@@ -402,6 +434,7 @@ TEXTURES = {
     'block/microreactor/screen': decal_screen,
     'block/microreactor/porthole': decal_porthole,
     'block/microreactor/porthole_on': decal_porthole_on,
+    'item/basic_control_board': item_basic_control_board,
     'item/sealed_fuel_core': item_sealed_fuel_core,
     'item/depleted_fuel_core': item_depleted_fuel_core,
     'block/microreactor/port_energy': decal_port_energy,

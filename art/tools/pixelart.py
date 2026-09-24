@@ -40,6 +40,10 @@ PAL = {
     's': '6a7280', 'u': '545b68', 'z': '3f4550',
     # cyan accent light (dim, lit, bright) and orange accent
     'f': '1b5a73', 'i': '35c8f5', 'j': 'a6eeff', 'X': 'ff8a1e', 'Z': 'a8520c',
+    # circuit board green, dark to light
+    '5': '1c4a30', '6': '2a6b45', '7': '3f9160',
+    # deep red (energy stripes), and fluorite purples dark to light
+    '8': '8a2626', '1': '2a1247', '2': '5a2a8f', '3': '8a4ccc', '4': 'c9a0f5',
 }
 
 
