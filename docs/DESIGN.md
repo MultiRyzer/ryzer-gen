@@ -84,7 +84,7 @@ Rule 2: **power gating.** The machine that makes the next tier's key material ru
 | 1 | Microreactor | Reactor heart | Steel, lead, graphite (blast furnace) | Basic control board: iron, copper, redstone |
 | 2 | Fuel cycle machines (run on microreactor power) | Advanced board, MOX fuel | Silicon from sand and coal in the electric alloy smelter; fluorite for reprocessing | Advanced board: steel, gold, silicon |
 | 3 | Fission reactor | Control rod assembly | Silver alloy control rods (real rods use silver, indium and cadmium); MOX fuel from tier 2 | Hardened board: silicon carbide and lead (radiation-hard electronics) |
-| 4 | Breeder reactor | Sodium coolant loop | Sodium split from salt using fission power (real fast breeders are sodium cooled); thorium from monazite | Hardened board |
+| 4 | Breeder reactor | Sodium coolant loop, breeder fuel | Spent MOX pyroprocessed in molten salt into transuranic metal, on fission power; sodium split from salt using fission power (real fast breeders are sodium cooled); thorium from monazite | Hardened board |
 | 5 | Fusion reactor | Superconducting magnet coil, plasma-facing wall | Yttrium from monazite for superconductors; tritium bred from lithium in the breeder; tungsten for the plasma wall | Cryogenic board: superconducting wiring |
 | 6 | Dyson swarm | Solar sail, receiver dish | Aluminium film sails; silicon solar cells | Photonic board |
 
@@ -175,19 +175,60 @@ When the core runs out, the player gets a depleted core they cannot use yet. Tha
 
 Real basis: spent uranium fuel is roughly 95% uranium, about 1% plutonium and about 4% fission products (the actual waste). Microreactor fuel is TRISO (tiny kernels sealed in ceramic and carbon), which is famously hard to reprocess. That gives us a real reason for an extra step. The lesson of the tier: spent fuel is the next fuel.
 
-All the machines run on microreactor power (power gating) and follow the electric smelter's pattern: a single-block 3D model (the reprocessor is two high), FE in at a back port, item and fluid pipes, a GUI with power and redstone controls, JEI and EMI pages, wrench rotation.
+The loop at a glance: a depleted fuel core goes through the **Core Cracker** (spent kernels out, some graphite and steel back), then the **Reprocessor** (with fluorite and water: uranium, plutonium and waste out), then the **Fuel Fabricator** (TRISO pellets, uranium rods and MOX rods). Spent uranium rods from the fission station skip the cracker and go straight to the reprocessor. Waste goes into a **Waste Cask**.
 
-### The chain
-1. **Core Cracker:** a depleted fuel core becomes spent kernels plus 2 graphite (the casing, recycled). Real basis: TRISO has to be crushed open before it can be processed.
-2. **Reprocessor:** spent kernels, a fluorite and water become 1 uranium ingot (an ordinary ingot, `c:ingots/uranium`), 1 plutonium nugget and 1 fission waste. A core took 2 uranium to make, so reprocessing gives half back. Real basis: fluoride volatility, where fluorine turns uranium into a gas so it can be separated (a real alternative to the nitric acid PUREX process, and it uses the fluorite we ship).
-3. **Fuel Fabricator:** makes fission fuel. MOX rods (1 plutonium nugget plus uranium; real MOX is only about 7% plutonium) and uranium rods. It also presses uranium back into TRISO pellets for the microreactor.
-4. **Waste Cask:** a thick steel drum that holds fission waste. Enough to feel real, never a chore. Waste does not emit radiation, so storage is about tidiness and realism, not survival.
+### Machines
+All four follow the electric smelter's pattern: a 3D model in the house style, FE in at a back port (red ring), item pipes in on top and out at the bottom (orange rings), a GUI with power and redstone buttons, JEI and EMI pages, wrench rotation. Recipes are data driven, one recipe type per machine (`ryzergen:cracking`, `ryzergen:reprocessing`, `ryzergen:fabricating`), so packs can change them.
+
+| Machine | Size | Power | Time per job | Notes |
+|---|---|---|---|---|
+| Core Cracker | 1 block | 20 FE/t | 10 s | A jaw crusher behind a steel door |
+| Reprocessor | 2 high | 80 FE/t | 20 s | Water in at the side (blue ring); a tall lead-lined column with a sight glass |
+| Fuel Fabricator | 1 block | 40 FE/t | 10 s | Up to three inputs; a press and a rod loading tray |
+| Waste Cask | 1 block | none | none | Storage only |
+
+Inputs only take items some recipe uses, and never the same item in two slots, so one pipe cannot fill every slot and jam a machine. When two recipes match, the one using more ingredients wins: a fabricator holding uranium, steel and plutonium makes MOX, not a plain uranium rod. The GUI shows a status line (running, no power, needs water, output full, held by redstone).
+
+Speed modules (upgrade, don't replace: rule 11): each machine has one upgrade slot holding up to 4. Each module adds another full speed, so 4 make a machine five times as fast. Power per tick grows with the square of the speed, so the energy per item grows with the speed: a fully upgraded reprocessor draws 2,000 FE/t, more than a microreactor makes, which gives fission power a job. Recipe: 4 redstone, 2 copper, 2 gold and an advanced board. Real basis: pushing more material through the same kit takes more power.
+
+Power gating: all of them run on microreactor power. Together they draw about 140 FE/t, so one water-cooled microreactor (about 257 FE/t) runs the whole chain alongside an intake pump and the electric smelter.
+
+Throughput: one reprocessor does 180 jobs an hour and one fabricator 360, against the 40 or so rods an hour a uranium station burns, so one of each keeps up with a station.
+
+### Recipes (first pass)
+**Core Cracker** (`ryzergen:cracking`)
+- Depleted fuel core: spent kernels, 2 graphite and 2 steel (the shell and packing, recycled). Real basis: TRISO has to be crushed open before it can be processed.
+
+**Reprocessor** (`ryzergen:reprocessing`)
+- Spent kernels, 1 fluorite and 250 mB water: 1 uranium ingot, 1 plutonium nugget, 1 fission waste. A core took 2 uranium to make, so reprocessing gives half back.
+- Spent uranium rod, 1 fluorite and 250 mB water: 1 uranium ingot, 3 plutonium nuggets, 1 fission waste. A station rod holds far more fuel than a microreactor core.
+- Real basis: fluoride volatility, where fluorine turns uranium into a gas so it can be separated (a real alternative to the nitric acid PUREX process, and it uses the fluorite we ship). Real plants make hydrogen fluoride from fluorite and acid; fluorite and water stand in for that, an honest fudge.
+- Spent MOX rods do not go in here: see tier 4.
+
+**Fuel Fabricator** (`ryzergen:fabricating`)
+- 2 uranium ingots and 1 steel: 1 uranium fuel rod. Real basis: fuel pellets stacked in a sealed metal tube. Real cladding is zirconium alloy; we skip zirconium and use steel, as early reactors did.
+- 1 plutonium ingot, 1 uranium ingot and 1 steel: 1 MOX fuel rod. Real MOX is about 7% plutonium mixed into uranium.
+- 1 uranium ingot, 2 graphite and 1 silicon carbide: 3 TRISO pellets. The crafting grid makes only 2 from the same, so the fabricator pays for itself on microreactor fuel.
+- Uranium balance: a uranium rod costs 2 uranium and gives 1 back, so every rod burned costs 1 uranium net. MOX costs 1 more uranium. Three uranium rods and the MOX rod they make come to about 160 million FE for 4 uranium, where a microreactor core gets about 18 million from 2.
+
+**Waste Cask**
+- Holds 1,024 fission waste (16 stacks), filled by pipe or hopper from any side. A gauge on the side shows how full it is.
+- Keeps its contents when broken, like a shulker box, so a full cask can be carried off and stacked in a store. Nothing is lost and nothing leaks.
+- One cask holds about a day of a uranium station's waste (40 an hour). If the reprocessor's output backs up it simply pauses, like any machine.
+- Real basis: dry cask storage, where spent fuel sits in sealed steel and concrete casks.
+
+### Machine recipes (first pass)
+- **Core Cracker:** 4 steel, 2 pistons (the jaws), 2 iron and 1 basic control board. It is the first tier 2 machine, needed the moment the first core runs out, so it takes a basic board.
+- **Reprocessor:** 4 lead (shielding), 2 advanced control boards, 2 steel and a cauldron (the dissolver).
+- **Fuel Fabricator:** 4 steel, 2 pistons (the press), 2 copper and 1 advanced control board.
+- **Waste Cask:** 4 steel, 4 lead and a barrel.
 
 ### Fuel and plutonium (no grind)
-- A MOX rod needs one plutonium nugget, not an ingot, so one reprocessed core makes one MOX rod. Nothing ever needs a stockpile of nine.
-- In the fission reactor, uranium rods burn fast and come out as spent rods that reprocess into plutonium: running uranium is the quick way to breed plutonium, as in real reactors. MOX rods run hotter and last much longer, so an hour of microreactor fuel becomes hours of better fission fuel.
-- The loop grows as you scale: microreactor cores start it, spent fission rods feed it, and the tier 4 breeder makes more fuel than it burns.
-- Exact rod lives and yields are tuned with the fission reactor in tier 3.
+- A MOX rod needs one plutonium ingot. MOX makes twice the power of uranium, so it has to cost more than a uranium rod, which is easy to make in bulk in a pack with quarries.
+- The ingot is not a compression recipe: the nuggets come from a new process (reprocessing), not from a pile of the tier below. It is also close to real: spent fuel is about 1% plutonium and MOX about 7%, so real MOX takes several spent rods' plutonium per fresh rod.
+- The yield is set so two stations pair up: 3 spent uranium rods make 1 MOX rod. A uranium station in its best power layout spends about 40 rods an hour (enough for about 13 MOX rods), and a full MOX station about 10. So one station burns uranium to breed plutonium and a second runs on the MOX it makes, with a little to spare (more with the breeder station in overdrive). Microreactor cores still give 1 nugget each, so early plutonium comes slowly.
+- The loop grows as you scale: microreactor cores start it, spent fission rods feed it, and the tier 4 breeder makes plutonium from uranium without burning a station's worth of rods.
+- Rod lives and yields are first numbers, tuned in play-testing.
 
 ### New materials
 - **Silicon:** sand and coal in the electric alloy smelter only (the fuel-burning smelter cannot get hot enough). Real basis: carbothermic reduction, how silicon is made.
@@ -195,7 +236,7 @@ All the machines run on microreactor power (power gating) and follow the electri
 - **Plutonium** ingot and nugget (`c:ingots/plutonium`, `c:nuggets/plutonium`), **spent kernels**, **fission waste**, **MOX fuel rod**, **uranium fuel rod**.
 
 ### Unlocking fission (natural gating)
-No hard locks. The fission reactor needs the microreactor's by-products to build and to run: its parts need advanced boards and products of the fuel cycle, and its only fuel comes from the Fuel Fabricator. A "Closing the Loop" advancement marks the first reprocessed core, which packs can hang quests on. Which exact parts need what is settled with the tier 3 design.
+No hard locks. The fission reactor needs the microreactor's by-products to build and to run: its parts need advanced boards and products of the fuel cycle, and its only fuel comes from the Fuel Fabricator. Advancements mark each step, for packs to hang quests on: cracking the first core, "Closing the Loop" for the first plutonium, and the first MOX rod.
 
 ## 8. Tier 3: Fission power station
 
@@ -221,13 +262,14 @@ Size is fixed, so the lever is the core layout (rule 1: knowledge, not volume). 
 - **Coolant channels:** carry heat away to make steam.
 - Channels are planned, then filled: pick a tool in the control screen (fuel, moderator, control rod, coolant) and click channels to plan them. Moderators (graphite blocks) and control rods go in once; fuel channels take uranium or MOX rods, by hand or through the fuel port, and spent rods come back out of the port. The grid is shown as seen from the station's front.
 - Channels start empty, so every coolant channel is a choice. Right-click a channel to take its item out, and again to clear its plan.
-- First numbers (being play-tested, `fission_station.output_percent` scales them): a uranium rod makes 1,000 thermal FE/t and lasts 30 minutes at a steady burn, MOX 1,400 and 2 hours.
+- First numbers (being play-tested, `fission_station.output_percent` scales them): a uranium rod makes 1,000 thermal FE/t and lasts 30 minutes at a steady burn, MOX 2,000 and 2 hours. MOX also lets each coolant channel carry more heat, up to twice as much in an all-MOX core (scaled by its share of the fuel rods), so a full MOX core plays like the same uranium core at double the power. Real basis: plutonium-bearing fuel runs at a higher power density, and hotter fuel drives more heat into the water; the factor of two is a fudge so closing the fuel cycle pays.
 - Neighbours change a rod: each moderator adds 40% heat at no extra burn (better neutron economy, so moderators are how you get more energy per rod); each neighbouring fuel rod adds 20% heat and 20% burn; each control rod takes 35% off both (so control rods trim a layout that runs too hot).
 - Coolant is local: a rod's heat goes, shared evenly, to the coolant channels touching it. Each channel carries up to 3,000 thermal FE/t as steam, boiling 1 mB of water per 200. Heat with no coolant beside it, or more than a channel can carry, stays in the core and heats it until it SCRAMs.
 - The core settles at a temperature set by how hard its coolant works: 150°C idle, 600°C at full load. The turbine is 25% efficient at 150°C, up to 40% at 600°C (Carnot). So the most power sits just under the coolant's limit.
 - The GUI works out the layout as you plan it: planned power (or "too hot" with the heat left uncooled), the settled temperature and efficiency, how long rods last, and a rating against the best layouts found. Each fuel rod shows a heat bar, each coolant channel a load bar, and uncooled rods or overloaded coolant flash red. No separate planner block is needed. A light puzzle, not a spreadsheet.
-- Best layouts found (`art/tools/core_optimiser.py`, a simulated-annealing search, at 100% output): uranium for power 8,006 FE/t (15 rods, 544°C, 38%); uranium for economy 2,713 FE/t from 4 rods (822 FE/t per rod burning); MOX for power 9,053 FE/t; MOX for economy 2,147 FE/t. Rerun it and update `StationReactor.BEST_URANIUM` and `BEST_MOX` whenever these numbers change.
+- Best layouts found (`art/tools/core_optimiser.py`, a simulated-annealing search, at 100% output): uranium for power 8,006 FE/t (15 rods, 544°C, 38%); uranium for economy 2,713 FE/t from 4 rods (822 FE/t per rod burning); MOX for power 16,012 FE/t (the uranium layout doubled, 544°C); MOX for economy 2,291 FE/t from 2 rods. Rerun it and update `StationReactor.BEST_URANIUM` and `BEST_MOX` whenever these numbers change.
 - Rods show in the chamber, glowing, in the layout you chose.
+- While it runs, the chamber glass gives off light (15, like a torch), so the station lights up the ground round it, and a green haze drifts up through the chamber (uranium glass glows green). Minecraft light has no colour, so the light itself is white. The haze is only for looks: the first thing to cut if stations cost too much on the client.
 
 ### Running it
 - Heat from the core boils the water fed in at the base; steam drives the turbine; FE comes out of the base. Real basis: a boiling water reactor, which boils its coolant in the core and sends the steam straight to the turbine.
@@ -238,7 +280,8 @@ Size is fixed, so the lever is the core layout (rule 1: knowledge, not volume). 
 
 ### Overdrive (safeties off)
 - The same safety switch as the microreactor, shift-clicked on purpose. The control rods come further out: every rod makes 30% more heat and burns 30% faster, each coolant channel carries 30% more (a hotter core drives more heat through it), and the steam leaves superheated, so the turbine reaches 45% instead of 40%. The same layout gives about half as much power again (best uranium about 11,600 FE/t). No SCRAM.
-- The catch: every fuel channel must hold a live rod. A spent or empty fuel channel starts a flux tilt. After 10 seconds' grace (time to swap a rod by hand) the status flashes FLUX TILT with a countdown, and a slow alarm sounds. Refill it within 5 minutes (`fission_station.flux_tilt_seconds`) and all is well. Otherwise the core goes UNSTABLE: it heats by 1°C a tick without limit, smoke pours out and the alarm climbs in pitch. Only re-arming the safeties saves it then (that SCRAMs the core). At 1000°C it melts down: the station and its contents are destroyed in an explosion (power 8 by default), leaving a radiation site of strength 500 that fades over 40 minutes. Overheating in overdrive ends the same way, since nothing SCRAMs.
+- The catch: every fuel channel must hold a live rod. A spent or empty fuel channel starts a flux tilt. After 10 seconds' grace (time to swap a rod by hand) the status flashes FLUX TILT with a countdown, and a slow alarm sounds. Refill it within 5 minutes (`fission_station.flux_tilt_seconds`) and all is well. Otherwise the core goes UNSTABLE: it heats by 1°C a tick without limit, smoke pours out and the alarm climbs in pitch. Only re-arming the safeties saves it then (that SCRAMs the core). At 1000°C it melts down: the station and its contents are destroyed. The blast (power 8 by default) is followed by a crater far bigger than a vanilla explosion digs: a scorched bowl 24 blocks in radius (`fission_station.meltdown_crater_radius`, 0 for the blast alone), its floor blackstone, basalt and magma with fires burning, the ground round the rim scorched. It leaves a radiation site of strength 500 that fades over 40 minutes. The crater goes through NeoForge's explosion event, so land claim mods can protect their blocks.
+- Overheating in overdrive ends the same way, since nothing SCRAMs, and much sooner: a core with no coolant reaches 1000°C in about a minute. A steady overdrive core never passes 600°C, so above 620°C the status shows MELTDOWN RISK (it outranks the flux tilt countdown) and the alarm climbs with the temperature.
 - A reward for good automation: an output port pushing spent rods out and a pipe feeding fresh ones in keeps the channels full.
 - Config: `fission_station.meltdowns` off makes the interlock re-arm itself and SCRAM instead of melting down.
 - Real basis: power peaking around a gap in the fuel, with too little control rod margin to hold it. The explosion is an honest fudge for a steam explosion.
@@ -246,8 +289,27 @@ Size is fixed, so the lever is the core layout (rule 1: knowledge, not volume). 
 
 ## 9. Tier 4: Breeder and thorium
 
-- Breeder reactor: produces more fissile fuel than it consumes. Needs more active management (flow rates, temperatures), with optional redstone or computer control.
-- Thorium path: thorium is not a fuel itself but breeds U-233. An alternative route with its own trade-offs.
+Spent MOX is the way in. The lesson of the tier: what one reactor cannot burn, another can.
+
+Real basis: every pass through a thermal reactor builds up heavier plutonium isotopes (Pu-240 and up) plus americium and curium. They soak up slow neutrons, so spent MOX cannot be recycled again in a moderated reactor like the fission station. France stores its spent MOX for this reason, waiting for fast reactors, whose unmoderated fast neutrons split those heavy isotopes. So spent MOX is a dead end for the station and the starting fuel for a breeder.
+
+### The chain
+1. **Spent MOX rods** come out of the fission station like spent uranium rods, but the tier 2 Reprocessor cannot take them.
+2. **Pyroprocessor** (working name): spent MOX rods, salt and power become transuranic metal (plutonium, americium and curium together, never separated), a uranium ingot and fission waste. Real basis: pyroprocessing, where spent fuel is dissolved in molten salt and the metals are plated out by electrolysis. It was designed for fast reactor fuel, keeps the transuranics together (harder to misuse), and uses the salt we ship. It runs on fission power and draws a lot of it (power gating).
+3. **Breeder fuel:** transuranic metal made into fast reactor fuel. It is the only fuel that starts a breeder core, so running MOX is the gate into tier 4.
+4. **Breeder reactor:** a sodium-cooled fast reactor. No moderator: fast neutrons burn the transuranic fuel, and a blanket round the core catches the spare ones. A uranium blanket breeds plutonium, which goes back into MOX rods, so once a breeder runs, MOX no longer needs a uranium station burning rods to feed it (rule 3: no grind). It makes more fissile fuel than it burns. Needs more active management than the station (sodium flow, temperatures), with optional redstone or computer control.
+5. **Thorium path:** swap the blanket to thorium (from monazite) and it breeds uranium-233 instead. Thorium is not a fuel itself; U-233 is an alternative fuel with its own trade-offs.
+
+### How the tiers tie together
+- Uranium station: uranium rods become spent rods, which reprocess into plutonium for MOX.
+- MOX station: MOX rods become spent MOX, which the pyroprocessor turns into breeder fuel.
+- Breeder: burns that fuel and breeds plutonium (back to MOX) or U-233 from thorium.
+- Every tier stays useful (rule 4): the breeder needs a MOX station to start and keep its fuel coming, and the stations burn what it breeds.
+- Sodium coolant is split from salt on fission power, and tritium for fusion is bred from lithium in the fission reactors, so tier 4 also feeds tier 5.
+- Output target: 20,000 to 100,000 FE/t (section 8's scaling targets).
+
+### New materials
+- **Spent MOX rod**, **transuranic metal** (no other mod makes it, so it has no common tag), **breeder fuel**, **sodium** (`c:dusts/sodium` or an ingot, decided with the machine), **uranium-233**.
 
 ## 10. Tier 5: Fusion
 
@@ -291,6 +353,13 @@ Size is fixed, so the lever is the core layout (rule 1: knowledge, not volume). 
 - **Intake pump:** a one-block machine that sits one block above the water and draws from the water source block directly below it, without ever draining it. 100 mB/t for 10 FE/t (config), energy in at the back, water out of the blue port on top. The microreactor runs dry without water, so its own dry power can start the pump that cools it. Real basis: an intake pump on a lake or river.
 - **Steam:** a gas, stored as a fluid that is lighter than air, tagged `c:steam` and `c:gaseous` so other mods' steam users and tanks take it. No bucket, never placed in the world.
 - **Pipes:** four kinds share one base (auto-connect, wrench to extract or disconnect, a stats panel): energy cables, item pipes, fluid pipes (liquids only, 250 mB/t) and gas pipes (gases only, 1,000 mB/t). Liquids and gases never share a pipe, as in real plants. Band colours match the ports: red energy, orange items, blue liquids, white gases.
+- **Fittings (upgrade, don't replace):** one rule for everything entering a network: whatever comes in on a side is limited by that side's fitting, whether it is pulled by an extract side, pushed in by a generator, or drawn from a battery; the source's own rate limits it too. So a full home battery (3,000 FE/t) discharges at 1,000 FE/t on a plain cable and at its own rate once fitted. A cable's panel (empty hand on any cable joined to a machine) lists each machine side above the player's inventory; sides that feed the network get a fitting slot, and sides that only take from it say "receives only", since a fitting there would do nothing. One fitting per side; each tier is crafted from the one before, so a better fitting replaces a worse one, and the same three serve every kind of cable and pipe:
+  - Silver Fittings (4 silver, 4 copper, redstone): 8 times the base. Silver is the best common conductor.
+  - Busbar Fittings (silver fittings, 4 copper blocks, 2 steel, 2 advanced boards): 32 times. Heavy busbars carry a power station's current.
+  - Cryogenic Fittings (busbar fittings, 4 yttrium, 4 blue ice): 1,024 times, effectively unlimited. Superconductors carry current with no loss. The recipe loads once yttrium exists (tier 5).
+  - Energy goes 1,000, 8,000, 32,000, about 1 million FE/t; fluids and gases scale the same way; item pipes grow their batch up to a stack, then pull more often, down to every tick.
+  - The fitting shows on the cable where it is fitted: a bright silver sleeve, a bolted copper clamp, or a frosted jacket with a glowing cyan ring. The cable's model adds them from the block entity (fittings in the block state would multiply each cable's states by 4096).
+  - Without fittings a plain cable carries 1,000 FE/t per input, which is why a fission station needs at least silver fittings on its energy port's cable.
 - **Pressure tank:** a steel tank with sight glasses. One block on its own is a small tank (32,000 mB, config). Built as a 2 x 2 footprint and stacked up to 16 high, the blocks join into one tower that pools its gas. A gas fills its whole container instead of sitting at a level, so the steam shows through the glass as a haze that thickens with the pressure. Pipes connect to any outside face. Breaking a block vents that block's share. Real basis: a gas receiver with sight glasses.
 - **Fluid tank:** the pressure tank's twin for liquids (water, lava), with copper walls and 16,000 mB per block (config). Same 2 x 2 towers; the liquid shows through the glass at its level, settled at the bottom, and lava glows. Pressure tanks and fluid tanks never join each other.
 
@@ -351,7 +420,7 @@ Radiation is on by default (config toggle to turn it off). It exists to make the
 ### The dosimeter ring
 - A craftable ring worn in the **Accessories** ring slot (tagged `accessories:ring`, and `curios:ring` for packs that use Curios). Recipe: a fluorite chip in an iron band (`.F. / I.I / .I.`); fluorite (calcium fluoride) is a real thermoluminescent dosimeter material.
 - Without an accessory mod installed, carrying it anywhere in the inventory counts, so the mod stays fully playable standalone.
-- The plain ring blocks 25% of the dose.
+- The plain ring blocks all of the dose for now, since there is no other radiation gear yet (and may never be). Its gauge and clicks still read the radiation around you, so it warns you even while it protects you. Lower `DosimeterRingItem.PROTECTION` if linings ever arrive.
 - Real basis: nuclear workers really do wear ring and badge dosimeters. The one fudge: real dosimeters only measure dose, while ours also protects.
 - Shows a small HUD gauge with current exposure, and clicks like a Geiger counter near sources.
 - Upgraded, not replaced: new tier materials are added to the same ring (lead lining, then silicon carbide, then tungsten) to protect against stronger sources. No crafting a new ring each tier.

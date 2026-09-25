@@ -23,8 +23,8 @@ import net.minecraft.world.phys.AABB;
 import java.util.List;
 
 /**
- * Draws a formed fission station from {@link StationGeometry}: the static body, the rods, and the
- * rotor turning about the station's centre. The geometry is drawn facing north from the station's
+ * Draws a formed fission station from {@link StationGeometry}: the static body (from a GPU mesh,
+ * see {@link StationMesh}), the rods, and the rotor turning about the station's centre. The geometry is drawn facing north from the station's
  * north-west corner, then turned about the footprint's centre to the core's facing.
  */
 public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEntity> {
@@ -39,14 +39,27 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
             return;
         }
         Direction facing = core.facing();
-        // From the core's corner to the design's north-west corner, then turned about the centre.
-        BlockPos coreCell = StationLayout.turn(StationLayout.CORE, facing);
+        // The static body: from the GPU mesh when we can (built once, redrawn each frame in one
+        // call), otherwise sent like everything else.
+        if (!StationMesh.shadersInUse()) {
+            StationMesh mesh = core.clientMesh instanceof StationMesh cached && cached.matches(light, facing) ? cached : null;
+            if (mesh == null) {
+                if (core.clientMesh instanceof StationMesh old) {
+                    old.close();
+                }
+                PoseStack local = new PoseStack();
+                place(local, facing);
+                mesh = StationMesh.build(StationGeometry.group("static"), local, light, facing);
+                core.clientMesh = mesh;
+            }
+            mesh.draw(pose.last().pose());
+        }
         VertexConsumer buffer = buffers.getBuffer(Sheets.cutoutBlockSheet());
         pose.pushPose();
-        pose.translate(-coreCell.getX() + HALF, 0, -coreCell.getZ() + HALF);
-        pose.mulPose(Axis.YP.rotationDegrees(StationLayout.yRotation(facing)));
-        pose.translate(-HALF, 0, -HALF);
-        draw(buffer, pose, StationGeometry.group("static"), light);
+        place(pose, facing);
+        if (StationMesh.shadersInUse()) {
+            draw(buffer, pose, StationGeometry.group("static"), light);
+        }
         draw(buffer, pose, rods(core), light);
         pose.pushPose();
         float angle = core.rotorAngle(partialTick);
@@ -56,6 +69,14 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
         draw(buffer, pose, StationGeometry.group("rotor"), light);
         pose.popPose();
         pose.popPose();
+    }
+
+    /** From the core's corner to the design's north-west corner, then turned about the centre to the facing. */
+    private static void place(PoseStack pose, Direction facing) {
+        BlockPos coreCell = StationLayout.turn(StationLayout.CORE, facing);
+        pose.translate(-coreCell.getX() + HALF, 0, -coreCell.getZ() + HALF);
+        pose.mulPose(Axis.YP.rotationDegrees(StationLayout.yRotation(facing)));
+        pose.translate(-HALF, 0, -HALF);
     }
 
     private static final ResourceLocation GLOW = texture("glow");
@@ -97,13 +118,16 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
         return quads;
     }
 
-    private static void draw(VertexConsumer buffer, PoseStack pose, List<StationGeometry.Quad> quads, int light) {
+    static void draw(VertexConsumer buffer, PoseStack pose, List<StationGeometry.Quad> quads, int light) {
         PoseStack.Pose last = pose.last();
         for (StationGeometry.Quad quad : quads) {
             int lit = quad.emissive() ? LightTexture.FULL_BRIGHT : light;
             float[] p = quad.xyz();
             float[] uv = quad.uv();
-            float nx = quad.face().getStepX(), ny = quad.face().getStepY(), nz = quad.face().getStepZ();
+            // The entity shader shades each face by its normal, which would dim the sides of a
+            // light strip to half. Emissive faces point their normal up, where that shading is full.
+            Direction normal = quad.emissive() ? Direction.UP : quad.face();
+            float nx = normal.getStepX(), ny = normal.getStepY(), nz = normal.getStepZ();
             for (int i = 0; i < 4; i++) {
                 buffer.addVertex(last, p[i * 3], p[i * 3 + 1], p[i * 3 + 2])
                         .setColor(0xFFFFFFFF)

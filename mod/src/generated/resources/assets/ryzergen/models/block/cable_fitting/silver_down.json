@@ -1,0 +1,41 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#fitting"
+        },
+        "east": {
+          "texture": "#fitting"
+        },
+        "north": {
+          "texture": "#fitting"
+        },
+        "south": {
+          "texture": "#fitting"
+        },
+        "up": {
+          "texture": "#fitting"
+        },
+        "west": {
+          "texture": "#fitting"
+        }
+      },
+      "from": [
+        4.5,
+        1,
+        4.5
+      ],
+      "to": [
+        11.5,
+        3.5,
+        11.5
+      ]
+    }
+  ],
+  "textures": {
+    "fitting": "ryzergen:block/fitting_silver",
+    "glow": "ryzergen:block/microreactor/glow",
+    "particle": "ryzergen:block/fitting_silver"
+  }
+}

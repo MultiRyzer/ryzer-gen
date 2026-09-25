@@ -1,4 +1,13 @@
 {
+  "core_cracker": {
+    "sounds": [
+      {
+        "name": "ryzergen:core_cracker",
+        "volume": 0.65
+      }
+    ],
+    "subtitle": "subtitles.ryzergen.core_cracker"
+  },
   "dosimeter_click": {
     "sounds": [
       {
@@ -9,11 +18,21 @@
     ],
     "subtitle": "subtitles.ryzergen.dosimeter_click"
   },
+  "fuel_fabricator": {
+    "sounds": [
+      {
+        "name": "ryzergen:fuel_fabricator",
+        "volume": 0.65
+      }
+    ],
+    "subtitle": "subtitles.ryzergen.fuel_fabricator"
+  },
   "microreactor_alarm": {
     "sounds": [
       {
         "attenuation_distance": 64,
-        "name": "ryzergen:microreactor_alarm"
+        "name": "ryzergen:microreactor_alarm",
+        "volume": 0.65
       }
     ],
     "subtitle": "subtitles.ryzergen.microreactor_alarm"
@@ -28,13 +47,33 @@
     ],
     "subtitle": "subtitles.ryzergen.microreactor_hum"
   },
+  "reprocessor": {
+    "sounds": [
+      {
+        "name": "ryzergen:reprocessor",
+        "volume": 0.65
+      }
+    ],
+    "subtitle": "subtitles.ryzergen.reprocessor"
+  },
   "station_alarm": {
     "sounds": [
       {
         "attenuation_distance": 96,
-        "name": "ryzergen:microreactor_alarm"
+        "name": "ryzergen:station_alarm",
+        "volume": 0.65
       }
     ],
     "subtitle": "subtitles.ryzergen.station_alarm"
+  },
+  "station_hum": {
+    "sounds": [
+      {
+        "attenuation_distance": 48,
+        "name": "ryzergen:station_hum",
+        "volume": 0.65
+      }
+    ],
+    "subtitle": "subtitles.ryzergen.station_hum"
   }
 }

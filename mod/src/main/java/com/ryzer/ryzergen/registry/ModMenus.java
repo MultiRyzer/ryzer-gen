@@ -9,6 +9,8 @@ import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterMenu;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorMenu;
 import com.ryzer.ryzergen.machine.fission.StationControlMenu;
 import com.ryzer.ryzergen.machine.fission.StationCoreMenu;
+import com.ryzer.ryzergen.machine.processing.ProcessingMachine;
+import com.ryzer.ryzergen.machine.processing.ProcessingMenu;
 import com.ryzer.ryzergen.machine.pump.IntakePumpMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.flag.FeatureFlags;
@@ -56,6 +58,15 @@ public final class ModMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<MicroreactorMenu>> MICROREACTOR =
             MENUS.register("microreactor", () -> new MenuType<>(MicroreactorMenu::new, FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<ProcessingMenu>> CORE_CRACKER = processing(ProcessingMachine.CORE_CRACKER);
+    public static final DeferredHolder<MenuType<?>, MenuType<ProcessingMenu>> REPROCESSOR = processing(ProcessingMachine.REPROCESSOR);
+    public static final DeferredHolder<MenuType<?>, MenuType<ProcessingMenu>> FUEL_FABRICATOR = processing(ProcessingMachine.FUEL_FABRICATOR);
+
+    private static DeferredHolder<MenuType<?>, MenuType<ProcessingMenu>> processing(ProcessingMachine machine) {
+        return MENUS.register(machine.id(), () -> new MenuType<>(
+                (id, inventory) -> new ProcessingMenu(machine, id, inventory), FeatureFlags.DEFAULT_FLAGS));
+    }
 
     private ModMenus() {}
 }

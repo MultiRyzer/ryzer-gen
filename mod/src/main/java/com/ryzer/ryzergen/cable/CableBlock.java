@@ -23,12 +23,13 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * A cable or pipe, in the spirit of Pipez: it joins others of its own kind and any block that
  * offers what it carries. The wrench sets a side to extract (pull out of that block) or disconnects
- * it, and an empty hand opens the stats panel on a cable with an extract side. Energy cables and
+ * it, and an empty hand opens the panel (stats and fittings) on a cable joined to a machine. Energy cables and
  * item pipes differ only in what they carry, so everything else lives here.
  */
 public abstract class CableBlock extends BaseEntityBlock {
@@ -154,11 +155,14 @@ public abstract class CableBlock extends BaseEntityBlock {
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())) {
             CableNetwork.changed();
+            if (level.getBlockEntity(pos) instanceof CableBlockEntity<?> cable) {
+                cable.dropFittings(level, pos);
+            }
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
-    /** An empty hand opens the panel for a cable that extracts; otherwise, a hint. */
+    /** An empty hand opens the panel for a cable joined to a machine; otherwise, a hint. */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!player.getMainHandItem().isEmpty()) {
@@ -166,8 +170,13 @@ public abstract class CableBlock extends BaseEntityBlock {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            if (state.getValues().containsValue(CableSide.EXTRACT) && level.getBlockEntity(pos) instanceof CableBlockEntity<?> cable) {
-                serverPlayer.openMenu(cable, buffer -> buffer.writeBlockPos(pos));
+            if (level.getBlockEntity(pos) instanceof CableBlockEntity<?> cable && !cable.panelSides().isEmpty()) {
+                List<Direction> sides = cable.panelSides();
+                serverPlayer.openMenu(cable, buffer -> {
+                    buffer.writeBlockPos(pos);
+                    CableMenu.writeSides(buffer, sides);
+                    CableMenu.writeSides(buffer, sides.stream().filter(cable::feeds).toList());
+                });
             } else {
                 player.displayClientMessage(Component.translatable("message.ryzergen.cable.no_extract"), true);
             }

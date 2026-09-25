@@ -1,32 +1,62 @@
 {
   "variants": {
-    "facing=east,formed=false": {
+    "facing=east,formed=false,lit=false": {
       "model": "ryzergen:block/station_core",
       "y": 90
     },
-    "facing=east,formed=true": {
+    "facing=east,formed=false,lit=true": {
       "model": "ryzergen:block/station_core",
       "y": 90
     },
-    "facing=north,formed=false": {
+    "facing=east,formed=true,lit=false": {
+      "model": "ryzergen:block/station_core",
+      "y": 90
+    },
+    "facing=east,formed=true,lit=true": {
+      "model": "ryzergen:block/station_core",
+      "y": 90
+    },
+    "facing=north,formed=false,lit=false": {
       "model": "ryzergen:block/station_core"
     },
-    "facing=north,formed=true": {
+    "facing=north,formed=false,lit=true": {
       "model": "ryzergen:block/station_core"
     },
-    "facing=south,formed=false": {
+    "facing=north,formed=true,lit=false": {
+      "model": "ryzergen:block/station_core"
+    },
+    "facing=north,formed=true,lit=true": {
+      "model": "ryzergen:block/station_core"
+    },
+    "facing=south,formed=false,lit=false": {
       "model": "ryzergen:block/station_core",
       "y": 180
     },
-    "facing=south,formed=true": {
+    "facing=south,formed=false,lit=true": {
       "model": "ryzergen:block/station_core",
       "y": 180
     },
-    "facing=west,formed=false": {
+    "facing=south,formed=true,lit=false": {
+      "model": "ryzergen:block/station_core",
+      "y": 180
+    },
+    "facing=south,formed=true,lit=true": {
+      "model": "ryzergen:block/station_core",
+      "y": 180
+    },
+    "facing=west,formed=false,lit=false": {
       "model": "ryzergen:block/station_core",
       "y": 270
     },
-    "facing=west,formed=true": {
+    "facing=west,formed=false,lit=true": {
+      "model": "ryzergen:block/station_core",
+      "y": 270
+    },
+    "facing=west,formed=true,lit=false": {
+      "model": "ryzergen:block/station_core",
+      "y": 270
+    },
+    "facing=west,formed=true,lit=true": {
       "model": "ryzergen:block/station_core",
       "y": 270
     }

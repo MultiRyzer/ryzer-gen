@@ -59,22 +59,28 @@ def disc(mat, y1, y2, r, cx=C, cz=C, step=4, sides=None, top=None):
         x += step
 
 
-def ring(mat, y1, y2, ro, ri, step=4):
+def ring(mat, y1, y2, ro, ri, step=4, proud=0):
     """A cylinder wall: the strips of a disc with the middle left out. Each strip's piece reaches from
     the wall's outside at the strip's inner edge to its inside at the strip's outer edge, so pieces
-    overlap their neighbours and a thin wall has no gaps on the curve."""
-    x = -ro
+    overlap their neighbours and a thin wall has no gaps on the curve.
+
+    Strips are laid out from the centre (one straddles it), so both halves are mirror images and two
+    rings of different radius share their strip edges. `proud` pushes each piece's outer end that
+    far past its strip, so a trim ring laid on a wall stands clear of the wall's steps on every side."""
+    x = -step / 2 - math.ceil(max(0, ro - step / 2) / step) * step
     while x < ro:
         near = min(abs(x), abs(x + step)) if not (x < 0 < x + step) else 0
         far = max(abs(x), abs(x + step))
         zo = math.sqrt(max(0, ro * ro - near * near))
+        x1 = x - (proud if x + step <= 0 else 0)
+        x2 = x + step + (proud if x >= 0 else 0)
         if zo > 0.5:
             if far < ri:
                 zi = math.sqrt(ri * ri - far * far)
-                box(mat, C + x, y1, C - zo, C + x + step, y2, C - zi)
-                box(mat, C + x, y1, C + zi, C + x + step, y2, C + zo)
+                box(mat, C + x1, y1, C - zo, C + x2, y2, C - zi)
+                box(mat, C + x1, y1, C + zi, C + x2, y2, C + zo)
             else:
-                box(mat, C + x, y1, C - zo, C + x + step, y2, C + zo)
+                box(mat, C + x1, y1, C - zo, C + x2, y2, C + zo)
         x += step
 
 
@@ -134,7 +140,7 @@ group = 'static'
 
 # ---------------------------------------------------------------- head
 disc('steel_dark', 80, 96, 6 * B - 6)
-ring('glow', 88, 89, 6 * B - 5.5, 6 * B - 7)
+ring('glow', 88, 89, 6 * B - 5.5, 6 * B - 7, proud=0.5)
 
 
 def wall(mat, y1, y2, r, thickness=5):
@@ -184,7 +190,7 @@ for y in range(124, TOP, 4):
     mat = 'steel_dark' if y in (124, TOP - 4) else 'steel'
     wall(mat, y, y + 4, r)
 ring('glow', 140, 141, 5.0 * B * math.sqrt(1 + 0.22 * ((140 - 158) / 34) ** 2) + 0.5,
-     5.0 * B * math.sqrt(1 + 0.22 * ((140 - 158) / 34) ** 2) - 2)
+     5.0 * B * math.sqrt(1 + 0.22 * ((140 - 158) / 34) ** 2) - 2, proud=0.5)
 
 
 # ---------------------------------------------------------------- cut into blocks and render

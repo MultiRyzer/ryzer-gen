@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.datagen;
 
+import com.ryzer.ryzergen.machine.processing.TallProcessingBlock;
 import com.ryzer.ryzergen.battery.HomeBatteryBlock;
 import com.ryzer.ryzergen.material.OreType;
 import com.ryzer.ryzergen.registry.ModBlocks;
@@ -49,6 +50,12 @@ public class ModBlockLootProvider extends BlockLootSubProvider {
         // Only the lower half drops the cabinet; its modules drop from the block entity.
         add(ModBlocks.HOME_BATTERY.get(), createSinglePropConditionTable(ModBlocks.HOME_BATTERY.get(),
                 HomeBatteryBlock.HALF, DoubleBlockHalf.LOWER));
+        dropSelf(ModBlocks.CORE_CRACKER.get());
+        dropSelf(ModBlocks.FUEL_FABRICATOR.get());
+        add(ModBlocks.REPROCESSOR.get(), createSinglePropConditionTable(ModBlocks.REPROCESSOR.get(),
+                TallProcessingBlock.HALF, DoubleBlockHalf.LOWER));
+        // The cask keeps its waste, like a shulker box keeps its contents.
+        add(ModBlocks.WASTE_CASK.get(), createShulkerBoxDrop(ModBlocks.WASTE_CASK.get()));
         dropSelf(ModBlocks.REACTOR_HEART.get());
         dropSelf(ModBlocks.REACTOR_MACHINE_UNIT.get());
         dropSelf(ModBlocks.COOLANT_JACKET.get());

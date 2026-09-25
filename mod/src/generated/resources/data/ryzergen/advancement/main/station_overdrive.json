@@ -1,0 +1,29 @@
+{
+  "parent": "ryzergen:main/station",
+  "criteria": {
+    "station_overdrive": {
+      "conditions": {
+        "milestone": "station_overdrive"
+      },
+      "trigger": "ryzergen:milestone"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.station_overdrive.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:control_rod"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.station_overdrive.title"
+    }
+  },
+  "requirements": [
+    [
+      "station_overdrive"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

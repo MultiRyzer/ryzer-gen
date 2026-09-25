@@ -1,5 +1,8 @@
 package com.ryzer.ryzergen.machine.fission;
 
+import com.ryzer.ryzergen.advancement.Milestone;
+import com.ryzer.ryzergen.registry.ModTriggers;
+import net.minecraft.world.phys.Vec3;
 import com.ryzer.ryzergen.RyzerGen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -127,12 +130,13 @@ public final class StationStructure {
         level.playSound(null, core.above(5), SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 1.0F, 0.8F);
         level.playSound(null, core.above(5), SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0F, 1.2F);
         level.sendParticles(ParticleTypes.ELECTRIC_SPARK, core.getX() + 0.5, core.getY() + 3, core.getZ() + 0.5, 80, 4, 2.5, 4, 0.05);
+        ModTriggers.MILESTONE.get().triggerNearby(level, Vec3.atCenterOf(core.above(3)), Milestone.STATION_FORMED);
     }
 
     private static void setFormed(ServerLevel level, BlockPos pos, boolean formed) {
         BlockState state = level.getBlockState(pos);
         if (state.getBlock() instanceof StationPartBlock && state.getValue(StationPartBlock.FORMED) != formed) {
-            level.setBlock(pos, state.setValue(StationPartBlock.FORMED, formed), Block.UPDATE_CLIENTS);
+            level.setBlock(pos, state.setValue(StationPartBlock.FORMED, formed).setValue(StationPartBlock.LIT, false), Block.UPDATE_CLIENTS);
             // Ports appear and vanish with the station.
             level.invalidateCapabilities(pos);
         }
