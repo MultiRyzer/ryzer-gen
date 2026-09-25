@@ -100,8 +100,10 @@ The first public build: the microreactor, home battery, pipes and steam, the fue
 - [x] Unfinished next-tier content (Lithium Extractor, target rods) behind the `preview.next_tier` config, off by default: no recipes, hidden from the creative tab, JEI and EMI, no target tool in the station grid
 - [x] MIT licence (sounds keep their Pixabay licence), version `0.1.0-alpha`, GitHub links in the mod metadata
 - [x] Mod page description with a player-facing roadmap
+- [x] Mod icon (`art/tools/mod_icon.py`, rendered from the formed microreactor), also the in-game logo
+- [x] Test checklist for the run below (`docs/ALPHA-TEST.md`)
 - [ ] Check the dosimeter ring's worn band in game (renderer written, see Polish)
-- [ ] Commit and push the current work
+- [x] Commit and push the current work
 - [ ] Survival run on a fresh world with only the release jar (no dev mods), then again with JEI, and once inside ATM10
 - [ ] Screenshots and a short clip: the microreactor snapping together, the station building itself and running
 - [ ] Make the GitHub repo public; turn on issues

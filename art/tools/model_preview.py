@@ -133,7 +133,7 @@ def collect_faces(models):
     return faces
 
 
-def render(faces, view, scale):
+def render(faces, view, scale, background=(40, 44, 52, 255)):
     """view is the horizontal direction the camera looks along, e.g. (1, 1) from the north west."""
     vx, vz = view
     n = math.hypot(vx, vz)
@@ -156,7 +156,7 @@ def render(faces, view, scale):
     pad = 12
     w, h = int(maxx - minx) + 2 * pad, int(maxy - miny) + 2 * pad
     ox, oy = pad - minx, pad - miny
-    img = [[(40, 44, 52, 255)] * w for _ in range(h)]
+    img = [[background] * w for _ in range(h)]
     zbuf = [[1e9] * w for _ in range(h)]
     for face, origin, eu, ev, uv, tex, rotation in visible:
         a = project(origin)
