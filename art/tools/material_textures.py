@@ -225,6 +225,8 @@ GEM_RAMPS = {
     'silicon': ('item/quartz', ['10141b', '1d2530', '2e3948', '445366', '627590', '8da0bb', 'c9d6ea']),
     # Spent kernels: the same little cluster as TRISO, its coating burnt and oxidised to rust brown.
     'spent_kernels': ('item/beetroot_seeds', ['0e0b09', '1d1613', '2f231c', '463427', '634935', '86644a', 'b08d6c']),
+    # Lithium: a soft, pale silver metal, on glowstone dust's grains.
+    'lithium_dust': ('item/glowstone_dust', ['23222b', '3b3a47', '5a5869', '7f7d91', 'a8a6ba', 'd1cfe0', 'f4f3fa']),
     # Fission waste: fission products set in glass (vitrified), a dark amber lump.
     'fission_waste': ('item/magma_cream', ['0a0604', '160c06', '24130a', '361d0e', '4f2c14', '7a4a20', 'd59a50']),
 }
