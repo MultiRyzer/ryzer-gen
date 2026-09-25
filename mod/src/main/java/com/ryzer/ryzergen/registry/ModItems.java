@@ -8,7 +8,9 @@ import com.ryzer.ryzergen.battery.BatteryChemistry;
 import com.ryzer.ryzergen.battery.BatteryModuleItem;
 import com.ryzer.ryzergen.item.WrenchItem;
 import com.ryzer.ryzergen.radiation.DosimeterRingItem;
+import com.ryzer.ryzergen.radiation.GeigerCounterItem;
 import com.ryzer.ryzergen.machine.fission.FuelRodItem;
+import com.ryzer.ryzergen.machine.fission.TargetRodItem;
 import com.ryzer.ryzergen.machine.microreactor.FuelCoreItem;
 import com.ryzer.ryzergen.material.OreType;
 import net.minecraft.world.item.BlockItem;
@@ -33,6 +35,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> CORE_CRACKER = ITEMS.registerSimpleBlockItem(ModBlocks.CORE_CRACKER);
     public static final DeferredItem<BlockItem> REPROCESSOR = ITEMS.registerSimpleBlockItem(ModBlocks.REPROCESSOR);
     public static final DeferredItem<BlockItem> FUEL_FABRICATOR = ITEMS.registerSimpleBlockItem(ModBlocks.FUEL_FABRICATOR);
+    public static final DeferredItem<BlockItem> LITHIUM_EXTRACTOR = ITEMS.registerSimpleBlockItem(ModBlocks.LITHIUM_EXTRACTOR);
     public static final DeferredItem<BlockItem> WASTE_CASK = ITEMS.registerSimpleBlockItem(ModBlocks.WASTE_CASK);
     public static final DeferredItem<BlockItem> FLUID_TANK = ITEMS.registerSimpleBlockItem(ModBlocks.FLUID_TANK);
     public static final DeferredItem<BlockItem> STATION_CORE = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_CORE);
@@ -46,6 +49,7 @@ public final class ModItems {
     public static final DeferredItem<BatteryModuleItem> LEAD_ACID_MODULE = ITEMS.registerItem("lead_acid_module",
             properties -> new BatteryModuleItem(BatteryChemistry.LEAD_ACID, properties));
     public static final DeferredItem<DosimeterRingItem> DOSIMETER_RING = ITEMS.registerItem("dosimeter_ring", DosimeterRingItem::new);
+    public static final DeferredItem<GeigerCounterItem> GEIGER_COUNTER = ITEMS.registerItem("geiger_counter", GeigerCounterItem::new);
     public static final DeferredItem<Item> GRAPHITE = ITEMS.registerSimpleItem("graphite");
     public static final DeferredItem<Item> STEEL_INGOT = ITEMS.registerSimpleItem("steel_ingot");
     /** Tier 1 circuit: iron, copper and redstone. */
@@ -89,6 +93,14 @@ public final class ModItems {
     public static final DeferredItem<Item> SPENT_URANIUM_ROD = ITEMS.registerSimpleItem("spent_uranium_rod",
             new Item.Properties().stacksTo(16));
     public static final DeferredItem<Item> SPENT_MOX_ROD = ITEMS.registerSimpleItem("spent_mox_rod",
+            new Item.Properties().stacksTo(16));
+    /** Lithium for tritium (design section 10), from salt and water in the Lithium Extractor. */
+    public static final DeferredItem<Item> LITHIUM_DUST = ITEMS.registerSimpleItem("lithium_dust");
+    /** Lithium in an aluminium and steel rod, bred into tritium in a target channel of the station's core. */
+    public static final DeferredItem<TargetRodItem> LITHIUM_TARGET_ROD = ITEMS.registerItem("lithium_target_rod", TargetRodItem::new,
+            new Item.Properties().stacksTo(16));
+    /** A bred target rod, full of tritium, ready for extraction. Safe to carry (rule 10). */
+    public static final DeferredItem<Item> IRRADIATED_TARGET_ROD = ITEMS.registerSimpleItem("irradiated_target_rod",
             new Item.Properties().stacksTo(16));
     /** The fission station's brake: silver soaks up neutrons (tier 3's new material). */
     public static final DeferredItem<Item> CONTROL_ROD = ITEMS.registerSimpleItem("control_rod",

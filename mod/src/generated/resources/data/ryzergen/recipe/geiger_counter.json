@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "tag": "c:circuits/basic"
+    },
+    "G": {
+      "tag": "c:glass_panes"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "N": {
+      "item": "minecraft:note_block"
+    }
+  },
+  "pattern": [
+    " G ",
+    "IBI",
+    "INI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:geiger_counter"
+  }
+}

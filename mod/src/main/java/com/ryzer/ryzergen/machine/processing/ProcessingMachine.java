@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.processing;
 
+import com.ryzer.ryzergen.Preview;
 import com.ryzer.ryzergen.recipe.MachineRecipe.Process;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
 import com.ryzer.ryzergen.registry.ModBlocks;
@@ -19,9 +20,16 @@ public enum ProcessingMachine {
     /** Separates spent fuel into uranium, plutonium and waste, with fluorite and water. Two high. */
     REPROCESSOR("reprocessor", Process.REPROCESSING, 2, 3, 80, 4_000, true),
     /** Makes fuel: uranium and MOX rods for the station, TRISO pellets for the microreactor. */
-    FUEL_FABRICATOR("fuel_fabricator", Process.FABRICATING, 3, 1, 40, 0, false);
+    FUEL_FABRICATOR("fuel_fabricator", Process.FABRICATING, 3, 1, 40, 0, false),
+    /** Draws lithium out of salt and water, for tritium (design section 10). */
+    LITHIUM_EXTRACTOR("lithium_extractor", Process.EXTRACTING, 1, 1, 40, 4_000, false);
 
     public static final int ENERGY_CAPACITY = 40_000;
+
+    /** False for unfinished machines while the preview is off, so recipe viewers leave them out. */
+    public boolean shown() {
+        return this != LITHIUM_EXTRACTOR || Preview.enabled();
+    }
     /** Enough for a fully upgraded reprocessor (80 FE/t at five times the speed, squared). */
     public static final int MAX_INPUT = 5_000;
     /** Speed modules one machine can hold. */
@@ -104,6 +112,7 @@ public enum ProcessingMachine {
             case CORE_CRACKER -> ModBlocks.CORE_CRACKER.get();
             case REPROCESSOR -> ModBlocks.REPROCESSOR.get();
             case FUEL_FABRICATOR -> ModBlocks.FUEL_FABRICATOR.get();
+            case LITHIUM_EXTRACTOR -> ModBlocks.LITHIUM_EXTRACTOR.get();
         };
     }
 
@@ -112,6 +121,7 @@ public enum ProcessingMachine {
             case CORE_CRACKER -> ModBlockEntities.CORE_CRACKER.get();
             case REPROCESSOR -> ModBlockEntities.REPROCESSOR.get();
             case FUEL_FABRICATOR -> ModBlockEntities.FUEL_FABRICATOR.get();
+            case LITHIUM_EXTRACTOR -> ModBlockEntities.LITHIUM_EXTRACTOR.get();
         };
     }
 
@@ -120,6 +130,7 @@ public enum ProcessingMachine {
             case CORE_CRACKER -> ModMenus.CORE_CRACKER.get();
             case REPROCESSOR -> ModMenus.REPROCESSOR.get();
             case FUEL_FABRICATOR -> ModMenus.FUEL_FABRICATOR.get();
+            case LITHIUM_EXTRACTOR -> ModMenus.LITHIUM_EXTRACTOR.get();
         };
     }
 }

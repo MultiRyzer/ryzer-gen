@@ -50,5 +50,9 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         add(ModSounds.FUEL_FABRICATOR, definition()
                 .subtitle("subtitles.ryzergen.fuel_fabricator")
                 .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "fuel_fabricator")).volume(RECORDING_VOLUME)));
+        // Pumping brine: the reprocessor's pump until the extractor has a recording of its own.
+        add(ModSounds.LITHIUM_EXTRACTOR, definition()
+                .subtitle("subtitles.ryzergen.lithium_extractor")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "reprocessor")).volume(RECORDING_VOLUME * 0.8F).pitch(1.15F)));
     }
 }

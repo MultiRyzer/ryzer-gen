@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.datagen;
 
+import com.ryzer.ryzergen.Preview;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.material.ModTags;
 import com.ryzer.ryzergen.material.OreType;
@@ -212,6 +213,17 @@ public class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
                 .save(output);
 
+        // Geiger counter: a gas-filled glass tube over a board, with a note block for the speaker.
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.GEIGER_COUNTER.get())
+                .pattern(" G ")
+                .pattern("IBI")
+                .pattern("INI")
+                .define('G', Tags.Items.GLASS_PANES)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('B', ModTags.CIRCUITS_BASIC)
+                .define('N', Items.NOTE_BLOCK)
+                .unlockedBy("has_uranium", has(OreType.URANIUM.dropTag()))
+                .save(output);
         // Dosimeter ring: a fluorite chip (a real thermoluminescent dosimeter material) set in an iron band.
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.DOSIMETER_RING.get())
                 .pattern(" F ")
@@ -497,6 +509,30 @@ public class ModRecipeProvider extends RecipeProvider {
                 List.of(SizedIngredient.of(OreType.URANIUM.ingotTag(), 1), SizedIngredient.of(ModTags.INGOTS_GRAPHITE, 2),
                         SizedIngredient.of(ModTags.GEMS_SILICON_CARBIDE, 1)), null,
                 List.of(new ItemStack(ModItems.TRISO_PELLETS.get(), 3)), 200);
+        // Lithium target rod: lithium in aluminium (real rods hold lithium aluminate pellets) in a steel tube.
+        // The lithium side of the next tier is unfinished, so its recipes load only with the preview on.
+        RecipeOutput preview = output.withConditions(Preview.CONDITION);
+        machine(preview, "fabricating/lithium_target_rod", MachineRecipe.Process.FABRICATING,
+                List.of(SizedIngredient.of(ModTags.DUSTS_LITHIUM, 2), SizedIngredient.of(OreType.ALUMINIUM.ingotTag(), 1),
+                        SizedIngredient.of(ModTags.INGOTS_STEEL, 1)), null,
+                List.of(new ItemStack(ModItems.LITHIUM_TARGET_ROD.get())), 200);
+
+        // Lithium Extractor (design section 10): a brine column over a pump, run by an advanced board.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LITHIUM_EXTRACTOR.get())
+                .pattern("SGS")
+                .pattern("GCG")
+                .pattern("SAS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .define('C', Items.CAULDRON)
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .unlockedBy("has_salt", has(OreType.SALT.dropTag()))
+                .save(preview);
+        // Extracting: salt dissolved into brine, the lithium drawn out of it. Real basis: direct
+        // lithium extraction from brine, where most of the world's lithium comes from.
+        machine(preview, "extracting/lithium", MachineRecipe.Process.EXTRACTING,
+                List.of(SizedIngredient.of(OreType.SALT.dropTag(), 2)), SizedFluidIngredient.of(Tags.Fluids.WATER, 500),
+                List.of(new ItemStack(ModItems.LITHIUM_DUST.get())), 200);
     }
 
     private static void machine(RecipeOutput output, String name, MachineRecipe.Process process, List<SizedIngredient> inputs,

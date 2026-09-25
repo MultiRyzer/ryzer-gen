@@ -67,6 +67,7 @@ public class RyzerGen {
         ModRecipes.SERIALIZERS.register(modEventBus);
         ModCreativeTabs.CREATIVE_TABS.register(modEventBus);
         ModBiomeModifiers.SERIALIZERS.register(modEventBus);
+        ModBiomeModifiers.CONDITIONS.register(modEventBus);
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         modEventBus.addListener(RyzerGen::registerCapabilities);
         modEventBus.addListener(RyzerGen::registerPayloads);
@@ -131,7 +132,8 @@ public class RyzerGen {
 
         // Fuel cycle machines: registered on the blocks so both halves of the two-high reprocessor
         // reach the block entity in its lower half.
-        Block[] processing = {ModBlocks.CORE_CRACKER.get(), ModBlocks.REPROCESSOR.get(), ModBlocks.FUEL_FABRICATOR.get()};
+        Block[] processing = {ModBlocks.CORE_CRACKER.get(), ModBlocks.REPROCESSOR.get(), ModBlocks.FUEL_FABRICATOR.get(),
+                ModBlocks.LITHIUM_EXTRACTOR.get()};
         event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
             ProcessingBlockEntity machine = processingMachine(level, pos, state);
             return machine == null ? null : machine.getItemHandler(side);

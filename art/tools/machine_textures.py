@@ -289,6 +289,35 @@ def lead_acid_module_item():
     return t
 
 
+def geiger_counter_item():
+    """A handheld Geiger counter: light casing with a graphite carry handle, a dark readout with a
+    cyan needle over its scale, a speaker grille, and the orange tube cap on the side."""
+    body = {(x, y) for x in range(2, 14) for y in range(5, 14)}
+    handle = {(x, y) for x in range(4, 12) for y in (2, 3)} | {(x, y) for x in (4, 5, 10, 11) for y in (3, 4)}
+    t = shape_item(body, 'F', 'A', 'J', highlight='A')
+    for x, y in handle:
+        t.set(x, y, 'S')
+    for x in range(4, 12):
+        t.set(x, 2, 'b')
+    for x in range(3, 13):
+        t.set(x, 1, 'U')
+    for x, y in ((3, 2), (12, 2), (3, 3), (12, 3), (3, 4), (12, 4), (6, 3), (7, 3), (8, 3), (9, 3)):
+        t.set(x, y, 'U')
+    # Readout: a dark window, the scale across the top in dim cyan, the needle lit.
+    t.rect(4, 6, 11, 9, 'U')
+    t.rect(5, 7, 10, 7, 'f')
+    for x, y in ((6, 9), (7, 8), (8, 8)):
+        t.set(x, y, 'i')
+    t.set(8, 7, 'j')
+    # Speaker grille and the tube cap.
+    for x in (5, 7, 9):
+        t.set(x, 11, 'T')
+        t.set(x, 12, 'S')
+    t.set(12, 11, 'X')
+    t.set(12, 12, 'Z')
+    return t
+
+
 def speed_module_item():
     """A speed module: a graphite circuit card with a double cyan chevron and gold edge contacts."""
     card = {(x, y) for x in range(2, 14) for y in range(3, 12)}
@@ -391,6 +420,7 @@ TEXTURES = {
     'item/lead_acid_module': lead_acid_module_item,
     'item/home_battery': home_battery_item,
     'item/speed_module': speed_module_item,
+    'item/geiger_counter': geiger_counter_item,
     'block/fitting_silver': lambda: fitting_block('silver'),
     'block/fitting_busbar': lambda: fitting_block('busbar'),
     'block/fitting_cryogenic': lambda: fitting_block('cryogenic'),

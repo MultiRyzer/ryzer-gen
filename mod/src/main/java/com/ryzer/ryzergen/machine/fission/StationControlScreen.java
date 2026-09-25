@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.fission;
 
+import com.ryzer.ryzergen.Preview;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.GuiGauges;
 import com.ryzer.ryzergen.machine.fission.StationReactor.Channel;
@@ -60,7 +61,13 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
     private static final int KEY_HOVER_U = 16;
     private static final int POWER_U = 32;
     private static final int SPRITE_V = 224;
-    private static final Channel[] TOOLS = {Channel.FUEL, Channel.MODERATOR, Channel.CONTROL, Channel.COOLANT};
+    private static final Channel[] TOOLS = {Channel.FUEL, Channel.MODERATOR, Channel.CONTROL, Channel.COOLANT, Channel.TARGET};
+    /** Without the next-tier preview there are no target rods, so no target tool. */
+    private static final Channel[] BASE_TOOLS = {Channel.FUEL, Channel.MODERATOR, Channel.CONTROL, Channel.COOLANT};
+
+    private static Channel[] tools() {
+        return Preview.enabled() ? TOOLS : BASE_TOOLS;
+    }
 
     /** The plan tool picked, or null to handle items normally. */
     private @Nullable Channel tool;
@@ -85,6 +92,7 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
             case MODERATOR -> ModItems.GRAPHITE_BLOCK.get();
             case CONTROL -> ModItems.CONTROL_ROD.get();
             case COOLANT -> Items.WATER_BUCKET;
+            case TARGET -> ModItems.LITHIUM_TARGET_ROD.get();
         });
     }
 
@@ -95,6 +103,7 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
             case MODERATOR -> 0xFF8A929C;
             case CONTROL -> 0xFFE0503C;
             case COOLANT -> 0xFF3A8CF0;
+            case TARGET -> 0xFFB27CF0;
             case EMPTY -> 0;
         };
     }
@@ -106,6 +115,7 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
             case MODERATOR -> 0x508A929C;
             case CONTROL -> 0x40E0503C;
             case COOLANT -> 0x603A8CF0;
+            case TARGET -> 0x40B27CF0;
             case EMPTY -> 0;
         };
     }
@@ -123,8 +133,8 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
             int y = topPos + StationControlMenu.slotY(i);
             graphics.fill(x, y, x + 16, y + 16, fill(plan[i]));
         }
-        for (int k = 0; k < TOOLS.length; k++) {
-            Channel channel = TOOLS[k];
+        for (int k = 0; k < tools().length; k++) {
+            Channel channel = tools()[k];
             int x = leftPos + toolX(k);
             int y = topPos + TOOL_Y;
             graphics.blit(TEXTURE, x, y, isOver(toolX(k), TOOL_Y, mouseX, mouseY) ? KEY_HOVER_U : KEY_U, SPRITE_V, 16, 16);
@@ -305,10 +315,10 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
         } else {
             renderTooltip(graphics, mouseX, mouseY);
         }
-        for (int k = 0; k < TOOLS.length; k++) {
+        for (int k = 0; k < tools().length; k++) {
             if (isOver(toolX(k), TOOL_Y, mouseX, mouseY)) {
                 graphics.renderComponentTooltip(font, List.of(
-                        Component.translatable("gui.ryzergen.station.tool." + TOOLS[k].name().toLowerCase(Locale.ROOT)),
+                        Component.translatable("gui.ryzergen.station.tool." + tools()[k].name().toLowerCase(Locale.ROOT)),
                         Component.translatable("gui.ryzergen.station.tool.hint").withStyle(style -> style.withColor(DIM)),
                         Component.translatable("gui.ryzergen.station.tool.clear").withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
             }
@@ -360,6 +370,7 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
         int fuel = 0;
         int control = 0;
         int coolant = 0;
+        int targets = 0;
         for (int n : StationReactor.neighbours(channel)) {
             if (plan[n] == Channel.COOLANT) {
                 coolant++;
@@ -368,6 +379,7 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
                     case MODERATOR -> moderators++;
                     case FUEL -> fuel++;
                     case CONTROL -> control++;
+                    case TARGET -> targets++;
                     default -> { }
                 }
             }
@@ -391,6 +403,9 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
                 if (control > 0) {
                     lines.add(Component.translatable(key + "fuel.control", control));
                 }
+                if (targets > 0) {
+                    lines.add(Component.translatable(key + "fuel.target", targets));
+                }
                 lines.add(Component.translatable(key + "fuel.burn", Math.round(analysis.burn()[channel] * 100)));
                 lines.add(coolant > 0
                         ? Component.translatable(key + "fuel.cooled", coolant).withStyle(style -> style.withColor(GOOD))
@@ -407,6 +422,23 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
                     lines.add(Component.translatable(key + "coolant.over").withStyle(style -> style.withColor(BAD)));
                 } else {
                     lines.add(Component.translatable(key + "coolant.load", compact(Math.round(load)), compact(capacity)).withStyle(style -> style.withColor(VALUE)));
+                }
+            }
+            case TARGET -> {
+                int colour = colour(Channel.TARGET);
+                if (rods[channel].isEmpty()) {
+                    lines.add(Component.translatable(key + "target.waiting").withStyle(style -> style.withColor(colour)));
+                } else if (!Channel.TARGET.accepts(rods[channel])) {
+                    lines.add(rods[channel].getHoverName().copy().withStyle(style -> style.withColor(colour)));
+                    lines.add(Component.translatable(key + "target.done").withStyle(style -> style.withColor(GOOD)));
+                } else {
+                    lines.add(rods[channel].getHoverName().copy().withStyle(style -> style.withColor(colour)));
+                    float minutes = analysis.breedMinutes(channel);
+                    lines.add(minutes > 0
+                            ? Component.translatable(key + "target.breeding", Math.max(1, Math.round(minutes * (1 - TargetRodItem.fraction(rods[channel])))))
+                                    .withStyle(style -> style.withColor(VALUE))
+                            : Component.translatable(key + "target.idle").withStyle(style -> style.withColor(DIM)));
+                    lines.add(Component.translatable(key + "target.cost", fuel).withStyle(style -> style.withColor(DIM)));
                 }
             }
             case MODERATOR, CONTROL -> {
@@ -437,9 +469,9 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
             return true;
         }
         if (button == 0) {
-            for (int k = 0; k < TOOLS.length; k++) {
+            for (int k = 0; k < tools().length; k++) {
                 if (isOver(toolX(k), TOOL_Y, mouseX, mouseY)) {
-                    tool = tool == TOOLS[k] ? null : TOOLS[k];
+                    tool = tool == tools()[k] ? null : tools()[k];
                     click();
                     return true;
                 }

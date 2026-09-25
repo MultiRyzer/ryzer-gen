@@ -35,6 +35,10 @@ import net.minecraft.world.item.ItemStack;
  * plutonium-bearing fuel runs at a higher power density, and hotter fuel drives more heat into the
  * water (heat flux rises with the temperature difference). The factor of two is a game fudge, so
  * the fuel cycle is worth closing.
+ *
+ * <p>Lithium target rods (design section 10) breed tritium for fusion from the fuel beside them.
+ * They soak up neutrons too, so that fuel makes 20% less heat and burns 20% slower. Real basis:
+ * tritium-producing burnable absorber rods, which make the United States' tritium in a power reactor.
  */
 public final class StationReactor {
     public static final int GRID = 5;
@@ -53,6 +57,13 @@ public final class StationReactor {
     private static final float MODERATOR_BONUS = 0.4F;
     private static final float FUEL_BONUS = 0.2F;
     private static final float CONTROL_CUT = 0.35F;
+    /** What a lithium target rod takes off the fuel beside it: it soaks up neutrons too, less than a control rod. */
+    private static final float TARGET_CUT = 0.2F;
+    /**
+     * Thousands of heat-ticks a target rod needs from the fuel beside it to be fully bred: about 20
+     * minutes beside two uranium rods, 5 beside four MOX rods.
+     */
+    public static final int TARGET_WORK = 60_000;
     private static final float MIN_FACTOR = 0.1F;
     public static final float IDLE_TEMPERATURE = 150;
     public static final float FULL_LOAD_TEMPERATURE = 600;
@@ -70,7 +81,8 @@ public final class StationReactor {
 
     /** What a channel is planned to hold. Coolant channels are pipes of water; empty ones do nothing. */
     public enum Channel {
-        EMPTY, FUEL, MODERATOR, CONTROL, COOLANT;
+        // New channel types go at the end: plans are saved by position in this list.
+        EMPTY, FUEL, MODERATOR, CONTROL, COOLANT, TARGET;
 
         public static Channel byId(int id) {
             return id >= 0 && id < values().length ? values()[id] : EMPTY;
@@ -82,6 +94,7 @@ public final class StationReactor {
                 case FUEL -> isFreshFuel(stack);
                 case MODERATOR -> stack.is(ModItems.GRAPHITE_BLOCK.get());
                 case CONTROL -> stack.is(ModItems.CONTROL_ROD.get());
+                case TARGET -> stack.is(ModItems.LITHIUM_TARGET_ROD.get());
                 case COOLANT, EMPTY -> false;
             };
         }
@@ -92,10 +105,16 @@ public final class StationReactor {
      * on each coolant channel; then the totals. {@code stranded} is heat no coolant can carry (a rod
      * with no coolant beside it, or more than a channel's capacity): any at all and the core cannot
      * hold steady. {@code working} is how many coolant channels carry heat, {@code capacity} how much
-     * each can carry in this core.
+     * each can carry in this core. {@code breed} is, per target channel, the fuel heat beside it,
+     * which is how fast its lithium turns into tritium.
      */
-    public record Analysis(float[] heat, float[] burn, float[] load, float generation, float stranded,
+    public record Analysis(float[] heat, float[] burn, float[] load, float[] breed, float generation, float stranded,
                            int working, int coolants, int fuelRods, int moxRods, boolean overdrive, float capacity) {
+        /** Minutes a fresh target rod takes to breed in channel {@code i}, or 0 if nothing is breeding it. */
+        public float breedMinutes(int i) {
+            return breed[i] <= 0 ? 0 : TARGET_WORK * 1000F / breed[i] / 1200F;
+        }
+
         /** The fraction of the working coolant's capacity in use, which sets the core's temperature. */
         public float loadFraction() {
             return working == 0 ? 0 : generation / (working * capacity);
@@ -166,6 +185,11 @@ public final class StationReactor {
         return stack.is(ModItems.SPENT_URANIUM_ROD.get()) || stack.is(ModItems.SPENT_MOX_ROD.get());
     }
 
+    /** Done with the core and ready to leave by the output port: a spent fuel rod or a bred target rod. */
+    public static boolean isFinished(ItemStack stack) {
+        return isSpent(stack) || stack.is(ModItems.IRRADIATED_TARGET_ROD.get());
+    }
+
     public static int life(ItemStack rod) {
         return rod.is(ModItems.MOX_FUEL_ROD.get()) ? MOX_LIFE : URANIUM_LIFE;
     }
@@ -216,6 +240,10 @@ public final class StationReactor {
                         heatFactor -= CONTROL_CUT;
                         burnFactor -= CONTROL_CUT;
                     }
+                    case TARGET -> {
+                        heatFactor -= TARGET_CUT;
+                        burnFactor -= TARGET_CUT;
+                    }
                     default -> { }
                 }
             }
@@ -247,6 +275,16 @@ public final class StationReactor {
                 }
             }
         }
+        // Each target rod breeds from the heat of the fuel beside it.
+        float[] breed = new float[CHANNELS];
+        for (int i = 0; i < CHANNELS; i++) {
+            if (types[i] != Channel.TARGET || !types[i].accepts(rods[i])) {
+                continue;
+            }
+            for (int n : neighbours(i)) {
+                breed[i] += heat[n];
+            }
+        }
         float capacity = capacity(overdrive, fuelRods == 0 ? 0 : moxRods / (float) fuelRods);
         int working = 0;
         for (int i = 0; i < CHANNELS; i++) {
@@ -255,7 +293,7 @@ public final class StationReactor {
                 stranded += Math.max(0, load[i] - capacity);
             }
         }
-        return new Analysis(heat, burn, load, generation, stranded, working, coolants, fuelRods, moxRods, overdrive, capacity);
+        return new Analysis(heat, burn, load, breed, generation, stranded, working, coolants, fuelRods, moxRods, overdrive, capacity);
     }
 
     /** The up to four channels beside channel {@code i}. */

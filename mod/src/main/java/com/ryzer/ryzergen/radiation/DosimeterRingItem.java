@@ -13,8 +13,9 @@ import java.util.List;
 
 /**
  * The dosimeter ring: a fluorite thermoluminescent chip in a metal band. Worn in the Accessories ring
- * slot if that mod is installed, or simply carried anywhere in the inventory. Shows the dose on the
- * HUD, clicks like a Geiger counter near sources, and takes the edge off exposure.
+ * slot if that mod is installed, or simply carried anywhere in the inventory. It shields you, and
+ * quietly records your total dose (shown in its tooltip); the live readout and the clicks come from
+ * the Geiger counter.
  *
  * <p>Real basis: nuclear workers wear ring and badge dosimeters, and fluorite (calcium fluoride) is a
  * real thermoluminescent dosimeter material. The fudge, as the design says: ours also protects.
@@ -42,5 +43,10 @@ public class DosimeterRingItem extends Item {
         tooltip.add(Component.translatable("item.ryzergen.dosimeter_ring.tooltip").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("item.ryzergen.dosimeter_ring.protection", Math.round(PROTECTION * 100))
                 .withStyle(ChatFormatting.DARK_AQUA));
+        // The dose the ring has recorded: the player's own, as last sent to this client.
+        if (context.level() != null && context.level().isClientSide) {
+            tooltip.add(Component.translatable("item.ryzergen.dosimeter_ring.dose", String.format("%.0f", RadiationClientState.dose()))
+                    .withStyle(ChatFormatting.GRAY));
+        }
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.world.item.Item;
 /** Our tags, and common tags that NeoForge's own Tags class does not define. Ore tags live on {@link OreType}. */
 public final class ModTags {
     public static final TagKey<Item> INGOTS_STEEL = common("ingots/steel");
+    public static final TagKey<Item> DUSTS_LITHIUM = common("dusts/lithium");
     /** Graphite as reactor mods tag it. */
     public static final TagKey<Item> INGOTS_GRAPHITE = common("ingots/graphite");
     public static final TagKey<Item> GEMS_SILICON_CARBIDE = common("gems/silicon_carbide");

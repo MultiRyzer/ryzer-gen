@@ -6,6 +6,7 @@ import com.ryzer.ryzergen.machine.RedstoneMode;
 import com.ryzer.ryzergen.machine.fission.StationReactor.Channel;
 import com.ryzer.ryzergen.radiation.RadiationSources;
 import com.ryzer.ryzergen.registry.ModDataComponents;
+import com.ryzer.ryzergen.registry.ModItems;
 import com.ryzer.ryzergen.registry.ModTriggers;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.BlockPos;
@@ -185,7 +186,7 @@ public class StationRunner {
         @Override
         public ItemStack getStackInSlot(int slot) {
             ItemStack held = channels.getStackInSlot(slot);
-            return StationReactor.isSpent(held) ? held : ItemStack.EMPTY;
+            return StationReactor.isFinished(held) ? held : ItemStack.EMPTY;
         }
 
         @Override
@@ -195,7 +196,7 @@ public class StationRunner {
 
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            return StationReactor.isSpent(channels.getStackInSlot(slot)) ? channels.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
+            return StationReactor.isFinished(channels.getStackInSlot(slot)) ? channels.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
         }
 
         @Override
@@ -336,7 +337,9 @@ public class StationRunner {
     ItemStack setType(int channel, Channel type) {
         types[channel] = type;
         ItemStack held = channels.getStackInSlot(channel);
-        if (!held.isEmpty() && !type.accepts(held) && !(type == Channel.FUEL && StationReactor.isSpent(held))) {
+        boolean finishedHere = (type == Channel.FUEL && StationReactor.isSpent(held))
+                || (type == Channel.TARGET && held.is(ModItems.IRRADIATED_TARGET_ROD.get()));
+        if (!held.isEmpty() && !type.accepts(held) && !finishedHere) {
             channels.setStackInSlot(channel, ItemStack.EMPTY);
             changed.run();
             return held;
@@ -416,6 +419,7 @@ public class StationRunner {
 
         if (generation > 0) {
             burn(analysis);
+            breed(analysis);
             RadiationSources.emit(level, centre, (60 + generation / 300) * (unstable ? 3 : 1));
         }
         pushEnergy(level, core, facing);
@@ -485,12 +489,39 @@ public class StationRunner {
         }
         for (int i = 0; i < StationReactor.CHANNELS; i++) {
             ItemStack spent = channels.getStackInSlot(i);
-            if (!StationReactor.isSpent(spent)) {
+            if (!StationReactor.isFinished(spent)) {
                 continue;
             }
             ItemStack left = net.neoforged.neoforge.items.ItemHandlerHelper.insertItem(target, spent.copy(), false);
             if (left.isEmpty()) {
                 channels.setStackInSlot(i, ItemStack.EMPTY);
+            }
+        }
+    }
+
+    /** Heat-ticks bred into each target rod so far, below the thousand that make one unit on the item. */
+    private final float[] bredPart = new float[StationReactor.CHANNELS];
+
+    /** Breeds each target rod by the fuel heat beside it; a rod that is done becomes an irradiated target rod. */
+    private void breed(StationReactor.Analysis analysis) {
+        for (int i = 0; i < StationReactor.CHANNELS; i++) {
+            if (analysis.breed()[i] <= 0) {
+                continue;
+            }
+            bredPart[i] += analysis.breed()[i];
+            int whole = (int) (bredPart[i] / 1000);
+            if (whole <= 0) {
+                continue;
+            }
+            bredPart[i] -= whole * 1000F;
+            ItemStack rod = channels.getStackInSlot(i);
+            int bred = rod.getOrDefault(ModDataComponents.BRED.get(), 0) + whole;
+            if (bred < StationReactor.TARGET_WORK) {
+                ItemStack breeding = rod.copy();
+                breeding.set(ModDataComponents.BRED.get(), bred);
+                channels.setStackInSlot(i, breeding);
+            } else {
+                channels.setStackInSlot(i, new ItemStack(ModItems.IRRADIATED_TARGET_ROD.get()));
             }
         }
     }

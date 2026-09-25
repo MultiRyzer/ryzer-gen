@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "ryzergen:preview"
+    }
+  ],
+  "type": "ryzergen:extracting",
+  "fluid": {
+    "amount": 500,
+    "tag": "c:water"
+  },
+  "inputs": [
+    {
+      "count": 2,
+      "tag": "c:dusts/salt"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "ryzergen:lithium_dust"
+    }
+  ]
+}

@@ -61,6 +61,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         coreCracker();
         reprocessor();
         fuelFabricator();
+        lithiumExtractor();
         wasteCask();
         stationParts();
         simpleBlockWithItem(ModBlocks.CREATIVE_BATTERY.get(), models().cubeBottomTop("creative_battery",
@@ -560,6 +561,44 @@ public class ModBlockStateProvider extends BlockStateProvider {
         BlockModelBuilder model = boxModel(name);
         boxes.build(model, "steel", this::machineTexture);
         return model;
+    }
+
+    /**
+     * Lithium Extractor, facing north: a hazard-striped skid, a light cabinet with a grille and a
+     * light strip, and a glass brine column on top with a sorbent bed that glows while it works,
+     * copper lines down its sides; the water port (blue) on the east, the item port on top, energy
+     * on the back.
+     */
+    private ModelFile lithiumExtractorModel(String name, boolean active) {
+        BoxModel boxes = new BoxModel();
+        boxes.add("steel_dark", 0, 0, 0, 16, 2, 16).sides("hazard");
+        boxes.add("steel", 1, 2, 1, 15, 8, 15);
+        boxes.add("steel_dark", 3, 3, 0.5F, 13, 7, 1).decal(Direction.NORTH, "grille");
+        boxes.add("steel_dark", 15, 3, 3, 16, 13, 13).decal(Direction.EAST, "port_coolant");
+        boxes.add("steel_dark", 3, 3, 15, 13, 13, 16).decal(Direction.SOUTH, "port_energy");
+        boxes.add("steel_dark", 0.5F, 8, 0.5F, 15.5F, 9, 15.5F);
+        // The column: a graphite frame with a sight glass on each side, the sorbent bed inside.
+        boxes.add("steel_dark", 3, 9, 3, 13, 10, 13);
+        boxes.add("steel_dark", 3, 14, 3, 13, 15, 13);
+        for (float x : new float[] {3, 12}) {
+            for (float z : new float[] {3, 12}) {
+                boxes.add("steel_dark", x, 10, z, x + 1, 14, z + 1);
+            }
+        }
+        lampStrip(boxes, active, 5, 10, 5, 11, 14, 11);
+        boxes.add("copper", 1.5F, 9, 7, 2.5F, 13, 9);
+        boxes.add("steel_dark", 3, 15, 3, 13, 16, 13).decal(Direction.UP, "port_fuel");
+        BlockModelBuilder model = boxModel(name);
+        boxes.build(model, "steel", this::machineTexture);
+        return model;
+    }
+
+    private void lithiumExtractor() {
+        Block block = ModBlocks.LITHIUM_EXTRACTOR.get();
+        ModelFile off = lithiumExtractorModel("lithium_extractor", false);
+        ModelFile on = lithiumExtractorModel("lithium_extractor_on", true);
+        horizontalBlock(block, state -> state.getValue(ProcessingBlock.ACTIVE) ? on : off);
+        simpleBlockItem(block, off);
     }
 
     private void fuelFabricator() {

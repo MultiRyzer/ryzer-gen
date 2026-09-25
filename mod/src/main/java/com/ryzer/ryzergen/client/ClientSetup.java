@@ -1,6 +1,8 @@
 package com.ryzer.ryzergen.client;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.compat.accessories.AccessoriesClient;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import com.ryzer.ryzergen.cable.CableUpgrade;
 import com.ryzer.ryzergen.registry.ModBlocks;
 import net.minecraft.client.renderer.block.BlockModelShaper;
@@ -49,12 +51,19 @@ public final class ClientSetup {
         event.register(ModMenus.CORE_CRACKER.get(), ProcessingScreen::new);
         event.register(ModMenus.REPROCESSOR.get(), ProcessingScreen::new);
         event.register(ModMenus.FUEL_FABRICATOR.get(), ProcessingScreen::new);
+        event.register(ModMenus.LITHIUM_EXTRACTOR.get(), ProcessingScreen::new);
     }
 
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.PRESSURE_TANK.get(), PressureTankRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.STATION_CORE.get(), StationRenderer::new);
+    }
+
+    /** Optional mods' client hooks: the worn dosimeter ring's renderer, when Accessories is here. */
+    @SubscribeEvent
+    public static void clientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(AccessoriesClient::register);
     }
 
     /** Each tier's fitting on each side, a small model of its own, added to cables that have one. */

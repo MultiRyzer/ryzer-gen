@@ -87,6 +87,10 @@ public final class ModBlockEntities {
             BLOCK_ENTITIES.register("fuel_fabricator", () -> BlockEntityType.Builder.of(
                     (pos, state) -> new ProcessingBlockEntity(ProcessingMachine.FUEL_FABRICATOR, pos, state), ModBlocks.FUEL_FABRICATOR.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ProcessingBlockEntity>> LITHIUM_EXTRACTOR =
+            BLOCK_ENTITIES.register("lithium_extractor", () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new ProcessingBlockEntity(ProcessingMachine.LITHIUM_EXTRACTOR, pos, state), ModBlocks.LITHIUM_EXTRACTOR.get()).build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WasteCaskBlockEntity>> WASTE_CASK =
             BLOCK_ENTITIES.register("waste_cask",
                     () -> BlockEntityType.Builder.of(WasteCaskBlockEntity::new, ModBlocks.WASTE_CASK.get()).build(null));

@@ -73,6 +73,7 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 ## Polish
 - [x] Cable and pipe fittings: silver, busbar and cryogenic, one slot per machine side in the panel, each tier crafted from the last, shown on the cable
 - [x] Fitting item icons: redraw them as cards like the Speed Module (a graphite card with a clear symbol per tier), so they are easy to spot in a chest
+- [x] Geiger counter: a new item that gives the clicks and the HUD gauge, so they only run when you carry one (inventory, or an Accessories slot such as the belt). The dosimeter ring keeps its protection but goes quiet. Shift-right-click to mute the clicks but keep the gauge
 - [ ] Dosimeter ring worn on the hand: it shows as the flat item sprite pasted on the back of the hand. Give it a small 3D band round a finger instead (Accessories renders what we give it)
 
 ## Milestone 3: Fission power station
@@ -94,7 +95,33 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] Its own alarm (a klaxon) and a turbine hum that follows the rotor
 - [x] Advancements (Rod Loaded, Power Station, By the Book, No Brakes, Crater Maker), a Reactor Fuel page and info pages in JEI and EMI
 
-## Milestone 4: Sun dimension prototype
+## Public alpha (0.1.0-alpha): tiers 1 to 3
+The first public build: the microreactor, home battery, pipes and steam, the fuel cycle and the fission station. Page text in `docs/MOD-PAGE.md`.
+- [x] Unfinished next-tier content (Lithium Extractor, target rods) behind the `preview.next_tier` config, off by default: no recipes, hidden from the creative tab, JEI and EMI, no target tool in the station grid
+- [x] MIT licence (sounds keep their Pixabay licence), version `0.1.0-alpha`, GitHub links in the mod metadata
+- [x] Mod page description with a player-facing roadmap
+- [ ] Check the dosimeter ring's worn band in game (renderer written, see Polish)
+- [ ] Commit and push the current work
+- [ ] Survival run on a fresh world with only the release jar (no dev mods), then again with JEI, and once inside ATM10
+- [ ] Screenshots and a short clip: the microreactor snapping together, the station building itself and running
+- [ ] Make the GitHub repo public; turn on issues
+- [ ] Create the Modrinth and CurseForge projects, upload the jar, credit the sounds
+
+## Milestone 4: Fission to fusion (design section 10)
+- [x] Lithium Extractor (salt and water to lithium)
+- [x] Lithium target rods (Fuel Fabricator) and a target channel in the station core: breeds tritium from neighbouring fuel, costs 20% of their heat, irradiated rods leave by the output port
+- [ ] Waste Refinery: palladium from fission waste, the rest vitrified
+- [ ] Tritium extraction from irradiated target rods (palladium membranes)
+- [ ] Heavy Water Plant, and a heavy water moderator channel in the station
+- [ ] Monazite processing (yttrium, and thorium for tier 4)
+- [ ] Cryo Plant (liquid nitrogen)
+- [ ] Superconducting tape and magnet coils; tungsten tiles
+- [ ] Uranium glass (decorative light block)
+
+## Milestone 5: Fusion reactor
+- [ ] Design the tokamak multiblock (shape, fuel, blanket, magnets, first wall)
+
+## Milestone 6: Sun dimension prototype
 - [ ] Superflat glowing dimension and portal
 - [ ] Protective gear and visor whiteout
 - [ ] Hand-launched anchor sails and swarm counter
@@ -106,4 +133,4 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - Sail launcher automation and receiver dish
 - Overworld sky ring, flare events, multiplayer shared swarm
 - Mod integrations (Mekanism; EMI and JEI are done)
-- Public release on CurseForge and Modrinth
+- Beta once tier 4 (the breeder) lands; stable once the energy scale is settled

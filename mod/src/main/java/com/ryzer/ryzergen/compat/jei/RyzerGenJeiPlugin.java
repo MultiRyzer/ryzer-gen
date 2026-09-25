@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.compat.jei;
 
+import com.ryzer.ryzergen.Preview;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.compat.RecipeViewerPages;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterScreen;
@@ -14,6 +15,8 @@ import com.ryzer.ryzergen.registry.ModItems;
 import com.ryzer.ryzergen.registry.ModRecipes;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.runtime.IJeiRuntime;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
@@ -61,8 +64,11 @@ public class RyzerGenJeiPlugin implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(new AlloyingJeiCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new FuelJeiCategory(registration.getJeiHelpers().getGuiHelper()));
-        MACHINES.forEach((machine, type) -> registration.addRecipeCategories(
-                new MachineJeiCategory(registration.getJeiHelpers().getGuiHelper(), machine, type)));
+        MACHINES.forEach((machine, type) -> {
+            if (machine.shown()) {
+                registration.addRecipeCategories(new MachineJeiCategory(registration.getJeiHelpers().getGuiHelper(), machine, type));
+            }
+        });
     }
 
     @Override
@@ -76,17 +82,33 @@ public class RyzerGenJeiPlugin implements IModPlugin {
         for (RecipeViewerPages.Info info : RecipeViewerPages.info()) {
             registration.addItemStackInfo(info.items(), info.text());
         }
-        MACHINES.forEach((machine, type) -> registration.addRecipes(type,
-                Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(machine.process().type())));
+        MACHINES.forEach((machine, type) -> {
+            if (machine.shown()) {
+                registration.addRecipes(type, Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(machine.process().type()));
+            }
+        });
     }
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(new ItemStack(ModItems.ALLOY_SMELTER.get()), ALLOYING);
         registration.addRecipeCatalyst(new ItemStack(ModItems.ELECTRIC_ALLOY_SMELTER.get()), ALLOYING);
-        MACHINES.forEach((machine, type) -> registration.addRecipeCatalyst(new ItemStack(machine.block()), type));
+        MACHINES.forEach((machine, type) -> {
+            if (machine.shown()) {
+                registration.addRecipeCatalyst(new ItemStack(machine.block()), type);
+            }
+        });
         registration.addRecipeCatalyst(new ItemStack(ModItems.REACTOR_HEART.get()), FUEL);
         registration.addRecipeCatalyst(new ItemStack(ModItems.STATION_CORE.get()), FUEL);
+    }
+
+    /** Unfinished items stay out of the ingredient list while the preview is off. */
+    @Override
+    public void onRuntimeAvailable(IJeiRuntime runtime) {
+        List<ItemStack> hidden = Preview.items().stream().map(ItemStack::new).filter(Preview::hidden).toList();
+        if (!hidden.isEmpty()) {
+            runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM_STACK, hidden);
+        }
     }
 
     /** Clicking the progress arrow in either smelter opens its recipes. */

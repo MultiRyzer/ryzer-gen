@@ -1,12 +1,14 @@
 package com.ryzer.ryzergen.compat;
 
 import com.ryzer.ryzergen.Config;
+import com.ryzer.ryzergen.Preview;
 import com.ryzer.ryzergen.machine.fission.StationReactor;
 import com.ryzer.ryzergen.registry.ModItems;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +27,7 @@ public final class RecipeViewerPages {
         int output = Config.get(Config.MICROREACTOR_OUTPUT);
         int coreMinutes = Config.get(Config.MICROREACTOR_FUEL_LIFE) / 1200;
         float multiplier = Config.get(Config.STATION_OUTPUT) / 100F;
-        return List.of(
+        List<Fuel> fuels = new ArrayList<>(List.of(
                 new Fuel(stack(ModItems.SEALED_FUEL_CORE.get()), stack(ModItems.DEPLETED_FUEL_CORE.get()), stack(ModItems.REACTOR_HEART.get()),
                         Component.translatable("jei.ryzergen.fuel.microreactor", String.format("%,d", output)),
                         Component.translatable("jei.ryzergen.fuel.life", coreMinutes)),
@@ -34,7 +36,13 @@ public final class RecipeViewerPages {
                         Component.translatable("jei.ryzergen.fuel.life", StationReactor.URANIUM_LIFE / 1200)),
                 new Fuel(stack(ModItems.MOX_FUEL_ROD.get()), stack(ModItems.SPENT_MOX_ROD.get()), stack(ModItems.STATION_CORE.get()),
                         Component.translatable("jei.ryzergen.fuel.station", String.format("%,d", Math.round(StationReactor.MOX_HEAT * multiplier))),
-                        Component.translatable("jei.ryzergen.fuel.life", StationReactor.MOX_LIFE / 1200)));
+                        Component.translatable("jei.ryzergen.fuel.life", StationReactor.MOX_LIFE / 1200))));
+        if (Preview.enabled()) {
+            // Not a fuel, but it burns down in the core the same way: lithium in, tritium out.
+            fuels.add(new Fuel(stack(ModItems.LITHIUM_TARGET_ROD.get()), stack(ModItems.IRRADIATED_TARGET_ROD.get()), stack(ModItems.STATION_CORE.get()),
+                    Component.translatable("jei.ryzergen.fuel.target"), Component.translatable("jei.ryzergen.fuel.target_cost")));
+        }
+        return fuels;
     }
 
     /** An info page: the items it is shown on, and its text. */

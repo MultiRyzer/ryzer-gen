@@ -84,6 +84,7 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
     private static final ResourceLocation DARK = texture("steel_dark");
     private static final ResourceLocation STEEL = texture("steel");
     private static final ResourceLocation COPPER = texture("copper");
+    private static final ResourceLocation LEAD = texture("lead");
 
     private static ResourceLocation texture(String name) {
         return ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "block/microreactor/" + name);
@@ -93,7 +94,7 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
      * The core's 25 channels as the player has loaded them, where the concept design puts them:
      * columns 20 pixels apart round the centre, standing on the pedestal up to the reactor head.
      * Coolant channels are copper pipes; fuel glows while the station runs (dim when stopped, dark
-     * once spent); moderators are graphite, control rods steel. Empty channels show just a collar.
+     * once spent); moderators are graphite, control rods steel, lithium target rods gunmetal. Empty channels show just a collar.
      */
     private static List<StationGeometry.Quad> rods(StationCoreBlockEntity core) {
         List<StationGeometry.Quad> quads = new java.util.ArrayList<>();
@@ -109,6 +110,7 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
                 case FUEL -> StationReactor.isFreshFuel(item) ? (running ? GLOW : GLOW_OFF) : StationReactor.isSpent(item) ? DARK : null;
                 case MODERATOR -> item.isEmpty() ? null : DARK;
                 case CONTROL -> item.isEmpty() ? null : STEEL;
+                case TARGET -> item.isEmpty() ? null : LEAD;
                 case EMPTY -> null;
             };
             if (texture != null) {

@@ -78,6 +78,9 @@ TEXTURES = {
     # Spent rods: the same rings, burnt dull.
     'item/spent_uranium_rod': lambda: fuel_rod('6', '5'),
     'item/spent_mox_rod': lambda: fuel_rod('Z', '8'),
+    # Lithium target rod: pale lithium rings; bred, they glow violet with tritium.
+    'item/lithium_target_rod': lambda: fuel_rod('A', 'I'),
+    'item/irradiated_target_rod': lambda: fuel_rod('4', '3'),
     # Control rod: the brake, ringed in warning red.
     'item/control_rod': lambda: fuel_rod('x', '8'),
 }

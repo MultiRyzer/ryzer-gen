@@ -27,6 +27,16 @@
     ],
     "subtitle": "subtitles.ryzergen.fuel_fabricator"
   },
+  "lithium_extractor": {
+    "sounds": [
+      {
+        "name": "ryzergen:reprocessor",
+        "pitch": 1.15,
+        "volume": 0.52
+      }
+    ],
+    "subtitle": "subtitles.ryzergen.lithium_extractor"
+  },
   "microreactor_alarm": {
     "sounds": [
       {

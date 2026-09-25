@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.registry;
 
+import com.ryzer.ryzergen.Preview;
 import com.ryzer.ryzergen.RyzerGen;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -15,8 +16,10 @@ public final class ModCreativeTabs {
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.ryzergen"))
                     .icon(() -> ModItems.GRAPHITE.get().getDefaultInstance())
-                    .displayItems((params, output) -> ModItems.ITEMS.getEntries()
-                            .forEach(item -> output.accept(item.get())))
+                    .displayItems((params, output) -> ModItems.ITEMS.getEntries().stream()
+                            .map(item -> item.get().getDefaultInstance())
+                            .filter(stack -> !Preview.hidden(stack))
+                            .forEach(output::accept))
                     .build());
 
     private ModCreativeTabs() {}

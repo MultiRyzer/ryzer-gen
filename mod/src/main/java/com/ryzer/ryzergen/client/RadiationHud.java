@@ -1,7 +1,8 @@
 package com.ryzer.ryzergen.client;
 
 import com.ryzer.ryzergen.RyzerGen;
-import com.ryzer.ryzergen.radiation.DosimeterRingItem;
+import com.ryzer.ryzergen.radiation.GeigerCounterItem;
+import net.minecraft.world.item.ItemStack;
 import com.ryzer.ryzergen.radiation.Radiation;
 import com.ryzer.ryzergen.radiation.RadiationClientState;
 import com.ryzer.ryzergen.registry.ModSounds;
@@ -21,15 +22,17 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 /**
- * The dosimeter's readout: a small gauge in the top left while the ring is worn or carried, and
- * Geiger clicks that come faster as the dose rate rises. Without a ring, radiation is silent.
+ * The Geiger counter's readout: a small gauge in the top left while one is carried (or worn in an
+ * accessory slot), and clicks that come faster as the dose rate rises, unless it is muted. Without
+ * a counter, radiation is silent.
  */
 public final class RadiationHud {
     private RadiationHud() {}
 
-    private static boolean hasRing() {
+    /** The Geiger counter the player carries, or empty: no counter, no readout and no clicks. */
+    private static ItemStack counter() {
         Player player = Minecraft.getInstance().player;
-        return player != null && DosimeterRingItem.isWorn(player);
+        return player == null ? ItemStack.EMPTY : GeigerCounterItem.carried(player);
     }
 
     /** Mod bus: register the HUD layer. */
@@ -49,7 +52,11 @@ public final class RadiationHud {
         public static void tick(ClientTickEvent.Post event) {
             Minecraft minecraft = Minecraft.getInstance();
             float rate = RadiationClientState.rate();
-            if (minecraft.player == null || minecraft.isPaused() || rate < 0.02F || !hasRing()) {
+            if (minecraft.player == null || minecraft.isPaused() || rate < 0.02F) {
+                return;
+            }
+            ItemStack counter = counter();
+            if (counter.isEmpty() || GeigerCounterItem.isMuted(counter)) {
                 return;
             }
             // A Geiger counter clicks at random, more often the stronger the field.
@@ -62,7 +69,7 @@ public final class RadiationHud {
 
     private static void render(GuiGraphics graphics, DeltaTracker delta) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.options.hideGui || !hasRing()) {
+        if (minecraft.options.hideGui || counter().isEmpty()) {
             return;
         }
         float dose = RadiationClientState.dose();

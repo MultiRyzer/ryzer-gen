@@ -22,5 +22,15 @@ public final class ModDataComponents {
             COMPONENTS.registerComponentType("stored_energy",
                     builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
 
+    /** How far a lithium target rod is bred, in thousands of heat-ticks (see StationReactor.TARGET_WORK). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BRED =
+            COMPONENTS.registerComponentType("bred",
+                    builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
+    /** A Geiger counter with its clicks switched off (the gauge still shows). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> MUTED =
+            COMPONENTS.registerComponentType("muted",
+                    builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
+
     private ModDataComponents() {}
 }

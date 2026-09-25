@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "active=false,facing=east": {
+      "model": "ryzergen:block/lithium_extractor",
+      "y": 90
+    },
+    "active=false,facing=north": {
+      "model": "ryzergen:block/lithium_extractor"
+    },
+    "active=false,facing=south": {
+      "model": "ryzergen:block/lithium_extractor",
+      "y": 180
+    },
+    "active=false,facing=west": {
+      "model": "ryzergen:block/lithium_extractor",
+      "y": 270
+    },
+    "active=true,facing=east": {
+      "model": "ryzergen:block/lithium_extractor_on",
+      "y": 90
+    },
+    "active=true,facing=north": {
+      "model": "ryzergen:block/lithium_extractor_on"
+    },
+    "active=true,facing=south": {
+      "model": "ryzergen:block/lithium_extractor_on",
+      "y": 180
+    },
+    "active=true,facing=west": {
+      "model": "ryzergen:block/lithium_extractor_on",
+      "y": 270
+    }
+  }
+}
