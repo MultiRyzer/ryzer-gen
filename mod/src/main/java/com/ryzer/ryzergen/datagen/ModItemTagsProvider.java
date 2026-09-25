@@ -25,6 +25,8 @@ public class ModItemTagsProvider extends ItemTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         tag(ModTags.INGOTS_STEEL).add(ModItems.STEEL_INGOT.get());
+        tag(ModTags.DUSTS_LITHIUM).add(ModItems.LITHIUM_DUST.get());
+        tag(Tags.Items.DUSTS).addTag(ModTags.DUSTS_LITHIUM);
         tag(ModTags.INGOTS_GRAPHITE).add(ModItems.GRAPHITE.get());
         tag(ModTags.GEMS_SILICON_CARBIDE).add(ModItems.SILICON_CARBIDE.get());
         tag(ModTags.MICROREACTOR_FUEL).add(ModItems.SEALED_FUEL_CORE.get());
@@ -40,6 +42,9 @@ public class ModItemTagsProvider extends ItemTagsProvider {
         // Wearable in Accessories' ring slot (and Curios', for packs that use it). Harmless if neither is installed.
         tag(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("accessories", "ring"))).add(ModItems.DOSIMETER_RING.get());
         tag(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("curios", "ring"))).add(ModItems.DOSIMETER_RING.get());
+        // The Geiger counter clips to a belt.
+        tag(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("accessories", "belt"))).add(ModItems.GEIGER_COUNTER.get());
+        tag(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("curios", "belt"))).add(ModItems.GEIGER_COUNTER.get());
         tag(Tags.Items.INGOTS).addTag(ModTags.INGOTS_STEEL);
 
         for (OreType ore : OreType.values()) {

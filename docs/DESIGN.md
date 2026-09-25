@@ -28,7 +28,7 @@ Most reactor mods have one answer to "how do I get more power": build it bigger.
 | 2 | Fuel cycle | Reprocessing, MOX fuel (as done in France) | Spent fuel is the next fuel |
 | 3 | Modular fission reactor | Conventional fission, moderators and coolant | Layout design |
 | 4 | Breeder and thorium | Fast breeder reactors, thorium to U-233 | Making more fuel than you burn |
-| 5 | Fusion | Deuterium-tritium tokamaks (ITER) | Plasma stability, breeding tritium from lithium |
+| 5 | Fusion | Deuterium-tritium tokamaks (ITER), fed by fission (see section 10) | Plasma stability, breeding tritium from lithium |
 | 6 | Dyson swarm | Dyson swarm concepts, beamed power | Building in the sun dimension |
 
 Later ideas kept on file (not in scope yet): aneutronic fusion, antimatter storage, Kugelblitz black hole power.
@@ -67,7 +67,12 @@ Iron, copper, gold, redstone, coal and sand come from vanilla.
 | Graphite | Moderator, fuel coating | Coal or charcoal block in a blast furnace (1 block makes 3 graphite) |
 | Silicon carbide | TRISO fuel layer, hardened circuits | Sand and graphite in the alloy smelter |
 | Silicon | Circuits and solar cells | Sand in a powered furnace |
-| Lithium | Breeds tritium for fusion | Extracted from salt brine (real lithium mostly comes from brine) |
+| Lithium | Breeds tritium for fusion | Extracted from salt and water in the Lithium Extractor (real lithium mostly comes from brine) |
+| Tritium | Fusion fuel | Bred from lithium target rods in the fission station's core |
+| Heavy water | Fusion fuel (deuterium), better moderator | Separated from water in the Heavy Water Plant |
+| Palladium | Hydrogen isotope membranes | Recovered from fission waste in the Waste Refinery |
+| Liquid nitrogen | Cools the superconducting magnets | Separated from air in the Cryo Plant |
+| Uranium glass | Decoration and light (glows green) | Glass and spare uranium from reprocessing |
 | Sodium | Breeder coolant | Split from salt |
 | Thorium, yttrium | Thorium fuel, superconductors | Extracted from monazite |
 
@@ -85,7 +90,7 @@ Rule 2: **power gating.** The machine that makes the next tier's key material ru
 | 2 | Fuel cycle machines (run on microreactor power) | Advanced board, MOX fuel | Silicon from sand and coal in the electric alloy smelter; fluorite for reprocessing | Advanced board: steel, gold, silicon |
 | 3 | Fission reactor | Control rod assembly | Silver alloy control rods (real rods use silver, indium and cadmium); MOX fuel from tier 2 | Hardened board: silicon carbide and lead (radiation-hard electronics) |
 | 4 | Breeder reactor | Sodium coolant loop, breeder fuel | Spent MOX pyroprocessed in molten salt into transuranic metal, on fission power; sodium split from salt using fission power (real fast breeders are sodium cooled); thorium from monazite | Hardened board |
-| 5 | Fusion reactor | Superconducting magnet coil, plasma-facing wall | Yttrium from monazite for superconductors; tritium bred from lithium in the breeder; tungsten for the plasma wall | Cryogenic board: superconducting wiring |
+| 5 | Fusion reactor | Superconducting magnet coil, plasma-facing wall | Tritium bred from lithium target rods in the fission station; heavy water for deuterium; palladium from fission waste; yttrium from monazite and liquid nitrogen for the magnets; tungsten for the plasma wall (section 10) | Cryogenic board: superconducting wiring |
 | 6 | Dyson swarm | Solar sail, receiver dish | Aluminium film sails; silicon solar cells | Photonic board |
 
 Circuits follow their own logic: basic, advanced, radiation-hardened, cryogenic, photonic. Each tier's circuit needs something only the previous tier made possible.
@@ -260,6 +265,7 @@ Size is fixed, so the lever is the core layout (rule 1: knowledge, not volume). 
 - **Moderators:** slow neutrons so the fuel beside them burns hotter and more efficiently. Graphite first; rarer moderators later give more (as Extreme Reactors rewards better blocks next to its rods). Which materials, and how realistic to be, is decided later. Real options include heavy water and beryllium.
 - **Control rods:** silver alloy (tier 3's new material), soak up neutrons to tame a hot layout.
 - **Coolant channels:** carry heat away to make steam.
+- **Target channels:** hold lithium target rods, which breed tritium for fusion from the fuel beside them, at the cost of 20% of that fuel's heat (section 10). Fully bred rods leave by the output port.
 - Channels are planned, then filled: pick a tool in the control screen (fuel, moderator, control rod, coolant) and click channels to plan them. Moderators (graphite blocks) and control rods go in once; fuel channels take uranium or MOX rods, by hand or through the fuel port, and spent rods come back out of the port. The grid is shown as seen from the station's front.
 - Channels start empty, so every coolant channel is a choice. Right-click a channel to take its item out, and again to clear its plan.
 - First numbers (being play-tested, `fission_station.output_percent` scales them): a uranium rod makes 1,000 thermal FE/t and lasts 30 minutes at a steady burn, MOX 2,000 and 2 hours. MOX also lets each coolant channel carry more heat, up to twice as much in an all-MOX core (scaled by its share of the fuel rods), so a full MOX core plays like the same uranium core at double the power. Real basis: plutonium-bearing fuel runs at a higher power density, and hotter fuel drives more heat into the water; the factor of two is a fudge so closing the fuel cycle pays.
@@ -311,11 +317,52 @@ Real basis: every pass through a thermal reactor builds up heavier plutonium iso
 ### New materials
 - **Spent MOX rod**, **transuranic metal** (no other mod makes it, so it has no common tag), **breeder fuel**, **sodium** (`c:dusts/sodium` or an ingot, decided with the machine), **uranium-233**.
 
-## 10. Tier 5: Fusion
+## 10. From fission to fusion
 
-- Deuterium-tritium tokamak.
-- Tritium is bred from lithium in your fission reactors, tying the tiers together.
+A deuterium-tritium tokamak cannot be built or fuelled without fission. Its fuel, its magnets and its fuel handling all come from a running fission station and what it leaves behind, each made by a new process on fission power (rule 7). None of it is a pile of the tier below (rule 6).
+
+| Fusion needs | What it is | Where it comes from |
+|---|---|---|
+| Tritium (fuel) | Radioactive hydrogen; almost none exists in nature | Lithium target rods in the fission station's core |
+| Deuterium (fuel) | Heavy hydrogen, in ordinary water | Heavy water, separated from water |
+| Magnets | Superconducting coils that hold the plasma | Yttrium tape from monazite, cooled by liquid nitrogen |
+| Fuel handling | Separating hydrogen isotopes | Palladium membranes, the palladium recovered from fission waste |
+| First wall | Armour facing the plasma | Tungsten tiles |
+
+### Tritium: lithium target rods
+- **Lithium Extractor:** salt and water become lithium (`c:dusts/lithium`). A simple machine on microreactor or fission power. Real basis: direct lithium extraction from brine, where most real lithium comes from.
+- **Lithium target rod:** made in the Fuel Fabricator from lithium, aluminium and steel. Real basis: lithium aluminate pellets in a steel tube.
+- **Numbers (first pass):** the Lithium Extractor (40 FE/t, 10 s) turns 2 salt and 500 mB of water into 1 lithium; a target rod takes 2 lithium, 1 aluminium and 1 steel. A rod is bred after 60 million heat-ticks from the fuel beside it: about 20 minutes beside two uranium rods, 5 beside four MOX rods. The station's panel shows how long each target channel will take.
+- **In the core:** target rods go in their own channel type in the station's grid. Neutrons from the fuel beside a target rod slowly turn its lithium into tritium; the more fuel heat beside it, the faster. A finished rod becomes an irradiated target rod and leaves by the output port, like a spent fuel rod.
+- **The trade-off:** a target rod soaks up neutrons, so the fuel beside it makes 20% less heat and burns 20% slower (a control rod takes 35%). Every target rod costs power, so breeding fusion fuel is a layout decision, not a grind.
+- **Tritium extraction:** irradiated target rods are processed into tritium, which needs palladium membranes (below).
+- Real basis: the United States makes its tritium this way, in a commercial power reactor, with lithium rods that absorb neutrons (they double as burnable absorbers).
+- Once the fusion reactor runs, its lithium blanket breeds its own tritium: fission starts fusion, and fusion then sustains itself, as planned for real reactors.
+
+### Deuterium: heavy water
+- **Heavy Water Plant:** water becomes a little heavy water, on fission power. Real basis: heavy water is separated from ordinary water in large plants.
+- Two uses: deuterium for fusion, and a better moderator for the fission station (a heavy water channel), as in heavy-water reactors such as CANDU.
+
+### Palladium: the use for fission waste
+- **Waste Refinery:** fission waste gives back palladium, and the rest is sealed into glass for storage. Real basis: fission leaves rare metals in spent fuel, palladium, rhodium and ruthenium among them, and high-level waste is vitrified (set in glass) for storage.
+- Palladium makes membranes that let hydrogen isotopes through and nothing else, which fusion's fuel system and tritium extraction both need. So the waste the fuel cycle has been storing finally has a use.
+
+### Magnets: yttrium and liquid nitrogen
+- **Monazite processing:** monazite gives yttrium (and thorium, for tier 4). Yttrium goes into superconducting tape, wound into the magnet coils. Real basis: this family of superconductors (yttrium barium copper oxide) works at liquid nitrogen temperature, and newer compact tokamaks use it.
+- **Cryo Plant:** separates liquid nitrogen from air, on fission power, to keep the coils cold.
+- The cryogenic cable fittings use the same yttrium.
+
+### First wall: tungsten
+- Tungsten tiles line the inside of the reactor. Real basis: tungsten survives the heat and is what ITER uses.
+
+### Uranium glass (decoration)
+- Glass with a little spare uranium in it, glowing green as the station's chamber haze does. A decorative glass and light block, not part of progression. Real basis: uranium glass is real, and fluoresces green under ultraviolet light.
+
+## 10b. Tier 5: Fusion
+
+- Deuterium-tritium tokamak, built and fuelled from section 10.
 - Gameplay: keep the plasma stable, manage wear on components from neutron damage.
+- Its lithium blanket breeds tritium once running, so it keeps itself fuelled.
 - Hard to run, huge payoff.
 
 ## 11. Tier 6: Dyson swarm
@@ -422,7 +469,11 @@ Radiation is on by default (config toggle to turn it off). It exists to make the
 - Without an accessory mod installed, carrying it anywhere in the inventory counts, so the mod stays fully playable standalone.
 - The plain ring blocks all of the dose for now, since there is no other radiation gear yet (and may never be). Its gauge and clicks still read the radiation around you, so it warns you even while it protects you. Lower `DosimeterRingItem.PROTECTION` if linings ever arrive.
 - Real basis: nuclear workers really do wear ring and badge dosimeters. The one fudge: real dosimeters only measure dose, while ours also protects.
-- Shows a small HUD gauge with current exposure, and clicks like a Geiger counter near sources.
+- It records your total dose quietly (shown in its tooltip) but shows no gauge and makes no sound.
+
+### The Geiger counter
+- A handheld counter (recipe: glass pane over a basic board, iron and a note block). While you carry it (anywhere in the inventory, or clipped to the Accessories belt slot, `accessories:belt` and `curios:belt`), a small HUD gauge shows your dose and the dose rate around you, and it clicks faster the stronger the field. Shift-right-click it to mute the clicks and keep the gauge (a plain right-click is Accessories' quick-equip). Without one, radiation is silent.
+- Real basis: a Geiger-Muller tube, a gas-filled tube that gives a pulse, heard as a click, each time radiation passes through it. It measures; it does not protect.
 - Upgraded, not replaced: new tier materials are added to the same ring (lead lining, then silicon carbide, then tungsten) to protect against stronger sources. No crafting a new ring each tier.
 - Multiplayer: a friend without a ring is at risk around your reactor, which makes the ring feel earned.
 

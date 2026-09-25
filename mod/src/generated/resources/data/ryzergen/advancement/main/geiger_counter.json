@@ -1,0 +1,33 @@
+{
+  "parent": "ryzergen:main/uranium",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:geiger_counter"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.geiger_counter.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:geiger_counter"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.geiger_counter.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

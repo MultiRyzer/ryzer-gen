@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.compat.emi;
 
+import com.ryzer.ryzergen.Preview;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.compat.RecipeViewerPages;
 import dev.emi.emi.api.recipe.EmiInfoRecipe;
@@ -53,8 +54,14 @@ public class RyzerGenEmiPlugin implements EmiPlugin {
                     ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "/info/" + info.id())));
         }
 
+        // Unfinished items stay out of the index while the preview is off.
+        registry.removeEmiStacks(stack -> Preview.hidden(stack.getItemStack()));
+
         // The fuel cycle machines, one category each.
         for (ProcessingMachine machine : ProcessingMachine.values()) {
+            if (!machine.shown()) {
+                continue;
+            }
             EmiStack workstation = EmiStack.of(machine.block());
             EmiRecipeCategory category = new EmiRecipeCategory(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID,
                     machine.process().name().toLowerCase(Locale.ROOT)), workstation);

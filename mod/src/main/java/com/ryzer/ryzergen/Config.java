@@ -148,6 +148,17 @@ public final class Config {
         BUILDER.pop();
     }
 
+    public static final ModConfigSpec.BooleanValue PREVIEW_CONTENT;
+
+    static {
+        BUILDER.comment("Unfinished content.").push("preview");
+        PREVIEW_CONTENT = BUILDER
+                .comment("Turn on unfinished content from the next tier: the Lithium Extractor and lithium target rods.",
+                        "Their products have no use yet. Needs a restart (or /reload) to add or remove their recipes.")
+                .define("next_tier", false);
+        BUILDER.pop();
+    }
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     /** A config value, or its default before the config has loaded (tooltips can ask very early). */
