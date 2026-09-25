@@ -23,24 +23,30 @@ import java.util.Set;
  * The fission station's geometry, as drawn in art/tools/fission_concept.py and exported to
  * assets/ryzergen/station/fission_station.json: every face of every box, in blocks from the
  * station's north-west bottom corner, split into the static body, the spinning rotor and the rods.
- * Loaded once on first use and dropped when resources reload.
+ * Loaded once on first use and dropped when resources reload. The fusion reactor's concept design is
+ * exported the same way and loads through here too.
  */
 public final class StationGeometry {
     private static final ResourceLocation DATA = ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "station/fission_station.json");
+    /** The fusion reactor's concept design (art/tools/tokamak_concept.py), drawn by its preview block. */
+    public static final ResourceLocation FUSION = ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "fusion/fusion_reactor.json");
     private static final Map<String, Direction> FACES = Map.of("n", Direction.NORTH, "s", Direction.SOUTH,
             "w", Direction.WEST, "e", Direction.EAST, "u", Direction.UP, "d", Direction.DOWN);
 
-    /** One face: four corners (x, y, z in blocks) with their atlas UVs, wound to face outward. */
-    public record Quad(float[] xyz, float[] uv, Direction face, boolean emissive) {}
+    /**
+     * One face: four corners (x, y, z in blocks) with their atlas UVs, wound to face outward, and
+     * the way it faces (a box face's axis, or any direction for a curved design's panel).
+     */
+    public record Quad(float[] xyz, float[] uv, float[] normal, boolean emissive) {}
 
-    private static Map<String, List<Quad>> groups;
+    private static final Map<ResourceLocation, Map<String, List<Quad>>> designs = new HashMap<>();
     /** Bumped on every reload, so meshes built from the old atlas know to rebuild. */
     private static int generation;
 
     private StationGeometry() {}
 
     public static void clear() {
-        groups = null;
+        designs.clear();
         generation++;
     }
 
@@ -49,17 +55,19 @@ public final class StationGeometry {
     }
 
     public static List<Quad> group(String name) {
-        if (groups == null) {
-            groups = load();
-        }
-        return groups.getOrDefault(name, List.of());
+        return group(DATA, name);
     }
 
-    private static Map<String, List<Quad>> load() {
+    /** A group from any design exported the same way (the station's, or the fusion reactor's). */
+    public static List<Quad> group(ResourceLocation data, String name) {
+        return designs.computeIfAbsent(data, StationGeometry::load).getOrDefault(name, List.of());
+    }
+
+    private static Map<String, List<Quad>> load(ResourceLocation data) {
         Map<String, List<Quad>> out = new HashMap<>();
-        var resource = Minecraft.getInstance().getResourceManager().getResource(DATA);
+        var resource = Minecraft.getInstance().getResourceManager().getResource(data);
         if (resource.isEmpty()) {
-            RyzerGen.LOGGER.warn("Missing station geometry {}", DATA);
+            RyzerGen.LOGGER.warn("Missing design geometry {}", data);
             return out;
         }
         try (Reader reader = resource.get().openAsReader()) {
@@ -71,6 +79,12 @@ public final class StationGeometry {
             }
             Set<String> emissive = new HashSet<>();
             root.getAsJsonArray("emissive").forEach(e -> emissive.add(e.getAsString()));
+            if (root.has("quads")) {
+                loadQuads(root.getAsJsonObject("quads"), sprites, emissive, out);
+            }
+            if (!root.has("groups")) {
+                return out;
+            }
             for (Map.Entry<String, JsonElement> group : root.getAsJsonObject("groups").entrySet()) {
                 List<Quad> quads = new ArrayList<>();
                 for (JsonElement element : group.getValue().getAsJsonArray()) {
@@ -89,9 +103,38 @@ public final class StationGeometry {
                 out.put(group.getKey(), quads);
             }
         } catch (Exception e) {
-            RyzerGen.LOGGER.error("Could not load station geometry {}", DATA, e);
+            RyzerGen.LOGGER.error("Could not load design geometry {}", data, e);
         }
         return out;
+    }
+
+    /**
+     * Free quads (the fusion reactor's curved design): each is a texture, four corners of x, y, z, u,
+     * v (design pixels, texture pixels), already wound to face outward, then its normal.
+     */
+    private static void loadQuads(JsonObject quads, Map<String, TextureAtlasSprite> sprites, Set<String> emissive,
+                                  Map<String, List<Quad>> out) {
+        for (Map.Entry<String, JsonElement> group : quads.entrySet()) {
+            List<Quad> list = new ArrayList<>();
+            for (JsonElement element : group.getValue().getAsJsonArray()) {
+                JsonArray q = element.getAsJsonArray();
+                String texture = q.get(0).getAsString();
+                TextureAtlasSprite sprite = sprites.get(texture);
+                float[] xyz = new float[12];
+                float[] uv = new float[8];
+                for (int i = 0; i < 4; i++) {
+                    int at = 1 + i * 5;
+                    xyz[i * 3] = q.get(at).getAsFloat() / 16;
+                    xyz[i * 3 + 1] = q.get(at + 1).getAsFloat() / 16;
+                    xyz[i * 3 + 2] = q.get(at + 2).getAsFloat() / 16;
+                    uv[i * 2] = sprite.getU(q.get(at + 3).getAsFloat() / 16);
+                    uv[i * 2 + 1] = sprite.getV(q.get(at + 4).getAsFloat() / 16);
+                }
+                float[] normal = {q.get(21).getAsFloat(), q.get(22).getAsFloat(), q.get(23).getAsFloat()};
+                list.add(new Quad(xyz, uv, normal, emissive.contains(texture)));
+            }
+            out.put(group.getKey(), list);
+        }
     }
 
     /**
@@ -143,6 +186,7 @@ public final class StationGeometry {
                 o[0] + eu[0] + ev[0], o[1] + eu[1] + ev[1], o[2] + eu[2] + ev[2],
                 o[0] + eu[0], o[1] + eu[1], o[2] + eu[2],
         };
-        return new Quad(xyz, new float[] {u1, v1, u1, v2, u2, v2, u2, v1}, face, emissive);
+        float[] normal = {face.getStepX(), face.getStepY(), face.getStepZ()};
+        return new Quad(xyz, new float[] {u1, v1, u1, v2, u2, v2, u2, v1}, normal, emissive);
     }
 }

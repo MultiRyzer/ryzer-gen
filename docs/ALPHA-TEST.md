@@ -59,7 +59,8 @@ One pass through everything the 0.1.0 alpha ships, before it goes public. Tick t
 - [ ] Set `preview.next_tier = true`, restart: all of it comes back
 
 ## 8. Multiplayer
-- [ ] Runs on a dedicated server (`./gradlew runServer`, or the jar on a real server) without crashing
+- [x] Starts on a dedicated server without crashing (`./gradlew runServer`, 25 Sep 2026: loads, generates a world, no errors)
+- [ ] Place and run a microreactor, a fuel cycle machine and the station on a server, with a client joined
 - [ ] Two players can see the same reactor running, animations and sounds included
 
 ## 9. Inside ATM10

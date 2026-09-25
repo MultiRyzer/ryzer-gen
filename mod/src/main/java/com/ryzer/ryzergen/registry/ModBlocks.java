@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.registry;
 
+import com.ryzer.ryzergen.machine.fusion.FusionPreviewBlock;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.battery.HomeBatteryBlock;
 import com.ryzer.ryzergen.cable.EnergyCableBlock;
@@ -92,6 +93,9 @@ public final class ModBlocks {
             () -> new CreativeSourceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
     public static final DeferredBlock<CreativeWaterTankBlock> CREATIVE_WATER_TANK = BLOCKS.register("creative_water_tank",
             () -> new CreativeWaterTankBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
+    // Creative-only: draws the fusion reactor's concept design round itself (next-tier preview).
+    public static final DeferredBlock<FusionPreviewBlock> FUSION_PREVIEW = BLOCKS.register("fusion_preview",
+            () -> new FusionPreviewBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
     public static final DeferredBlock<HomeBatteryBlock> HOME_BATTERY = BLOCKS.register("home_battery",
             () -> new HomeBatteryBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
                     .pushReaction(PushReaction.BLOCK)));
