@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "active=false,facing=east,half=lower": {
+      "model": "ryzergen:block/reprocessor_lower",
+      "y": 90
+    },
+    "active=false,facing=east,half=upper": {
+      "model": "ryzergen:block/reprocessor_upper",
+      "y": 90
+    },
+    "active=false,facing=north,half=lower": {
+      "model": "ryzergen:block/reprocessor_lower"
+    },
+    "active=false,facing=north,half=upper": {
+      "model": "ryzergen:block/reprocessor_upper"
+    },
+    "active=false,facing=south,half=lower": {
+      "model": "ryzergen:block/reprocessor_lower",
+      "y": 180
+    },
+    "active=false,facing=south,half=upper": {
+      "model": "ryzergen:block/reprocessor_upper",
+      "y": 180
+    },
+    "active=false,facing=west,half=lower": {
+      "model": "ryzergen:block/reprocessor_lower",
+      "y": 270
+    },
+    "active=false,facing=west,half=upper": {
+      "model": "ryzergen:block/reprocessor_upper",
+      "y": 270
+    },
+    "active=true,facing=east,half=lower": {
+      "model": "ryzergen:block/reprocessor_lower_on",
+      "y": 90
+    },
+    "active=true,facing=east,half=upper": {
+      "model": "ryzergen:block/reprocessor_upper_on",
+      "y": 90
+    },
+    "active=true,facing=north,half=lower": {
+      "model": "ryzergen:block/reprocessor_lower_on"
+    },
+    "active=true,facing=north,half=upper": {
+      "model": "ryzergen:block/reprocessor_upper_on"
+    },
+    "active=true,facing=south,half=lower": {
+      "model": "ryzergen:block/reprocessor_lower_on",
+      "y": 180
+    },
+    "active=true,facing=south,half=upper": {
+      "model": "ryzergen:block/reprocessor_upper_on",
+      "y": 180
+    },
+    "active=true,facing=west,half=lower": {
+      "model": "ryzergen:block/reprocessor_lower_on",
+      "y": 270
+    },
+    "active=true,facing=west,half=upper": {
+      "model": "ryzergen:block/reprocessor_upper_on",
+      "y": 270
+    }
+  }
+}

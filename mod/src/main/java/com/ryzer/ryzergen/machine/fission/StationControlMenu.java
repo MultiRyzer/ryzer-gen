@@ -1,5 +1,8 @@
 package com.ryzer.ryzergen.machine.fission;
 
+import com.ryzer.ryzergen.advancement.Milestone;
+import com.ryzer.ryzergen.registry.ModTriggers;
+import net.minecraft.server.level.ServerPlayer;
 import com.ryzer.ryzergen.machine.RedstoneMode;
 import com.ryzer.ryzergen.machine.fission.StationReactor.Channel;
 import com.ryzer.ryzergen.registry.ModMenus;
@@ -239,6 +242,9 @@ public class StationControlMenu extends AbstractContainerMenu {
         }
         if (id == BUTTON_SAFETY) {
             runner.toggleSafeties();
+            if (!runner.safeties && player instanceof ServerPlayer serverPlayer) {
+                ModTriggers.MILESTONE.get().trigger(serverPlayer, Milestone.STATION_OVERDRIVE);
+            }
             return true;
         }
         if (id == BUTTON_REDSTONE) {

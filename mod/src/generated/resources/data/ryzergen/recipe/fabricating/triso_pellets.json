@@ -1,0 +1,23 @@
+{
+  "type": "ryzergen:fabricating",
+  "inputs": [
+    {
+      "count": 1,
+      "tag": "c:ingots/uranium"
+    },
+    {
+      "count": 2,
+      "tag": "c:ingots/graphite"
+    },
+    {
+      "count": 1,
+      "tag": "c:gems/silicon_carbide"
+    }
+  ],
+  "results": [
+    {
+      "count": 3,
+      "id": "ryzergen:triso_pellets"
+    }
+  ]
+}

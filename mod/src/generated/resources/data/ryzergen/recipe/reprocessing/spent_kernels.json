@@ -1,0 +1,32 @@
+{
+  "type": "ryzergen:reprocessing",
+  "fluid": {
+    "amount": 250,
+    "tag": "c:water"
+  },
+  "inputs": [
+    {
+      "count": 1,
+      "item": "ryzergen:spent_kernels"
+    },
+    {
+      "count": 1,
+      "tag": "c:gems/fluorite"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "ryzergen:uranium_ingot"
+    },
+    {
+      "count": 1,
+      "id": "ryzergen:plutonium_nugget"
+    },
+    {
+      "count": 1,
+      "id": "ryzergen:fission_waste"
+    }
+  ],
+  "time": 400
+}

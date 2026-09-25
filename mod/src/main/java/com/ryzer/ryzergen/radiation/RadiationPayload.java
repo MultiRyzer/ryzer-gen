@@ -7,7 +7,10 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
-/** Once a second, server to client: the player's dose (mSv) and current dose rate (mSv/s), for the dosimeter. */
+/**
+ * Once a second, server to client, for the dosimeter: the player's dose (mSv) and the radiation
+ * around them (mSv/s), as the ring reads it, before the ring's own protection.
+ */
 public record RadiationPayload(float dose, float rate) implements CustomPacketPayload {
     public static final Type<RadiationPayload> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "radiation"));

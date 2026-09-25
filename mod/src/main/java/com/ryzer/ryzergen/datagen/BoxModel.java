@@ -80,10 +80,22 @@ final class BoxModel {
      * the cut are left out, and decals keep their place across it.
      */
     void build(BlockModelBuilder model, String particle, Function<String, ResourceLocation> texture, float yOffset) {
+        build(model, particle, texture, yOffset, 16);
+    }
+
+    /**
+     * Writes the whole design uncut, for the item model of a two-high machine (models may reach
+     * 32 pixels up; the item's display transforms scale it down to fit).
+     */
+    void buildWhole(BlockModelBuilder model, String particle, Function<String, ResourceLocation> texture) {
+        build(model, particle, texture, 0, 32);
+    }
+
+    private void build(BlockModelBuilder model, String particle, Function<String, ResourceLocation> texture, float yOffset, float height) {
         model.texture("particle", texture.apply(particle));
         for (Box box : boxes) {
             float y1 = Math.max(box.from[1], yOffset);
-            float y2 = Math.min(box.to[1], yOffset + 16);
+            float y2 = Math.min(box.to[1], yOffset + height);
             if (y2 <= y1) {
                 continue;
             }
@@ -113,7 +125,7 @@ final class BoxModel {
                     face.emissivity(15, 15);
                 }
                 float local = axis == 1 ? edge - yOffset : edge;
-                if (local == 0 || local == 16) {
+                if (height == 16 && (local == 0 || local == 16)) {
                     face.cullface(dir);
                 }
                 face.end();

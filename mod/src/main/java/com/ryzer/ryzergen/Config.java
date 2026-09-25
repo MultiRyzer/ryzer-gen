@@ -61,6 +61,7 @@ public final class Config {
     public static final ModConfigSpec.BooleanValue STATION_MELTDOWNS;
     public static final ModConfigSpec.DoubleValue STATION_MELTDOWN_POWER;
     public static final ModConfigSpec.IntValue STATION_TILT_SECONDS;
+    public static final ModConfigSpec.IntValue STATION_MELTDOWN_RADIUS;
     public static final ModConfigSpec.IntValue FLUID_TANK_CAPACITY;
     public static final ModConfigSpec.IntValue STEAM_PER_WATER;
     public static final ModConfigSpec.IntValue LEAD_ACID_CAPACITY;
@@ -125,6 +126,9 @@ public final class Config {
         STATION_MELTDOWN_POWER = BUILDER
                 .comment("Meltdown explosion strength (TNT is 4).")
                 .defineInRange("meltdown_power", 8.0, 0.0, 20.0);
+        STATION_MELTDOWN_RADIUS = BUILDER
+                .comment("Radius in blocks of the crater a station meltdown digs, on top of the blast. 0 leaves only the blast.")
+                .defineInRange("meltdown_crater_radius", 24, 0, 64);
         STATION_TILT_SECONDS = BUILDER
                 .comment("In overdrive, how long a fuel channel may sit without a live rod before the core goes unstable.")
                 .defineInRange("flux_tilt_seconds", 300, 10, 3600);

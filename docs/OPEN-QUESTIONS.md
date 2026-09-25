@@ -10,4 +10,9 @@ Decisions still to make. Move them into DESIGN.md once settled.
 6. **Microreactor fuel.** Does a new reactor come with its first fuel core, or does the player craft one separately?
 7. **Coolant block name.** Registered as "Coolant Jacket" (`coolant_jacket`) as a working name. Confirm or rename before release.
 8. **Middle battery tier.** A fridge-sized commercial cabinet between the home stack and the container, or go straight from house to container?
-9. **Power-spending machines.** Add things like an automated miner or powered tools and armour, or keep the mod to power and processing?
+9. **Power-spending machines.** Add things like an automated miner or powered tools and armour, or keep the mod to power and processing? Leaning towards our own quarry: a microreactor runs it slowly, and more power runs it faster. It gives bigger reactors a job, supplies uranium and fluorite for the fuel cycle in standalone play, and feeds later builds. To settle: its speed per FE, whether it upgrades by modules (rule 11) rather than a new block per tier, and a config toggle so packs that already have quarries can turn it off.
+10. **Pyroprocessor name.** A working name for the machine that turns spent MOX into transuranic metal. Pick an original name before it is built.
+11. **Breeder blanket.** Is breeding part of the breeder's core layout (blanket channels round the fuel, like the station's grid), or a separate blanket block or machine?
+12. **Spent breeder fuel.** What comes out of spent breeder fuel: more transuranic metal (a closed loop), waste only, or a feed for fusion?
+13. **Sodium form.** Sodium as a dust, an ingot, or only a liquid coolant fluid. Real sodium is a soft metal kept away from water, which could be a hazard mechanic.
+14. **Americium and curium.** Keep them folded into transuranic metal, or split them out later (americium-241 for a radioisotope battery, say)?

@@ -16,7 +16,7 @@ LANG = os.path.join(ROOT, 'mod', 'src', 'main', 'resources', 'assets', 'ryzergen
 
 # (key, sample values, available width in px). Samples are the longest the screen can show.
 CHECKS = [
-    # Cable and pipe panel (cable/CableScreen): rows and footer inside a 156 px well, text inset 4.
+    # Cable and pipe panel (cable/CableScreen): the footer is a 156 px well, text inset 4.
     ('gui.ryzergen.cable.max', ['100,000'], 148),
     ('gui.ryzergen.cable.network_buffers', ['99', '99'], 148),
     ('gui.ryzergen.item_pipe.max', ['1,000'], 148),
@@ -24,10 +24,11 @@ CHECKS = [
     ('gui.ryzergen.fluid_pipe.max', ['100,000'], 148),
     ('gui.ryzergen.gas_pipe.max', ['100,000'], 148),
     ('gui.ryzergen.gas_pipe.network', ['99'], 148),
-    # Row values share the line with the source name, which is cut to fit, so they get half.
-    ('gui.ryzergen.cable.rate', ['100,000'], 74),
-    ('gui.ryzergen.fluid_pipe.rate', ['100,000'], 74),
-    ('gui.ryzergen.item_pipe.rate', ['1,000'], 74),
+    # Row values share a 108 px line with the source name, which is cut to fit; the largest
+    # (cryogenic fittings) leave the name at least 28 px.
+    ('gui.ryzergen.cable.rate', ['1,024,000'], 80),
+    ('gui.ryzergen.fluid_pipe.rate', ['1,024,000'], 80),
+    ('gui.ryzergen.item_pipe.rate', ['10,240'], 80),
     # Intake pump (machine/pump/IntakePumpScreen): screen x 44 to 166, text from x 52.
     ('gui.ryzergen.intake_pump.status.no_water', [], 110),
     ('gui.ryzergen.intake_pump.status.redstone', [], 110),
@@ -37,6 +38,18 @@ CHECKS = [
     ('gui.ryzergen.intake_pump.source.missing', [], 110),
     ('gui.ryzergen.intake_pump.rate', ['1,000'], 110),
     ('gui.ryzergen.intake_pump.power', ['1,000'], 110),
+    # Fuel cycle machines (machine/processing/ProcessingScreen): status screen x 24 to 110, text from x 28.
+    ('gui.ryzergen.processing.status.idle', [], 78),
+    ('gui.ryzergen.processing.status.running', [], 78),
+    ('gui.ryzergen.processing.status.no_power', [], 78),
+    ('gui.ryzergen.processing.status.no_water', [], 78),
+    ('gui.ryzergen.processing.status.output_full', [], 78),
+    ('gui.ryzergen.processing.status.redstone', [], 78),
+    ('gui.ryzergen.processing.status.off', [], 78),
+    # Reactor Fuel page in JEI and EMI (compat/*/Fuel*): 160 px wide, text from x 0.
+    ('jei.ryzergen.fuel.microreactor', ['99,999'], 160),
+    ('jei.ryzergen.fuel.station', ['99,999'], 160),
+    ('jei.ryzergen.fuel.life', ['9999'], 160),
     # Station control core (machine/fission/StationCoreScreen): screen x 66 to 170, text from x 70;
     # part counts start after a 10 px icon, at x 82.
     ('gui.ryzergen.station_core.building', [], 96),
@@ -52,6 +65,7 @@ CHECKS = [
     ('gui.ryzergen.station.status.overdrive', [], 104),
     ('gui.ryzergen.station.status.flux_tilt', ['59:59'], 104),
     ('gui.ryzergen.station.status.unstable', [], 104),
+    ('gui.ryzergen.station.status.runaway', [], 104),
     ('gui.ryzergen.station.live', ['99.9k', '1000'], 104),
     ('gui.ryzergen.station.plan', ['99.9k'], 104),
     ('gui.ryzergen.station.plan_empty', [], 104),

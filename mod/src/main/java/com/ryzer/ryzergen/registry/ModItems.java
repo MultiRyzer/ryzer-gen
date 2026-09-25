@@ -1,6 +1,9 @@
 package com.ryzer.ryzergen.registry;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.cable.CableUpgrade;
+import com.ryzer.ryzergen.cable.FittingItem;
+import com.ryzer.ryzergen.machine.SpeedModuleItem;
 import com.ryzer.ryzergen.battery.BatteryChemistry;
 import com.ryzer.ryzergen.battery.BatteryModuleItem;
 import com.ryzer.ryzergen.item.WrenchItem;
@@ -27,6 +30,10 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> GAS_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.GAS_PIPE);
     public static final DeferredItem<BlockItem> INTAKE_PUMP = ITEMS.registerSimpleBlockItem(ModBlocks.INTAKE_PUMP);
     public static final DeferredItem<BlockItem> PRESSURE_TANK = ITEMS.registerSimpleBlockItem(ModBlocks.PRESSURE_TANK);
+    public static final DeferredItem<BlockItem> CORE_CRACKER = ITEMS.registerSimpleBlockItem(ModBlocks.CORE_CRACKER);
+    public static final DeferredItem<BlockItem> REPROCESSOR = ITEMS.registerSimpleBlockItem(ModBlocks.REPROCESSOR);
+    public static final DeferredItem<BlockItem> FUEL_FABRICATOR = ITEMS.registerSimpleBlockItem(ModBlocks.FUEL_FABRICATOR);
+    public static final DeferredItem<BlockItem> WASTE_CASK = ITEMS.registerSimpleBlockItem(ModBlocks.WASTE_CASK);
     public static final DeferredItem<BlockItem> FLUID_TANK = ITEMS.registerSimpleBlockItem(ModBlocks.FLUID_TANK);
     public static final DeferredItem<BlockItem> STATION_CORE = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_CORE);
     public static final DeferredItem<BlockItem> CREATIVE_BATTERY = ITEMS.registerSimpleBlockItem(ModBlocks.CREATIVE_BATTERY);
@@ -56,6 +63,14 @@ public final class ModItems {
     // fuel rods the fabricator presses for the fission reactor.
     /** Made from sand and coal in the electric alloy smelter only. */
     public static final DeferredItem<Item> SILICON = ITEMS.registerSimpleItem("silicon");
+    public static final DeferredItem<SpeedModuleItem> SPEED_MODULE = ITEMS.registerItem("speed_module", SpeedModuleItem::new);
+    // Cable fittings, one line for every kind of cable and pipe; each tier is crafted from the last.
+    public static final DeferredItem<FittingItem> SILVER_FITTINGS = ITEMS.registerItem("silver_fittings",
+            properties -> new FittingItem(CableUpgrade.SILVER, properties));
+    public static final DeferredItem<FittingItem> BUSBAR_FITTINGS = ITEMS.registerItem("busbar_fittings",
+            properties -> new FittingItem(CableUpgrade.BUSBAR, properties));
+    public static final DeferredItem<FittingItem> CRYOGENIC_FITTINGS = ITEMS.registerItem("cryogenic_fittings",
+            properties -> new FittingItem(CableUpgrade.CRYOGENIC, properties));
     /** Tier 2 circuit: steel, gold and silicon. */
     public static final DeferredItem<Item> ADVANCED_CONTROL_BOARD = ITEMS.registerSimpleItem("advanced_control_board");
     /** A cracked depleted core: the fuel kernels, freed from their casing for the reprocessor. */

@@ -1,0 +1,23 @@
+{
+  "type": "ryzergen:cracking",
+  "inputs": [
+    {
+      "count": 1,
+      "item": "ryzergen:depleted_fuel_core"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "ryzergen:spent_kernels"
+    },
+    {
+      "count": 2,
+      "id": "ryzergen:graphite"
+    },
+    {
+      "count": 2,
+      "id": "ryzergen:steel_ingot"
+    }
+  ]
+}
