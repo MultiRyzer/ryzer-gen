@@ -1,0 +1,267 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "east": {
+          "texture": "#lead"
+        },
+        "north": {
+          "texture": "#lead"
+        },
+        "south": {
+          "texture": "#lead"
+        },
+        "up": {
+          "texture": "#lead"
+        },
+        "west": {
+          "texture": "#lead"
+        }
+      },
+      "from": [
+        3,
+        0,
+        2
+      ],
+      "to": [
+        13,
+        13,
+        14
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "texture": "#lead"
+        },
+        "north": {
+          "texture": "#lead"
+        },
+        "south": {
+          "texture": "#lead"
+        },
+        "up": {
+          "texture": "#lead"
+        },
+        "west": {
+          "texture": "#lead"
+        }
+      },
+      "from": [
+        2,
+        0,
+        3
+      ],
+      "to": [
+        14,
+        13,
+        13
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#steel_dark"
+        },
+        "east": {
+          "texture": "#steel_dark"
+        },
+        "north": {
+          "texture": "#steel_dark"
+        },
+        "south": {
+          "texture": "#steel_dark"
+        },
+        "up": {
+          "texture": "#steel_dark"
+        },
+        "west": {
+          "texture": "#steel_dark"
+        }
+      },
+      "from": [
+        1.5,
+        5,
+        1.5
+      ],
+      "to": [
+        14.5,
+        6,
+        14.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#steel_dark"
+        },
+        "east": {
+          "texture": "#steel_dark"
+        },
+        "north": {
+          "texture": "#steel_dark"
+        },
+        "south": {
+          "texture": "#steel_dark"
+        },
+        "up": {
+          "texture": "#steel_dark"
+        },
+        "west": {
+          "texture": "#steel_dark"
+        }
+      },
+      "from": [
+        6,
+        0.5,
+        1.25
+      ],
+      "to": [
+        10,
+        12,
+        2
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#glow_off"
+        },
+        "east": {
+          "texture": "#glow_off"
+        },
+        "north": {
+          "texture": "#glow_off"
+        },
+        "south": {
+          "texture": "#glow_off"
+        },
+        "up": {
+          "texture": "#glow_off"
+        },
+        "west": {
+          "texture": "#glow_off"
+        }
+      },
+      "from": [
+        7,
+        1.5,
+        1
+      ],
+      "to": [
+        9,
+        11,
+        1.25
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "texture": "#copper"
+        },
+        "north": {
+          "texture": "#copper"
+        },
+        "south": {
+          "texture": "#copper"
+        },
+        "up": {
+          "texture": "#copper"
+        },
+        "west": {
+          "texture": "#copper"
+        }
+      },
+      "from": [
+        13,
+        0,
+        13
+      ],
+      "to": [
+        15,
+        10,
+        15
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#steel_dark"
+        },
+        "east": {
+          "texture": "#steel_dark"
+        },
+        "north": {
+          "texture": "#steel_dark"
+        },
+        "south": {
+          "texture": "#steel_dark"
+        },
+        "up": {
+          "texture": "#steel_dark"
+        },
+        "west": {
+          "texture": "#steel_dark"
+        }
+      },
+      "from": [
+        1.5,
+        13,
+        1.5
+      ],
+      "to": [
+        14.5,
+        15,
+        14.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#steel_dark"
+        },
+        "east": {
+          "texture": "#steel_dark"
+        },
+        "north": {
+          "texture": "#steel_dark"
+        },
+        "south": {
+          "texture": "#steel_dark"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#port_fuel",
+          "uv": [
+            0.0,
+            0.0,
+            10.0,
+            10.0
+          ]
+        },
+        "west": {
+          "texture": "#steel_dark"
+        }
+      },
+      "from": [
+        3,
+        15,
+        3
+      ],
+      "to": [
+        13,
+        16,
+        13
+      ]
+    }
+  ],
+  "textures": {
+    "copper": "ryzergen:block/microreactor/copper",
+    "glow_off": "ryzergen:block/microreactor/glow_off",
+    "lead": "ryzergen:block/microreactor/lead",
+    "particle": "ryzergen:block/microreactor/steel",
+    "port_fuel": "ryzergen:block/microreactor/port_fuel",
+    "steel_dark": "ryzergen:block/microreactor/steel_dark"
+  }
+}

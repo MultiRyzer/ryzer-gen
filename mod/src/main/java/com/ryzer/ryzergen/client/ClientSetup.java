@@ -1,6 +1,14 @@
 package com.ryzer.ryzergen.client;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.cable.CableUpgrade;
+import com.ryzer.ryzergen.registry.ModBlocks;
+import net.minecraft.client.renderer.block.BlockModelShaper;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.client.event.ModelEvent;
+import com.ryzer.ryzergen.machine.processing.ProcessingScreen;
 import com.ryzer.ryzergen.battery.HomeBatteryScreen;
 import com.ryzer.ryzergen.cable.CableScreen;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterScreen;
@@ -38,12 +46,39 @@ public final class ClientSetup {
         event.register(ModMenus.STATION_CORE.get(), StationCoreScreen::new);
         event.register(ModMenus.STATION_CONTROL.get(), StationControlScreen::new);
         event.register(ModMenus.MICROREACTOR.get(), MicroreactorScreen::new);
+        event.register(ModMenus.CORE_CRACKER.get(), ProcessingScreen::new);
+        event.register(ModMenus.REPROCESSOR.get(), ProcessingScreen::new);
+        event.register(ModMenus.FUEL_FABRICATOR.get(), ProcessingScreen::new);
     }
 
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.PRESSURE_TANK.get(), PressureTankRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.STATION_CORE.get(), StationRenderer::new);
+    }
+
+    /** Each tier's fitting on each side, a small model of its own, added to cables that have one. */
+    @SubscribeEvent
+    public static void registerFittingModels(ModelEvent.RegisterAdditional event) {
+        for (CableUpgrade tier : CableUpgrade.values()) {
+            if (tier == CableUpgrade.NONE) {
+                continue;
+            }
+            for (Direction side : Direction.values()) {
+                event.register(FittedCableModel.location(tier, side));
+            }
+        }
+    }
+
+    /** Every cable and pipe state's model gains its fittings. */
+    @SubscribeEvent
+    public static void wrapCableModels(ModelEvent.ModifyBakingResult event) {
+        Block[] cables = {ModBlocks.ENERGY_CABLE.get(), ModBlocks.ITEM_PIPE.get(), ModBlocks.FLUID_PIPE.get(), ModBlocks.GAS_PIPE.get()};
+        for (Block cable : cables) {
+            for (BlockState state : cable.getStateDefinition().getPossibleStates()) {
+                event.getModels().computeIfPresent(BlockModelShaper.stateToModelLocation(state), (key, model) -> new FittedCableModel(model));
+            }
+        }
     }
 
     /** The station's geometry is read from resources, so drop it when they reload. */

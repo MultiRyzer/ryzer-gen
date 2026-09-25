@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:ingots/yttrium"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "F": {
+      "item": "ryzergen:busbar_fittings"
+    },
+    "I": {
+      "item": "minecraft:blue_ice"
+    },
+    "Y": {
+      "tag": "c:ingots/yttrium"
+    }
+  },
+  "pattern": [
+    "YIY",
+    "IFI",
+    "YIY"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:cryogenic_fittings"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "parent": "ryzergen:main/station_overdrive",
+  "criteria": {
+    "station_meltdown": {
+      "conditions": {
+        "milestone": "station_meltdown"
+      },
+      "trigger": "ryzergen:milestone"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.station_meltdown.description"
+    },
+    "frame": "challenge",
+    "hidden": true,
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:spent_uranium_rod"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.station_meltdown.title"
+    }
+  },
+  "requirements": [
+    [
+      "station_meltdown"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

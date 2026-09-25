@@ -7,11 +7,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
 
-/** sounds.json. Our events borrow pitched vanilla sounds until the mod has audio of its own. */
+/** sounds.json. Some events borrow pitched vanilla sounds; the rest play our own loops. */
 public class ModSoundProvider extends SoundDefinitionsProvider {
     public ModSoundProvider(PackOutput output, ExistingFileHelper existingFiles) {
         super(output, RyzerGen.MOD_ID, existingFiles);
     }
+
+    /** Our recordings play at 65% of their levelled loudness (turned down 35% after play-testing). */
+    private static final float RECORDING_VOLUME = 0.65F;
 
     @Override
     public void registerSounds() {
@@ -23,14 +26,29 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         add(ModSounds.MICROREACTOR_HUM, definition()
                 .subtitle("subtitles.ryzergen.microreactor_hum")
                 .with(sound(ResourceLocation.withDefaultNamespace("block/beacon/ambient")).pitch(0.55F).volume(0.8F)));
-        // One beep cycle cut from a nuclear alarm (art/tools/alarm_sound.py). The client loops it and
+        // Our own recordings are cut into loops by art/tools/machine_sounds.py, which also credits them.
+        // The coolant-loss alarm: sixteen beeps of a depressurisation alarm. The client loops it and
         // raises the pitch towards meltdown. Heard from 64 blocks, so a runaway core is hard to miss.
         add(ModSounds.MICROREACTOR_ALARM, definition()
                 .subtitle("subtitles.ryzergen.microreactor_alarm")
-                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "microreactor_alarm")).attenuationDistance(64)));
-        // The fission station's alarm: the same beep for now, lower and heard from further away.
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "microreactor_alarm")).volume(RECORDING_VOLUME).attenuationDistance(64)));
+        // The fission station's alarm: a klaxon, heard from further away.
         add(ModSounds.STATION_ALARM, definition()
                 .subtitle("subtitles.ryzergen.station_alarm")
-                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "microreactor_alarm")).attenuationDistance(96)));
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "station_alarm")).volume(RECORDING_VOLUME).attenuationDistance(96)));
+        // The station's turbine: a windy drone, heard across a base.
+        add(ModSounds.STATION_HUM, definition()
+                .subtitle("subtitles.ryzergen.station_hum")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "station_hum")).volume(RECORDING_VOLUME).attenuationDistance(48)));
+        // The fuel cycle machines at work: grinding, a pump, a hydraulic press.
+        add(ModSounds.CORE_CRACKER, definition()
+                .subtitle("subtitles.ryzergen.core_cracker")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "core_cracker")).volume(RECORDING_VOLUME)));
+        add(ModSounds.REPROCESSOR, definition()
+                .subtitle("subtitles.ryzergen.reprocessor")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "reprocessor")).volume(RECORDING_VOLUME)));
+        add(ModSounds.FUEL_FABRICATOR, definition()
+                .subtitle("subtitles.ryzergen.fuel_fabricator")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "fuel_fabricator")).volume(RECORDING_VOLUME)));
     }
 }

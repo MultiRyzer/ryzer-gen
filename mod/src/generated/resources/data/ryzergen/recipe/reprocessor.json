@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:circuits/advanced"
+    },
+    "C": {
+      "item": "minecraft:cauldron"
+    },
+    "L": {
+      "tag": "c:ingots/lead"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "LAL",
+    "SCS",
+    "LAL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:reprocessor"
+  }
+}

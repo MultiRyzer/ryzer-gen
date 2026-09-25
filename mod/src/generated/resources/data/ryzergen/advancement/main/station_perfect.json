@@ -1,0 +1,30 @@
+{
+  "parent": "ryzergen:main/station",
+  "criteria": {
+    "station_perfect": {
+      "conditions": {
+        "milestone": "station_perfect"
+      },
+      "trigger": "ryzergen:milestone"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.station_perfect.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:graphite_block"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.station_perfect.title"
+    }
+  },
+  "requirements": [
+    [
+      "station_perfect"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

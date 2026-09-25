@@ -504,13 +504,75 @@ def station_control():
     return t
 
 
-def cable():
-    """Cable panel, drawn for six extract rows plus the footer. The rows are drawn in code, and the
-    screen shows only as many as the cable has, then this texture's bottom edge."""
+# Fuel cycle machines (Core Cracker, Reprocessor, Fuel Fabricator). Keep in step with ProcessingMenu
+# and ProcessingScreen: inputs in a row centred on x 53 at y 34, the arrow at 84,34, outputs in a
+# column at x 112 centred on the arrow's row, power and redstone keys at 133,17 and 133,35, the
+# upgrade slot under them at 132,52, the
+# energy well at 152,17, the water well at 8,17 for machines that take water, and a status screen
+# under the inputs. Sprites: the lit arrow at 176,0, the keycap at 176,20 (hovered 192,20), the
+# power keys (on, on hovered, off, off hovered) from 176,36.
+PROCESSING = {
+    'core_cracker': (1, 3, False),
+    'reprocessor': (2, 3, True),
+    'fuel_fabricator': (3, 1, False),
+}
+
+
+def processing(inputs, outputs, water):
     t = Tex(SIZE)
-    h = 194
+    panel(t, PANEL_W, SMELTER_H)
+    bx0, by0, bx1, by1 = SMELTER_BAY
+    recess(t, bx0, by0, bx1 - bx0 + 1, by1 - by0 + 1, 'S', 'U', 'A')
+    for i in range(inputs):
+        slot(t, 53 - 9 * inputs + 18 * i - 1, 34)
+    for i in range(outputs):
+        y = 35 - 9 * (outputs - 1) + 18 * i - 1
+        slot(t, 112, y)
+    # An orange accent rim round the outputs, as round the smelter's output slot.
+    oy0 = 35 - 9 * (outputs - 1) - 2
+    oy1 = 35 - 9 * (outputs - 1) + 18 * outputs - 1
+    t.rect(111, oy0, 130, oy0, 'X')
+    t.rect(111, oy0, 111, oy1, 'X')
+    t.rect(111, oy1, 130, oy1, 'Z')
+    t.rect(130, oy0, 130, oy1, 'Z')
+    arrow(t, 84, 34, lit=False)
+    well(t, 152, 17, 10, 52)
+    if water:
+        well(t, 8, 17, 12, 52)
+    screen(t, 24, 55, 86, 14)
+    # The upgrade slot under the keys, marked with a faint double chevron for speed modules.
+    slot(t, 132, 52)
+    for ox in (136, 140):
+        for dy in (-2, -1, 0, 1, 2):
+            t.set(ox + (2 - abs(dy)), 61 + dy, 'I')
+    for row in range(3):
+        for col in range(9):
+            slot(t, 7 + col * 18, 83 + row * 18)
+    for col in range(9):
+        slot(t, 7 + col * 18, 141)
+    arrow(t, 176, 0, lit=True)
+    keycap(t, 176, 20, False)
+    keycap(t, 192, 20, True)
+    for i, (on, hover) in enumerate(((True, False), (True, True), (False, False), (False, True))):
+        power_key(t, 176 + i * 16, 36, on, hover)
+    return t
+
+
+def cable():
+    """Cable panel on a 256 x 320 sheet: the header and the bay for six rows (drawn in code, each
+    with its fitting slot), the footer row, then from y 188 the inventory section: the bay's bottom
+    edge, the player's inventory and the panel's bottom edge. The screen shows the top part for as
+    many rows as the cable has, then the inventory section. Keep in step with CableMenu."""
+    t = Tex(256, 320)
+    inventory_v = 20 + 7 * 24
+    h = inventory_v + 100
     panel(t, PANEL_W, h)
-    recess(t, 4, 16, 168, h - 20, 'S', 'U', 'A')
+    recess(t, 4, 16, 168, inventory_v + 3 - 16, 'S', 'U', 'A')
+    for row in range(3):
+        for col in range(9):
+            slot(t, 7 + col * 18, inventory_v + 18 + row * 18)
+    for col in range(9):
+        slot(t, 7 + col * 18, inventory_v + 76)
     return t
 
 
@@ -523,6 +585,8 @@ def main():
     publish('gui/intake_pump', intake_pump())
     publish('gui/station_core', station_core())
     publish('gui/station_control', station_control())
+    for name, (inputs, outputs, water) in PROCESSING.items():
+        publish('gui/' + name, processing(inputs, outputs, water))
 
 
 if __name__ == '__main__':

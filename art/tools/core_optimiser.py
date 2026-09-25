@@ -7,7 +7,9 @@ Channels: F fuel, M moderator (graphite), R control rod, C coolant.
 """
 import random, math, sys
 G=5; N=25; CAP=3000
-BASE={'U':1000,'X':1400}
+BASE={'U':1000,'X':2000}
+# Coolant capacity multiplier per fuel: an all-MOX core's channels carry twice as much.
+COOL={'U':1,'X':2}
 def nb(i):
     x,z=i%G,i//G; out=[]
     if x>0: out.append(i-1)
@@ -34,10 +36,10 @@ def analyse(L, fuel):
         cs=[n for n in NB[i] if L[n]=='C']
         if not cs: stranded+=heat[i]; continue
         for c in cs: load[c]=load.get(c,0)+heat[i]/len(cs)
-    over=sum(max(0,l-CAP) for l in load.values())
+    over=sum(max(0,l-CAP*COOL[fuel]) for l in load.values())
     gen=sum(heat)
     used=len(load)
-    r = gen/(used*CAP) if used else 0
+    r = gen/(used*CAP*COOL[fuel]) if used else 0
     return gen, stranded+over, r, sum(burn), sum(1 for t in L if t=='F')
 def score(L, fuel, mode):
     gen,stuck,r,burn,rods=analyse(L,fuel)

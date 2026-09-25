@@ -67,6 +67,8 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
 
     public StationControlScreen(StationControlMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
+        // The machine bay starts at y 13, so the title sits higher than the default.
+        titleLabelY = 4;
         imageWidth = StationControlMenu.WIDTH;
         imageHeight = 222;
         inventoryLabelX = StationControlMenu.INVENTORY_X;
@@ -175,7 +177,7 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
             if (analysis.heat()[i] > 0) {
                 alarm = !cooled(plan, i);
             } else if (plan[i] == Channel.COOLANT && analysis.load()[i] > 0) {
-                alarm = analysis.load()[i] > StationReactor.capacity(analysis.overdrive()) + 1;
+                alarm = analysis.load()[i] > analysis.capacity() + 1;
             }
             if (alarm && flash) {
                 frame(graphics, x, y, BAD);
@@ -231,7 +233,7 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
             case ONLINE -> GOOD;
             case WARMING, NO_FUEL, OFFLINE, OVERDRIVE -> WARN;
             case NO_WATER, OVERHEAT, SCRAM -> BAD;
-            case FLUX_TILT, UNSTABLE -> flash ? BAD : WARN;
+            case FLUX_TILT, UNSTABLE, RUNAWAY -> flash ? BAD : WARN;
         };
         int seconds = menu.tiltSeconds();
         text(graphics, Component.translatable("gui.ryzergen.station.status." + status.name().toLowerCase(Locale.ROOT),
@@ -397,7 +399,7 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
             case COOLANT -> {
                 lines.add(Component.translatable(key + "coolant").withStyle(style -> style.withColor(colour(Channel.COOLANT))));
                 float load = analysis.load()[channel];
-                int capacity = Math.round(StationReactor.capacity(analysis.overdrive()));
+                int capacity = Math.round(analysis.capacity());
                 if (load <= 0) {
                     lines.add(Component.translatable(key + "coolant.idle").withStyle(style -> style.withColor(DIM)));
                 } else if (load > capacity + 1) {

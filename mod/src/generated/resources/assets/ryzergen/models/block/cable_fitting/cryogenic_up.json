@@ -1,0 +1,97 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#fitting"
+        },
+        "east": {
+          "texture": "#fitting"
+        },
+        "north": {
+          "texture": "#fitting"
+        },
+        "south": {
+          "texture": "#fitting"
+        },
+        "up": {
+          "texture": "#fitting"
+        },
+        "west": {
+          "texture": "#fitting"
+        }
+      },
+      "from": [
+        4,
+        11,
+        4
+      ],
+      "to": [
+        12,
+        15,
+        12
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "neoforge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          },
+          "texture": "#glow"
+        },
+        "east": {
+          "neoforge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          },
+          "texture": "#glow"
+        },
+        "north": {
+          "neoforge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          },
+          "texture": "#glow"
+        },
+        "south": {
+          "neoforge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          },
+          "texture": "#glow"
+        },
+        "up": {
+          "neoforge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          },
+          "texture": "#glow"
+        },
+        "west": {
+          "neoforge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          },
+          "texture": "#glow"
+        }
+      },
+      "from": [
+        3.75,
+        12.75,
+        3.75
+      ],
+      "to": [
+        12.25,
+        13.25,
+        12.25
+      ]
+    }
+  ],
+  "textures": {
+    "fitting": "ryzergen:block/fitting_cryogenic",
+    "glow": "ryzergen:block/microreactor/glow",
+    "particle": "ryzergen:block/fitting_cryogenic"
+  }
+}

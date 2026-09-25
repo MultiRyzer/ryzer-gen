@@ -21,7 +21,8 @@ import org.jetbrains.annotations.Nullable;
  * stuck item never blocks the rest. Items move instantly, as in Pipez.
  */
 public class ItemPipeBlockEntity extends CableBlockEntity<IItemHandler> {
-    private int cooldown;
+    /** Ticks until each extract side pulls again: a fitting shortens the wait. */
+    private final int[] cooldown = new int[6];
 
     public ItemPipeBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.ITEM_PIPE.get(), pos, state);
@@ -65,8 +66,11 @@ public class ItemPipeBlockEntity extends CableBlockEntity<IItemHandler> {
                 if (stack.isEmpty()) {
                     return stack;
                 }
-                int count = Math.min(stack.getCount(), batch());
+                int count = Math.min(stack.getCount(), schedule(side)[0]);
                 ItemStack left = distribute(stack.copyWithCount(count), source, null, simulate);
+                if (!simulate) {
+                    pushed[side.get3DDataValue()] += count - left.getCount();
+                }
                 return stack.copyWithCount(stack.getCount() - count + left.getCount());
             }
 
@@ -88,26 +92,24 @@ public class ItemPipeBlockEntity extends CableBlockEntity<IItemHandler> {
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, ItemPipeBlockEntity pipe) {
-        java.util.Arrays.fill(pipe.moved, 0);
-        if (--pipe.cooldown > 0) {
-            return;
-        }
-        pipe.cooldown = interval();
+        pipe.startTick();
         for (Direction dir : Direction.values()) {
-            if (state.getValue(CableBlock.SIDES.get(dir)) != CableSide.EXTRACT) {
+            if (state.getValue(CableBlock.SIDES.get(dir)) != CableSide.EXTRACT || --pipe.cooldown[dir.get3DDataValue()] > 0) {
                 continue;
             }
+            int[] schedule = pipe.schedule(dir);
+            pipe.cooldown[dir.get3DDataValue()] = schedule[1];
             BlockPos sourcePos = pos.relative(dir);
             IItemHandler source = level.getCapability(Capabilities.ItemHandler.BLOCK, sourcePos, dir.getOpposite());
             if (source != null) {
-                pipe.moved[dir.get3DDataValue()] = pipe.pull(level, source, sourcePos);
+                pipe.moved[dir.get3DDataValue()] += pipe.pull(level, source, sourcePos, schedule[0]);
             }
         }
     }
 
-    /** Moves up to one batch out of {@code source}, slot by slot. Returns how many items moved. */
-    private int pull(Level level, IItemHandler source, BlockPos sourcePos) {
-        int budget = batch();
+    /** Moves up to {@code batch} items out of {@code source}, slot by slot. Returns how many moved. */
+    private int pull(Level level, IItemHandler source, BlockPos sourcePos, int batch) {
+        int budget = batch;
         for (int slot = 0; slot < source.getSlots() && budget > 0; slot++) {
             ItemStack offered = source.extractItem(slot, budget, true);
             if (offered.isEmpty()) {
@@ -128,7 +130,7 @@ public class ItemPipeBlockEntity extends CableBlockEntity<IItemHandler> {
             }
             budget -= taken.getCount() - left.getCount();
         }
-        return batch() - budget;
+        return batch - budget;
     }
 
     /**
@@ -163,5 +165,10 @@ public class ItemPipeBlockEntity extends CableBlockEntity<IItemHandler> {
 
     private static int interval() {
         return Config.get(Config.ITEM_PIPE_INTERVAL);
+    }
+
+    /** {batch, interval} for what comes in on {@code side}, with its fitting. */
+    private int[] schedule(Direction side) {
+        return upgrade(side).itemSchedule(batch(), interval());
     }
 }

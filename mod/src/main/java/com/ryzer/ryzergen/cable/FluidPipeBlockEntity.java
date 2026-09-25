@@ -74,7 +74,7 @@ public class FluidPipeBlockEntity extends CableBlockEntity<IFluidHandler> {
 
             @Override
             public int getTankCapacity(int tank) {
-                return rate();
+                return rate(side);
             }
 
             @Override
@@ -87,7 +87,11 @@ public class FluidPipeBlockEntity extends CableBlockEntity<IFluidHandler> {
                 if (!carries(resource)) {
                     return 0;
                 }
-                return distribute(resource.copyWithAmount(Math.min(resource.getAmount(), rate())), source, null, action);
+                int sent = distribute(resource.copyWithAmount(Math.min(resource.getAmount(), rate(side))), source, null, action);
+                if (action.execute()) {
+                    pushed[side.get3DDataValue()] += sent;
+                }
+                return sent;
             }
 
             @Override
@@ -103,27 +107,27 @@ public class FluidPipeBlockEntity extends CableBlockEntity<IFluidHandler> {
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, FluidPipeBlockEntity pipe) {
+        pipe.startTick();
         for (Direction dir : Direction.values()) {
-            pipe.moved[dir.get3DDataValue()] = 0;
             if (state.getValue(CableBlock.SIDES.get(dir)) != CableSide.EXTRACT) {
                 continue;
             }
             BlockPos sourcePos = pos.relative(dir);
             IFluidHandler source = level.getCapability(Capabilities.FluidHandler.BLOCK, sourcePos, dir.getOpposite());
             if (source != null) {
-                pipe.moved[dir.get3DDataValue()] = pipe.pull(source, sourcePos);
+                pipe.moved[dir.get3DDataValue()] += pipe.pull(source, sourcePos, pipe.rate(dir));
             }
         }
     }
 
-    /** Drains up to the rate of the first fluid in {@code source} this pipe carries. Returns mB moved. */
-    private int pull(IFluidHandler source, BlockPos sourcePos) {
+    /** Drains up to {@code rate} of the first fluid in {@code source} this pipe carries. Returns mB moved. */
+    private int pull(IFluidHandler source, BlockPos sourcePos, int rate) {
         for (int tank = 0; tank < source.getTanks(); tank++) {
             FluidStack inTank = source.getFluidInTank(tank);
             if (!carries(inTank)) {
                 continue;
             }
-            FluidStack offered = source.drain(inTank.copyWithAmount(rate()), FluidAction.SIMULATE);
+            FluidStack offered = source.drain(inTank.copyWithAmount(rate), FluidAction.SIMULATE);
             if (offered.isEmpty()) {
                 continue;
             }
@@ -163,7 +167,13 @@ public class FluidPipeBlockEntity extends CableBlockEntity<IFluidHandler> {
         return sent;
     }
 
+    /** The base limit per input, before fittings. */
     private int rate() {
         return Config.get(gas ? Config.GAS_PIPE_RATE : Config.FLUID_PIPE_RATE);
+    }
+
+    /** The limit for what comes in on {@code side}, with its fitting. */
+    private int rate(Direction side) {
+        return upgrade(side).scale(rate());
     }
 }

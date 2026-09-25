@@ -1,0 +1,34 @@
+{
+  "parent": "ryzergen:main/spent_kernels",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:plutonium_nugget"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.plutonium.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:plutonium_nugget"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.plutonium.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

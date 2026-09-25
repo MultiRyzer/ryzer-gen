@@ -1,0 +1,33 @@
+{
+  "parent": "ryzergen:main/depleted_fuel_core",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:uranium_fuel_rod"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.uranium_fuel_rod.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:uranium_fuel_rod"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.uranium_fuel_rod.title"
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

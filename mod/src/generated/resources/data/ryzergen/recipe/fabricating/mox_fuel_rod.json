@@ -1,0 +1,23 @@
+{
+  "type": "ryzergen:fabricating",
+  "inputs": [
+    {
+      "count": 1,
+      "tag": "c:ingots/plutonium"
+    },
+    {
+      "count": 1,
+      "tag": "c:ingots/uranium"
+    },
+    {
+      "count": 1,
+      "tag": "c:ingots/steel"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "ryzergen:mox_fuel_rod"
+    }
+  ]
+}

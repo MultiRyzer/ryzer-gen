@@ -8,7 +8,11 @@ import com.ryzer.ryzergen.creative.CreativeWaterTankBlock;
 import com.ryzer.ryzergen.cable.FluidPipeBlock;
 import com.ryzer.ryzergen.machine.fission.StationCoreBlock;
 import com.ryzer.ryzergen.machine.fission.StationPartBlock;
+import com.ryzer.ryzergen.machine.processing.ProcessingBlock;
+import com.ryzer.ryzergen.machine.processing.ProcessingMachine;
+import com.ryzer.ryzergen.machine.processing.TallProcessingBlock;
 import com.ryzer.ryzergen.machine.pump.IntakePumpBlock;
+import com.ryzer.ryzergen.storage.WasteCaskBlock;
 import com.ryzer.ryzergen.storage.FluidTankBlock;
 import com.ryzer.ryzergen.storage.PressureTankBlock;
 import com.ryzer.ryzergen.cable.GasPipeBlock;
@@ -52,6 +56,15 @@ public final class ModBlocks {
             () -> new GasPipeBlock(BlockBehaviour.Properties.of().strength(0.5F).sound(SoundType.METAL).noOcclusion()));
     public static final DeferredBlock<IntakePumpBlock> INTAKE_PUMP = BLOCKS.register("intake_pump",
             () -> new IntakePumpBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+    // Fuel cycle machines (design section 7). Their lamp strips light while they work.
+    public static final DeferredBlock<ProcessingBlock> CORE_CRACKER = BLOCKS.register("core_cracker",
+            () -> new ProcessingBlock(ProcessingMachine.CORE_CRACKER, machineProperties()));
+    public static final DeferredBlock<TallProcessingBlock> REPROCESSOR = BLOCKS.register("reprocessor",
+            () -> new TallProcessingBlock(ProcessingMachine.REPROCESSOR, machineProperties().pushReaction(PushReaction.BLOCK)));
+    public static final DeferredBlock<ProcessingBlock> FUEL_FABRICATOR = BLOCKS.register("fuel_fabricator",
+            () -> new ProcessingBlock(ProcessingMachine.FUEL_FABRICATOR, machineProperties()));
+    public static final DeferredBlock<WasteCaskBlock> WASTE_CASK = BLOCKS.register("waste_cask",
+            () -> new WasteCaskBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
     public static final DeferredBlock<PressureTankBlock> PRESSURE_TANK = BLOCKS.register("pressure_tank",
             () -> new PressureTankBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
                     .isViewBlocking((state, level, pos) -> false)));
@@ -64,6 +77,7 @@ public final class ModBlocks {
             () -> new StationPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
     public static final DeferredBlock<StationPartBlock> STATION_GLASS = BLOCKS.register("station_glass",
             () -> new StationPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS).strength(1.5F).noOcclusion()
+                    .lightLevel(state -> state.getValue(StationPartBlock.LIT) ? 15 : 0)
                     .isViewBlocking((state, level, pos) -> false)));
     public static final DeferredBlock<StationPartBlock> TURBINE_ROTOR = BLOCKS.register("turbine_rotor",
             () -> new StationPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
@@ -94,6 +108,11 @@ public final class ModBlocks {
             DEEPSLATE_ORES.put(ore, BLOCKS.register("deepslate_" + ore.id() + "_ore",
                     () -> new DropExperienceBlock(ore.xp(), BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE))));
         }
+    }
+
+    private static BlockBehaviour.Properties machineProperties() {
+        return BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
+                .lightLevel(state -> state.getValue(ProcessingBlock.ACTIVE) ? 5 : 0);
     }
 
     /** A running microreactor glows through its porthole and screens. */

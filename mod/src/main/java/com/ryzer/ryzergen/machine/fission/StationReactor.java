@@ -28,14 +28,23 @@ import net.minecraft.world.item.ItemStack;
  * and burns 30% faster. The hotter core drives 30% more heat through each coolant channel, so a
  * layout that holds steady still does, and the steam leaves superheated: the turbine reaches 45%
  * instead of 40%. About half as much power again, from the same layout.
+ *
+ * <p>MOX: each rod makes twice a uranium rod's heat, and the coolant carries more in step, up to
+ * twice as much in an all-MOX core (scaled by the share of MOX rods). So a MOX core plays exactly
+ * like the same uranium core at double the power: same best layouts, same temperatures. Real basis:
+ * plutonium-bearing fuel runs at a higher power density, and hotter fuel drives more heat into the
+ * water (heat flux rises with the temperature difference). The factor of two is a game fudge, so
+ * the fuel cycle is worth closing.
  */
 public final class StationReactor {
     public static final int GRID = 5;
     public static final int CHANNELS = GRID * GRID;
 
-    /** Thermal FE per tick a fuel rod makes on its own. MOX runs hotter. */
+    /** Thermal FE per tick a fuel rod makes on its own. MOX runs twice as hot. */
     public static final float URANIUM_HEAT = 1000;
-    public static final float MOX_HEAT = 1400;
+    public static final float MOX_HEAT = 2000;
+    /** How much more heat each coolant channel carries in an all-MOX core (1 = twice as much). */
+    private static final float MOX_COOLING = 1;
     /** Ticks a rod lasts burning at 100%: uranium burns fast (and its spent rods breed plutonium), MOX lasts. */
     public static final int URANIUM_LIFE = 36_000;
     public static final int MOX_LIFE = 144_000;
@@ -52,10 +61,10 @@ public final class StationReactor {
      * art/tools/core_optimiser.py), for the screen's rating. At 100% output.
      */
     public static final float BEST_URANIUM = 8006;
-    public static final float BEST_MOX = 9053;
+    public static final float BEST_MOX = 16012;
     /** The temperatures those best layouts settle at, to scale them for overdrive. */
     private static final float BEST_URANIUM_TEMPERATURE = 544;
-    private static final float BEST_MOX_TEMPERATURE = 490;
+    private static final float BEST_MOX_TEMPERATURE = 544;
     /** Overdrive: more heat and burn per rod, and more heat carried per coolant channel. */
     public static final float OVERDRIVE_HEAT = 1.3F;
 
@@ -82,13 +91,14 @@ public final class StationReactor {
      * A layout worked out: per channel, the heat each fuel rod makes, how hard it burns, and the load
      * on each coolant channel; then the totals. {@code stranded} is heat no coolant can carry (a rod
      * with no coolant beside it, or more than a channel's capacity): any at all and the core cannot
-     * hold steady. {@code working} is how many coolant channels carry heat.
+     * hold steady. {@code working} is how many coolant channels carry heat, {@code capacity} how much
+     * each can carry in this core.
      */
     public record Analysis(float[] heat, float[] burn, float[] load, float generation, float stranded,
-                           int working, int coolants, int fuelRods, int moxRods, boolean overdrive) {
+                           int working, int coolants, int fuelRods, int moxRods, boolean overdrive, float capacity) {
         /** The fraction of the working coolant's capacity in use, which sets the core's temperature. */
         public float loadFraction() {
-            return working == 0 ? 0 : generation / (working * capacity(overdrive));
+            return working == 0 ? 0 : generation / (working * capacity);
         }
 
         public boolean holdsSteady() {
@@ -140,9 +150,12 @@ public final class StationReactor {
         return Config.get(Config.STATION_OUTPUT) / 100F;
     }
 
-    /** Thermal FE per tick one coolant channel can carry, after the config's output setting. */
-    public static float capacity(boolean overdrive) {
-        return COOLANT_CAPACITY * multiplier() * (overdrive ? OVERDRIVE_HEAT : 1);
+    /**
+     * Thermal FE per tick one coolant channel can carry, after the config's output setting, in a
+     * core where {@code mox} (0 to 1) of the fuel rods are MOX.
+     */
+    public static float capacity(boolean overdrive, float mox) {
+        return COOLANT_CAPACITY * multiplier() * (overdrive ? OVERDRIVE_HEAT : 1) * (1 + MOX_COOLING * mox);
     }
 
     public static boolean isFreshFuel(ItemStack stack) {
@@ -234,14 +247,15 @@ public final class StationReactor {
                 }
             }
         }
+        float capacity = capacity(overdrive, fuelRods == 0 ? 0 : moxRods / (float) fuelRods);
         int working = 0;
         for (int i = 0; i < CHANNELS; i++) {
             if (load[i] > 0) {
                 working++;
-                stranded += Math.max(0, load[i] - capacity(overdrive));
+                stranded += Math.max(0, load[i] - capacity);
             }
         }
-        return new Analysis(heat, burn, load, generation, stranded, working, coolants, fuelRods, moxRods, overdrive);
+        return new Analysis(heat, burn, load, generation, stranded, working, coolants, fuelRods, moxRods, overdrive, capacity);
     }
 
     /** The up to four channels beside channel {@code i}. */

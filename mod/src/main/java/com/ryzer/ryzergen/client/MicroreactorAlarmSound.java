@@ -19,7 +19,7 @@ import static com.ryzer.ryzergen.machine.microreactor.ReactorHeartBlockEntity.OV
  */
 public class MicroreactorAlarmSound extends AbstractTickableSoundInstance {
     /** Pitch at the start of the runaway, and at meltdown (Minecraft's limit). */
-    private static final float START_PITCH = 0.7F;
+    private static final float START_PITCH = 0.85F;
     private static final float MELTDOWN_PITCH = 2.0F;
 
     private final ReactorHeartBlockEntity heart;

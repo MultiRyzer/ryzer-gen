@@ -289,6 +289,80 @@ def lead_acid_module_item():
     return t
 
 
+def speed_module_item():
+    """A speed module: a graphite circuit card with a double cyan chevron and gold edge contacts."""
+    card = {(x, y) for x in range(2, 14) for y in range(3, 12)}
+    pins = {(x, 12) for x in (4, 6, 8, 10)}
+    t = shape_item(card | pins, 'S', 'b', 'T', highlight='J')
+    for x, y in pins:
+        t.set(x, y, 'a')
+    # Two chevrons pointing right, two pixels thick, bright at the tips.
+    for ox in (4, 8):
+        for dx in (0, 1):
+            for i, dy in enumerate((-2, -1, 0, 1, 2)):
+                t.set(ox + dx + (2 - abs(dy)), 7 + dy, 'i')
+        t.set(ox + 3, 7, 'j')
+    return t
+
+
+# ---------------------------------------------------------------- cable fittings
+# One look per tier, the same on every kind of cable and pipe (see CableUpgrade). Block textures
+# tile across the fitting's faces; item textures show the fitting on its own.
+
+def fitting_block(tier):
+    """Clean banded metal: silver plating, heavy copper, or frosted cryogenic jacket."""
+    fill, light, shade, line = {
+        'silver': ('H', 'A', 'h', 'L'),
+        'busbar': ('R', 'e', 'r', 'O'),
+        'cryogenic': ('A', 'A', 'E', 'j'),
+    }[tier]
+    t = Tex()
+    t.rect(0, 0, 15, 15, fill)
+    for y in (0, 8):
+        t.rect(0, y, 15, y, light)
+        t.rect(0, y + 6, 15, y + 6, shade)
+        t.rect(0, y + 7, 15, y + 7, line)
+    if tier == 'busbar':
+        # Bolt heads on the clamp.
+        for x, y in ((3, 3), (12, 3), (3, 11), (12, 11)):
+            t.set(x, y, 'X')
+            t.set(x + 1, y + 1, 'Z')
+    return t
+
+
+def fitting_item(tier):
+    """A fitting, drawn as a card like the Speed Module so upgrades read alike in a chest: a graphite
+    card with gold contacts, one to three tier pips along the top, and the tier's symbol. Silver: a
+    bright conductor bar. Busbar: two thick copper bars. Cryogenic: a cyan snowflake."""
+    card = {(x, y) for x in range(2, 14) for y in range(3, 12)}
+    pins = {(x, 12) for x in (4, 6, 8, 10)}
+    t = shape_item(card | pins, 'S', 'b', 'T', highlight='J')
+    for x, y in pins:
+        t.set(x, y, 'a')
+    level = {'silver': 1, 'busbar': 2, 'cryogenic': 3}[tier]
+    for i in range(3):
+        t.set(10 + i, 4, 'n' if i < level else 'T')
+    if tier == 'silver':
+        t.rect(4, 7, 11, 8, 'H')
+        t.rect(4, 7, 11, 7, 'A')
+        t.rect(4, 9, 11, 9, 'h')
+    elif tier == 'busbar':
+        for y in (6, 9):
+            t.rect(4, y, 11, y + 1, 'R')
+            t.rect(4, y, 11, y, 'e')
+            t.set(5, y + 1, 'X')
+            t.set(10, y + 1, 'X')
+    else:
+        for i in range(-2, 3):
+            t.set(7 + i, 8, 'i')
+            t.set(7, 8 + i, 'i')
+        for d in (-2, 2):
+            t.set(7 + d, 8 + d, 'i')
+            t.set(7 + d, 8 - d, 'i')
+        t.set(7, 8, 'j')
+    return t
+
+
 def home_battery_item():
     """A tall cabinet with its bay column, three modules fitted."""
     body = {(x, y) for x in range(4, 12) for y in range(1, 15)}
@@ -316,6 +390,13 @@ TEXTURES = {
     'block/machine/module_case': module_case,
     'item/lead_acid_module': lead_acid_module_item,
     'item/home_battery': home_battery_item,
+    'item/speed_module': speed_module_item,
+    'block/fitting_silver': lambda: fitting_block('silver'),
+    'block/fitting_busbar': lambda: fitting_block('busbar'),
+    'block/fitting_cryogenic': lambda: fitting_block('cryogenic'),
+    'item/silver_fittings': lambda: fitting_item('silver'),
+    'item/busbar_fittings': lambda: fitting_item('busbar'),
+    'item/cryogenic_fittings': lambda: fitting_item('cryogenic'),
 }
 
 # Every pipe, energy cable included, from the one family. Their items show the block itself.

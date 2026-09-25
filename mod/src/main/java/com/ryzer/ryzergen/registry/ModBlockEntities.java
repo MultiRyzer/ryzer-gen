@@ -6,7 +6,10 @@ import com.ryzer.ryzergen.cable.EnergyCableBlockEntity;
 import com.ryzer.ryzergen.cable.FluidPipeBlockEntity;
 import com.ryzer.ryzergen.creative.CreativeSourceBlockEntity;
 import com.ryzer.ryzergen.machine.fission.StationCoreBlockEntity;
+import com.ryzer.ryzergen.machine.processing.ProcessingBlockEntity;
+import com.ryzer.ryzergen.machine.processing.ProcessingMachine;
 import com.ryzer.ryzergen.machine.pump.IntakePumpBlockEntity;
+import com.ryzer.ryzergen.storage.WasteCaskBlockEntity;
 import com.ryzer.ryzergen.storage.PressureTankBlockEntity;
 import com.ryzer.ryzergen.cable.ItemPipeBlockEntity;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlockEntity;
@@ -70,6 +73,23 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ReactorHeartBlockEntity>> REACTOR_HEART =
             BLOCK_ENTITIES.register("reactor_heart",
                     () -> BlockEntityType.Builder.of(ReactorHeartBlockEntity::new, ModBlocks.REACTOR_HEART.get()).build(null));
+
+    // The fuel cycle machines share one block entity class, told apart by their ProcessingMachine.
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ProcessingBlockEntity>> CORE_CRACKER =
+            BLOCK_ENTITIES.register("core_cracker", () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new ProcessingBlockEntity(ProcessingMachine.CORE_CRACKER, pos, state), ModBlocks.CORE_CRACKER.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ProcessingBlockEntity>> REPROCESSOR =
+            BLOCK_ENTITIES.register("reprocessor", () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new ProcessingBlockEntity(ProcessingMachine.REPROCESSOR, pos, state), ModBlocks.REPROCESSOR.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ProcessingBlockEntity>> FUEL_FABRICATOR =
+            BLOCK_ENTITIES.register("fuel_fabricator", () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new ProcessingBlockEntity(ProcessingMachine.FUEL_FABRICATOR, pos, state), ModBlocks.FUEL_FABRICATOR.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WasteCaskBlockEntity>> WASTE_CASK =
+            BLOCK_ENTITIES.register("waste_cask",
+                    () -> BlockEntityType.Builder.of(WasteCaskBlockEntity::new, ModBlocks.WASTE_CASK.get()).build(null));
 
     private ModBlockEntities() {}
 }

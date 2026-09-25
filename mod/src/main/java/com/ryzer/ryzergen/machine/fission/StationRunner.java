@@ -55,6 +55,11 @@ public class StationRunner {
     public static final float SCRAM_TEMPERATURE = 900;
     private static final float RESET_TEMPERATURE = 400;
     public static final float HOT_TEMPERATURE = 700;
+    /**
+     * In overdrive a core that holds steady settles at 600°C at most (full coolant load), so one
+     * past this is overheating with nothing to stop it: a runaway, heading for meltdown.
+     */
+    public static final float RUNAWAY_TEMPERATURE = 620;
     private static final float WARM_TEMPERATURE = 150;
     /** In overdrive nothing stops the heat: at this temperature the core melts down. */
     public static final float MELTDOWN_TEMPERATURE = 1000;
@@ -65,11 +70,17 @@ public class StationRunner {
     private static final long MELTDOWN_FADE_TICKS = 48_000;
 
     public enum Status {
-        OFFLINE, NO_FUEL, WARMING, ONLINE, NO_WATER, OVERHEAT, SCRAM, OVERDRIVE, FLUX_TILT, UNSTABLE;
+        // New statuses go at the end: the status is saved by its position in this list.
+        OFFLINE, NO_FUEL, WARMING, ONLINE, NO_WATER, OVERHEAT, SCRAM, OVERDRIVE, FLUX_TILT, UNSTABLE, RUNAWAY;
 
         /** Whether the alarm sounds. */
         public boolean alarm() {
-            return this == FLUX_TILT || this == UNSTABLE;
+            return this == FLUX_TILT || this == UNSTABLE || this == RUNAWAY;
+        }
+
+        /** Heading for meltdown, so the alarm climbs with the core's temperature. */
+        public boolean critical() {
+            return this == UNSTABLE || this == RUNAWAY;
         }
     }
 
@@ -368,14 +379,17 @@ public class StationRunner {
         float byWater = water.getFluidAmount() * HEAT_PER_WATER;
         float carryable = generation > 0 ? Math.max(0, generation - analysis.stranded()) : 0;
         int working = generation > 0 && analysis.working() > 0 ? analysis.working() : analysis.coolants();
-        float potential = working * StationReactor.capacity(overdrive) * StationReactor.coolingRamp(temperature);
+        float potential = working * analysis.capacity() * StationReactor.coolingRamp(temperature);
         float removed = Math.max(0, Math.min(potential, Math.min(carryable + stored, byWater)));
         if (removed > 0) {
             water.drain((int) Math.ceil(removed / HEAT_PER_WATER), IFluidHandler.FluidAction.EXECUTE);
         }
         temperature += (generation - removed) / HEAT_CAPACITY;
-        // A little heat leaks away to the air.
-        temperature -= (temperature - AMBIENT) * 0.0005F;
+        // A stopped core slowly loses its heat to the air. Not while it runs: the plan (and the
+        // rating) assume every bit of heat reaches the turbine, and the leak cost about a fifth of it.
+        if (generation <= 0) {
+            temperature -= (temperature - AMBIENT) * 0.0005F;
+        }
         temperature = Math.max(AMBIENT, temperature);
         if (unstable) {
             temperature += RUNAWAY_RATE;
@@ -413,7 +427,10 @@ public class StationRunner {
         }
 
         Status before = status;
+        // An overheating core outranks a flux tilt: with no coolant it melts down in about a minute,
+        // long before the tilt's countdown runs out.
         status = unstable ? Status.UNSTABLE
+                : overdrive && temperature >= RUNAWAY_TEMPERATURE ? Status.RUNAWAY
                 : tilting() ? Status.FLUX_TILT
                 : !allowed ? Status.OFFLINE
                 : scrammed ? Status.SCRAM
@@ -424,8 +441,13 @@ public class StationRunner {
                 : overdrive ? Status.OVERDRIVE
                 : Status.ONLINE;
         // Nearby clients follow the alarm closely, so it can speed up as the core heats.
-        if (status != before || (unstable && level.getGameTime() % 5 == 0)) {
+        if (status != before || (status.critical() && level.getGameTime() % 5 == 0)) {
             changed.run();
+        }
+        // A layout as good as the best known, running: worth an advancement for whoever is near.
+        if ((status == Status.ONLINE || status == Status.OVERDRIVE) && output > 0 && level.getGameTime() % 100 == 0
+                && analysis.rating() >= 0.999F) {
+            ModTriggers.MILESTONE.get().triggerNearby(level, centre, Milestone.STATION_PERFECT);
         }
     }
 
@@ -446,7 +468,8 @@ public class StationRunner {
             }
         }
         level.removeBlock(core, false);
-        ModTriggers.MILESTONE.get().triggerNearby(level, centre, Milestone.MELTDOWN);
+        ModTriggers.MILESTONE.get().triggerNearby(level, centre, Milestone.STATION_MELTDOWN);
+        MeltdownCrater.carve(level, BlockPos.containing(centre.x, core.getY(), centre.z), Config.get(Config.STATION_MELTDOWN_RADIUS));
         level.explode(null, centre.x, centre.y, centre.z, Config.STATION_MELTDOWN_POWER.get().floatValue(),
                 true, Level.ExplosionInteraction.BLOCK);
         RadiationSources.contaminate(level, centre, MELTDOWN_RADIATION, MELTDOWN_FADE_TICKS);

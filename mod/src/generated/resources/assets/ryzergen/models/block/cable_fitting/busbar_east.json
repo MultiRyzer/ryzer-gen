@@ -1,0 +1,105 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#fitting"
+        },
+        "east": {
+          "texture": "#fitting"
+        },
+        "north": {
+          "texture": "#fitting"
+        },
+        "south": {
+          "texture": "#fitting"
+        },
+        "up": {
+          "texture": "#fitting"
+        },
+        "west": {
+          "texture": "#fitting"
+        }
+      },
+      "from": [
+        12,
+        4,
+        4
+      ],
+      "to": [
+        15,
+        12,
+        12
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#fitting"
+        },
+        "east": {
+          "texture": "#fitting"
+        },
+        "north": {
+          "texture": "#fitting"
+        },
+        "south": {
+          "texture": "#fitting"
+        },
+        "up": {
+          "texture": "#fitting"
+        },
+        "west": {
+          "texture": "#fitting"
+        }
+      },
+      "from": [
+        12.5,
+        7,
+        3
+      ],
+      "to": [
+        14.5,
+        9,
+        4
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#fitting"
+        },
+        "east": {
+          "texture": "#fitting"
+        },
+        "north": {
+          "texture": "#fitting"
+        },
+        "south": {
+          "texture": "#fitting"
+        },
+        "up": {
+          "texture": "#fitting"
+        },
+        "west": {
+          "texture": "#fitting"
+        }
+      },
+      "from": [
+        12.5,
+        7,
+        12
+      ],
+      "to": [
+        14.5,
+        9,
+        13
+      ]
+    }
+  ],
+  "textures": {
+    "fitting": "ryzergen:block/fitting_busbar",
+    "glow": "ryzergen:block/microreactor/glow",
+    "particle": "ryzergen:block/fitting_busbar"
+  }
+}

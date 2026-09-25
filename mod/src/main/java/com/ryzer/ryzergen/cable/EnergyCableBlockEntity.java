@@ -55,7 +55,11 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
         return new IEnergyStorage() {
             @Override
             public int receiveEnergy(int amount, boolean simulate) {
-                return distribute(Math.min(amount, rate()), source, null, simulate);
+                int sent = distribute(Math.min(amount, rate(side)), source, null, simulate);
+                if (!simulate) {
+                    pushed[side.get3DDataValue()] += sent;
+                }
+                return sent;
             }
 
             @Override
@@ -70,7 +74,7 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
 
             @Override
             public int getMaxEnergyStored() {
-                return rate();
+                return rate(side);
             }
 
             @Override
@@ -89,8 +93,8 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
         if (cable.refreshTargets() && cable.leader) {
             PENDING_DRAIN.add(cable);
         }
+        cable.startTick();
         for (Direction dir : Direction.values()) {
-            cable.moved[dir.get3DDataValue()] = 0;
             if (state.getValue(CableBlock.SIDES.get(dir)) != CableSide.EXTRACT) {
                 continue;
             }
@@ -99,9 +103,9 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
             if (source == null || !source.canExtract()) {
                 continue;
             }
-            int available = source.extractEnergy(rate(), true);
+            int available = source.extractEnergy(cable.rate(dir), true);
             if (available > 0) {
-                cable.moved[dir.get3DDataValue()] = source.extractEnergy(cable.distribute(available, sourcePos, source, false), false);
+                cable.moved[dir.get3DDataValue()] += source.extractEnergy(cable.distribute(available, sourcePos, source, false), false);
             }
         }
     }
@@ -130,11 +134,43 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
             if (buffer == null || !isBuffer(buffer)) {
                 continue;
             }
-            int available = buffer.extractEnergy(rate(), true);
+            int available = buffer.extractEnergy(drawRate(target.endpoint()), true);
             int wanted = available > 0 ? deliver(available, null, buffer, false, true) : 0;
             if (wanted > 0) {
-                deliver(buffer.extractEnergy(wanted, false), null, buffer, false, false);
+                int drawn = buffer.extractEnergy(wanted, false);
+                deliver(drawn, null, buffer, false, false);
+                countDraw(target.endpoint(), drawn);
             }
+        }
+    }
+
+    /** The network draws on storage without an extract side, so a battery's side feeds it. */
+    @Override
+    protected boolean canGive(Direction side) {
+        if (level == null) {
+            return false;
+        }
+        IEnergyStorage storage = level.getCapability(Capabilities.EnergyStorage.BLOCK, worldPosition.relative(side), side.getOpposite());
+        return storage != null && storage.canExtract();
+    }
+
+    /**
+     * The most the network may draw from a battery this tick: the fitting on the side of the cable
+     * that touches it, like any other input. The battery's own rate limits it too.
+     */
+    private int drawRate(CableNetwork.Endpoint endpoint) {
+        BlockPos cablePos = endpoint.pos().relative(endpoint.side());
+        if (level != null && level.getBlockEntity(cablePos) instanceof CableBlockEntity<?> cable) {
+            return cable.upgrade(endpoint.side().getOpposite()).scale(rate());
+        }
+        return rate();
+    }
+
+    /** Counts a battery's draw as coming in on the side of the cable that touches it, for that cable's panel. */
+    private void countDraw(CableNetwork.Endpoint endpoint, int amount) {
+        BlockPos cablePos = endpoint.pos().relative(endpoint.side());
+        if (amount > 0 && level != null && level.getBlockEntity(cablePos) instanceof CableBlockEntity<?> cable) {
+            cable.pushed[endpoint.side().getOpposite().get3DDataValue()] += amount;
         }
     }
 
@@ -193,7 +229,13 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
         return sent;
     }
 
+    /** The base limit per input, before fittings. */
     private static int rate() {
         return Config.get(Config.CABLE_RATE);
+    }
+
+    /** The limit for what comes in on {@code side}, with its fitting. */
+    private int rate(Direction side) {
+        return upgrade(side).scale(rate());
     }
 }

@@ -21,10 +21,12 @@ import net.minecraft.world.phys.BlockHitResult;
 public class StationPartBlock extends Block {
     public static final MapCodec<StationPartBlock> CODEC = simpleCodec(StationPartBlock::new);
     public static final BooleanProperty FORMED = BooleanProperty.create("formed");
+    /** Chamber glass of a running station: it gives off light, so the station lights up its surroundings. */
+    public static final BooleanProperty LIT = BooleanProperty.create("lit");
 
     public StationPartBlock(Properties properties) {
         super(properties);
-        registerDefaultState(stateDefinition.any().setValue(FORMED, false));
+        registerDefaultState(stateDefinition.any().setValue(FORMED, false).setValue(LIT, false));
     }
 
     @Override
@@ -34,7 +36,7 @@ public class StationPartBlock extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FORMED);
+        builder.add(FORMED, LIT);
     }
 
     @Override

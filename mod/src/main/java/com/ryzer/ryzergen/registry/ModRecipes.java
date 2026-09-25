@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.registry;
 
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.recipe.AlloyingRecipe;
+import com.ryzer.ryzergen.recipe.MachineRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -18,6 +19,21 @@ public final class ModRecipes {
             () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "alloying")));
     public static final DeferredHolder<RecipeSerializer<?>, AlloyingRecipe.Serializer> ALLOYING_SERIALIZER =
             SERIALIZERS.register("alloying", AlloyingRecipe.Serializer::new);
+
+    // The fuel cycle machines (design section 7): one recipe shape, a type per machine.
+    public static final DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> CRACKING_TYPE = type("cracking");
+    public static final DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> REPROCESSING_TYPE = type("reprocessing");
+    public static final DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> FABRICATING_TYPE = type("fabricating");
+    public static final DeferredHolder<RecipeSerializer<?>, MachineRecipe.Serializer> CRACKING_SERIALIZER =
+            SERIALIZERS.register("cracking", () -> new MachineRecipe.Serializer(MachineRecipe.Process.CRACKING));
+    public static final DeferredHolder<RecipeSerializer<?>, MachineRecipe.Serializer> REPROCESSING_SERIALIZER =
+            SERIALIZERS.register("reprocessing", () -> new MachineRecipe.Serializer(MachineRecipe.Process.REPROCESSING));
+    public static final DeferredHolder<RecipeSerializer<?>, MachineRecipe.Serializer> FABRICATING_SERIALIZER =
+            SERIALIZERS.register("fabricating", () -> new MachineRecipe.Serializer(MachineRecipe.Process.FABRICATING));
+
+    private static DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> type(String name) {
+        return TYPES.register(name, () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, name)));
+    }
 
     private ModRecipes() {}
 }

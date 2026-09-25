@@ -4,19 +4,30 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelProperty;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -25,14 +36,18 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * What every cable and pipe keeps: which sides the wrench disconnected, the network it delivers to
- * (cached until any cable changes), what each side moved this tick for the panel, and the panel
- * itself. Subclasses decide what moves and how.
+ * What every cable and pipe keeps: which sides the wrench disconnected, the fitting on each side,
+ * the network it delivers to (cached until any cable changes), what each side moved this tick for
+ * the panel, and the panel itself. Subclasses decide what moves and how.
+ *
+ * <p>Fittings (see {@link CableUpgrade}) raise the limit for what comes in on their side, pulled by
+ * an extract side or pushed in by a generator. They sync to clients, and the cable's model adds
+ * each one to the side it is on (see {@link #FITTINGS}).
  *
  * @param <C> the capability carried, such as an energy storage or an item handler
  */
 public abstract class CableBlockEntity<C> extends BlockEntity implements MenuProvider {
-    // Synced to the open panel: per side, its mode and what it moved this tick (as two halves).
+    // Synced to the open panel: per side, its mode and fitting, and what it moved this tick (as two halves).
     public static final int DATA_PER_SIDE = 3;
     public static final int DATA_MAX_LOW = 18;
     public static final int DATA_MAX_HIGH = 19;
@@ -40,14 +55,23 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
     public static final int DATA_BUFFERS = 21;
     public static final int DATA_COUNT = 22;
 
+    /** The fitting on each side (by 3D data value), for the cable's model. */
+    public static final ModelProperty<CableUpgrade[]> FITTINGS = new ModelProperty<>();
+
     private final Set<Direction> disabled = EnumSet.noneOf(Direction.class);
+    private final ItemStack[] fittings = {ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY,
+            ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
     protected final List<Target<C>> targets = new ArrayList<>();
     private int networkVersion = -1;
     /** One cable picked per network, for work that must run once per tick. */
     protected boolean leader;
     protected int roundRobin;
-    /** What each side pulled this tick, for the panel. */
+    /** What each side moved last tick, for the panel. */
     protected final int[] moved = new int[6];
+    /** What was pushed in on each side this tick, so far. Becomes {@link #moved} as the next tick starts. */
+    protected final int[] pushed = new int[6];
+    /** When something last came in on each side, so the panel knows which sides feed the network. */
+    private final long[] lastIn = new long[6];
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -55,7 +79,7 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
             if (index < 6 * DATA_PER_SIDE) {
                 Direction side = Direction.from3DDataValue(index / DATA_PER_SIDE);
                 return switch (index % DATA_PER_SIDE) {
-                    case 0 -> getBlockState().getValue(CableBlock.SIDES.get(side)).ordinal();
+                    case 0 -> getBlockState().getValue(CableBlock.SIDES.get(side)).ordinal() | upgrade(side).ordinal() << 2;
                     case 1 -> moved[side.get3DDataValue()] & 0xFFFF;
                     default -> moved[side.get3DDataValue()] >>> 16;
                 };
@@ -92,7 +116,7 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
     /** Which panel to show. */
     public abstract CableKind kind();
 
-    /** The limit per extract side, in the panel's unit (FE per tick, items per second). */
+    /** The base limit per input, before fittings, in the panel's unit (FE per tick, items per second). */
     protected abstract int panelMax();
 
     /** How many receivers (or, with {@code buffers}, storage blocks) the network reaches. */
@@ -123,6 +147,160 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
         return getBlockState().getValue(CableBlock.SIDES.get(dir));
     }
 
+    // ------------------------------------------------------------------ fittings
+
+    public CableUpgrade upgrade(Direction side) {
+        return CableUpgrade.of(fittings[side.get3DDataValue()]);
+    }
+
+    public ItemStack fitting(Direction side) {
+        return fittings[side.get3DDataValue()];
+    }
+
+    public void setFitting(Direction side, ItemStack stack) {
+        CableUpgrade before = upgrade(side);
+        fittings[side.get3DDataValue()] = stack;
+        setChanged();
+        if (before != upgrade(side) && level != null && !level.isClientSide) {
+            // Nearby players see the fitting change.
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        }
+    }
+
+    /**
+     * Whether the block on {@code side} feeds the network, so a fitting there does something: an
+     * extract side, a block that pushes in (lately), or one the network can draw on (see
+     * {@link #canGive}). A side that already has a fitting counts too, so it can be taken out.
+     */
+    public boolean feeds(Direction side) {
+        int i = side.get3DDataValue();
+        if (side(side) == CableSide.EXTRACT || !fittings[i].isEmpty()) {
+            return true;
+        }
+        if (level != null && lastIn[i] != 0 && level.getGameTime() - lastIn[i] < 200) {
+            return true;
+        }
+        return canGive(side);
+    }
+
+    /** Whether the network can draw on the block on {@code side} without an extract side (energy storage). */
+    protected boolean canGive(Direction side) {
+        return false;
+    }
+
+    /** Sides the panel lists: every side joined to a block other than a cable. Those that feed get a fitting slot. */
+    public List<Direction> panelSides() {
+        List<Direction> sides = new ArrayList<>();
+        if (level == null) {
+            return sides;
+        }
+        for (Direction dir : Direction.values()) {
+            if (side(dir) != CableSide.NONE && !(level.getBlockState(worldPosition.relative(dir)).getBlock() instanceof CableBlock)) {
+                sides.add(dir);
+            }
+        }
+        return sides;
+    }
+
+    /** The fittings as a six-slot container for the panel, one slot per side by 3D data value. */
+    public Container fittingContainer() {
+        return new Container() {
+            @Override
+            public int getContainerSize() {
+                return 6;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                for (ItemStack stack : fittings) {
+                    if (!stack.isEmpty()) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public ItemStack getItem(int slot) {
+                return fittings[slot];
+            }
+
+            @Override
+            public ItemStack removeItem(int slot, int amount) {
+                ItemStack taken = fittings[slot];
+                if (!taken.isEmpty() && amount > 0) {
+                    setFitting(Direction.from3DDataValue(slot), ItemStack.EMPTY);
+                }
+                return taken;
+            }
+
+            @Override
+            public ItemStack removeItemNoUpdate(int slot) {
+                return removeItem(slot, 1);
+            }
+
+            @Override
+            public void setItem(int slot, ItemStack stack) {
+                setFitting(Direction.from3DDataValue(slot), stack);
+            }
+
+            @Override
+            public int getMaxStackSize() {
+                return 1;
+            }
+
+            @Override
+            public boolean canPlaceItem(int slot, ItemStack stack) {
+                return CableUpgrade.of(stack) != CableUpgrade.NONE;
+            }
+
+            @Override
+            public void setChanged() {
+                CableBlockEntity.this.setChanged();
+            }
+
+            @Override
+            public boolean stillValid(Player player) {
+                return !isRemoved();
+            }
+
+            @Override
+            public void clearContent() {
+                for (Direction dir : Direction.values()) {
+                    setFitting(dir, ItemStack.EMPTY);
+                }
+            }
+        };
+    }
+
+    public void dropFittings(Level level, BlockPos pos) {
+        for (ItemStack stack : fittings) {
+            Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
+        }
+    }
+
+    /** Called as each tick starts: last tick's pushes become what the panel shows for those sides. */
+    protected void startTick() {
+        for (int i = 0; i < 6; i++) {
+            if (pushed[i] > 0 && level != null) {
+                lastIn[i] = level.getGameTime();
+            }
+            moved[i] = pushed[i];
+            pushed[i] = 0;
+        }
+    }
+
+    @Override
+    public ModelData getModelData() {
+        CableUpgrade[] tiers = new CableUpgrade[6];
+        for (Direction dir : Direction.values()) {
+            tiers[dir.get3DDataValue()] = upgrade(dir);
+        }
+        return ModelData.builder().with(FITTINGS, tiers).build();
+    }
+
+    // ------------------------------------------------------------------ network
+
     /** Rebuilds the cached list of blocks to deliver to if any cable changed. False on the client. */
     protected boolean refreshTargets() {
         if (!(level instanceof ServerLevel server)) {
@@ -147,7 +325,30 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
 
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
-        return new CableMenu(kind(), containerId, worldPosition, data, ContainerLevelAccess.create(level, worldPosition));
+        List<Direction> sides = panelSides();
+        return new CableMenu(kind(), containerId, inventory, worldPosition, sides, sides.stream().filter(this::feeds).toList(),
+                fittingContainer(), data, ContainerLevelAccess.create(level, worldPosition));
+    }
+
+    // ------------------------------------------------------------------ saving and syncing
+
+    private void saveFittings(CompoundTag tag, HolderLookup.Provider registries) {
+        CompoundTag list = new CompoundTag();
+        for (Direction dir : Direction.values()) {
+            ItemStack stack = fitting(dir);
+            if (!stack.isEmpty()) {
+                list.put(dir.getName(), stack.save(registries));
+            }
+        }
+        tag.put("fittings", list);
+    }
+
+    private void loadFittings(CompoundTag tag, HolderLookup.Provider registries) {
+        CompoundTag list = tag.getCompound("fittings");
+        for (Direction dir : Direction.values()) {
+            fittings[dir.get3DDataValue()] = list.contains(dir.getName())
+                    ? ItemStack.parseOptional(registries, list.getCompound(dir.getName())) : ItemStack.EMPTY;
+        }
     }
 
     @Override
@@ -158,6 +359,7 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
             mask |= 1 << dir.ordinal();
         }
         tag.putInt("disabled", mask);
+        saveFittings(tag, registries);
     }
 
     @Override
@@ -169,6 +371,40 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
             if ((mask & 1 << dir.ordinal()) != 0) {
                 disabled.add(dir);
             }
+        }
+        loadFittings(tag, registries);
+    }
+
+    /** Clients only need the fittings, for the model. */
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        saveFittings(tag, registries);
+        return tag;
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        loadFittings(tag, registries);
+        refreshModel();
+    }
+
+    @Override
+    public void onDataPacket(Connection connection, ClientboundBlockEntityDataPacket packet, HolderLookup.Provider registries) {
+        loadFittings(packet.getTag(), registries);
+        refreshModel();
+    }
+
+    /** On the client: rebuild the chunk so the model shows the new fittings. */
+    private void refreshModel() {
+        if (level != null && level.isClientSide) {
+            requestModelDataUpdate();
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_IMMEDIATE);
         }
     }
 }

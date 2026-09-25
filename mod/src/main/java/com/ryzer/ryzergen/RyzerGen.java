@@ -9,6 +9,8 @@ import com.ryzer.ryzergen.creative.CreativeSourceBlockEntity;
 import com.ryzer.ryzergen.machine.fission.StationCoreBlockEntity;
 import com.ryzer.ryzergen.machine.fission.StationLayout;
 import com.ryzer.ryzergen.machine.fission.StationStructure;
+import com.ryzer.ryzergen.machine.processing.ProcessingBlock;
+import com.ryzer.ryzergen.machine.processing.ProcessingBlockEntity;
 import com.ryzer.ryzergen.machine.pump.IntakePumpBlockEntity;
 import com.ryzer.ryzergen.storage.PressureTankBlockEntity;
 import com.ryzer.ryzergen.cable.ItemPipeBlockEntity;
@@ -31,7 +33,11 @@ import com.ryzer.ryzergen.registry.ModMenus;
 import com.ryzer.ryzergen.registry.ModTriggers;
 import com.ryzer.ryzergen.registry.ModRecipes;
 import com.ryzer.ryzergen.registry.ModSounds;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -123,6 +129,24 @@ public class RyzerGen {
             return battery == null ? null : battery.energy();
         }, ModBlocks.HOME_BATTERY.get());
 
+        // Fuel cycle machines: registered on the blocks so both halves of the two-high reprocessor
+        // reach the block entity in its lower half.
+        Block[] processing = {ModBlocks.CORE_CRACKER.get(), ModBlocks.REPROCESSOR.get(), ModBlocks.FUEL_FABRICATOR.get()};
+        event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
+            ProcessingBlockEntity machine = processingMachine(level, pos, state);
+            return machine == null ? null : machine.getItemHandler(side);
+        }, processing);
+        event.registerBlock(Capabilities.EnergyStorage.BLOCK, (level, pos, state, be, side) -> {
+            ProcessingBlockEntity machine = processingMachine(level, pos, state);
+            return machine == null ? null : machine.getEnergy(side);
+        }, processing);
+        event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
+            ProcessingBlockEntity machine = processingMachine(level, pos, state);
+            return machine == null ? null : machine.getWater(side);
+        }, processing);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.WASTE_CASK.get(),
+                (cask, side) -> cask.items());
+
         // Microreactor ports: any part can end up in a port's slot, so these go on all three blocks.
         Block[] microreactorParts = {ModBlocks.REACTOR_HEART.get(), ModBlocks.REACTOR_MACHINE_UNIT.get(), ModBlocks.COOLANT_JACKET.get()};
         event.registerBlock(Capabilities.EnergyStorage.BLOCK, (level, pos, state, be, side) -> {
@@ -144,5 +168,9 @@ public class RyzerGen {
             ReactorHeartBlockEntity heart = MicroreactorStructure.heartForPort(level, pos, state, MicroreactorPort.FUEL, side);
             return heart == null ? null : heart.fuelPort();
         }, microreactorParts);
+    }
+
+    private static @Nullable ProcessingBlockEntity processingMachine(Level level, BlockPos pos, BlockState state) {
+        return state.getBlock() instanceof ProcessingBlock block ? block.machineAt(level, pos, state) : null;
     }
 }

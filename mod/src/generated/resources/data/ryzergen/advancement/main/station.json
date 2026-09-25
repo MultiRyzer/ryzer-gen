@@ -1,0 +1,30 @@
+{
+  "parent": "ryzergen:main/uranium_fuel_rod",
+  "criteria": {
+    "station_formed": {
+      "conditions": {
+        "milestone": "station_formed"
+      },
+      "trigger": "ryzergen:milestone"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.station.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:station_core"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.station.title"
+    }
+  },
+  "requirements": [
+    [
+      "station_formed"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

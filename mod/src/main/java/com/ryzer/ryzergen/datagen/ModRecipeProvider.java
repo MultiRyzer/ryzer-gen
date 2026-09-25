@@ -4,6 +4,7 @@ import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.material.ModTags;
 import com.ryzer.ryzergen.material.OreType;
 import com.ryzer.ryzergen.recipe.AlloyingRecipe;
+import com.ryzer.ryzergen.recipe.MachineRecipe;
 import com.ryzer.ryzergen.registry.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -26,7 +27,11 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.NotCondition;
 import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /** Recipes always take common tags as input, so other mods' materials work too. */
@@ -352,6 +357,8 @@ public class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_triso_pellets", has(ModItems.TRISO_PELLETS.get()))
                 .save(output);
 
+        fuelCycle(output);
+
         for (OreType ore : OreType.values()) {
             if (ore.hasIngot()) {
                 Item ingot = ModItems.INGOTS.get(ore).get();
@@ -359,6 +366,142 @@ public class ModRecipeProvider extends RecipeProvider {
                 smeltAndBlast(output, ore.oreItemTag(), ingot, ore.ingotName() + "_from_ore");
             }
         }
+    }
+
+    /**
+     * The fuel cycle (design section 7): the four machines, then what each one makes. Each machine
+     * has its own recipe type, so packs can change one machine's recipes alone.
+     */
+    private static void fuelCycle(RecipeOutput output) {
+        // Core Cracker: a jaw crusher (two pistons) in a steel frame. It takes a basic board, since
+        // it is needed the moment the first core runs out.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CORE_CRACKER.get())
+                .pattern("SBS")
+                .pattern("PIP")
+                .pattern("SIS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('B', ModTags.CIRCUITS_BASIC)
+                .define('P', Items.PISTON)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .unlockedBy("has_depleted_core", has(ModItems.DEPLETED_FUEL_CORE.get()))
+                .save(output);
+        // Reprocessor: a lead-lined column (shielding) round a cauldron, the dissolver, run by advanced boards.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.REPROCESSOR.get())
+                .pattern("LAL")
+                .pattern("SCS")
+                .pattern("LAL")
+                .define('L', OreType.LEAD.ingotTag())
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('C', Items.CAULDRON)
+                .unlockedBy("has_advanced_board", has(ModTags.CIRCUITS_ADVANCED))
+                .save(output);
+        // Fuel Fabricator: a press (two pistons) with copper wiring and an advanced board.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FUEL_FABRICATOR.get())
+                .pattern("SAS")
+                .pattern("CPC")
+                .pattern("SPS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('P', Items.PISTON)
+                .unlockedBy("has_advanced_board", has(ModTags.CIRCUITS_ADVANCED))
+                .save(output);
+        // Waste Cask: a lead-lined steel drum round a barrel.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.WASTE_CASK.get())
+                .pattern("SLS")
+                .pattern("LBL")
+                .pattern("SLS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('L', OreType.LEAD.ingotTag())
+                .define('B', Items.BARREL)
+                .unlockedBy("has_waste", has(ModItems.FISSION_WASTE.get()))
+                .save(output);
+
+        // Speed module: redstone logic, copper windings and gold contacts on an advanced board.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SPEED_MODULE.get())
+                .pattern("RCR")
+                .pattern("GAG")
+                .pattern("RCR")
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('G', Tags.Items.INGOTS_GOLD)
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .unlockedBy("has_advanced_board", has(ModTags.CIRCUITS_ADVANCED))
+                .save(output);
+
+        // Cable fittings: each tier is made from the one before, so a better fitting replaces a worse
+        // one. Silver plating over copper, then heavy copper busbars, then superconductor.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SILVER_FITTINGS.get())
+                .pattern("SCS")
+                .pattern("CRC")
+                .pattern("SCS")
+                .define('S', OreType.SILVER.ingotTag())
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy("has_silver", has(OreType.SILVER.ingotTag()))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BUSBAR_FITTINGS.get())
+                .pattern("BSB")
+                .pattern("AFA")
+                .pattern("BSB")
+                .define('B', Tags.Items.STORAGE_BLOCKS_COPPER)
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .define('F', ModItems.SILVER_FITTINGS.get())
+                .unlockedBy("has_silver_fittings", has(ModItems.SILVER_FITTINGS.get()))
+                .save(output);
+        // Superconductor: yttrium (tier 5, from monazite) kept cold with blue ice. Until the mod makes
+        // yttrium this only loads when another mod provides it.
+        TagKey<Item> yttrium = ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ingots/yttrium"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CRYOGENIC_FITTINGS.get())
+                .pattern("YIY")
+                .pattern("IFI")
+                .pattern("YIY")
+                .define('Y', yttrium)
+                .define('I', Items.BLUE_ICE)
+                .define('F', ModItems.BUSBAR_FITTINGS.get())
+                .unlockedBy("has_busbar_fittings", has(ModItems.BUSBAR_FITTINGS.get()))
+                .save(output.withConditions(new NotCondition(new TagEmptyCondition(yttrium))));
+
+        // Cracking: TRISO has to be crushed open before it can be processed. The shell and packing
+        // come back as graphite and steel.
+        machine(output, "cracking/depleted_fuel_core", MachineRecipe.Process.CRACKING,
+                List.of(SizedIngredient.of(ModItems.DEPLETED_FUEL_CORE.get(), 1)), null,
+                List.of(new ItemStack(ModItems.SPENT_KERNELS.get()), new ItemStack(ModItems.GRAPHITE.get(), 2),
+                        new ItemStack(ModItems.STEEL_INGOT.get(), 2)), 200);
+
+        // Reprocessing (fluoride volatility): half the uranium back, the plutonium, the waste. A
+        // station rod holds far more fuel than a microreactor core, so it gives 3 nuggets to its 1.
+        SizedFluidIngredient water = SizedFluidIngredient.of(Tags.Fluids.WATER, 250);
+        machine(output, "reprocessing/spent_kernels", MachineRecipe.Process.REPROCESSING,
+                List.of(SizedIngredient.of(ModItems.SPENT_KERNELS.get(), 1), SizedIngredient.of(OreType.FLUORITE.dropTag(), 1)), water,
+                List.of(new ItemStack(ModItems.INGOTS.get(OreType.URANIUM).get()), new ItemStack(ModItems.PLUTONIUM_NUGGET.get()),
+                        new ItemStack(ModItems.FISSION_WASTE.get())), 400);
+        machine(output, "reprocessing/spent_uranium_rod", MachineRecipe.Process.REPROCESSING,
+                List.of(SizedIngredient.of(ModItems.SPENT_URANIUM_ROD.get(), 1), SizedIngredient.of(OreType.FLUORITE.dropTag(), 1)), water,
+                List.of(new ItemStack(ModItems.INGOTS.get(OreType.URANIUM).get()), new ItemStack(ModItems.PLUTONIUM_NUGGET.get(), 3),
+                        new ItemStack(ModItems.FISSION_WASTE.get())), 400);
+
+        // Fabricating: fuel pellets sealed in steel tubes (real cladding is zirconium alloy; early
+        // reactors used steel), MOX with plutonium mixed in, and TRISO pellets pressed more
+        // thriftily than the crafting grid manages (3 per uranium, not 2).
+        machine(output, "fabricating/uranium_fuel_rod", MachineRecipe.Process.FABRICATING,
+                List.of(SizedIngredient.of(OreType.URANIUM.ingotTag(), 2), SizedIngredient.of(ModTags.INGOTS_STEEL, 1)), null,
+                List.of(new ItemStack(ModItems.URANIUM_FUEL_ROD.get())), 200);
+        machine(output, "fabricating/mox_fuel_rod", MachineRecipe.Process.FABRICATING,
+                List.of(SizedIngredient.of(ModTags.INGOTS_PLUTONIUM, 1), SizedIngredient.of(OreType.URANIUM.ingotTag(), 1),
+                        SizedIngredient.of(ModTags.INGOTS_STEEL, 1)), null,
+                List.of(new ItemStack(ModItems.MOX_FUEL_ROD.get())), 200);
+        machine(output, "fabricating/triso_pellets", MachineRecipe.Process.FABRICATING,
+                List.of(SizedIngredient.of(OreType.URANIUM.ingotTag(), 1), SizedIngredient.of(ModTags.INGOTS_GRAPHITE, 2),
+                        SizedIngredient.of(ModTags.GEMS_SILICON_CARBIDE, 1)), null,
+                List.of(new ItemStack(ModItems.TRISO_PELLETS.get(), 3)), 200);
+    }
+
+    private static void machine(RecipeOutput output, String name, MachineRecipe.Process process, List<SizedIngredient> inputs,
+                                @Nullable SizedFluidIngredient fluid, List<ItemStack> results, int time) {
+        output.accept(id(name), new MachineRecipe(process, inputs, Optional.ofNullable(fluid), results, time), null);
     }
 
     private static void smeltAndBlast(RecipeOutput output, TagKey<Item> input, Item result, String name) {

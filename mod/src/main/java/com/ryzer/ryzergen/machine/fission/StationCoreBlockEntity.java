@@ -1,11 +1,14 @@
 package com.ryzer.ryzergen.machine.fission;
 
 import com.ryzer.ryzergen.client.StationAlarmSound;
+import com.ryzer.ryzergen.client.StationHumSound;
 import com.ryzer.ryzergen.client.StationGhostPreview;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
+import com.ryzer.ryzergen.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -28,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -147,6 +151,28 @@ public class StationCoreBlockEntity extends BlockEntity implements MenuProvider 
         return runner;
     }
 
+    /** Whether the chamber glass is lit; null until the first tick after loading, so it is set then. */
+    private @Nullable Boolean lit;
+
+    /**
+     * Lights the chamber glass while the station runs (light 15, a torch's), so a running station
+     * lights up the ground around it like a giant lamp. Light in Minecraft has no colour, so the
+     * glow itself stays white; the rods show the colour.
+     */
+    private void lightChamber(Level level, boolean shine) {
+        for (Map.Entry<BlockPos, StationPart> entry : StationLayout.PARTS.entrySet()) {
+            if (entry.getValue() != StationPart.GLASS) {
+                continue;
+            }
+            BlockPos glass = StationLayout.toWorld(worldPosition, facing(), entry.getKey());
+            BlockState state = level.getBlockState(glass);
+            if (state.is(ModBlocks.STATION_GLASS.get()) && state.getValue(StationPartBlock.FORMED)
+                    && state.getValue(StationPartBlock.LIT) != shine) {
+                level.setBlock(glass, state.setValue(StationPartBlock.LIT, shine), Block.UPDATE_CLIENTS);
+            }
+        }
+    }
+
     private void runnerChanged() {
         setChanged();
         dirty = true;
@@ -156,6 +182,15 @@ public class StationCoreBlockEntity extends BlockEntity implements MenuProvider 
         if (state.getValue(StationPartBlock.FORMED)) {
             double[] centre = core.centre();
             core.runner.tick((ServerLevel) level, pos, core.facing(), new net.minecraft.world.phys.Vec3(centre[0], pos.getY() + 3, centre[1]));
+            // A meltdown takes the station apart; nothing left to light.
+            if (!(level.getBlockEntity(pos) instanceof StationCoreBlockEntity)) {
+                return;
+            }
+            boolean shine = core.isRunning();
+            if (core.lit == null || core.lit != shine) {
+                core.lit = shine;
+                core.lightChamber(level, shine);
+            }
             // Nearby players see the rods as loaded and the turbine turning.
             if (core.dirty && level.getGameTime() % 10 == 0) {
                 core.dirty = false;
@@ -240,6 +275,23 @@ public class StationCoreBlockEntity extends BlockEntity implements MenuProvider 
 
     /** The client's alarm, typed loosely so this class never loads client code on a server. */
     public Object clientAlarm;
+    /** The client's turbine hum, typed loosely for the same reason. */
+    public Object clientHum;
+    /** The client's GPU mesh of the station's body (see StationMesh), closed when the core goes. */
+    public Object clientMesh;
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (clientMesh instanceof AutoCloseable mesh) {
+            try {
+                mesh.close();
+            } catch (Exception ignored) {
+                // Only frees GPU memory; nothing to recover.
+            }
+            clientMesh = null;
+        }
+    }
 
     /** Degrees the rotor turns each tick at full steam. */
     private static final float ROTOR_SPEED = 8;
@@ -247,6 +299,11 @@ public class StationCoreBlockEntity extends BlockEntity implements MenuProvider 
     private float rotorBefore;
     /** The turbine's speed as the player sees it: eases towards the real one. */
     private float spin;
+
+    /** How fast the rotor turns as the player sees it, 0 to 1. The hum follows it. */
+    public float spin() {
+        return spin;
+    }
 
     public boolean isRunning() {
         return runner.turbine > 0.05F;
@@ -264,6 +321,7 @@ public class StationCoreBlockEntity extends BlockEntity implements MenuProvider 
         }
         StationAlarmSound.update(core);
         core.spin += (core.runner.turbine - core.spin) * 0.02F;
+        StationHumSound.update(core);
         core.rotorBefore = core.rotor;
         core.rotor = (core.rotor + core.spin * ROTOR_SPEED) % 360;
         if (!core.isRunning()) {
@@ -279,7 +337,20 @@ public class StationCoreBlockEntity extends BlockEntity implements MenuProvider 
                     centre[1] + Math.sin(angle) * r, (random.nextDouble() - 0.5) * 0.02, 0.12 + random.nextDouble() * 0.08,
                     (random.nextDouble() - 0.5) * 0.02);
         }
+        // A green haze drifting up through the chamber, round the rods and inside the glass (the
+        // glow of uranium glass, which fluoresces green). Purely for looks: the first thing to cut
+        // if stations ever cost too much on the client.
+        for (int i = 0; i < 2; i++) {
+            double angle = random.nextDouble() * Math.PI * 2;
+            double r = Math.sqrt(random.nextDouble()) * CHAMBER_RADIUS;
+            level.addParticle(CHAMBER_HAZE, centre[0] + Math.cos(angle) * r, pos.getY() + 1.5 + random.nextDouble() * 3.5,
+                    centre[1] + Math.sin(angle) * r, 0, 0.01 + random.nextDouble() * 0.02, 0);
+        }
     }
+
+    /** Inside the chamber glass (which sits about 5.4 blocks out), in blocks from the centre. */
+    private static final double CHAMBER_RADIUS = 4.5;
+    private static final DustParticleOptions CHAMBER_HAZE = new DustParticleOptions(new Vector3f(0.45F, 1.0F, 0.35F), 1.4F);
 
     @Override
     public Component getDisplayName() {

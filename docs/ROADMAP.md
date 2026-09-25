@@ -59,17 +59,27 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 ## Milestone 2: Fuel cycle
 - [x] Fluorite ore (shipped with the other ores in milestone 1)
 - [x] Silicon (electric alloy smelter only), advanced control board, plutonium, spent kernels, fission waste, MOX and uranium fuel rod items
-- [ ] Core Cracker
-- [ ] Reprocessor (spent kernels + fluorite + water: 1 uranium ingot, 1 plutonium nugget, 1 waste)
-- [ ] Fuel Fabricator (MOX rods, uranium rods, TRISO pellets from uranium)
-- [ ] Waste Cask
-- [ ] Advancements ("Closing the Loop"), JEI and EMI pages, a test pass through the whole loop
+- [x] Shared machine recipe type (items and an optional fluid in, several outputs), JEI and EMI categories
+- [x] Core Cracker (20 FE/t, 10 s: depleted core to spent kernels, 2 graphite, 2 steel)
+- [x] Reprocessor, two high (80 FE/t, 20 s, 250 mB water: spent kernels or a spent uranium rod plus fluorite to uranium, plutonium nuggets and waste)
+- [x] Fuel Fabricator (40 FE/t, 10 s: uranium rods, MOX rods from a plutonium ingot, 3 TRISO pellets per uranium)
+- [x] Waste Cask (1,024 waste, keeps its contents when broken, fill gauge)
+- [x] Models, textures and GUIs in the house style; GUI text checked
+- [x] Advancements (first cracked core, "Closing the Loop", first MOX rod)
+- [x] A test pass through the whole loop in game
+- [x] Speed upgrades for the machines: a Speed Module, up to 4 per machine, each adding a full speed at the square of the power
+- [x] Machine sounds: our own sound events for each machine working, looped on the client while it runs (sources in `art/sounds/CREDITS.md`)
+
+## Polish
+- [x] Cable and pipe fittings: silver, busbar and cryogenic, one slot per machine side in the panel, each tier crafted from the last, shown on the cable
+- [x] Fitting item icons: redraw them as cards like the Speed Module (a graphite card with a clear symbol per tier), so they are easy to spot in a chest
+- [ ] Dosimeter ring worn on the hand: it shows as the flat item sprite pasted on the back of the hand. Give it a small 3D band round a finger instead (Accessories renders what we give it)
 
 ## Milestone 3: Fission power station
 - [x] Block map drawn and previewed (`art/tools/fission_concept.py`): a 12-wide round tower, 11 high, glass chamber, the roof one giant turbine inside an open steam stack
 - [x] Parts (casing, glass, turbine rotor, control core), recipes, ghost outline and snap-together forming
 - [x] Formed look: the core draws the station from the exported design, rotor spinning, steam from the stack
-- [ ] Draw the static body from a cached GPU buffer (it is about 22,000 faces)
+- [x] Draw the static body from a cached GPU buffer (it is about 22,000 faces): `client/StationMesh`, rebuilt only when the light, facing or resources change; drawn the old way while a shader pack is on
 - [x] Auto-build: feed the control core the parts and it builds the station itself
 - [x] Core grid GUI (plan tools, heat tints, live readout, plan preview)
 - [x] Layout rules reworked: local coolant, moderators for fuel economy, load-driven temperature; planning stats, per-channel tooltips and a rating against the best layouts (`art/tools/core_optimiser.py`)
@@ -78,8 +88,11 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] Output port for spent rods (later waste); fuel rods keep their burn when taken out
 - [x] Overdrive: safeties off for about 50% more power, flux tilt countdown, unstable core, meltdown with config toggle
 - [ ] Better moderators than graphite (decided later)
-- [ ] Fuel rod recipes (the Fuel Fabricator, milestone 2)
-- [ ] Advancements, JEI and EMI pages, its own alarm sound
+- [x] Fuel rod recipes (the Fuel Fabricator, milestone 2)
+- [x] MOX rebalanced: twice uranium's heat and more coolant capacity, so a full MOX core makes double the power
+- [x] Spent MOX rods come out of the station (they wait for the tier 4 pyroprocessor)
+- [x] Its own alarm (a klaxon) and a turbine hum that follows the rotor
+- [x] Advancements (Rod Loaded, Power Station, By the Book, No Brakes, Crater Maker), a Reactor Fuel page and info pages in JEI and EMI
 
 ## Milestone 4: Sun dimension prototype
 - [ ] Superflat glowing dimension and portal
@@ -88,7 +101,7 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [ ] Sky renderer showing swarm coverage
 
 ## Later
-- Breeder reactor and thorium path
+- Tier 4: pyroprocessor (spent MOX to transuranic metal), sodium from salt, breeder reactor with a uranium or thorium blanket (design section 9)
 - Fusion
 - Sail launcher automation and receiver dish
 - Overworld sky ring, flare events, multiplayer shared swarm
