@@ -121,7 +121,15 @@ The first public build: the microreactor, home battery, pipes and steam, the fue
 - [ ] Uranium glass (decorative light block)
 
 ## Milestone 5: Fusion reactor
-- [ ] Design the tokamak multiblock (shape, fuel, blanket, magnets, first wall)
+- [x] Design draft: shape, parts, running it, blanket, wear, H-mode, safety (design section 10b)
+- [x] Concept render (`art/tools/tokamak_concept.py`): the doughnut vessel with the plasma ring behind viewports, 16 D coils, solenoid, poloidal rings, heating injector
+- [x] Creative Fusion Reactor Preview block: draws the concept design round itself in game (next-tier preview only)
+- [ ] Block map, part blocks, ghost outline, snap-together forming and auto-build (behind `preview.next_tier` until tier 5 is complete)
+- [ ] Formed look: the core draws the reactor from the concept design (GPU mesh), the plasma glowing and pulsing while it burns
+- [ ] Control core GUI: magnets, charge, fuel mix, heating, triple product, Q, blanket plan
+- [ ] Plasma model: temperature, density limit, confinement, Q and ignition, disruptions, H-mode
+- [ ] Blanket modules and tritium breeding ratio; tungsten tile wear and replacement
+- [ ] Sounds, advancements, JEI and EMI pages
 
 ## Milestone 6: Sun dimension prototype
 - [ ] Superflat glowing dimension and portal
