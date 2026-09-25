@@ -41,6 +41,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> STATION_CORE = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_CORE);
     public static final DeferredItem<BlockItem> CREATIVE_BATTERY = ITEMS.registerSimpleBlockItem(ModBlocks.CREATIVE_BATTERY);
     public static final DeferredItem<BlockItem> CREATIVE_WATER_TANK = ITEMS.registerSimpleBlockItem(ModBlocks.CREATIVE_WATER_TANK);
+    public static final DeferredItem<BlockItem> FUSION_PREVIEW = ITEMS.registerSimpleBlockItem(ModBlocks.FUSION_PREVIEW);
     public static final DeferredItem<BlockItem> STATION_CASING = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_CASING);
     public static final DeferredItem<BlockItem> STATION_GLASS = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_GLASS);
     public static final DeferredItem<BlockItem> TURBINE_ROTOR = ITEMS.registerSimpleBlockItem(ModBlocks.TURBINE_ROTOR);

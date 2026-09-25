@@ -358,12 +358,56 @@ A deuterium-tritium tokamak cannot be built or fuelled without fission. Its fuel
 ### Uranium glass (decoration)
 - Glass with a little spare uranium in it, glowing green as the station's chamber haze does. A decorative glass and light block, not part of progression. Real basis: uranium glass is real, and fluoresces green under ultraviolet light.
 
-## 10b. Tier 5: Fusion
+## 10b. Tier 5: Fusion reactor (tokamak)
 
-- Deuterium-tritium tokamak, built and fuelled from section 10.
-- Gameplay: keep the plasma stable, manage wear on components from neutron damage.
-- Its lithium blanket breeds tritium once running, so it keeps itself fuelled.
-- Hard to run, huge payoff.
+A deuterium-tritium tokamak, built and fuelled from section 10. Draft, 25 Sep 2026: the concept is `art/tools/tokamak_concept.py` (render in `art/concepts/fusion_reactor.png`). The station's lesson was layout; this tier's lesson is running a plasma. Hard to run, huge payoff.
+
+### Shape
+- A doughnut. The vacuum vessel is a torus 5 blocks thick, 5.5 blocks from the machine's centre to the middle of the tube, on a round base 18 across. About 9 high with the solenoid.
+- **The plasma is the doughnut.** It is a glowing ring inside the vessel, pink-violet as real deuterium-tritium plasma looks, seen through a band of viewports round the top of the vessel. Real basis: in a tokamak the plasma fills the ring; nothing burns in the hole in the middle.
+- **Central solenoid:** a column up the hole in the middle, capped with a cyan light ring.
+- **Toroidal field coils:** 16 D-shaped copper-cased coils round the tube, straight on the inside. Real basis: they make the main field running the long way round the ring; the D shape takes the magnetic load best.
+- **Poloidal field coils:** two flat rings, above and below, that hold the plasma's shape.
+- **Heating injector:** a duct into the side of the vessel (a neutral beam injector), powered through its end.
+- **Base:** hazard-striped plinth with the ports on the front: deuterium in, tritium in, the control core, liquid nitrogen in, energy out. Water in and helium out still to be placed.
+- Built like the station: a ghost outline, and the control core builds the reactor itself from parts fed to it. Formed, the core draws the whole machine from the concept design (a GPU mesh, like `client/StationMesh`). The block map is still to draw; aim for about 500 cheap blocks, open inside.
+
+### Parts (rule 3: cheap structure, costly key parts)
+- **Reactor casing:** the base and the vessel shell. Steel, cheap, most of the blocks.
+- **Viewport:** uranium glass (section 10), a fudge: real viewports are fused silica. Settles open question 17 if kept.
+- **Magnet coil:** superconducting tape (yttrium, section 10) in a copper and steel case. 16 of them, plus 2 poloidal rings. The main cost.
+- **Central solenoid:** copper and tape, a few blocks tall.
+- **Heating injector** and **control core:** advanced boards.
+- Inside, filled from the GUI like the station's rods: tungsten first-wall tiles and blanket modules.
+
+### Running it
+1. **Cool the magnets.** Liquid nitrogen from the Cryo Plant must flow before the coils can carry current. Real basis: this family of superconductors (section 10) works at liquid nitrogen temperature. Lose the nitrogen and the coils warm and quench: the field collapses and the plasma is lost.
+2. **Charge up.** Starting a plasma takes one large pulse of energy for the solenoid and heating, drawn from batteries or fission stations over about a minute (rule 7: fission starts fusion). Numbers to play-test.
+3. **Fuel and heat.** Deuterium and tritium come in as gases; heating raises the plasma to its burn temperature (about 150 million °C on the readout). The readout shows the triple product (density times temperature times confinement time) against the ignition line. Real basis: the Lawson criterion.
+4. **Burn.** Once the plasma heats itself, heating can be turned down. The panel shows Q (fusion power over heating power): above 1 it gives more than it takes, and the best setups reach ignition (Q without limit). 50:50 fuel gives the most power; an off mix gives less.
+5. **Stay inside the limits.** Too much fuel for the field passes the density limit and the plasma disrupts. Too little gives little power. Stronger fields allow more density, and cost more nitrogen. Real basis: the Greenwald density limit.
+6. **Helium ash.** Every reaction makes helium, which dilutes the fuel. The divertor at the bottom of the vessel removes it; helium leaves by a port (its use is open question 18).
+
+### The blanket (the layout part)
+- Behind the first wall sits a ring of blanket slots, planned in the GUI like the station's channels. Each slot is one of:
+  - **Lithium-lead breeder:** breeds tritium from the neutrons, plus some heat. Lead multiplies neutrons, and we ship it. Real basis: lithium-lead breeding blankets.
+  - **Heat module:** captures more heat, breeds nothing.
+  - **Shield module:** protects the coils, so they need less nitrogen.
+- The panel shows the tritium breeding ratio. At 1.0 or more the reactor makes all the tritium it burns and the fission target rods are no longer needed (fission starts fusion, fusion then sustains itself, section 10). Above 1, spare tritium comes out. Below 1, it needs topping up.
+- So every slot is a choice between power, fuel and magnet cost (rule 1).
+
+### Wear
+- 14 MeV neutrons slowly wear the tungsten tiles, and disruptions take a chunk out of them. Worn tiles come out of a port and new ones go in, so it automates (rule 3). Long lives, never a chore.
+
+### H-mode (the risky option)
+- In place of the safeties switch: past a heating threshold the plasma can jump into H-mode, which roughly doubles confinement and so power. The catch is edge bursts (real name: edge-localised modes) that wear the tiles and divertor much faster, with a small chance of a disruption on each one. Real basis: H-mode is how real tokamaks plan to reach high Q, and taming those bursts is an open problem.
+
+### Safety
+- Fusion cannot run away: the worst case is a disruption. The plasma dies in an instant and its energy hits the wall: a bang, sparks, tile damage and a restart (with a new charge). No meltdown, no crater. Real basis: a tokamak holds only a few grams of fuel at a time, and any upset stops the reaction.
+- Radiation while running is the strongest in the mod (fast neutrons), so a reactor needs distance or shielding. It stops when the plasma stops (rule 10).
+
+### Output
+- Target 100,000 to 1,000,000 FE/t (section 8's scaling targets). Heat leaves through the blanket's water and comes out as FE at the base, as the station does; the steam loop and turbines inside the base are the fudge (open question 19).
 
 ## 11. Tier 6: Dyson swarm
 

@@ -20,5 +20,10 @@ public class FittingItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("item.ryzergen.fittings.tooltip", tier.multiplier())
                 .withStyle(style -> style.withColor(0xFF9AA3AE)));
+        if (tier == CableUpgrade.CRYOGENIC) {
+            // Its recipe loads only when some mod supplies yttrium (we make it in tier 5).
+            tooltip.add(Component.translatable("item.ryzergen.cryogenic_fittings.yttrium")
+                    .withStyle(style -> style.withColor(0xFF9AA3AE)));
+        }
     }
 }

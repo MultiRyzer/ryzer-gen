@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.registry;
 
+import com.ryzer.ryzergen.machine.fusion.FusionPreviewBlockEntity;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.battery.HomeBatteryBlockEntity;
 import com.ryzer.ryzergen.cable.EnergyCableBlockEntity;
@@ -52,6 +53,10 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StationCoreBlockEntity>> STATION_CORE =
             BLOCK_ENTITIES.register("station_core",
                     () -> BlockEntityType.Builder.of(StationCoreBlockEntity::new, ModBlocks.STATION_CORE.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FusionPreviewBlockEntity>> FUSION_PREVIEW =
+            BLOCK_ENTITIES.register("fusion_preview",
+                    () -> BlockEntityType.Builder.of(FusionPreviewBlockEntity::new, ModBlocks.FUSION_PREVIEW.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreativeSourceBlockEntity>> CREATIVE_SOURCE =
             BLOCK_ENTITIES.register("creative_source",

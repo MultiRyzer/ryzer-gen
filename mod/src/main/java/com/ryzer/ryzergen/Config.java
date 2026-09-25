@@ -153,7 +153,8 @@ public final class Config {
     static {
         BUILDER.comment("Unfinished content.").push("preview");
         PREVIEW_CONTENT = BUILDER
-                .comment("Turn on unfinished content from the next tier: the Lithium Extractor and lithium target rods.",
+                .comment("Turn on unfinished content from the next tier: the Lithium Extractor, lithium target rods and the",
+                        "creative Fusion Reactor Preview block.",
                         "Their products have no use yet. Needs a restart (or /reload) to add or remove their recipes.")
                 .define("next_tier", false);
         BUILDER.pop();

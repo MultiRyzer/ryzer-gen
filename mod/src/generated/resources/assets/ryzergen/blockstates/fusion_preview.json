@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "ryzergen:block/fusion_preview"
+    },
+    "facing=south": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 270
+    }
+  }
+}

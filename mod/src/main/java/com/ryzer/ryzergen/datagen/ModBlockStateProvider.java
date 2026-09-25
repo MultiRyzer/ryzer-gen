@@ -416,6 +416,11 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 modLoc("block/station_core_front"), modLoc("block/station_casing"));
         horizontalBlock(ModBlocks.STATION_CORE.get(), core);
         simpleBlockItem(ModBlocks.STATION_CORE.get(), core);
+        // The fusion preview: a station core face on a creative top, so it reads as a test block.
+        ModelFile fusionPreview = models().orientableWithBottom("fusion_preview", modLoc("block/station_casing"),
+                modLoc("block/station_core_front"), modLoc("block/station_casing"), modLoc("block/creative_top"));
+        horizontalBlock(ModBlocks.FUSION_PREVIEW.get(), fusionPreview);
+        simpleBlockItem(ModBlocks.FUSION_PREVIEW.get(), fusionPreview);
     }
 
     /** Our shared material and decal textures, by short name. */

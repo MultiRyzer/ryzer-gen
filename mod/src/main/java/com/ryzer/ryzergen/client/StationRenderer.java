@@ -68,6 +68,8 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
         pose.translate(-HALF, 0, -HALF);
         draw(buffer, pose, StationGeometry.group("rotor"), light);
         pose.popPose();
+        // The chamber glass last, translucent, so it tints what is behind it rather than cutting it out.
+        draw(buffers.getBuffer(Sheets.translucentCullBlockSheet()), pose, StationGeometry.group("glass"), light);
         pose.popPose();
     }
 
@@ -120,6 +122,8 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
         return quads;
     }
 
+    private static final float[] UP = {0, 1, 0};
+
     static void draw(VertexConsumer buffer, PoseStack pose, List<StationGeometry.Quad> quads, int light) {
         PoseStack.Pose last = pose.last();
         for (StationGeometry.Quad quad : quads) {
@@ -128,8 +132,8 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
             float[] uv = quad.uv();
             // The entity shader shades each face by its normal, which would dim the sides of a
             // light strip to half. Emissive faces point their normal up, where that shading is full.
-            Direction normal = quad.emissive() ? Direction.UP : quad.face();
-            float nx = normal.getStepX(), ny = normal.getStepY(), nz = normal.getStepZ();
+            float[] n = quad.emissive() ? UP : quad.normal();
+            float nx = n[0], ny = n[1], nz = n[2];
             for (int i = 0; i < 4; i++) {
                 buffer.addVertex(last, p[i * 3], p[i * 3 + 1], p[i * 3 + 2])
                         .setColor(0xFFFFFFFF)

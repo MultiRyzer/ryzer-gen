@@ -19,3 +19,5 @@ Decisions still to make. Move them into DESIGN.md once settled.
 15. **Where the breeder sits.** With the fission station breeding tritium, fusion no longer needs the breeder. Keep fission, breeder, fusion in line, or make the breeder an optional branch (fuel supply and thorium) with fusion straight after fission? Leaning towards the branch.
 16. **How tritium is stored.** A gas in pressure tanks and gas pipes (we have both), or canisters (real tritium is often stored bound in metal, as a hydride)?
 17. **Uranium glass.** Decoration only, or also the fusion reactor's viewing windows (a fudge)?
+18. **Fusion helium.** What is the helium from the divertor for: vented, a coolant for a later tier, or decoration?
+19. **Fusion heat out.** FE straight out of the base (as the station does), or steam out to a turbine hall the player builds?
