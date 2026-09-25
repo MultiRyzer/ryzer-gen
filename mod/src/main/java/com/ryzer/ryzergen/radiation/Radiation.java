@@ -65,14 +65,17 @@ public final class Radiation {
         }
         ServerLevel level = player.serverLevel();
         boolean exempt = !Config.RADIATION_ENABLED.get() || player.isCreative() || player.isSpectator();
-        float rate = exempt ? 0 : doseRate(level, player);
+        // The ring reads the radiation around the player (its gauge and clicks); the dose taken is
+        // what gets past it.
+        float field = Config.RADIATION_ENABLED.get() ? fieldRate(level, player) : 0;
+        float rate = exempt ? 0 : doseRate(field, player);
         float dose = player.getData(ModAttachments.RADIATION_DOSE);
         dose = rate > 0.05F ? Math.min(MAX_DOSE, dose + rate) : Math.max(0, dose - RECOVERY);
         player.setData(ModAttachments.RADIATION_DOSE, dose);
         if (!exempt) {
             applyEffects(player, dose);
         }
-        PacketDistributor.sendToPlayer(player, new RadiationPayload(dose, rate));
+        PacketDistributor.sendToPlayer(player, new RadiationPayload(dose, field));
     }
 
     /** Once a second, every mob near a source takes its dose. */
@@ -103,13 +106,14 @@ public final class Radiation {
         }
     }
 
-    /** mSv per second at the player's head, after shielding and the dosimeter ring. */
-    public static float doseRate(ServerLevel level, ServerPlayer player) {
-        float total = sourceRate(level, RadiationSources.sources(level), player.getEyePosition());
-        if (DosimeterRingItem.isWorn(player)) {
-            total *= 1 - DosimeterRingItem.PROTECTION;
-        }
-        return total;
+    /** mSv per second at the player's head, after shielding: what the dosimeter ring reads. */
+    public static float fieldRate(ServerLevel level, ServerPlayer player) {
+        return sourceRate(level, RadiationSources.sources(level), player.getEyePosition());
+    }
+
+    /** The share of {@code field} the player actually takes, after the dosimeter ring. */
+    public static float doseRate(float field, ServerPlayer player) {
+        return DosimeterRingItem.isWorn(player) ? field * (1 - DosimeterRingItem.PROTECTION) : field;
     }
 
     /** mSv per second at a point from every source in range, after shielding and the config multiplier. */

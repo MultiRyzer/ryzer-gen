@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 /**
  * The Ryzer Gen advancement tab: the progression spine (design section 5) as a checklist. It walks
  * the player from their first lead or uranium to a running microreactor, and ends on the depleted
- * core, the hook into the fuel cycle. Titles and descriptions are in the lang file.
+ * core, the hook into the fuel cycle, then walks the cycle itself to the first MOX rod. Titles and descriptions are in the lang file.
  */
 public class ModAdvancementProvider extends AdvancementProvider {
     public ModAdvancementProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup, ExistingFileHelper existingFiles) {
@@ -64,7 +64,22 @@ public class ModAdvancementProvider extends AdvancementProvider {
                 Milestone.SAFETIES_OFF, AdvancementType.TASK, false);
         milestone(saver, overdrive, "meltdown", ModItems.DEPLETED_FUEL_CORE.get(),
                 Milestone.MELTDOWN, AdvancementType.CHALLENGE, true);
-        has(saver, core, "depleted_fuel_core", ModItems.DEPLETED_FUEL_CORE.get(), AdvancementType.GOAL);
+        AdvancementHolder depleted = has(saver, core, "depleted_fuel_core", ModItems.DEPLETED_FUEL_CORE.get(), AdvancementType.GOAL);
+
+        // The fission station (design section 8): fuel rods, then the station itself.
+        AdvancementHolder rod = has(saver, depleted, "uranium_fuel_rod", ModItems.URANIUM_FUEL_ROD.get(), AdvancementType.TASK);
+        AdvancementHolder station = milestone(saver, rod, "station", ModItems.STATION_CORE.get(),
+                Milestone.STATION_FORMED, AdvancementType.GOAL, false);
+        milestone(saver, station, "station_perfect", ModItems.GRAPHITE_BLOCK.get(), Milestone.STATION_PERFECT, AdvancementType.CHALLENGE, false);
+        AdvancementHolder stationOverdrive = milestone(saver, station, "station_overdrive", ModItems.CONTROL_ROD.get(),
+                Milestone.STATION_OVERDRIVE, AdvancementType.TASK, false);
+        milestone(saver, stationOverdrive, "station_meltdown", ModItems.SPENT_URANIUM_ROD.get(), Milestone.STATION_MELTDOWN,
+                AdvancementType.CHALLENGE, true);
+
+        // The fuel cycle (design section 7): crack the core, reprocess it, make MOX.
+        AdvancementHolder kernels = has(saver, depleted, "spent_kernels", ModItems.SPENT_KERNELS.get(), AdvancementType.TASK);
+        AdvancementHolder plutonium = has(saver, kernels, "plutonium", ModItems.PLUTONIUM_NUGGET.get(), AdvancementType.GOAL);
+        has(saver, plutonium, "mox_fuel_rod", ModItems.MOX_FUEL_ROD.get(), AdvancementType.GOAL);
 
         // Using the power.
         has(saver, formed, "electric_alloy_smelter", ModItems.ELECTRIC_ALLOY_SMELTER.get(), AdvancementType.TASK);

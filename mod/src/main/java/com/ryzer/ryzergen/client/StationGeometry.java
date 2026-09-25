@@ -34,11 +34,18 @@ public final class StationGeometry {
     public record Quad(float[] xyz, float[] uv, Direction face, boolean emissive) {}
 
     private static Map<String, List<Quad>> groups;
+    /** Bumped on every reload, so meshes built from the old atlas know to rebuild. */
+    private static int generation;
 
     private StationGeometry() {}
 
     public static void clear() {
         groups = null;
+        generation++;
+    }
+
+    public static int generation() {
+        return generation;
     }
 
     public static List<Quad> group(String name) {

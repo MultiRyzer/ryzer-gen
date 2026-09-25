@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:circuits/advanced"
+    },
+    "B": {
+      "tag": "c:storage_blocks/copper"
+    },
+    "F": {
+      "item": "ryzergen:silver_fittings"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "BSB",
+    "AFA",
+    "BSB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:busbar_fittings"
+  }
+}

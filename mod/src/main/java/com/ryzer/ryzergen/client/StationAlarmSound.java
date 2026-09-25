@@ -11,14 +11,14 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 
 /**
- * The fission station's alarm. During a flux tilt it beeps slow and low, a warning with time to
+ * The fission station's klaxon. During a flux tilt it sounds slow and low, a warning with time to
  * act; once the core is unstable the pitch climbs with the heat, faster and faster until the
  * meltdown. Stops by itself when the danger is over.
  */
 public class StationAlarmSound extends AbstractTickableSoundInstance {
-    private static final float TILT_PITCH = 0.55F;
+    private static final float TILT_PITCH = 0.8F;
     /** Pitch as an unstable core passes 600°C, and at meltdown (Minecraft's limit). */
-    private static final float UNSTABLE_PITCH = 0.8F;
+    private static final float UNSTABLE_PITCH = 0.9F;
     private static final float MELTDOWN_PITCH = 2.0F;
     private static final float UNSTABLE_FROM = 600;
 
@@ -44,7 +44,7 @@ public class StationAlarmSound extends AbstractTickableSoundInstance {
             stop();
             return;
         }
-        if (status == StationRunner.Status.UNSTABLE) {
+        if (status.critical()) {
             float progress = Mth.clamp((core.runner().temperature() - UNSTABLE_FROM)
                     / (StationRunner.MELTDOWN_TEMPERATURE - UNSTABLE_FROM), 0, 1);
             // Eased so it speeds up hardest in the last seconds.

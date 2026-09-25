@@ -21,8 +21,11 @@ import java.util.List;
  * Linings (lead, then silicon carbide, then tungsten) will add protection later instead of new rings.
  */
 public class DosimeterRingItem extends Item {
-    /** Share of the dose the plain ring blocks. */
-    public static final float PROTECTION = 0.25F;
+    /**
+     * Share of the dose the plain ring blocks: all of it, for now. There is no other radiation gear
+     * yet (and may never be), so the ring is the whole answer. Lower this if linings arrive.
+     */
+    public static final float PROTECTION = 1.0F;
 
     public DosimeterRingItem(Properties properties) {
         super(properties.stacksTo(1));

@@ -1,0 +1,41 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:ingots/yttrium"
+      }
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_busbar_fittings": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:busbar_fittings"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ryzergen:cryogenic_fittings"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_busbar_fittings"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ryzergen:cryogenic_fittings"
+    ]
+  }
+}

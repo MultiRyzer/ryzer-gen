@@ -22,6 +22,10 @@ public class ElectricAlloySmelterScreen extends AbstractContainerScreen<Electric
 
     public ElectricAlloySmelterScreen(ElectricAlloySmelterMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
+        // The machine bay starts at y 13, so the title sits higher than the default, and the
+        // inventory label clears the bay's bottom edge (y 71).
+        titleLabelY = 4;
+        inventoryLabelY = 73;
     }
 
     @Override
