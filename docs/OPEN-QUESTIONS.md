@@ -16,3 +16,6 @@ Decisions still to make. Move them into DESIGN.md once settled.
 12. **Spent breeder fuel.** What comes out of spent breeder fuel: more transuranic metal (a closed loop), waste only, or a feed for fusion?
 13. **Sodium form.** Sodium as a dust, an ingot, or only a liquid coolant fluid. Real sodium is a soft metal kept away from water, which could be a hazard mechanic.
 14. **Americium and curium.** Keep them folded into transuranic metal, or split them out later (americium-241 for a radioisotope battery, say)?
+15. **Where the breeder sits.** With the fission station breeding tritium, fusion no longer needs the breeder. Keep fission, breeder, fusion in line, or make the breeder an optional branch (fuel supply and thorium) with fusion straight after fission? Leaning towards the branch.
+16. **How tritium is stored.** A gas in pressure tanks and gas pipes (we have both), or canisters (real tritium is often stored bound in metal, as a hydride)?
+17. **Uranium glass.** Decoration only, or also the fusion reactor's viewing windows (a fudge)?

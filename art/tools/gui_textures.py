@@ -515,6 +515,7 @@ PROCESSING = {
     'core_cracker': (1, 3, False),
     'reprocessor': (2, 3, True),
     'fuel_fabricator': (3, 1, False),
+    'lithium_extractor': (1, 1, True),
 }
 
 

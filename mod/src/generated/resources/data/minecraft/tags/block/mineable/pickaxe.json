@@ -24,6 +24,7 @@
     "ryzergen:reprocessor",
     "ryzergen:fuel_fabricator",
     "ryzergen:waste_cask",
+    "ryzergen:lithium_extractor",
     "ryzergen:uranium_ore",
     "ryzergen:deepslate_uranium_ore",
     "ryzergen:lead_ore",

@@ -1,0 +1,28 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "ryzergen:preview"
+    }
+  ],
+  "type": "ryzergen:fabricating",
+  "inputs": [
+    {
+      "count": 2,
+      "tag": "c:dusts/lithium"
+    },
+    {
+      "count": 1,
+      "tag": "c:ingots/aluminum"
+    },
+    {
+      "count": 1,
+      "tag": "c:ingots/steel"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "ryzergen:lithium_target_rod"
+    }
+  ]
+}

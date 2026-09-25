@@ -56,6 +56,7 @@ public class ModAdvancementProvider extends AdvancementProvider {
         AdvancementHolder triso = has(saver, siliconCarbide, "triso_pellets", ModItems.TRISO_PELLETS.get(), AdvancementType.TASK);
         AdvancementHolder core = has(saver, triso, "sealed_fuel_core", ModItems.SEALED_FUEL_CORE.get(), AdvancementType.TASK);
         has(saver, uranium, "dosimeter_ring", ModItems.DOSIMETER_RING.get(), AdvancementType.TASK);
+        has(saver, uranium, "geiger_counter", ModItems.GEIGER_COUNTER.get(), AdvancementType.TASK);
 
         // The microreactor.
         AdvancementHolder formed = milestone(saver, steel, "microreactor", ModItems.REACTOR_HEART.get(),
