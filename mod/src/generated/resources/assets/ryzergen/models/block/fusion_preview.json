@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "bottom": "ryzergen:block/station_casing",
+    "front": "ryzergen:block/station_core_front",
+    "side": "ryzergen:block/station_casing",
+    "top": "ryzergen:block/creative_top"
+  }
+}
