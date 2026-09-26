@@ -16,7 +16,7 @@ Most reactor mods have one answer to "how do I get more power": build it bigger.
 
 1. **Progression through knowledge, not volume.** A small, well-designed reactor should beat a big sloppy one.
 2. **Somewhat accurate.** Real physics where we can, honest fudges where we must, and never pure fantasy.
-3. **No grind.** Cheap structure, meaningful components. Milestones unlock tiers, not piles of ingots.
+3. **No grind.** Cheap structure, meaningful components. Milestones unlock tiers, not piles of ingots. Power is the price of progress (section 5).
 4. **Every tier stays useful.** Earlier reactors become stepping stones, not junk.
 5. **Pack friendly.** Standard energy, easy recipe tweaking, sensible configs, good performance. Built to earn a spot in packs like ATM10.
 
@@ -82,7 +82,21 @@ Deliberately skipped: zirconium and spodumene ores, and iridium and platinum. Ac
 
 Rule 1: **no compression recipes.** A higher tier never needs a stack of the tier below. It needs different materials made by a new process.
 
-Rule 2: **power gating.** The machine that makes the next tier's key material runs on the current tier's power. You cannot make it until you can power it.
+Rule 2: **power is the price.** The machines that make the next tier's key materials run on the current tier's power, and they take a lot of it. Progress is paid for in energy, not in piles of ingots. You cannot make a key material until you can power its machine, and how fast you make it depends on how good your power is.
+
+### Power is the price
+- **Two numbers per key machine.** The *energy per operation* is the price. The *minimum draw* is the gate: the machine only runs when it gets its full draw every tick. Its buffer holds only a few ticks' worth, so a trickle cannot bank up, and a big enough pile of the tier below cannot stand in for the tier itself.
+- **The budget.** Building the next tier, and its first fuel, costs roughly one to two hours of a well-designed setup of the current tier at full output. A sloppy setup takes three or four times as long. So knowledge still beats volume (pillar 1): the best fission core already makes about four times what a careless one does, and that becomes four times faster progress.
+- **Fuel is the brake on volume.** Structure is cheap (rule 3), so more power could mean more generators. What stops that is fuel: rods are finite, so what really wins is energy per rod, which is a layout skill.
+- **Reward the clever player:**
+  - Efficiency you can design for: staged machines (heavy water cascades), heat recovery, pre-cooled inputs. Each lowers the energy per operation.
+  - Heat used directly: some machines can take station steam or heat, which is cheaper than turning it into FE and back. Real basis: cogeneration.
+  - Timing: batteries charge while the base is quiet and spend in bursts. Battery discharge caps (3,000 FE/t per cabinet) stop them from beating a minimum draw for long.
+  - Speed modules already square the power per tick, so going faster costs more energy per item.
+- **No waiting as grind.** Anything long runs unattended, shows its progress and time left, and is fed by pipes, so the cost is building and tuning, not watching a bar.
+- **Real basis:** the processes behind our key materials really are power hungry. Heavy water separation, air separation for liquid nitrogen, uranium enrichment and superconductor manufacture all rank among the most energy-hungry industries.
+- **Packs:** power from other mods (Mekanism, Powah and the like) makes these costs easy in a big pack. That is fine: FE is FE. Each machine's energy cost and minimum draw scale in the common config, and the mod page says standalone play is the balanced experience.
+- **Scope:** these rules apply from the fusion materials (section 10) onwards. Tiers 1 to 3 keep their tested alpha numbers for now and may be rebalanced later.
 
 | Tier | Generator | Key component | New material and process | Circuit |
 |---|---|---|---|---|
@@ -355,6 +369,23 @@ A deuterium-tritium tokamak cannot be built or fuelled without fission. Its fuel
 ### First wall: tungsten
 - Tungsten tiles line the inside of the reactor. Real basis: tungsten survives the heat and is what ITER uses.
 
+### Energy costs (first pass, being play-tested)
+Power is the price (section 5). The budget is about 1 billion FE to build the reactor and its first fuel: roughly 1.5 hours of 10,000 FE/t, two or three good fission stations. Every minimum draw is above any microreactor (460 FE/t overdriven), so fission has to be running.
+
+| Machine | Minimum draw | Energy per operation | Per reactor build | Real basis |
+|---|---|---|---|---|
+| Waste Refinery | 1,500 FE/t | 600,000 FE (20 s) per waste | Palladium for membranes, small | Rare metals from spent fuel |
+| Tritium extraction | 2,000 FE/t | 1.2M FE (30 s) per rod | A few rods for the first charge | Heating rods to drive tritium through palladium |
+| Heavy Water Plant | 4,000 FE/t | 20,000 FE per mB | About 20M FE for a 1,000 mB first charge | Isotope separation is famously costly |
+| Monazite processing | 2,000 FE/t | 800,000 FE (20 s) per raw monazite | About 80 yttrium: about 64M FE | Acid digestion and solvent extraction |
+| Tape machine (name to come) | 6,000 FE/t | 8M FE (about 67 s) per tape | 4 tape per coil, about 90 tape: about 720M FE | Superconducting tape is laid down in vacuum, slowly |
+| Tungsten sintering | 3,000 FE/t | 600,000 FE (10 s) per tile | About 64 tiles: about 38M FE | Tungsten is pressed and fired above 2,000 °C |
+| Cryo Plant | 2,000 FE/t | Running cost, not build cost | Keeps the coils cold while the reactor runs | Air separation is mostly compressor power |
+
+- Tape is the main cost, as the magnets are in a real tokamak. A player can run two tape machines side by side if they have the power, so more power means faster progress, not a longer queue.
+- The Cryo Plant is the fusion reactor's running cost: about 2 to 5% of its output goes back into keeping the coils cold. Real basis: cryogenics are a large part of a fusion plant's own power use.
+- Speed modules and staged setups (such as a heavy water cascade) change these numbers; the table is for one plain machine.
+
 ### Uranium glass (decoration)
 - Glass with a little spare uranium in it, glowing green as the station's chamber haze does. A decorative glass and light block, not part of progression. Real basis: uranium glass is real, and fluoresces green under ultraviolet light.
 
@@ -416,6 +447,12 @@ A deuterium-tritium tokamak, built and fuelled from section 10. Draft, 25 Sep 20
 - Entry needs special gear: heat shielding, radiation protection and a visor. Without the visor the screen whites out.
 - Performance note: a huge truly transparent floor is expensive to render. Use a glowing block that looks translucent or shimmers instead.
 
+### The sun gate
+- The way in is the sun gate: a small sun held above a round platform by three curved emitter arms. Honest fudge: it is a stabilised window onto the photosphere, so the sun you see is the real one, scaled down.
+- It doubles as the swarm's orrery. Solar shades circle the little sun on six tilted orbits (24 slots each), and slots fill as the real swarm's coverage rises, evenly all round. Empty slots show as faint outlines, so progress reads at a glance from across the base.
+- Somewhat accurate touches: the sun darkens and reddens towards its edge (limb darkening), the surface boils with granulation, inner orbits turn faster (Kepler's third law), and the corona dims as coverage rises because the shades catch the light.
+- Concept design in `art/tools/sun_gate_concept.py`, 11 blocks across and about 10 high. The platform is static geometry; the sun, corona, prominences and shades are drawn every frame (`SunGateSun`). A creative Sun Gate Preview block shows it in game (right-click steps the coverage shown).
+
 ### Anchor sails
 - The first batch of sails is launched by hand in the sun dimension.
 - Right-click a sail: it becomes a real entity, drifts upward, then vanishes and joins the swarm.
@@ -423,7 +460,7 @@ A deuterium-tritium tokamak, built and fuelled from section 10. Draft, 25 Sep 20
 - The launch trip is a one-time adventure, not a chore.
 
 ### Automation
-- Sail launcher machine linked to the portal. Once calibrated, it teleports sails into the dimension automatically.
+- Sail launcher machine linked to the sun gate. Once calibrated, it teleports sails into the dimension automatically.
 - GUI shows calibration progress, e.g. 14/20 anchors detected.
 - Better sail tiers cover more sky per launch, so progress comes from tech, not volume.
 
@@ -525,6 +562,8 @@ Radiation is on by default (config toggle to turn it off). It exists to make the
 
 - Structure blocks are cheap. Cost lives in the interesting parts.
 - Tiers unlock through milestones, not resource piles.
+- Power is the price (section 5): key materials cost energy, and a better power setup gets there faster.
+- A long process runs unattended, shows its time left, and is fed by pipes.
 - Test designs in the planner before building.
 - Any repeated manual action should be replaced by automation soon after the player understands it.
 

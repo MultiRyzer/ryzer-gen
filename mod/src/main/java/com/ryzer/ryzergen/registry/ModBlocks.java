@@ -1,6 +1,7 @@
 package com.ryzer.ryzergen.registry;
 
 import com.ryzer.ryzergen.machine.fusion.FusionPreviewBlock;
+import com.ryzer.ryzergen.machine.sun.SunGatePreviewBlock;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.battery.HomeBatteryBlock;
 import com.ryzer.ryzergen.cable.EnergyCableBlock;
@@ -96,6 +97,9 @@ public final class ModBlocks {
     // Creative-only: draws the fusion reactor's concept design round itself (next-tier preview).
     public static final DeferredBlock<FusionPreviewBlock> FUSION_PREVIEW = BLOCKS.register("fusion_preview",
             () -> new FusionPreviewBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+    // Creative-only: draws the sun gate's concept design round itself, and lights its platform.
+    public static final DeferredBlock<SunGatePreviewBlock> SUN_GATE_PREVIEW = BLOCKS.register("sun_gate_preview",
+            () -> new SunGatePreviewBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion().lightLevel(state -> 15)));
     public static final DeferredBlock<HomeBatteryBlock> HOME_BATTERY = BLOCKS.register("home_battery",
             () -> new HomeBatteryBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
                     .pushReaction(PushReaction.BLOCK)));

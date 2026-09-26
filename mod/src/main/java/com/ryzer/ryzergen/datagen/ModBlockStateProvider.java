@@ -421,6 +421,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 modLoc("block/station_core_front"), modLoc("block/station_casing"), modLoc("block/creative_top"));
         horizontalBlock(ModBlocks.FUSION_PREVIEW.get(), fusionPreview);
         simpleBlockItem(ModBlocks.FUSION_PREVIEW.get(), fusionPreview);
+        // The sun gate preview uses the same block (its coverage setting changes only the drawing).
+        horizontalBlock(ModBlocks.SUN_GATE_PREVIEW.get(), fusionPreview);
+        simpleBlockItem(ModBlocks.SUN_GATE_PREVIEW.get(), fusionPreview);
     }
 
     /** Our shared material and decal textures, by short name. */

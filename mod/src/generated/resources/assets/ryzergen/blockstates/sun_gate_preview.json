@@ -1,0 +1,169 @@
+{
+  "variants": {
+    "coverage=0,facing=east": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 90
+    },
+    "coverage=0,facing=north": {
+      "model": "ryzergen:block/fusion_preview"
+    },
+    "coverage=0,facing=south": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 180
+    },
+    "coverage=0,facing=west": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 270
+    },
+    "coverage=1,facing=east": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 90
+    },
+    "coverage=1,facing=north": {
+      "model": "ryzergen:block/fusion_preview"
+    },
+    "coverage=1,facing=south": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 180
+    },
+    "coverage=1,facing=west": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 270
+    },
+    "coverage=10,facing=east": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 90
+    },
+    "coverage=10,facing=north": {
+      "model": "ryzergen:block/fusion_preview"
+    },
+    "coverage=10,facing=south": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 180
+    },
+    "coverage=10,facing=west": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 270
+    },
+    "coverage=2,facing=east": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 90
+    },
+    "coverage=2,facing=north": {
+      "model": "ryzergen:block/fusion_preview"
+    },
+    "coverage=2,facing=south": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 180
+    },
+    "coverage=2,facing=west": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 270
+    },
+    "coverage=3,facing=east": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 90
+    },
+    "coverage=3,facing=north": {
+      "model": "ryzergen:block/fusion_preview"
+    },
+    "coverage=3,facing=south": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 180
+    },
+    "coverage=3,facing=west": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 270
+    },
+    "coverage=4,facing=east": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 90
+    },
+    "coverage=4,facing=north": {
+      "model": "ryzergen:block/fusion_preview"
+    },
+    "coverage=4,facing=south": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 180
+    },
+    "coverage=4,facing=west": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 270
+    },
+    "coverage=5,facing=east": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 90
+    },
+    "coverage=5,facing=north": {
+      "model": "ryzergen:block/fusion_preview"
+    },
+    "coverage=5,facing=south": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 180
+    },
+    "coverage=5,facing=west": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 270
+    },
+    "coverage=6,facing=east": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 90
+    },
+    "coverage=6,facing=north": {
+      "model": "ryzergen:block/fusion_preview"
+    },
+    "coverage=6,facing=south": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 180
+    },
+    "coverage=6,facing=west": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 270
+    },
+    "coverage=7,facing=east": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 90
+    },
+    "coverage=7,facing=north": {
+      "model": "ryzergen:block/fusion_preview"
+    },
+    "coverage=7,facing=south": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 180
+    },
+    "coverage=7,facing=west": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 270
+    },
+    "coverage=8,facing=east": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 90
+    },
+    "coverage=8,facing=north": {
+      "model": "ryzergen:block/fusion_preview"
+    },
+    "coverage=8,facing=south": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 180
+    },
+    "coverage=8,facing=west": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 270
+    },
+    "coverage=9,facing=east": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 90
+    },
+    "coverage=9,facing=north": {
+      "model": "ryzergen:block/fusion_preview"
+    },
+    "coverage=9,facing=south": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 180
+    },
+    "coverage=9,facing=west": {
+      "model": "ryzergen:block/fusion_preview",
+      "y": 270
+    }
+  }
+}
