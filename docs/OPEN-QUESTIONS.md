@@ -21,3 +21,4 @@ Decisions still to make. Move them into DESIGN.md once settled.
 17. **Uranium glass.** Decoration only, or also the fusion reactor's viewing windows (a fudge)?
 18. **Fusion helium.** What is the helium from the divertor for: vented, a coolant for a later tier, or decoration?
 19. **Fusion heat out.** FE straight out of the base (as the station does), or steam out to a turbine hall the player builds?
+20. **Stepping through the sun gate.** How does the player go in: walk up the dais into the sun (it swells round them and the screen whites out), or use the console? And what does the gate cost to run: FE per trip, or a steady draw to hold the sun?
