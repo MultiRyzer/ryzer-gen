@@ -20,7 +20,9 @@ public final class AccessoriesClient {
     /** Kept in its own class so Accessories' classes load only when the mod is present. */
     private static final class Hooks {
         static void register() {
-            AccessoriesRendererRegistry.registerRenderer(ModItems.DOSIMETER_RING.get(), DosimeterRingRenderer::new);
+            // Nothing is drawn for a worn ring, as with other mods' rings. Registered explicitly,
+            // or Accessories would fall back to its default renderer and paste the item on the hand.
+            AccessoriesRendererRegistry.registerNoRenderer(ModItems.DOSIMETER_RING.get());
         }
     }
 }
