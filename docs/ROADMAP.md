@@ -74,7 +74,7 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] Cable and pipe fittings: silver, busbar and cryogenic, one slot per machine side in the panel, each tier crafted from the last, shown on the cable
 - [x] Fitting item icons: redraw them as cards like the Speed Module (a graphite card with a clear symbol per tier), so they are easy to spot in a chest
 - [x] Geiger counter: a new item that gives the clicks and the HUD gauge, so they only run when you carry one (inventory, or an Accessories slot such as the belt). The dosimeter ring keeps its protection but goes quiet. Shift-right-click to mute the clicks but keep the gauge
-- [ ] Dosimeter ring worn on the hand: it shows as the flat item sprite pasted on the back of the hand. Give it a small 3D band round a finger instead (Accessories renders what we give it)
+- [x] Dosimeter ring worn on the hand: dropped. Nothing shows on the hand, as with other mods' rings, and that is fine
 
 ## Milestone 3: Fission power station
 - [x] Block map drawn and previewed (`art/tools/fission_concept.py`): a 12-wide round tower, 11 high, glass chamber, the roof one giant turbine inside an open steam stack
@@ -102,7 +102,7 @@ The first public build: the microreactor, home battery, pipes and steam, the fue
 - [x] Mod page description with a player-facing roadmap
 - [x] Mod icon (`art/tools/mod_icon.py`, rendered from the formed microreactor), also the in-game logo
 - [x] Test checklist for the run below (`docs/ALPHA-TEST.md`)
-- [ ] Check the dosimeter ring's worn band in game (renderer written, see Polish)
+- [x] Dosimeter ring in the Accessories slot checked: it protects, and nothing shows on the hand (fine, see Polish)
 - [x] Playtest fixes (26 Sep 2026): pipes pull only results from every machine, never ingredients; JEI text placed properly on the fuel, alloying and machine pages, with tidy result columns; moderator plan colour (amber); microreactor fuel in and out on separate ports; station ports moved to the sides (inputs left, outputs right, as you face the front); louvre ribs under the station's stack aligned; station casing 16 per craft
 - [ ] Steam in JEI and EMI: a page showing the microreactor and the station turning water into steam (mB per mB)
 - [ ] Visual audit of the multiblocks (microreactor, station, tanks, battery) before screenshots

@@ -51,7 +51,7 @@ One pass through everything the 0.1.0 alpha ships, before it goes public. Tick t
 ## 6. Radiation
 - [ ] Nothing radiates except running reactors and meltdown sites
 - [ ] Geiger counter clicks and shows the gauge; shift-right-click mutes it
-- [ ] Dosimeter ring protects; worn in the Accessories ring slot it shows as a band on the hand (check in third person, F5)
+- [x] Dosimeter ring protects when worn in the Accessories ring slot (26 Sep 2026: nothing shows on the hand, which is fine: other mods' rings don't either)
 - [ ] Effects build slowly; mobs near a reactor are affected
 - [ ] `radiation.enabled = false` turns it all off
 
@@ -61,8 +61,8 @@ One pass through everything the 0.1.0 alpha ships, before it goes public. Tick t
 
 ## 8. Multiplayer
 - [x] Starts on a dedicated server without crashing (`./gradlew runServer`, 25 Sep 2026: loads, generates a world, no errors)
-- [ ] Place and run a microreactor, a fuel cycle machine and the station on a server, with a client joined
-- [ ] Two players can see the same reactor running, animations and sounds included
+- [ ] Place and run a microreactor, a fuel cycle machine and the station on a server, with a client joined (after the alpha, once players are trying it)
+- [ ] Two players can see the same reactor running, animations and sounds included (after the alpha)
 
 ## 9. Inside ATM10
 - [ ] Add the jar to an ATM10 instance. It loads, recipes show in JEI, and other mods' ores work in our recipes (common tags)
