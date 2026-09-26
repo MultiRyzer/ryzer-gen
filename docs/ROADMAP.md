@@ -37,7 +37,7 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] Dosimeter ring with Accessories slot support and inventory fallback (HUD gauge, Geiger clicks, 25% protection)
 - [x] Electric alloy smelter (FE, twice as fast, same recipes)
 - [x] Advancements: a Ryzer Gen tab walking from the first ore to a running microreactor, ending on the depleted core
-- [x] Fuel automation: one fuel hatch on top; fresh cores go in, the reactor pushes spent ones back out
+- [x] Fuel automation: fresh cores in on the left of the vessel, spent cores pushed out on the right (two ports, so the two pipe lines never mix)
 
 ## Milestone 1b: Home battery
 - [x] Home battery stack cabinet with 6 module slots and segment model
@@ -103,6 +103,9 @@ The first public build: the microreactor, home battery, pipes and steam, the fue
 - [x] Mod icon (`art/tools/mod_icon.py`, rendered from the formed microreactor), also the in-game logo
 - [x] Test checklist for the run below (`docs/ALPHA-TEST.md`)
 - [ ] Check the dosimeter ring's worn band in game (renderer written, see Polish)
+- [x] Playtest fixes (26 Sep 2026): pipes pull only results from every machine, never ingredients; JEI text placed properly on the fuel, alloying and machine pages, with tidy result columns; moderator plan colour (amber); microreactor fuel in and out on separate ports; station ports moved to the sides (inputs left, outputs right, as you face the front); louvre ribs under the station's stack aligned; station casing 16 per craft
+- [ ] Steam in JEI and EMI: a page showing the microreactor and the station turning water into steam (mB per mB)
+- [ ] Visual audit of the multiblocks (microreactor, station, tanks, battery) before screenshots
 - [x] Commit and push the current work
 - [ ] Survival run on a fresh world with only the release jar (no dev mods), then again with JEI, and once inside ATM10
 - [ ] Screenshots and a short clip: the microreactor snapping together, the station building itself and running
@@ -112,7 +115,7 @@ The first public build: the microreactor, home battery, pipes and steam, the fue
 ## Milestone 4: Fission to fusion (design section 10)
 - [x] Lithium Extractor (salt and water to lithium)
 - [x] Lithium target rods (Fuel Fabricator) and a target channel in the station core: breeds tritium from neighbouring fuel, costs 20% of their heat, irradiated rods leave by the output port
-- [ ] Power is the price (design section 5): minimum draw and a few-tick buffer for key machines in `machine/processing`, energy cost and minimum draw scaled per machine in the common config, time left shown in the GUI
+- [x] Power is the price (design section 5): gated machines in `machine/processing` (two-tick buffer, full draw every tick or no progress, UNDERPOWERED status), draw and time scaled per machine in the common config (`machines.<id>`), time left and energy to finish on the arrow's tooltip
 - [ ] Waste Refinery: palladium from fission waste, the rest vitrified
 - [ ] Tritium extraction from irradiated target rods (palladium membranes)
 - [ ] Heavy Water Plant, and a heavy water moderator channel in the station
@@ -120,6 +123,7 @@ The first public build: the microreactor, home battery, pipes and steam, the fue
 - [ ] Cryo Plant (liquid nitrogen)
 - [ ] Superconducting tape and magnet coils; tungsten tiles
 - [ ] Uranium glass (decorative light block)
+- [ ] A better coolant for the fission station (open question 21): a coolant channel filled with it carries more heat, so a MOX core can be pushed harder and target rods breed tritium faster. Made by a later process, and used again by later tiers
 
 ## Milestone 5: Fusion reactor
 - [x] Design draft: shape, parts, running it, blanket, wear, H-mode, safety (design section 10b)

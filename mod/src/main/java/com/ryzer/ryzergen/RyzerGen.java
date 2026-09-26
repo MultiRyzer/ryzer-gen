@@ -165,10 +165,14 @@ public class RyzerGen {
             ReactorHeartBlockEntity heart = MicroreactorStructure.heartForPort(level, pos, state, MicroreactorPort.STEAM_OUT, side);
             return heart == null ? null : heart.steamOutput();
         }, microreactorParts);
-        // Fuel hatch on the lid: fresh cores go in, spent ones come out.
+        // Fuel ports on the vessel's flanks: fresh cores in on the left, spent cores out on the right.
         event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
-            ReactorHeartBlockEntity heart = MicroreactorStructure.heartForPort(level, pos, state, MicroreactorPort.FUEL, side);
-            return heart == null ? null : heart.fuelPort();
+            ReactorHeartBlockEntity heart = MicroreactorStructure.heartForPort(level, pos, state, MicroreactorPort.FUEL_IN, side);
+            if (heart != null) {
+                return heart.fuelInput();
+            }
+            heart = MicroreactorStructure.heartForPort(level, pos, state, MicroreactorPort.FUEL_OUT, side);
+            return heart == null ? null : heart.fuelOutput();
         }, microreactorParts);
     }
 

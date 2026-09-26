@@ -230,82 +230,6 @@
           "texture": "#steel_dark"
         },
         "east": {
-          "texture": "#port_coolant",
-          "uv": [
-            0.0,
-            0.0,
-            10.0,
-            10.0
-          ]
-        },
-        "north": {
-          "texture": "#steel_dark"
-        },
-        "south": {
-          "texture": "#steel_dark"
-        },
-        "up": {
-          "texture": "#steel_dark"
-        },
-        "west": {
-          "texture": "#steel_dark"
-        }
-      },
-      "from": [
-        15,
-        3,
-        3
-      ],
-      "to": [
-        16,
-        13,
-        13
-      ]
-    },
-    {
-      "faces": {
-        "down": {
-          "texture": "#steel_dark"
-        },
-        "east": {
-          "texture": "#steel_dark"
-        },
-        "north": {
-          "texture": "#steel_dark"
-        },
-        "south": {
-          "texture": "#port_energy",
-          "uv": [
-            0.0,
-            0.0,
-            10.0,
-            10.0
-          ]
-        },
-        "up": {
-          "texture": "#steel_dark"
-        },
-        "west": {
-          "texture": "#steel_dark"
-        }
-      },
-      "from": [
-        3,
-        3,
-        15
-      ],
-      "to": [
-        13,
-        13,
-        16
-      ]
-    },
-    {
-      "faces": {
-        "down": {
-          "texture": "#steel_dark"
-        },
-        "east": {
           "texture": "#steel_dark"
         },
         "north": {
@@ -555,44 +479,6 @@
         31,
         14.5
       ]
-    },
-    {
-      "faces": {
-        "down": {
-          "texture": "#steel_dark"
-        },
-        "east": {
-          "texture": "#steel_dark"
-        },
-        "north": {
-          "texture": "#steel_dark"
-        },
-        "south": {
-          "texture": "#steel_dark"
-        },
-        "up": {
-          "texture": "#port_fuel",
-          "uv": [
-            0.0,
-            0.0,
-            10.0,
-            10.0
-          ]
-        },
-        "west": {
-          "texture": "#steel_dark"
-        }
-      },
-      "from": [
-        3,
-        31,
-        3
-      ],
-      "to": [
-        13,
-        32,
-        13
-      ]
     }
   ],
   "textures": {
@@ -602,9 +488,6 @@
     "hazard": "ryzergen:block/microreactor/hazard",
     "lead": "ryzergen:block/microreactor/lead",
     "particle": "ryzergen:block/microreactor/steel",
-    "port_coolant": "ryzergen:block/microreactor/port_coolant",
-    "port_energy": "ryzergen:block/microreactor/port_energy",
-    "port_fuel": "ryzergen:block/microreactor/port_fuel",
     "steel": "ryzergen:block/microreactor/steel",
     "steel_dark": "ryzergen:block/microreactor/steel_dark"
   }

@@ -56,7 +56,8 @@ public class FuelJeiCategory implements IRecipeCategory<RecipeViewerPages.Fuel> 
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, RecipeViewerPages.Fuel fuel, IFocusGroup focuses) {
         builder.addRecipeArrowWidget().setPosition(26, 1);
-        builder.addText(fuel.power(), 0, 23).setColor(0xFF808080);
-        builder.addText(fuel.life(), 0, 33).setColor(0xFF808080);
+        // addText takes the text's size; setPosition places it.
+        builder.addText(fuel.power(), getWidth(), 10).setPosition(0, 23).setColor(0xFF808080);
+        builder.addText(fuel.life(), getWidth(), 10).setPosition(0, 33).setColor(0xFF808080);
     }
 }

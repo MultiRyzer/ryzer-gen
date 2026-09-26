@@ -1,6 +1,7 @@
 package com.ryzer.ryzergen.machine.processing;
 
 import com.ryzer.ryzergen.machine.MachineEnergyStorage;
+import com.ryzer.ryzergen.machine.MachineItemPort;
 import com.ryzer.ryzergen.machine.RedstoneMode;
 import com.ryzer.ryzergen.recipe.MachineRecipe;
 import com.ryzer.ryzergen.registry.ModItems;
@@ -30,7 +31,6 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -42,8 +42,9 @@ import java.util.function.Predicate;
  * buffer and, for the reprocessor, a water tank. Each tick it finds the recipe its inputs make, and
  * while there is room for the results and power to spend, it works towards it.
  *
- * <p>Pipes: items in from the top and sides (only items some recipe uses, and never the same item
- * in two input slots, so one pipe cannot fill every slot and jam it), results out of the bottom,
+ * <p>Pipes connect on any side, and every side works the same way: items in (only items some recipe
+ * uses, and never the same item in two input slots, so one pipe cannot fill every slot and jam it),
+ * results out (only results, so a pipe set to extract never pulls ingredients),
  * energy and water on any side. When two recipes match, the one using more ingredients wins, so a
  * fabricator holding uranium, steel and plutonium makes MOX rather than a plain uranium rod.
  */
@@ -59,14 +60,14 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
     public static final int DATA_MODULES = 8;
     public static final int DATA_COUNT = 9;
 
-    public enum Status { IDLE, RUNNING, NO_POWER, NO_WATER, OUTPUT_FULL, REDSTONE, OFF }
+    /** UNDERPOWERED: a gated machine getting some power, but less than its full draw. */
+    public enum Status { IDLE, RUNNING, NO_POWER, NO_WATER, OUTPUT_FULL, REDSTONE, OFF, UNDERPOWERED }
 
     private final ProcessingMachine machine;
     private final ItemStackHandler items;
     private final IItemHandler inputs;
     private final IItemHandler outputs;
-    private final MachineEnergyStorage energy = new MachineEnergyStorage(ProcessingMachine.ENERGY_CAPACITY,
-            ProcessingMachine.MAX_INPUT, this::setChanged);
+    private final MachineEnergyStorage energy;
     private final FluidTank water;
     private final IFluidHandler waterPort;
 
@@ -114,12 +115,13 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
     public ProcessingBlockEntity(ProcessingMachine machine, BlockPos pos, BlockState state) {
         super(machine.blockEntityType(), pos, state);
         this.machine = machine;
+        energy = new MachineEnergyStorage(capacity(machine, 0), maxInput(machine, 0), this::setChanged);
         items = createItems(machine, this::usable, () -> {
             dirty = true;
             setChanged();
         });
-        inputs = new RangedWrapper(items, 0, machine.inputs());
-        outputs = new RangedWrapper(items, machine.inputs(), machine.slots());
+        inputs = MachineItemPort.of(items, 0, machine.inputs(), machine.inputs(), machine.slots());
+        outputs = inputs;
         water = new FluidTank(machine.waterCapacity(), stack -> stack.is(FluidTags.WATER)) {
             @Override
             protected void onContentsChanged() {
@@ -215,7 +217,29 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
 
     /** Power drawn per tick while working: the base, times the speed squared. */
     public static int energyPerTick(ProcessingMachine machine, int modules) {
-        return machine.energyPerTick() * speed(modules) * speed(modules);
+        return (int) Math.min(Integer.MAX_VALUE, (long) machine.energyPerTick() * speed(modules) * speed(modules));
+    }
+
+    /**
+     * The energy buffer: a gated machine's holds {@link ProcessingMachine#GATED_BUFFER_TICKS} ticks
+     * of its draw, the others a fixed store (larger if the config raises their draw).
+     */
+    public static int capacity(ProcessingMachine machine, int modules) {
+        int draw = energyPerTick(machine, modules);
+        if (machine.gated()) {
+            return (int) Math.min(Integer.MAX_VALUE, (long) draw * ProcessingMachine.GATED_BUFFER_TICKS);
+        }
+        return (int) Math.max(ProcessingMachine.ENERGY_CAPACITY, Math.min(Integer.MAX_VALUE, 8L * draw));
+    }
+
+    /** FE per tick the buffer takes in. */
+    public static int maxInput(ProcessingMachine machine, int modules) {
+        return machine.gated() ? capacity(machine, modules) : Math.max(ProcessingMachine.MAX_INPUT, energyPerTick(machine, modules));
+    }
+
+    private void updateLimits() {
+        int modules = modules();
+        energy.setLimits(capacity(machine, modules), maxInput(machine, modules));
     }
 
     private List<MachineRecipe> recipes() {
@@ -306,6 +330,7 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     private void tick(Level level, BlockPos pos, BlockState state) {
+        updateLimits();
         if (dirty) {
             recipe = findRecipe(input(water.getFluid()));
             thirsty = recipe == null && machine.usesWater()
@@ -324,11 +349,15 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
         } else if (!hasRoomFor(recipe)) {
             status = Status.OUTPUT_FULL;
         } else if (!energy.consume(energyPerTick(machine, modules()))) {
-            status = Status.NO_POWER;
+            status = machine.gated() && energy.getEnergyStored() > 0 ? Status.UNDERPOWERED : Status.NO_POWER;
+            if (machine.gated()) {
+                // Short of the full draw: no progress, and what did arrive is spent anyway.
+                energy.drain();
+            }
         } else {
             status = Status.RUNNING;
             working = true;
-            total = recipe.time();
+            total = machine.time(recipe.time());
             progress += speed(modules());
             if (progress >= total) {
                 craft(recipe);
@@ -416,6 +445,7 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
         for (int slot = 0; slot < items.getSlots(); slot++) {
             items.setStackInSlot(slot, slot < saved.getSlots() ? saved.getStackInSlot(slot) : ItemStack.EMPTY);
         }
+        updateLimits();
         energy.setStored(tag.getInt("energy"));
         if (machine.usesWater()) {
             water.readFromNBT(registries, tag.getCompound("water"));

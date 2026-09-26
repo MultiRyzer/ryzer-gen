@@ -347,45 +347,6 @@
     {
       "faces": {
         "down": {
-          "texture": "#steel_dark"
-        },
-        "east": {
-          "texture": "#steel_dark"
-        },
-        "north": {
-          "texture": "#steel_dark"
-        },
-        "south": {
-          "cullface": "south",
-          "texture": "#port_energy",
-          "uv": [
-            0.0,
-            0.0,
-            10.0,
-            10.0
-          ]
-        },
-        "up": {
-          "texture": "#steel_dark"
-        },
-        "west": {
-          "texture": "#steel_dark"
-        }
-      },
-      "from": [
-        3,
-        3,
-        15
-      ],
-      "to": [
-        13,
-        13,
-        16
-      ]
-    },
-    {
-      "faces": {
-        "down": {
           "texture": "#copper"
         },
         "east": {
@@ -431,27 +392,21 @@
         },
         "up": {
           "cullface": "up",
-          "texture": "#port_coolant",
-          "uv": [
-            0.0,
-            0.0,
-            10.0,
-            10.0
-          ]
+          "texture": "#steel_dark"
         },
         "west": {
           "texture": "#steel_dark"
         }
       },
       "from": [
-        3,
+        4.5,
         15,
-        3
+        4.5
       ],
       "to": [
-        13,
+        11.5,
         16,
-        13
+        11.5
       ]
     }
   ],
@@ -462,8 +417,6 @@
     "hazard": "ryzergen:block/microreactor/hazard",
     "lead": "ryzergen:block/microreactor/lead",
     "particle": "ryzergen:block/microreactor/steel",
-    "port_coolant": "ryzergen:block/microreactor/port_coolant",
-    "port_energy": "ryzergen:block/microreactor/port_energy",
     "steel": "ryzergen:block/microreactor/steel",
     "steel_dark": "ryzergen:block/microreactor/steel_dark"
   }
