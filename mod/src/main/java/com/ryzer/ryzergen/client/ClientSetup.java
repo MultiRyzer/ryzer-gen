@@ -62,7 +62,7 @@ public final class ClientSetup {
         event.registerBlockEntityRenderer(ModBlockEntities.SUN_GATE_PREVIEW.get(), SunGateRenderer::new);
     }
 
-    /** Optional mods' client hooks: the worn dosimeter ring's renderer, when Accessories is here. */
+    /** Optional mods' client hooks: no renderer for the worn dosimeter ring, when Accessories is here. */
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(AccessoriesClient::register);
