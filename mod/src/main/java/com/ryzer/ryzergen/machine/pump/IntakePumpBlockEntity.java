@@ -125,14 +125,14 @@ public class IntakePumpBlockEntity extends BlockEntity implements MenuProvider {
         super(ModBlockEntities.INTAKE_PUMP.get(), pos, state);
     }
 
-    /** Energy goes in at the back only. */
+    /** Energy goes in on any side. */
     public @Nullable IEnergyStorage energyFor(@Nullable Direction side) {
-        return side == getBlockState().getValue(IntakePumpBlock.FACING).getOpposite() ? energy : null;
+        return energy;
     }
 
-    /** Water comes out of the port on top only. */
+    /** Water can be drawn from any side (it still pushes out of the top on its own). */
     public @Nullable IFluidHandler waterFor(@Nullable Direction side) {
-        return side == Direction.UP ? waterOutput : null;
+        return waterOutput;
     }
 
     public void cycleRedstoneMode() {

@@ -16,10 +16,19 @@ public enum MicroreactorPort {
     COOLANT_IN(MicroreactorSlot.UPPER_BACK, Side.UP),
     /** Steam outlet on the right-hand side: the boiled coolant leaves here as steam. */
     STEAM_OUT(MicroreactorSlot.LOWER_BACK, Side.RIGHT),
-    /** Fuel hatch on the lid: fresh cores go in, and the reactor pushes spent ones back out. */
-    FUEL(MicroreactorSlot.UPPER_FRONT, Side.UP);
+    /**
+     * Fuel in, on the vessel's flank to your left as you face the front (the same side as the fission
+     * station's inputs): fresh cores only, nothing comes out.
+     */
+    FUEL_IN(MicroreactorSlot.LOWER_FRONT, Side.RIGHT),
+    /**
+     * Spent cores out, on the flank to your right as you face the front: the reactor pushes them out, and pipes can pull
+     * them. Two ports, not one hatch, so the pipe bringing fresh cores and the pipe taking spent ones
+     * away are separate lines, and fresh cores can never wander into the spent-core store.
+     */
+    FUEL_OUT(MicroreactorSlot.LOWER_FRONT, Side.LEFT);
 
-    private enum Side { BACK, UP, RIGHT }
+    private enum Side { BACK, UP, RIGHT, LEFT }
 
     private final MicroreactorSlot slot;
     private final Side side;
@@ -39,6 +48,7 @@ public enum MicroreactorPort {
             case BACK -> facing.getOpposite();
             case UP -> Direction.UP;
             case RIGHT -> facing.getClockWise();
+            case LEFT -> facing.getCounterClockWise();
         };
     }
 

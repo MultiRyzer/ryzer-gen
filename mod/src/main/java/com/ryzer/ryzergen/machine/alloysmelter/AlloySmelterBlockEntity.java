@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.alloysmelter;
 
+import com.ryzer.ryzergen.machine.MachineItemPort;
 import com.ryzer.ryzergen.recipe.AlloyingRecipe;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
 import com.ryzer.ryzergen.registry.ModRecipes;
@@ -24,12 +25,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Burns furnace fuel to cook two inputs into one output. Pipes connect like a furnace:
- * inputs from the top, fuel from the sides, output from the bottom.
+ * Burns furnace fuel to cook two inputs into one output. Pipes connect like a furnace: inputs in
+ * from the top, fuel in from the sides, and the output comes out of any side (only the output, so
+ * a pipe set to extract never pulls ingredients or fuel).
  */
 public class AlloySmelterBlockEntity extends BlockEntity implements MenuProvider {
     public static final int INPUT_A = 0;
@@ -40,9 +41,9 @@ public class AlloySmelterBlockEntity extends BlockEntity implements MenuProvider
     public static final int DATA_COUNT = 4;
 
     private final ItemStackHandler items = createItems(this::setChanged);
-    private final IItemHandler inputs = new RangedWrapper(items, INPUT_A, INPUT_B + 1);
-    private final IItemHandler fuel = new RangedWrapper(items, FUEL, FUEL + 1);
-    private final IItemHandler output = new RangedWrapper(items, OUTPUT, OUTPUT + 1);
+    private final IItemHandler inputs = MachineItemPort.of(items, INPUT_A, INPUT_B + 1, OUTPUT, OUTPUT + 1);
+    private final IItemHandler fuel = MachineItemPort.of(items, FUEL, FUEL + 1, OUTPUT, OUTPUT + 1);
+    private final IItemHandler output = MachineItemPort.of(items, 0, 0, OUTPUT, OUTPUT + 1);
 
     private int litTime;
     private int litDuration;

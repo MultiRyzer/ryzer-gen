@@ -100,7 +100,7 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
     private static int colour(Channel channel) {
         return switch (channel) {
             case FUEL -> 0xFF44D65E;
-            case MODERATOR -> 0xFF8A929C;
+            case MODERATOR -> 0xFFE8B030;
             case CONTROL -> 0xFFE0503C;
             case COOLANT -> 0xFF3A8CF0;
             case TARGET -> 0xFFB27CF0;
@@ -112,7 +112,7 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
     private static int fill(Channel channel) {
         return switch (channel) {
             case FUEL -> 0x4044D65E;
-            case MODERATOR -> 0x508A929C;
+            case MODERATOR -> 0x50E8B030;
             case CONTROL -> 0x40E0503C;
             case COOLANT -> 0x603A8CF0;
             case TARGET -> 0x40B27CF0;

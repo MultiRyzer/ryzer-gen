@@ -35,21 +35,29 @@ public final class StationLayout {
     public static final BlockPos ROTOR = new BlockPos(6, 6, 6);
 
     /**
-     * The ports on the base: three on the front beside the core, each on its block's front face, and
-     * the output port (spent rods, later waste) on the east flat, facing out to the side, because
-     * the front has only four flat blocks.
+     * The ports on the base, on the two flat sides so the front stays clear for the core's screen.
+     * As you face the front: inputs on your left (water and fuel, on the east flat of a station
+     * facing north), outputs on your right (energy and spent rods, on the west flat). Two separate
+     * sides also keep the pipe bringing fuel apart from the one taking spent rods away.
      */
-    public enum Port { WATER, FUEL, ENERGY, OUTPUT }
+    public enum Port {
+        WATER, FUEL, ENERGY, OUTPUT;
+
+        public boolean input() {
+            return this == WATER || this == FUEL;
+        }
+    }
 
     public static final Map<BlockPos, Port> PORTS = Map.of(
-            new BlockPos(4, 0, 0), Port.WATER,
-            new BlockPos(6, 0, 0), Port.FUEL,
-            new BlockPos(7, 0, 0), Port.ENERGY,
-            new BlockPos(11, 0, 4), Port.OUTPUT);
+            new BlockPos(11, 0, 5), Port.WATER,
+            new BlockPos(11, 0, 6), Port.FUEL,
+            new BlockPos(0, 0, 5), Port.ENERGY,
+            new BlockPos(0, 0, 6), Port.OUTPUT);
 
     /** The way a port's face looks out, for a station facing {@code facing}. */
     public static Direction portFace(Direction facing, Port port) {
-        return port == Port.OUTPUT ? facing.getClockWise() : facing;
+        // A player facing the front looks the opposite way to it, so their left is the front's clockwise turn.
+        return port.input() ? facing.getClockWise() : facing.getCounterClockWise();
     }
 
     /** Where a port is in the world, for a station whose core is at {@code core}. */

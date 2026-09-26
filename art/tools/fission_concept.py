@@ -35,6 +35,7 @@ TEXTURES.update({
     'console_top': 'ryzergen:block/machine/console_top',
     'rib': 'ryzergen:block/station/rib',
     'plinth': 'ryzergen:block/station/plinth',
+    'front_panel': 'ryzergen:block/station/front_panel',
 })
 d = Design(C, TEXTURES, {'glow', 'screen'}, concept_only={'rods'})
 
@@ -44,24 +45,32 @@ d.cylinder('steel_dark', 0, 6, 6 * B - 3)
 d.annulus('steel_dark', 6, 6 * B - 4, 6 * B - 3)
 d.cylinder('plinth', 6, 16, 6 * B - 4, v0=0)
 d.annulus('steel_dark', 16, 0, 6 * B - 4)
-# The front four blocks of the base (cells 4 to 7 on the front row): water in, the control core,
-# the fuel port and energy out. Each port is a 10 x 10 flange flush with its block's face (z = 0),
-# drawn whole so its ring sits centred in its cell; the core shows its screen there.
-FRONT = [('port_coolant', 4), ('core', 5), ('port_fuel', 6), ('port_energy', 7)]
-d.box('console', 4 * B - 4, 0, 1.5, 8 * B + 4, 15, 2 * B, top='console_top', skip=('south', 'down'))
-for kind, cell in FRONT:
-    x = cell * B
-    if kind == 'core':
-        d.box('steel_dark', x + 3, 5, 0, x + 13, 11, 0.5, decals={'north': 'screen'}, skip=('south',))
-        d.box('steel_dark', x + 1, 2, 0.5, x + 15, 14, 1.5, skip=('south',))
+# The front panel: two blocks wide (the core in cell 5 and the block beside it in cell 6, the only
+# blocks that open the screen), centred on the station. Its face is one texture drawn once across
+# both blocks (station/front_panel, 32 x 16, rows 1 to 15), and the core's screen stands proud of it.
+PANEL_Z = 1.5
+d.box('console', C - 16, 0, PANEL_Z, C + 16, 15, 2 * B, top='console_top', skip=('south', 'down', 'north'))
+# Seen from the front the viewer's left is the east (+x) end, so u runs from x = C + 16 to C - 16.
+d.quad('front_panel', [(C + 16, 15, PANEL_Z), (C - 16, 15, PANEL_Z), (C - 16, 0, PANEL_Z), (C + 16, 0, PANEL_Z)],
+       [(0, 1), (16, 1), (16, 16), (0, 16)], (0, 0, -1))
+d.box('steel_dark', C - 5, 5, PANEL_Z - 1, C + 5, 11, PANEL_Z - 0.5, decals={'north': 'screen'}, skip=('south',))
+d.box('steel_dark', C - 6, 4, PANEL_Z - 0.5, C + 6, 12, PANEL_Z, skip=('south',))
+# The ports, on consoles across the two flat sides (cells 5 and 6 from the front), so pipes and
+# cables come in from the sides and the front stays clear (StationLayout.PORTS). As you face the
+# front: water and fuel in on your left (east), energy and spent rods out on your right (west).
+# Each is a 10 x 10 flange flush with its block's face, drawn whole so its ring sits centred.
+SIDES = [('east', [('port_coolant', 5), ('port_fuel', 6)]), ('west', [('port_energy', 5), ('port_fuel', 6)])]
+for side, ports in SIDES:
+    if side == 'east':
+        d.box('console', 11 * B, 0, 5 * B - 4, 12 * B - 1.5, 15, 7 * B + 4, top='console_top', skip=('west', 'down'))
     else:
-        d.box('steel_dark', x + 3, 3, 0, x + 13, 13, 1.5, decals={'north': kind}, skip=('south',))
-# The output port (spent rods out) on the east side, cell 4 from the front: the same flange on a
-# small side console, since the front has only four flat blocks.
-OUTPUT_CELL = 4
-z = OUTPUT_CELL * B
-d.box('console', 11 * B, 0, z - 4, 12 * B - 1.5, 15, z + B + 4, top='console_top', skip=('west', 'down'))
-d.box('steel_dark', 12 * B - 1.5, 3, z + 3, 12 * B, 13, z + 13, decals={'east': 'port_fuel'}, skip=('west',))
+        d.box('console', 1.5, 0, 5 * B - 4, B, 15, 7 * B + 4, top='console_top', skip=('east', 'down'))
+    for kind, cell in ports:
+        z = cell * B
+        if side == 'east':
+            d.box('steel_dark', 12 * B - 1.5, 3, z + 3, 12 * B, 13, z + 13, decals={'east': kind}, skip=('west',))
+        else:
+            d.box('steel_dark', 0, 3, z + 3, 1.5, 13, z + 13, decals={'west': kind}, skip=('east',))
 
 # ---------------------------------------------------------------- reactor chamber
 # Smooth glass, drawn translucent: its outside, and its inside so the far wall tints the view too.
@@ -93,8 +102,9 @@ for row, line in enumerate(LAYOUT):
 d.group = 'static'
 
 # ---------------------------------------------------------------- head
-d.disc('steel_dark', 80, 96, 6 * B - 6)
-d.cylinder('glow', 88, 89, 6 * B - 5.5)
+# 48 steps round, like the stack and the louvre ribs above, so every ring's seams line up.
+d.disc('steel_dark', 80, 96, 6 * B - 6, n=48)
+d.cylinder('glow', 88, 89, 6 * B - 5.5, n=48)
 
 # ---------------------------------------------------------------- turbine
 # The whole roof is one turbine: steam rising from the core drives a rotor as wide as the station,
@@ -125,10 +135,12 @@ for sx, sz in ((C - 80, C), (C + 80, C), (C, C - 80), (C, C + 80)):
     d.box('steel_dark', sx - 3, 108, sz - 3, sx + 3, 116, sz + 3, skip=('down', 'up'))
 
 # ---------------------------------------------------------------- the outer wall rises into a steam stack
-# Around the rotor: open louvres between ribs, so the turbine can be seen turning.
+# Around the rotor: open louvres between ribs, so the turbine can be seen turning. The ribs sit on
+# every other seam of the 48-step rings, their outer faces just inside the stack's rim (88.4 at its
+# foot), so the stack reads as resting squarely on them.
 for k in range(24):
-    d.post('rib', math.radians(k * 15), 6 * B - 9, 96, 124, 4, 4)
-d.wall('steel_dark', 96, 98, 6 * B - 6, 6 * B - 12)
+    d.post('rib', math.radians(k * 15), 84, 96, 124, 4, 4)
+d.wall('steel_dark', 96, 98, 6 * B - 6, 6 * B - 12, n=48)
 # Above: a hyperbolic stack, narrowest two thirds of the way up, flaring to an open top.
 TOP = 176
 

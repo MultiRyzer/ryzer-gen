@@ -38,14 +38,18 @@ CHECKS = [
     ('gui.ryzergen.intake_pump.source.missing', [], 110),
     ('gui.ryzergen.intake_pump.rate', ['1,000'], 110),
     ('gui.ryzergen.intake_pump.power', ['1,000'], 110),
+    # Battery rack title (battery/HomeBatteryScreen): from x 8 to the panel's right edge, less a margin.
+    ('block.ryzergen.home_battery', [], 160),
     # Fuel cycle machines (machine/processing/ProcessingScreen): status screen x 24 to 110, text from x 28.
     ('gui.ryzergen.processing.status.idle', [], 78),
     ('gui.ryzergen.processing.status.running', [], 78),
+    ('gui.ryzergen.processing.status.running_time', ['59:59'], 78),
     ('gui.ryzergen.processing.status.no_power', [], 78),
     ('gui.ryzergen.processing.status.no_water', [], 78),
     ('gui.ryzergen.processing.status.output_full', [], 78),
     ('gui.ryzergen.processing.status.redstone', [], 78),
     ('gui.ryzergen.processing.status.off', [], 78),
+    ('gui.ryzergen.processing.status.underpowered', [], 78),
     # Reactor Fuel page in JEI and EMI (compat/*/Fuel*): 160 px wide, text from x 0.
     ('jei.ryzergen.fuel.microreactor', ['99,999'], 160),
     ('jei.ryzergen.fuel.station', ['99,999'], 160),

@@ -145,7 +145,7 @@ public class ModRecipeProvider extends RecipeProvider {
         // Fission station. The shell is cheap structure (rule 3): steel-framed concrete-like casing
         // and reinforced glass, many per craft. The cost is in the core (advanced boards, so the fuel
         // cycle comes first) and in what goes into the reactor.
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.STATION_CASING.get(), 32)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.STATION_CASING.get(), 16)
                 .pattern("BSB")
                 .pattern("SBS")
                 .pattern("BSB")

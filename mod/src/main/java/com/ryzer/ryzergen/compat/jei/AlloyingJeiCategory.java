@@ -70,10 +70,12 @@ public class AlloyingJeiCategory implements IRecipeCategory<RecipeHolder<Alloyin
         // The flame burns for the whole cook; the arrow fills over it.
         builder.addAnimatedRecipeFlameWidget(cookingTime).setPosition(11, 21);
         builder.addAnimatedRecipeArrowWidget(cookingTime).setPosition(44, 9);
-        builder.addText(Component.translatable("gui.jei.category.smelting.time.seconds", cookingTime / 20F), 38, 32)
-                .setColor(0xFF808080);
+        // addText takes the text's size; setPosition places it.
+        builder.addText(Component.translatable("gui.jei.category.smelting.time.seconds", cookingTime / 20F), getWidth() - 38, 10)
+                .setPosition(38, 32).setColor(0xFF808080);
         if (holder.value().electricOnly()) {
-            builder.addText(Component.translatable("jei.ryzergen.alloying.electric_only"), 0, 43).setColor(0xFFC0392B);
+            builder.addText(Component.translatable("jei.ryzergen.alloying.electric_only"), getWidth(), 10)
+                    .setPosition(0, 43).setColor(0xFFC0392B);
         }
     }
 }

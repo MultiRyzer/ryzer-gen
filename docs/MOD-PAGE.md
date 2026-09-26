@@ -20,7 +20,7 @@ NeoForge 1.21.1. Standalone: it ships every ore it uses. Optional support for JE
 - A four-block portable reactor based on real transportable "nuclear battery" designs and TRISO fuel. It snaps together into one machine when the parts are in place, with a ghost preview to show you where they go.
 - Heat, fuel life and coolant: it runs dry, but water makes it run better and turns into steam.
 - Overdrive: take the safeties off for more power. Lose coolant while they are off and it melts down.
-- Home battery (a cabinet of lead-acid modules), energy cables, item pipes, fluid and gas pipes, an intake pump, and tall pressure and fluid tanks.
+- Modular Battery Rack (a cabinet of lead-acid modules), energy cables, item pipes, fluid and gas pipes, an intake pump, and tall pressure and fluid tanks.
 
 ### Tier 2: the fuel cycle
 - Spent fuel is the next fuel. Crack depleted cores, reprocess them into uranium and plutonium, and fabricate uranium and MOX fuel rods, much as France recycles its fuel.

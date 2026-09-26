@@ -76,11 +76,6 @@ public final class StationStructure {
         return null;
     }
 
-    /** The core of the formed station that {@code pos} is part of, or null. */
-    static @Nullable BlockPos coreOf(ServerLevel level, BlockPos pos) {
-        return findCore(level, pos, true);
-    }
-
     /**
      * The core whose station includes {@code pos}: formed ones when breaking, unformed ones whose
      * station is now complete when placing.

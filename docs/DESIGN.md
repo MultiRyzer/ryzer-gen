@@ -85,7 +85,7 @@ Rule 1: **no compression recipes.** A higher tier never needs a stack of the tie
 Rule 2: **power is the price.** The machines that make the next tier's key materials run on the current tier's power, and they take a lot of it. Progress is paid for in energy, not in piles of ingots. You cannot make a key material until you can power its machine, and how fast you make it depends on how good your power is.
 
 ### Power is the price
-- **Two numbers per key machine.** The *energy per operation* is the price. The *minimum draw* is the gate: the machine only runs when it gets its full draw every tick. Its buffer holds only a few ticks' worth, so a trickle cannot bank up, and a big enough pile of the tier below cannot stand in for the tier itself.
+- **Two numbers per key machine.** The *energy per operation* is the price. The *minimum draw* is the gate: the machine only runs when it gets its full draw every tick. Its buffer holds only two ticks' worth, and a tick short of the full draw makes no progress while the power that did arrive is spent anyway, so a trickle cannot bank up and a big enough pile of the tier below cannot stand in for the tier itself. The screen says UNDERPOWERED and names the draw it needs. Real basis: a process with a threshold (a furnace's heat, a column's cold) gets nowhere below it but still burns what it is given.
 - **The budget.** Building the next tier, and its first fuel, costs roughly one to two hours of a well-designed setup of the current tier at full output. A sloppy setup takes three or four times as long. So knowledge still beats volume (pillar 1): the best fission core already makes about four times what a careless one does, and that becomes four times faster progress.
 - **Fuel is the brake on volume.** Structure is cheap (rule 3), so more power could mean more generators. What stops that is fuel: rods are finite, so what really wins is energy per rod, which is a layout skill.
 - **Reward the clever player:**
@@ -132,7 +132,9 @@ Inspired by the new generation of transportable microreactors. It gets its own o
   - **Energy out:** cable socket on the back face of the lower back block. The machine pushes energy out, so it works with cables that do not pull (Mekanism's included).
   - **Coolant in:** intake chute on the top face of the upper back block. Accepts water only, and pipes cannot drain it.
   - **Steam out:** outlet on the right-hand face of the lower back block. The water the reactor boils leaves as steam (10 mB of steam per mB of water, config), pushed out of the port into a gas pipe or pressure tank. With nothing connected it blows out as a visible plume; running dry there is no steam and no plume. Steam will drive turbines at the next tier.
-  - **Fuel hatch:** on the top face of the upper front block, built like the coolant intake. Fresh cores go in when the slot is free, and the reactor pushes a spent core back out of the same hatch into whatever sits on it, the way the energy port pushes power. So one item pipe from a chest (its chest side set to extract) keeps the reactor fuelled and carries spent cores back to the chest. Only spent cores ever come out, so automation never pulls a core with fuel left in it. Real basis: reactors are refuelled from above.
+  - **Fuel in:** on the lower front block's flank to your left as you face the front (inputs are on that side for every machine). Fresh cores go in when the slot is free; nothing comes out.
+  - **Spent cores out:** on the lower front block's flank to your right as you face the front. The reactor pushes a spent core out into whatever is beside it, the way the energy port pushes power, and pipes can pull it too. Only spent cores ever come out, so automation never pulls a core with fuel left in it.
+  - Two ports rather than one hatch, so fresh and spent cores travel on separate pipe lines. On one shared line, a pipe carrying fresh cores to a full reactor would deliver them to the spent-core store instead.
 - Every port is a 10x10 flange flush with the block face, centred, around an 8x8 socket. That seats the common 6x6 pipes and cables (Pipez, Mekanism) and their 8x8 end plates. The ring colour says what it carries: red energy, blue coolant, white steam, orange items (fuel).
 - Ports use the standard NeoForge energy and fluid capabilities, only on the port face and only while formed.
 - Front face carries the display panel. Right-click any block to open the GUI.
@@ -155,7 +157,7 @@ Inspired by the new generation of transportable microreactors. It gets its own o
   - Dump: it keeps running on a full buffer and vents the surplus as a steam plume from the steam outlet. It burns fuel nonstop, so it keeps making depleted cores (and later by-products) with no power consumer attached. Real basis: the steam dump (turbine bypass) valves that let a pressurised-water reactor run on when the turbine cannot take its power.
 - Running shows: Cherenkov glow in the porthole (emissive, block light 9), a low hum, steam wisps from the coolant intake.
 - GUI: fuel left, temperature, output, energy, coolant, on/off. Redstone controllable.
-- Balance lives in the common config: output (200 FE/t default), fuel life (72,000 ticks, one hour of running), coolant use.
+- Balance lives in the common config: output (200 FE/t default), fuel life (48,000 ticks, 40 minutes of running), coolant use.
 
 ### Crafting (first pass, being play-tested)
 
@@ -266,7 +268,7 @@ A fixed-size station, built like the microreactor: place the parts inside a ghos
 - **Base:** the ports, all at ground level: water in, energy out, fuel in and spent fuel out.
 - **Reactor chamber:** a glass ring round the core, so the rods glow through it (Cherenkov blue-green) while it runs.
 - **The roof is one giant turbine:** a rotor as wide as the station spins above the reactor head, seen through open louvres. Steam from the core drives it, then rises up the station's outer wall, which carries on above the rotor as a hyperbolic steam stack, open at the top and pouring steam. All the steam goes to the turbine; no steam port.
-- Block map (facing north; the control core sets the facing): layer 0 a 12-wide ring of casing with the control core in the middle and the four front blocks as the ports; layers 1 to 4 a ring of station glass; layer 5 casing (the reactor head); layers 6 and 7 casing (the turbine band) with the turbine rotor in the middle of layer 6; layers 8 to 10 an 11-wide ring of casing (the stack). About 340 blocks, open inside.
+- Block map (facing north; the control core sets the facing): layer 0 a 12-wide ring of casing with the control core in the middle of the front and the ports on the two flat sides; layers 1 to 4 a ring of station glass; layer 5 casing (the reactor head); layers 6 and 7 casing (the turbine band) with the turbine rotor in the middle of layer 6; layers 8 to 10 an 11-wide ring of casing (the stack). About 340 blocks, open inside.
 - Formed, the parts stop drawing themselves and the control core draws the whole station from the design in `art/tools/fission_concept.py` (exported to `assets/ryzergen/station/fission_station.json`).
 
 ### Building it
@@ -295,7 +297,7 @@ Size is fixed, so the lever is the core layout (rule 1: knowledge, not volume). 
 - Heat from the core boils the water fed in at the base; steam drives the turbine; FE comes out of the base. Real basis: a boiling water reactor, which boils its coolant in the core and sends the steam straight to the turbine.
 - Output target: a few thousand FE/t per station, so two or three run a mid-game base. Scaling targets across tiers, set against ATM10 (default configs): microreactor 200 to 460 FE/t, fission 2,000 to 20,000, breeder 20,000 to 100,000, fusion 100,000 to 1,000,000, the swarm above that.
 - Too hot with too little water, the core heats up; at 900°C an automatic SCRAM stops the reaction until it cools below 400°C.
-- Ports on the base: water in, fuel in and energy out on the front beside the core (the fuel port takes anything a channel is planned for: rods, graphite, control rods). Round the side, beside energy out, the output port (orange ring) pushes spent rods into whatever is beside it, and pipes can pull from it. Later waste leaves the same way. So one pipe feeds fresh rods and another carries spent ones away.
+- Ports on the base, on the two flat sides so the front (the core's screen) stays clear of pipes and cables. As you face the front, inputs are on your left: water in and fuel in (the fuel port takes anything a channel is planned for: rods, graphite, control rods). Outputs are on your right: energy out, and the output port (orange ring), which pushes spent rods into whatever is beside it and lets pipes pull from it. Later waste leaves the same way. Inputs and outputs on opposite sides keep the pipe feeding fresh rods apart from the one carrying spent ones away (the microreactor's fuel ports taught the same lesson).
 - Breaking the core drops its rods and blocks.
 
 ### Overdrive (safeties off)
@@ -478,7 +480,7 @@ A deuterium-tritium tokamak, built and fuelled from section 10. Draft, 25 Sep 20
 
 ## 11b. Water, steam and pipes (tier 1)
 
-- **Intake pump:** a one-block machine that sits one block above the water and draws from the water source block directly below it, without ever draining it. 100 mB/t for 10 FE/t (config), energy in at the back, water out of the blue port on top. The microreactor runs dry without water, so its own dry power can start the pump that cools it. Real basis: an intake pump on a lake or river.
+- **Intake pump:** a one-block machine that sits one block above the water and draws from the water source block directly below it, without ever draining it. 100 mB/t for 10 FE/t (config), energy in on any side, and it pushes water out of the blue port on top (pipes can also draw it from any side). The microreactor runs dry without water, so its own dry power can start the pump that cools it. Real basis: an intake pump on a lake or river.
 - **Steam:** a gas, stored as a fluid that is lighter than air, tagged `c:steam` and `c:gaseous` so other mods' steam users and tanks take it. No bucket, never placed in the world.
 - **Pipes:** four kinds share one base (auto-connect, wrench to extract or disconnect, a stats panel): energy cables, item pipes, fluid pipes (liquids only, 250 mB/t) and gas pipes (gases only, 1,000 mB/t). Liquids and gases never share a pipe, as in real plants. Band colours match the ports: red energy, orange items, blue liquids, white gases.
 - **Fittings (upgrade, don't replace):** one rule for everything entering a network: whatever comes in on a side is limited by that side's fitting, whether it is pulled by an extract side, pushed in by a generator, or drawn from a battery; the source's own rate limits it too. So a full home battery (3,000 FE/t) discharges at 1,000 FE/t on a plain cable and at its own rate once fitted. A cable's panel (empty hand on any cable joined to a machine) lists each machine side above the player's inventory; sides that feed the network get a fitting slot, and sides that only take from it say "receives only", since a fitting there would do nothing. One fitting per side; each tier is crafted from the one before, so a better fitting replaces a worse one, and the same three serve every kind of cable and pipe:
@@ -497,8 +499,8 @@ Goal: batteries that look and grow like real ones, instead of one block recolour
 
 Simple rule: each module adds both capacity and charge/discharge rate. The chemistry decides how much. No separate inverter block.
 
-### Tier 1: Home battery stack
-- A 2-block-tall cabinet, like a stackable home battery.
+### Tier 1: Modular Battery Rack
+- A 2-block-tall cabinet of battery modules, like a stackable home battery (internal ID `home_battery`).
 - Right-click a battery module into it and one more segment appears on the model, up to 6.
 - Shift right-click removes the top module, so modules can be moved or swapped.
 - Chemistries, swapped into the same stack:

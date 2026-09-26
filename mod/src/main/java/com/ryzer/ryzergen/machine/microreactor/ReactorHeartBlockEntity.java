@@ -224,7 +224,8 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
     };
 
     private final ItemStackHandler fuel = createFuelSlot(this::setChanged);
-    private final IItemHandler fuelPort = new IItemHandler() {
+    /** What pipes see at the fuel inlet: fresh cores go in when the slot is free; nothing comes out. */
+    private final IItemHandler fuelInput = new IItemHandler() {
         @Override
         public int getSlots() {
             return 1;
@@ -242,7 +243,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
 
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            return fuel.getStackInSlot(slot).is(ModItems.DEPLETED_FUEL_CORE.get()) ? fuel.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
+            return ItemStack.EMPTY;
         }
 
         @Override
@@ -253,6 +254,43 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             return stack.is(ModTags.MICROREACTOR_FUEL);
+        }
+    };
+
+    /**
+     * What pipes see at the spent-core outlet: only a spent core, and only coming out, so automation
+     * never pulls a core with fuel left in it, and nothing can be put in.
+     */
+    private final IItemHandler fuelOutput = new IItemHandler() {
+        @Override
+        public int getSlots() {
+            return 1;
+        }
+
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            ItemStack core = fuel.getStackInSlot(slot);
+            return core.is(ModItems.DEPLETED_FUEL_CORE.get()) ? core : ItemStack.EMPTY;
+        }
+
+        @Override
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            return stack;
+        }
+
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            return fuel.getStackInSlot(slot).is(ModItems.DEPLETED_FUEL_CORE.get()) ? fuel.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return 1;
+        }
+
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            return false;
         }
     };
 
@@ -392,12 +430,14 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         return safeties;
     }
 
-    /**
-     * What the fuel hatch and chute offer: fresh cores go in when the slot is free, and only a spent
-     * core comes out, so automation never pulls a core that still has fuel in it.
-     */
-    public IItemHandler fuelPort() {
-        return fuelPort;
+    /** The fuel inlet (on your left as you face the front): fresh cores in. */
+    public IItemHandler fuelInput() {
+        return fuelInput;
+    }
+
+    /** The spent-core outlet (on your right as you face the front): spent cores out. */
+    public IItemHandler fuelOutput() {
+        return fuelOutput;
     }
 
     public void toggleSafeties() {
@@ -621,17 +661,17 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
     }
 
     /**
-     * Pushes a spent core up out of the fuel hatch into whatever sits on it (an item pipe, a hopper),
-     * the same way the energy port pushes power. One pipe on the hatch then both brings fresh cores
-     * and takes spent ones away, with no extract side on the reactor.
+     * Pushes a spent core out of the spent-core outlet into whatever is beside it (an item pipe, a
+     * hopper, a chest), the same way the energy port pushes power, so the pipe there needs no
+     * extract side.
      */
     private void ejectSpentCore(Level level, BlockPos origin, Direction facing) {
         ItemStack core = fuel.getStackInSlot(0);
         if (!core.is(ModItems.DEPLETED_FUEL_CORE.get())) {
             return;
         }
-        Direction face = MicroreactorPort.FUEL.face(facing);
-        BlockPos target = MicroreactorPort.FUEL.blockPos(origin, facing).relative(face);
+        Direction face = MicroreactorPort.FUEL_OUT.face(facing);
+        BlockPos target = MicroreactorPort.FUEL_OUT.blockPos(origin, facing).relative(face);
         IItemHandler receiver = level.getCapability(Capabilities.ItemHandler.BLOCK, target, face.getOpposite());
         if (receiver != null) {
             fuel.setStackInSlot(0, ItemHandlerHelper.insertItemStacked(receiver, core.copy(), false));

@@ -11,6 +11,10 @@ plates in half. These are drawn for the shapes they go on instead. Called by the
 - station/rib: an upright rib (8 pixels across, along the texture's height): a lit edge, a recessed
   channel, a joint line every block.
 - station/plinth: the station's 10-pixel plinth band: a lit lip, a groove, a panel joint per step.
+- station/front_panel: the station's front panel, 32 x 16, drawn once across its two blocks (rows
+  1 to 15 show on the 15-pixel face): a graphite plate with a lit bevel, a cyan light line, status
+  lamps, a bezel round the screen (the screen itself is a separate glowing box), vents, and a
+  hazard band along the foot.
 - fusion/plasma_wisp: the plasma's glow shells, animated: soft filaments flowing round the ring,
   white on black (drawn additively and tinted in code, see FusionPlasma).
 - fusion/arc: a soft white streak for the lightning arcs (tinted in code), clear at the edges.
@@ -79,6 +83,46 @@ def plinth():
             row.append(solid(k))
         tex.append(row)
     return tex
+
+
+def front_panel():
+    W, H = 32, 16
+    k = [['T'] * W for _ in range(H)]
+    for x in range(W):
+        k[1][x] = 'b'                        # lit top bevel
+        k[2][x] = 'S'
+        k[3][x] = 'U'                        # groove holding the light line
+        k[4][x] = 'S'
+        k[15][x] = 'U'                       # shadowed foot
+    for y in range(1, 16):
+        k[y][0] = 'b' if y < 13 else k[y][0]  # lit left edge
+        k[y][W - 1] = 'U'                     # shadowed right edge
+    for x in range(2, W - 2):
+        k[3][x] = 'i'                        # cyan light line, inset from the ends
+    # Bezel round the screen (the screen box covers x 11 to 20, rows 5 to 10 of the face).
+    for y in range(5, 12):
+        for x in range(9, 23):
+            k[y][x] = 'u' if (y in (5, 11) or x in (9, 22)) else 'z'
+    for x in range(9, 23):
+        k[5][x] = 's'                        # lit top of the bezel
+    # Status lamps on the left: green, amber, red, on a dark strip.
+    for y in range(6, 11):
+        for x in range(3, 7):
+            k[y][x] = 'U'
+    for (y, c) in ((7, 'n'), (8, 'a'), (9, 'x')):
+        k[y][4] = c
+        k[y][5] = c
+    # Vents on the right: three slots.
+    for y in (6, 8, 10):
+        for x in range(25, 29):
+            k[y][x] = 'U'
+        for x in range(25, 29):
+            k[y + 1][x] = 'b' if y < 10 else k[y + 1][x]
+    # Hazard band along the foot: yellow on graphite, 45 degrees.
+    for y in (12, 13, 14):
+        for x in range(1, W - 1):
+            k[y][x] = 'Y' if (x + y) % 6 < 3 else 'B'
+    return [[solid(c) for c in row] for row in k]
 
 
 FRAMES = 16
@@ -203,6 +247,7 @@ def publish_all():
     write_texture('block/machine/console_top', console_top())
     write_texture('block/station/rib', rib())
     write_texture('block/station/plinth', plinth())
+    write_texture('block/station/front_panel', front_panel())
     write_texture('block/fusion/plasma_wisp', plasma_wisp())
     write_texture('block/fusion/arc', arc())
     write_texture('block/sun/photosphere', photosphere())

@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.electricsmelter;
 
+import com.ryzer.ryzergen.machine.MachineItemPort;
 import com.ryzer.ryzergen.machine.MachineEnergyStorage;
 import com.ryzer.ryzergen.recipe.AlloyingRecipe;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
@@ -25,13 +26,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * The powered alloy smelter: the same alloying recipes, twice as fast, on FE instead of furnace fuel.
  * The fuel-burning smelter stays the way in; this is what microreactor power buys (design rule 7).
- * Pipes: inputs from the top and sides, output from the bottom, energy on any side.
+ * Pipes connect on any side: inputs in and the output out, energy in.
  */
 public class ElectricAlloySmelterBlockEntity extends BlockEntity implements MenuProvider {
     public static final int INPUT_A = 0;
@@ -52,8 +52,8 @@ public class ElectricAlloySmelterBlockEntity extends BlockEntity implements Menu
     public static final int DATA_COUNT = 4;
 
     private final ItemStackHandler items = createItems(this::setChanged);
-    private final IItemHandler inputs = new RangedWrapper(items, INPUT_A, INPUT_B + 1);
-    private final IItemHandler output = new RangedWrapper(items, OUTPUT, OUTPUT + 1);
+    private final IItemHandler inputs = MachineItemPort.of(items, INPUT_A, INPUT_B + 1, OUTPUT, OUTPUT + 1);
+    private final IItemHandler output = inputs;
     private final MachineEnergyStorage energy = new MachineEnergyStorage(ENERGY_CAPACITY, MAX_INPUT, this::setChanged);
 
     private int progress;

@@ -20,15 +20,16 @@ One pass through everything the 0.1.0 alpha ships, before it goes public. Tick t
 - [ ] Breaking any block takes it apart and gives the parts back
 - [ ] Runs dry at about 200 FE/t. With water from an intake pump it runs better and steam comes out
 - [ ] The control unit GUI: every value makes sense, power and redstone buttons work
-- [ ] Fuel hatch: fresh cores go in by pipe, spent cores come back out
+- [ ] Fuel ports: fresh cores go in by pipe on your left as you face the front, spent cores come out on your right into a separate pipe line, and a chest of fresh cores never leaks into the spent store
 - [ ] Overdrive: safeties off, cut the water, the alarm sounds, and it melts down (then again with `meltdowns = false`: it should re-arm instead)
 
 ## 3. Power network
 - [ ] Energy cables auto-connect; the wrench sets extract and disconnect; the cable panel shows sensible numbers
-- [ ] Home battery: add modules, it fills from surplus and covers shortfalls. Fill it for the advancement
+- [ ] Modular Battery Rack: add modules, it fills from surplus and covers shortfalls. Fill it for the advancement
 - [ ] Item, fluid and gas pipes move what they should, at the rates their panels say
 - [ ] Pressure tank and fluid tank towers form at any height up to 16 and show their contents
 - [ ] Fittings (silver, busbar, cryogenic) slot in and raise the limit
+- [ ] Auto crafter: a vanilla Crafter fed by item pipes crafts our recipes (fuel cores, steel parts, microreactor and station parts), and item pipes pull its results into chests and machines. Note any recipe that fights it (shapes, stack sizes, items pipes refuse)
 
 ## 4. Fuel cycle
 - [ ] Deplete a fuel core, crack it, reprocess it, get uranium, plutonium nuggets and waste
@@ -41,7 +42,7 @@ One pass through everything the 0.1.0 alpha ships, before it goes public. Tick t
 - [ ] Craft the parts; the ghost outline shows the shape
 - [ ] Feed the core its parts (by hand and by pipe) and it builds itself
 - [ ] Plan a core in the grid. The rating and tooltips help you improve it
-- [ ] Water, fuel and power ports work; spent rods leave by the output port
+- [ ] Ports on the sides: water and fuel in on your left as you face the front, energy and spent rods out on your right
 - [ ] The turbine spins and hums, steam rises from the stack
 - [ ] SCRAM at 900°C. Overdrive: flux tilt countdown, then a meltdown and crater (and with meltdowns off)
 - [ ] A full MOX core makes about double the power
@@ -66,6 +67,7 @@ One pass through everything the 0.1.0 alpha ships, before it goes public. Tick t
 ## 9. Inside ATM10
 - [ ] Add the jar to an ATM10 instance. It loads, recipes show in JEI, and other mods' ores work in our recipes (common tags)
 - [ ] Nothing clashes with ores or items from Mekanism and friends
+- [ ] AE2 or Refined Storage autocrafting: patterns for our crafting recipes work, and our processing machines work as pattern providers' targets (items in the top and sides, results out of the bottom)
 
 ## Notes
 Write anything odd here, with what you were doing when it happened.
