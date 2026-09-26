@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.machine.fission;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A fission station part: casing, glass or the turbine rotor (the control core extends this). Once
@@ -53,22 +55,38 @@ public class StationPartBlock extends Block {
     }
 
     /**
-     * Right-click the core, or any part of a formed station, for the core's panel: its parts store
-     * while building (design section 8), its controls once formed.
+     * Right-click the station's front panel for the core's screen: its parts store while building
+     * (design section 8), its controls once formed. The panel is two blocks wide, the core and the
+     * block beside it (design cells 5 and 6 on the front row); the rest of the station is only
+     * structure.
      */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        boolean core = this instanceof StationCoreBlock;
-        if (!core && !state.getValue(FORMED)) {
+        BlockPos corePos = this instanceof StationCoreBlock ? pos : state.getValue(FORMED) ? panelCore(level, pos) : null;
+        if (corePos == null) {
             return InteractionResult.PASS;
         }
-        if (level instanceof ServerLevel server) {
-            BlockPos corePos = core ? pos : StationStructure.coreOf(server, pos);
-            if (corePos != null && level.getBlockEntity(corePos) instanceof StationCoreBlockEntity entity) {
-                player.openMenu(entity);
-            }
+        if (!level.isClientSide && level.getBlockEntity(corePos) instanceof StationCoreBlockEntity entity) {
+            player.openMenu(entity);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    /**
+     * The core, if {@code pos} is the panel's other half: the block beside a formed core, on its
+     * clockwise side (design cell 6, next to the core in cell 5). Works on both sides, so the
+     * client only swings for a click that opens the screen.
+     */
+    private static @Nullable BlockPos panelCore(Level level, BlockPos pos) {
+        for (Direction dir : Direction.Plane.HORIZONTAL) {
+            BlockPos candidate = pos.relative(dir);
+            BlockState core = level.getBlockState(candidate);
+            if (core.getBlock() instanceof StationCoreBlock && core.getValue(FORMED)
+                    && candidate.relative(core.getValue(StationCoreBlock.FACING).getClockWise()).equals(pos)) {
+                return candidate;
+            }
+        }
+        return null;
     }
 
     @Override

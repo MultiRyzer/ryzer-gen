@@ -89,6 +89,17 @@ public class ProcessingMenu extends AbstractContainerMenu {
         return total == 0 ? 0 : Mth.clamp(data.get(DATA_PROGRESS) / (float) total, 0, 1);
     }
 
+    /** Ticks until the current operation finishes at the current speed, or 0 if none is under way. */
+    public int ticksLeft() {
+        int total = data.get(DATA_TOTAL);
+        int left = total - data.get(DATA_PROGRESS);
+        if (total == 0 || left <= 0) {
+            return 0;
+        }
+        int speed = speed(modules());
+        return (left + speed - 1) / speed;
+    }
+
     public int energy() {
         return (data.get(DATA_ENERGY_HIGH) & 0xFFFF) << 16 | (data.get(DATA_ENERGY_LOW) & 0xFFFF);
     }

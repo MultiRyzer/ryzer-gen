@@ -51,7 +51,8 @@ public class MachineJeiCategory implements IRecipeCategory<RecipeHolder<MachineR
 
     @Override
     public int getWidth() {
-        return OUTPUTS_X + 18;
+        // Room for the large output frame, which reaches 4 px past its slot.
+        return OUTPUTS_X + 24;
     }
 
     @Override
@@ -69,16 +70,20 @@ public class MachineJeiCategory implements IRecipeCategory<RecipeHolder<MachineR
                 .addIngredients(NeoForgeTypes.FLUID_STACK, List.of(fluid.getFluids())));
         int results = recipe.results().size();
         for (int i = 0; i < results; i++) {
-            builder.addOutputSlot(OUTPUTS_X + 1, 19 - 9 * (results - 1) + 18 * i).setOutputSlotBackground()
-                    .addItemStack(recipe.results().get(i));
+            var slot = builder.addOutputSlot(OUTPUTS_X + 1, 19 - 9 * (results - 1) + 18 * i);
+            // The large output frame is 26 px: fine for one result, but stacked they overlap and spill
+            // past the page, so a column of results gets plain slot frames.
+            (results == 1 ? slot.setOutputSlotBackground() : slot.setStandardSlotBackground()).addItemStack(recipe.results().get(i));
         }
     }
 
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, RecipeHolder<MachineRecipe> holder, IFocusGroup focuses) {
-        int time = holder.value().time();
+        int time = machine.time(holder.value().time());
         builder.addAnimatedRecipeArrowWidget(time).setPosition(74, 19);
-        builder.addText(Component.translatable("jei.ryzergen.machine.time", time / 20F, machine.energyPerTick()), 0, 56)
+        // addText takes the text's size; setPosition places it.
+        builder.addText(Component.translatable("jei.ryzergen.machine.time", time / 20F, machine.energyPerTick()), getWidth(), 10)
+                .setPosition(0, 56)
                 .setColor(0xFF808080);
     }
 }

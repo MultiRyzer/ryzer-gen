@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen;
 
+import com.ryzer.ryzergen.machine.processing.ProcessingMachine;
 import com.ryzer.ryzergen.material.OreType;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
@@ -34,8 +35,8 @@ public final class Config {
                 .comment("FE per tick running dry at operating temperature. Water adds about 28%, overdrive about 85%.")
                 .defineInRange("output", 200, 1, 1_000_000);
         MICROREACTOR_FUEL_LIFE = BUILDER
-                .comment("How long one sealed fuel core burns, in ticks (72000 is one hour of running).")
-                .defineInRange("fuel_life", 72_000, 20, Integer.MAX_VALUE);
+                .comment("How long one sealed fuel core burns, in ticks (48000 is 40 minutes of running).")
+                .defineInRange("fuel_life", 48_000, 20, Integer.MAX_VALUE);
         MICROREACTOR_COOLANT_USE = BUILDER
                 .comment("Water boiled off per tick while running with coolant, in mB.")
                 .defineInRange("coolant_use", 1, 0, 1000);
@@ -107,7 +108,7 @@ public final class Config {
                 .defineInRange("fluid_tank_capacity", 16_000, 1, 100_000_000);
         BUILDER.pop();
 
-        BUILDER.comment("Home battery. Each module adds capacity and charge rate; a cabinet holds up to 6.").push("battery");
+        BUILDER.comment("Modular battery rack. Each module adds capacity and charge rate; a cabinet holds up to 6.").push("battery");
         LEAD_ACID_CAPACITY = BUILDER
                 .comment("FE one lead-acid module holds.")
                 .defineInRange("lead_acid_capacity", 200_000, 1, 100_000_000);
@@ -148,6 +149,26 @@ public final class Config {
         BUILDER.pop();
     }
 
+    private static final Map<ProcessingMachine, ModConfigSpec.IntValue> MACHINE_DRAW = new EnumMap<>(ProcessingMachine.class);
+    private static final Map<ProcessingMachine, ModConfigSpec.IntValue> MACHINE_TIME = new EnumMap<>(ProcessingMachine.class);
+
+    static {
+        BUILDER.comment("Processing machines. The energy one operation costs is its draw times its time, so raising either",
+                "makes it dearer. Machines marked as gated need their full draw every tick (design section 5).").push("machines");
+        for (ProcessingMachine machine : ProcessingMachine.values()) {
+            BUILDER.push(machine.id());
+            MACHINE_DRAW.put(machine, BUILDER
+                    .comment("Percent of the normal FE per tick drawn while working (" + machine.baseEnergyPerTick() + " FE/t"
+                            + (machine.gated() ? ", which is also its minimum draw)." : ")."))
+                    .defineInRange("draw_percent", 100, 1, 100_000));
+            MACHINE_TIME.put(machine, BUILDER
+                    .comment("Percent of each recipe's normal time.")
+                    .defineInRange("time_percent", 100, 1, 100_000));
+            BUILDER.pop();
+        }
+        BUILDER.pop();
+    }
+
     public static final ModConfigSpec.BooleanValue PREVIEW_CONTENT;
 
     static {
@@ -165,6 +186,16 @@ public final class Config {
     /** A config value, or its default before the config has loaded (tooltips can ask very early). */
     public static int get(ModConfigSpec.IntValue value) {
         return SPEC.isLoaded() ? value.get() : value.getDefault();
+    }
+
+    /** A processing machine's draw, as a percent of normal. */
+    public static int drawPercent(ProcessingMachine machine) {
+        return get(MACHINE_DRAW.get(machine));
+    }
+
+    /** A processing machine's recipe times, as a percent of normal. */
+    public static int timePercent(ProcessingMachine machine) {
+        return get(MACHINE_TIME.get(machine));
     }
 
     /** Unknown ore IDs (for example from a datapack typo) stay enabled rather than silently vanishing. */

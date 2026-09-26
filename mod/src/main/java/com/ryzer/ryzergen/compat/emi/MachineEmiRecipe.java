@@ -25,7 +25,7 @@ public class MachineEmiRecipe extends BasicEmiRecipe {
     public MachineEmiRecipe(EmiRecipeCategory category, ResourceLocation id, MachineRecipe recipe) {
         super(category, id, OUTPUTS_X + 18, 66);
         machine = ProcessingMachine.forProcess(recipe.process());
-        time = recipe.time();
+        time = machine.time(recipe.time());
         recipe.inputs().forEach(input -> inputs.add(EmiIngredient.of(input.ingredient(), input.count())));
         recipe.fluid().ifPresent(fluid -> inputs.add(EmiIngredient.of(Arrays.stream(fluid.getFluids())
                 .map(stack -> EmiStack.of(stack.getFluid(), stack.getAmount())).toList())));

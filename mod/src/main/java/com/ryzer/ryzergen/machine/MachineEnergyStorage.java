@@ -33,6 +33,24 @@ public class MachineEnergyStorage extends EnergyStorage {
         return received;
     }
 
+    /** Changes the buffer's size and intake (a gated machine's follow its draw); any excess is lost. */
+    public void setLimits(int capacity, int maxReceive) {
+        this.capacity = capacity;
+        this.maxReceive = maxReceive;
+        if (energy > capacity) {
+            energy = capacity;
+            onChanged.run();
+        }
+    }
+
+    /** Spends everything held (a gated machine short of its draw). */
+    public void drain() {
+        if (energy > 0) {
+            energy = 0;
+            onChanged.run();
+        }
+    }
+
     public void setStored(int amount) {
         energy = Math.max(0, Math.min(capacity, amount));
     }

@@ -157,13 +157,14 @@ public class ModBlockStateProvider extends BlockStateProvider {
     /**
      * Electric alloy smelter: a graphite machine inside a light steel frame, with depth in the
      * Mekanism spirit. Trim base and cap, steel corner pillars, the body set back a pixel between
-     * them, a raised window onto the heating coil (glowing when working), vents on the sides and
-     * the energy port on the back. Built facing north and turned into place.
+     * them, a raised window onto the heating coil (glowing when working), vents on the sides.
+     * No ports drawn: like every single-block machine, it takes pipes and cables on any side. Built
+     * facing north and turned into place.
      */
     /**
      * Home battery: a two-high cabinet drawn as one 16 x 32 design and cut per block. A trim plinth
-     * and cap, a light casing body, graphite posts framing a recessed bay column, the energy port on
-     * the back. Each module is its own small model, added by the multipart when its bay is filled;
+     * and cap, a light casing body, graphite posts framing a recessed bay column (cables connect on
+     * any side, so no port is drawn). Each module is its own small model, added by the multipart when its bay is filled;
      * bays are 4 pixels apart, three per block, so none crosses the join.
      */
     private void homeBattery() {
@@ -176,12 +177,10 @@ public class ModBlockStateProvider extends BlockStateProvider {
         cabinet.add("body", 3, 3, 2.5F, 13, 29, 3);
         cabinet.add("trim", 1, 30, 1, 15, 32, 15);
         cabinet.add("glow_off", 3, 30.5F, 0.9F, 13, 31, 1);
-        cabinet.add("trim", 4, 5, 14, 12, 13, 15);
-        cabinet.add("trim", 3, 4, 15, 13, 14, 16).decal(Direction.SOUTH, "port_energy");
         Function<String, ResourceLocation> textures = texture -> switch (texture) {
             case "frame" -> modLoc("block/microreactor/steel");
             case "trim" -> modLoc("block/microreactor/steel_dark");
-            case "port_energy", "glow", "glow_off" -> modLoc("block/microreactor/" + texture);
+            case "glow", "glow_off" -> modLoc("block/microreactor/" + texture);
             default -> modLoc("block/machine/" + texture);
         };
         ModelFile[] halves = new ModelFile[2];
@@ -272,12 +271,11 @@ public class ModBlockStateProvider extends BlockStateProvider {
         boxes.add("frame", 4, 2.5F, 0.5F, 12, 3.5F, 1).decal(Direction.NORTH, active ? "lamp_on" : "lamp_off");
         boxes.add("frame", 15, 5, 4, 15.5F, 11, 12).decal(Direction.EAST, "grille");
         boxes.add("frame", 0.5F, 5, 4, 1, 11, 12).decal(Direction.WEST, "grille");
-        boxes.add("trim", 3, 3, 15, 13, 13, 16).decal(Direction.SOUTH, "port_energy");
         BlockModelBuilder model = models().getBuilder(name).parent(models().getExistingFile(mcLoc("block/block")));
         boxes.build(model, "frame", texture -> switch (texture) {
             case "frame" -> modLoc("block/microreactor/steel");
             case "trim" -> modLoc("block/microreactor/steel_dark");
-            case "grille", "port_energy" -> modLoc("block/microreactor/" + texture);
+            case "grille" -> modLoc("block/microreactor/" + texture);
             default -> modLoc("block/machine/" + texture);
         });
         return model;
@@ -294,7 +292,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
     /**
      * Intake pump, facing north: a hazard-striped skid, a strainer with intake grilles low down (where
      * the water comes in), the pump casing at the front with a light strip, the gunmetal motor behind
-     * it, the energy port on the back and the blue water port on top.
+     * it, and a copper riser on top with a cap (it pushes water out of the top; pipes and cables
+     * connect on any side, so no ports are drawn).
      */
     private ModelFile intakePumpModel(String name, boolean running) {
         BoxModel boxes = new BoxModel();
@@ -310,11 +309,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
         // Motor behind it: a gunmetal drum, two overlapping boxes for a rounded look.
         boxes.add("lead", 4, 8, 8, 12, 14, 15);
         boxes.add("lead", 3, 9, 8, 13, 13, 15);
-        // Energy port on the back.
-        boxes.add("steel_dark", 3, 3, 15, 13, 13, 16).decal(Direction.SOUTH, "port_energy");
-        // Water out: a copper riser to the blue port on top.
+        // Water out: a copper riser with a graphite cap on top.
         boxes.add("copper", 5, 14, 5, 11, 15, 11);
-        boxes.add("steel_dark", 3, 15, 3, 13, 16, 13).decal(Direction.UP, "port_coolant");
+        boxes.add("steel_dark", 4.5F, 15, 4.5F, 11.5F, 16, 11.5F);
         BlockModelBuilder model = models().getBuilder(name).parent(models().getExistingFile(mcLoc("block/block")));
         boxes.build(model, "steel", texture -> modLoc("block/microreactor/" + texture));
         return model;
@@ -450,8 +447,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     /**
      * Core Cracker, facing north: a hazard-striped skid, a light casing with a jaw crusher's
-     * flywheels on either side, a grilled access door on the front with a light strip over it, the
-     * feed hopper with its item port on top, and the energy port on the back.
+     * flywheels on either side, a grilled access door on the front with a light strip over it, and the
+     * feed hopper on top. No ports drawn: pipes and cables connect on any side.
      */
     private ModelFile coreCrackerModel(String name, boolean active) {
         BoxModel boxes = new BoxModel();
@@ -468,10 +465,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
         boxes.add("steel_dark", 3, 3, 0.5F, 13, 11, 1).decal(Direction.NORTH, "grille");
         boxes.add("accent", 11.5F, 6, 0, 12.5F, 8, 0.5F);
         lampStrip(boxes, active, 2, 12, 0.75F, 14, 12.5F, 1);
-        // Feed hopper and item port on top.
+        // Feed hopper on top.
         boxes.add("steel", 2.5F, 14, 2.5F, 13.5F, 15, 13.5F);
-        boxes.add("steel_dark", 3, 15, 3, 13, 16, 13).decal(Direction.UP, "port_fuel");
-        boxes.add("steel_dark", 3, 3, 15, 13, 13, 16).decal(Direction.SOUTH, "port_energy");
         BlockModelBuilder model = boxModel(name);
         boxes.build(model, "steel", this::machineTexture);
         return model;
@@ -486,10 +481,11 @@ public class ModBlockStateProvider extends BlockStateProvider {
     }
 
     /**
-     * Reprocessor, two high, facing north: a light dissolver tank on a hazard-striped skid, with
-     * the water port (blue) on its east side and the energy port on the back; above it a gunmetal
+     * Reprocessor, two high, facing north: a light dissolver tank on a hazard-striped skid, and
+     * above it a gunmetal
      * lead-lined column with a sight glass that glows while it works, a copper line running up
-     * from the tank, and the item port on the cap. Drawn as one 32-high design and cut per block.
+     * from the tank, and a cap. No ports drawn: pipes and cables connect on any side. Drawn as one
+     * 32-high design and cut per block.
      */
     private BoxModel reprocessorBoxes(boolean active) {
         BoxModel boxes = new BoxModel();
@@ -497,8 +493,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
         boxes.add("steel", 1, 2, 1, 15, 14, 15);
         boxes.add("steel_dark", 3, 4, 0.5F, 13, 10, 1).decal(Direction.NORTH, "grille");
         lampStrip(boxes, active, 2, 11.5F, 0.75F, 14, 12, 1);
-        boxes.add("steel_dark", 15, 3, 3, 16, 13, 13).decal(Direction.EAST, "port_coolant");
-        boxes.add("steel_dark", 3, 3, 15, 13, 13, 16).decal(Direction.SOUTH, "port_energy");
         boxes.add("steel_dark", 0.5F, 14, 0.5F, 15.5F, 15.5F, 15.5F);
         // The column: gunmetal lead lining, rounded with two overlapping boxes, and trim bands.
         boxes.add("lead", 3, 15.5F, 2, 13, 29, 14);
@@ -510,9 +504,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
         // Copper line from the tank up the back corner into the column. It stands clear of the trim
         // band (which reaches 14.5), so no face of it lies on one of the band's and flickers.
         boxes.add("copper", 13, 15.5F, 13, 15, 26, 15);
-        // Cap with the item port.
+        // Cap.
         boxes.add("steel_dark", 1.5F, 29, 1.5F, 14.5F, 31, 14.5F);
-        boxes.add("steel_dark", 3, 31, 3, 13, 32, 13).decal(Direction.UP, "port_fuel");
         return boxes;
     }
 
@@ -544,7 +537,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
     /**
      * Fuel Fabricator, facing north: a hazard-striped skid, a light lower cabinet with a grille and a
      * light strip, a graphite worktop, and an open press bay above it (corner posts, a gunmetal ram,
-     * a copper rod lying on the tray) under a housing with the item port on top. Energy on the back.
+     * a copper rod lying on the tray) under a housing. No ports drawn: pipes and cables connect on any side.
      */
     private ModelFile fuelFabricatorModel(String name, boolean active) {
         BoxModel boxes = new BoxModel();
@@ -564,8 +557,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
         boxes.add("copper", 4.5F, 11.5F, 7.5F, 12, 12, 8.5F);
         boxes.add("accent", 4, 11.5F, 7.5F, 4.5F, 12, 8.5F);
         boxes.add("steel", 1, 14, 1, 15, 15, 15);
-        boxes.add("steel_dark", 3, 15, 3, 13, 16, 13).decal(Direction.UP, "port_fuel");
-        boxes.add("steel_dark", 3, 3, 15, 13, 13, 16).decal(Direction.SOUTH, "port_energy");
         BlockModelBuilder model = boxModel(name);
         boxes.build(model, "steel", this::machineTexture);
         return model;
@@ -574,16 +565,13 @@ public class ModBlockStateProvider extends BlockStateProvider {
     /**
      * Lithium Extractor, facing north: a hazard-striped skid, a light cabinet with a grille and a
      * light strip, and a glass brine column on top with a sorbent bed that glows while it works,
-     * copper lines down its sides; the water port (blue) on the east, the item port on top, energy
-     * on the back.
+     * copper lines down its sides. No ports drawn: pipes and cables connect on any side.
      */
     private ModelFile lithiumExtractorModel(String name, boolean active) {
         BoxModel boxes = new BoxModel();
         boxes.add("steel_dark", 0, 0, 0, 16, 2, 16).sides("hazard");
         boxes.add("steel", 1, 2, 1, 15, 8, 15);
         boxes.add("steel_dark", 3, 3, 0.5F, 13, 7, 1).decal(Direction.NORTH, "grille");
-        boxes.add("steel_dark", 15, 3, 3, 16, 13, 13).decal(Direction.EAST, "port_coolant");
-        boxes.add("steel_dark", 3, 3, 15, 13, 13, 16).decal(Direction.SOUTH, "port_energy");
         boxes.add("steel_dark", 0.5F, 8, 0.5F, 15.5F, 9, 15.5F);
         // The column: a graphite frame with a sight glass on each side, the sorbent bed inside.
         boxes.add("steel_dark", 3, 9, 3, 13, 10, 13);
@@ -595,7 +583,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
         }
         lampStrip(boxes, active, 5, 10, 5, 11, 14, 11);
         boxes.add("copper", 1.5F, 9, 7, 2.5F, 13, 9);
-        boxes.add("steel_dark", 3, 15, 3, 13, 16, 13).decal(Direction.UP, "port_fuel");
         BlockModelBuilder model = boxModel(name);
         boxes.build(model, "steel", this::machineTexture);
         return model;
@@ -619,7 +606,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     /**
      * Waste Cask: a light steel drum, rounded with overlapping boxes, with graphite rings (the
-     * middle one hazard striped), a lid with the item port on top, and a four-segment gauge down
+     * middle one hazard striped), a lid on top, and a four-segment gauge down
      * its face that lights a segment per quarter full.
      */
     private ModelFile wasteCaskModel(String name, int fill) {
@@ -631,7 +618,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
         boxes.add("steel_dark", 1, 7, 1, 15, 9, 15).sides("hazard");
         boxes.add("steel_dark", 1, 13.5F, 1, 15, 15, 15);
         boxes.add("steel", 2.5F, 15, 2.5F, 13.5F, 15.5F, 13.5F);
-        boxes.add("steel_dark", 3, 15.5F, 3, 13, 16, 13).decal(Direction.UP, "port_fuel");
         // The gauge: a graphite frame in front of the drum and rings, four segments bottom to top.
         boxes.add("steel_dark", 6.5F, 2.5F, 0.5F, 9.5F, 13, 1);
         for (int i = 0; i < WasteCaskBlock.FILL_STEPS; i++) {
