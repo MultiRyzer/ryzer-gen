@@ -59,6 +59,7 @@ public final class ClientSetup {
         event.registerBlockEntityRenderer(ModBlockEntities.PRESSURE_TANK.get(), PressureTankRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.STATION_CORE.get(), StationRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.FUSION_PREVIEW.get(), FusionPreviewRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.SUN_GATE_PREVIEW.get(), SunGateRenderer::new);
     }
 
     /** Optional mods' client hooks: the worn dosimeter ring's renderer, when Accessories is here. */
