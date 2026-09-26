@@ -1,14 +1,24 @@
 # Mod page (Modrinth and CurseForge)
 
-The text below is the project description. Paste it into both sites (both take Markdown). Summary line for the short description field:
+The text below is the project description. Paste it into both sites (both take Markdown; on CurseForge pick the Markdown editor first). Upload the gallery first, then replace each `IMAGE_URL` with that picture's address (open it in the gallery and copy the image link). Summary line for the short description field:
 
 > Nuclear power progression grounded in real physics: a portable microreactor, a real fuel cycle and a fission station you design channel by channel.
 
 ---
 
-# Ryzer Gen
+<center>
 
-**Power from understanding, not volume.** Most reactor mods answer "how do I get more power?" with "build it bigger". In Ryzer Gen a small, well-designed machine beats a big sloppy one. Every tier teaches a new idea, feeds the next one, and stays grounded in real science.
+![The fission power station at sunset](HERO_IMAGE_URL)
+
+[![Source on GitHub](https://img.shields.io/badge/source-GitHub-181717?style=for-the-badge&logo=github)](https://github.com/MultiRyzer/ryzer-gen)
+[![Issues](https://img.shields.io/github/issues/MultiRyzer/ryzer-gen?style=for-the-badge&label=issues)](https://github.com/MultiRyzer/ryzer-gen/issues)
+[![MIT licence](https://img.shields.io/badge/licence-MIT-2E7D32?style=for-the-badge)](https://github.com/MultiRyzer/ryzer-gen/blob/main/LICENSE)
+![NeoForge 1.21.1](https://img.shields.io/badge/NeoForge-1.21.1-D9731F?style=for-the-badge)
+![Alpha](https://img.shields.io/badge/status-alpha-C62828?style=for-the-badge)
+
+</center>
+
+**Power from understanding, not volume.** Most reactor mods answer "how do I get more power?" with "build it bigger". In Ryzer Gen a small, well-designed machine beats a big sloppy one. Start with a portable microreactor, recycle your spent fuel into MOX, and design a fission station channel by channel, with fusion and a Dyson swarm on the way.
 
 > **Alpha.** Tiers 1 to 3 are playable. Balance is a first pass and may change between versions. Back up your world before updating.
 
@@ -27,9 +37,14 @@ NeoForge 1.21.1 (21.1.249 or newer, so it runs in ATM10). Standalone: it ships e
 - Fission waste goes into a Waste Cask that keeps its contents when broken.
 - Speed Modules, and cable fittings (silver, busbar, cryogenic) to raise throughput.
 
+![A fuel cycle production line feeding the fission station](PRODUCTION_LINE_IMAGE_URL)
+
 ### Tier 3: the fission power station
 - A large round station with a glass chamber and a giant roof turbine. Feed the control core its parts and it builds itself.
 - The core is where the depth is: you plan every channel as fuel, moderator, control rod or coolant. Heat, fuel economy and output all come from the layout, and the planner rates your design against the best possible layouts.
+
+![The core planner rating a layout at 100%](CORE_PLANNER_IMAGE_URL)
+
 - MOX fuel makes double the power of uranium. SCRAM at 900°C, or turn the safeties off and risk a flux tilt and a meltdown that leaves a crater.
 
 ### Radiation
@@ -50,6 +65,8 @@ NeoForge 1.21.1 (21.1.249 or newer, so it runs in ATM10). Standalone: it ships e
 | 5 | Fusion: a deuterium-tritium tokamak built and fuelled by fission | Planned |
 | 6 | Dyson swarm: launch sails round a walkable sun in its own dimension, then beam the power home | Planned |
 
+![Coming later: the sun gate, with its Dyson swarm filling in](SUN_GATE_IMAGE_URL)
+
 Want an early look at the next tier? Set `preview.next_tier = true` in `ryzergen-common.toml`. It is unfinished and its products have no use yet.
 
 Full roadmap and issue tracker: https://github.com/MultiRyzer/ryzer-gen
@@ -61,6 +78,13 @@ Full roadmap and issue tracker: https://github.com/MultiRyzer/ryzer-gen
 - Every ore's worldgen has a config toggle, so you can turn off ores another mod already supplies.
 - Toggles for radiation, mob radiation, meltdowns, explosion power and crater size, plus output and capacity settings.
 - No required dependencies besides NeoForge. MIT licensed: include it in any pack.
+
+## FAQ
+- **Fabric or Forge?** No: NeoForge 1.21.1 only.
+- **Older versions?** No plans. The mod is built for 1.21.1, the version ATM10 runs on.
+- **Can I use it in my modpack?** Yes, any pack. It is MIT licensed.
+- **Is radiation dangerous to carry around?** No. Only running reactors and meltdown sites emit it, and it can be turned off.
+- **Found a bug?** Please open an issue on GitHub with your log and the steps to reproduce it.
 
 ## How it was made
 Ryzer Gen is designed by Ryzer. The code was written with help from Claude, an AI assistant. The textures are drawn in code by the mod's own scripts; material textures build on vanilla shapes. Sounds are credited below.
