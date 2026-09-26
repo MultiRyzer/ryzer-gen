@@ -19,3 +19,6 @@ desktop.ini
 # Python (art/tools)
 __pycache__/
 *.pyc
+
+# Original sound recordings (Pixabay): kept locally, never redistributed as-is. See art/sounds/CREDITS.md.
+art/sounds/source/
