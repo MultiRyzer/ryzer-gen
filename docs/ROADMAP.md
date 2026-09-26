@@ -112,6 +112,7 @@ The first public build: the microreactor, home battery, pipes and steam, the fue
 ## Milestone 4: Fission to fusion (design section 10)
 - [x] Lithium Extractor (salt and water to lithium)
 - [x] Lithium target rods (Fuel Fabricator) and a target channel in the station core: breeds tritium from neighbouring fuel, costs 20% of their heat, irradiated rods leave by the output port
+- [ ] Power is the price (design section 5): minimum draw and a few-tick buffer for key machines in `machine/processing`, energy cost and minimum draw scaled per machine in the common config, time left shown in the GUI
 - [ ] Waste Refinery: palladium from fission waste, the rest vitrified
 - [ ] Tritium extraction from irradiated target rods (palladium membranes)
 - [ ] Heavy Water Plant, and a heavy water moderator channel in the station
@@ -132,7 +133,8 @@ The first public build: the microreactor, home battery, pipes and steam, the fue
 - [ ] Sounds, advancements, JEI and EMI pages
 
 ## Milestone 6: Sun dimension prototype
-- [ ] Superflat glowing dimension and portal
+- [x] Sun gate concept design (`art/tools/sun_gate_concept.py`) and creative preview block: a mini sun over a platform, with the shade swarm as an orrery showing coverage
+- [ ] Superflat glowing dimension, entered through the sun gate
 - [ ] Protective gear and visor whiteout
 - [ ] Hand-launched anchor sails and swarm counter
 - [ ] Sky renderer showing swarm coverage

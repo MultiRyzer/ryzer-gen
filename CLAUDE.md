@@ -47,7 +47,7 @@ These come from `docs/DESIGN.md`. Check any new feature against them.
 4. **Every tier stays useful.** Earlier machines are stepping stones, not junk.
 5. **Pack friendly.** FE energy, data-driven recipes and worldgen, config toggles for balance and anything disruptive, good performance. Built to earn a place in packs like ATM10.
 6. **No compression recipes.** A higher tier never needs a stack of the tier below. It needs different materials made by a new process.
-7. **Power gating.** The machine that makes the next tier's key material runs on the current tier's power.
+7. **Power is the price.** The machines that make the next tier's key materials run on the current tier's power and take a lot of it: an energy cost per operation, plus a minimum draw that only the current tier can supply. Better power setups progress faster (DESIGN.md section 5). Applies from the fusion materials onwards.
 8. **Common tags everywhere.** Every ore and material uses `c:` tags (`c:ingots/uranium`, `c:dusts/lead`, ...) and every recipe asks for the tag, never our own item. Each ore's worldgen has a config toggle. The mod ships every ore it uses so it plays standalone.
 9. **Optional dependencies stay optional.** Curios, Mekanism, EMI/JEI integrations must never be required to load or play.
 10. **Radiation comes only from running reactors and meltdowns.** Ores, fuel, depleted cores and waste are safe to carry. Effects escalate slowly and never instantly kill outside a meltdown. On by default, config toggle to turn off.
