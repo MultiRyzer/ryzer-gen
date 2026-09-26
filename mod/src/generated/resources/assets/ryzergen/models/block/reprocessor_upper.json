@@ -215,45 +215,6 @@
         15,
         14.5
       ]
-    },
-    {
-      "faces": {
-        "down": {
-          "texture": "#steel_dark"
-        },
-        "east": {
-          "texture": "#steel_dark"
-        },
-        "north": {
-          "texture": "#steel_dark"
-        },
-        "south": {
-          "texture": "#steel_dark"
-        },
-        "up": {
-          "cullface": "up",
-          "texture": "#port_fuel",
-          "uv": [
-            0.0,
-            0.0,
-            10.0,
-            10.0
-          ]
-        },
-        "west": {
-          "texture": "#steel_dark"
-        }
-      },
-      "from": [
-        3,
-        15,
-        3
-      ],
-      "to": [
-        13,
-        16,
-        13
-      ]
     }
   ],
   "textures": {
@@ -261,7 +222,6 @@
     "glow_off": "ryzergen:block/microreactor/glow_off",
     "lead": "ryzergen:block/microreactor/lead",
     "particle": "ryzergen:block/microreactor/steel",
-    "port_fuel": "ryzergen:block/microreactor/port_fuel",
     "steel_dark": "ryzergen:block/microreactor/steel_dark"
   }
 }

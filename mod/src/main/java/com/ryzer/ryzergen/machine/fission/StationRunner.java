@@ -550,13 +550,14 @@ public class StationRunner {
         }
     }
 
-    /** Pushes power out of the energy port into whatever is in front of it. */
+    /** Pushes power out of the energy port into whatever is beside it. */
     private void pushEnergy(ServerLevel level, BlockPos core, Direction facing) {
         if (energy.getEnergyStored() <= 0) {
             return;
         }
         BlockPos port = StationLayout.portPos(core, facing, StationLayout.Port.ENERGY);
-        IEnergyStorage receiver = level.getCapability(Capabilities.EnergyStorage.BLOCK, port.relative(facing), facing.getOpposite());
+        Direction face = StationLayout.portFace(facing, StationLayout.Port.ENERGY);
+        IEnergyStorage receiver = level.getCapability(Capabilities.EnergyStorage.BLOCK, port.relative(face), face.getOpposite());
         if (receiver != null && receiver.canReceive()) {
             int sent = receiver.receiveEnergy(energy.getEnergyStored(), false);
             energy.extractEnergy(sent, false);

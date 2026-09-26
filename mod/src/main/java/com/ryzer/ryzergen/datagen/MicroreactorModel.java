@@ -103,9 +103,9 @@ final class MicroreactorModel {
         boxes.add(lightStrip(1.9F, 22.25F, 16.4F, 14.1F, 22.75F, 30.1F, running));
         boxes.add(new Box("lead", 4, 26, 4, 12, 27, 14));
         boxes.add(new Box("lead", 5, 27, 5, 11, 28, 13));
-        // Pressure gauges on both flanks, between the clamp rings.
-        boxes.add(new Box("steel", 1.5F, 12, 6, 2, 19, 13).decal(Direction.WEST, "gauge"));
-        boxes.add(new Box("steel", 14, 12, 6, 14.5F, 19, 13).decal(Direction.EAST, "gauge"));
+        // Pressure gauges on both flanks, between the clamp rings, above the fuel ports.
+        boxes.add(new Box("steel", 1.5F, 13, 6, 2, 20, 13).decal(Direction.WEST, "gauge"));
+        boxes.add(new Box("steel", 14, 13, 6, 14.5F, 20, 13).decal(Direction.EAST, "gauge"));
         // Porthole onto the core, and the control console below it.
         // Running, the core glows Cherenkov blue through the porthole and lights up in the dark.
         Box porthole = new Box("steel", 3, 11, 1, 13, 21, 2).decal(Direction.NORTH, running ? "porthole_on" : "porthole");
@@ -120,9 +120,9 @@ final class MicroreactorModel {
             boxes.add(new Box("copper", 1, y, 17, 2, y + 1, 29));
             boxes.add(new Box("copper", 14, y, 17, 15, y + 1, 29));
         }
-        // Coolant loop pipes from the housing into the vessel, low on each side.
-        boxes.add(new Box("copper", 1, 4, 10, 3, 6, 20));
-        boxes.add(new Box("copper", 13, 4, 10, 15, 6, 20));
+        // Coolant loop pipes from the housing into the vessel, low on each side, entering behind the fuel ports.
+        boxes.add(new Box("copper", 1, 4, 13, 3, 6, 20));
+        boxes.add(new Box("copper", 13, 4, 13, 15, 6, 20));
 
         // Ports (see MicroreactorPort). Each is a 10 x 10 flange flush with the block face around an
         // 8 x 8 socket, centred on the face. That seats the 6 x 6 pipes and cables of Pipez and
@@ -137,12 +137,13 @@ final class MicroreactorModel {
         // Steam out: right-hand side of the lower back block.
         boxes.add(new Box("steel_dark", 14, 4, 20, 15, 12, 28));
         boxes.add(new Box("steel_dark", 15, 3, 19, 16, 13, 29).decal(Direction.EAST, "port_steam"));
-        // Fuel hatch: the top of the upper front block, built like the coolant intake behind it. A
-        // column rises straight off the lid, square with its top tier, with an orange band (items),
-        // and the port sits on top, centred on the block face so pipes seat in it.
-        boxes.add(new Box("steel", 5, 28, 5, 11, 31, 11));
-        boxes.add(new Box("accent", 4.75F, 29.25F, 4.75F, 11.25F, 29.75F, 11.25F));
-        boxes.add(new Box("steel_dark", 3, 31, 3, 13, 32, 13).decal(Direction.UP, "port_fuel"));
+        // Fuel ports: both flanks of the lower front block, centred on the face, each on a short neck
+        // out of the vessel's base, on the skid. Fresh cores in on the east flank (on your left as you
+        // face the front, facing north), spent cores out on the west.
+        boxes.add(new Box("steel_dark", 1, 4, 4, 2, 12, 12));
+        boxes.add(new Box("steel_dark", 0, 3, 3, 1, 13, 13).decal(Direction.WEST, "port_fuel"));
+        boxes.add(new Box("steel_dark", 14, 4, 4, 15, 12, 12));
+        boxes.add(new Box("steel_dark", 15, 3, 3, 16, 13, 13).decal(Direction.EAST, "port_fuel"));
         return boxes;
     }
 

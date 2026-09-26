@@ -15,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluids;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -68,7 +69,7 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
         int arrow = Mth.ceil(menu.progress() * 24);
         graphics.blit(texture, leftPos + ARROW_X, topPos + ARROW_Y, 176, SPRITE_ARROW_V, arrow, 17);
         GuiGauges.glow(graphics, leftPos + ENERGY_X, topPos + WELL_Y, 8, WELL_H,
-                menu.energy() / (float) ProcessingMachine.ENERGY_CAPACITY, GuiGauges.ENERGY);
+                menu.energy() / (float) ProcessingBlockEntity.capacity(menu.machine(), menu.modules()), GuiGauges.ENERGY);
         GuiGauges.glass(graphics, leftPos + ENERGY_X, topPos + WELL_Y, 8, WELL_H);
         if (menu.machine().usesWater()) {
             GuiGauges.fluid(graphics, leftPos + WATER_X, topPos + WELL_Y, 10, WELL_H,
@@ -101,10 +102,25 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
             case RUNNING -> GOOD;
             case IDLE, OFF -> DIM;
             case OUTPUT_FULL, REDSTONE -> WARN;
-            case NO_POWER, NO_WATER -> BAD;
+            case NO_POWER, NO_WATER, UNDERPOWERED -> BAD;
         };
-        graphics.drawString(font, Component.translatable("gui.ryzergen.processing.status." + status.name().toLowerCase(Locale.ROOT)),
-                STATUS_X, STATUS_Y, colour, false);
+        // Running, the line also shows the time left (the arrow's own tooltip is the recipe viewer's).
+        Component line = status == Status.RUNNING && menu.ticksLeft() > 0
+                ? Component.translatable("gui.ryzergen.processing.status.running_time", clock(menu.ticksLeft()))
+                : Component.translatable("gui.ryzergen.processing.status." + status.name().toLowerCase(Locale.ROOT));
+        graphics.drawString(font, line, STATUS_X, STATUS_Y, colour, false);
+    }
+
+    /** Ticks as a short clock, "0:45" or "3:05", for the status line. */
+    private static String clock(int ticks) {
+        int seconds = (ticks + 19) / 20;
+        return String.format("%d:%02d", seconds / 60, seconds % 60);
+    }
+
+    /** Ticks as "45s" or "3m 05s". */
+    private static String duration(int ticks) {
+        int seconds = (ticks + 19) / 20;
+        return seconds < 60 ? seconds + "s" : String.format("%dm %02ds", seconds / 60, seconds % 60);
     }
 
     private boolean isOver(int x, int y, double mouseX, double mouseY) {
@@ -119,13 +135,22 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
         int my = mouseY - topPos;
         boolean wellRow = my >= WELL_Y - 1 && my < WELL_Y + WELL_H + 1;
         if (wellRow && mx >= ENERGY_X - 1 && mx < ENERGY_X + 9) {
-            graphics.renderComponentTooltip(font, List.of(
+            String draw = String.format("%,d", ProcessingBlockEntity.energyPerTick(menu.machine(), menu.modules()));
+            List<Component> lines = new ArrayList<>(List.of(
                     Component.translatable("gui.ryzergen.energy", String.format("%,d", menu.energy()),
-                            String.format("%,d", ProcessingMachine.ENERGY_CAPACITY)),
-                    Component.translatable("gui.ryzergen.processing.uses",
-                            String.format("%,d", ProcessingBlockEntity.energyPerTick(menu.machine(), menu.modules())))
-                            .withStyle(style -> style.withColor(DIM)),
+                            String.format("%,d", ProcessingBlockEntity.capacity(menu.machine(), menu.modules()))),
+                    Component.translatable("gui.ryzergen.processing.uses", draw).withStyle(style -> style.withColor(DIM)),
                     Component.translatable("gui.ryzergen.processing.speed", ProcessingBlockEntity.speed(menu.modules()))
+                            .withStyle(style -> style.withColor(DIM))));
+            if (menu.machine().gated()) {
+                lines.add(Component.translatable("gui.ryzergen.processing.gated", draw).withStyle(style -> style.withColor(WARN)));
+            }
+            graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
+        } else if (mx >= STATUS_X && mx < STATUS_X + 78 && my >= STATUS_Y - 1 && my < STATUS_Y + 9 && menu.ticksLeft() > 0) {
+            long cost = (long) menu.ticksLeft() * ProcessingBlockEntity.energyPerTick(menu.machine(), menu.modules());
+            graphics.renderComponentTooltip(font, List.of(
+                    Component.translatable("gui.ryzergen.processing.time_left", duration(menu.ticksLeft())),
+                    Component.translatable("gui.ryzergen.processing.energy_left", String.format("%,d", cost))
                             .withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
         } else if (wellRow && menu.machine().usesWater() && mx >= WATER_X - 1 && mx < WATER_X + 11) {
             graphics.renderTooltip(font, Component.translatable("gui.ryzergen.intake_pump.water",
