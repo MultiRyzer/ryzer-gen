@@ -46,7 +46,7 @@ One pass through everything the 0.1.0 alpha ships, before it goes public. Tick t
 - [ ] The turbine spins and hums, steam rises from the stack
 - [ ] SCRAM at 900°C. Overdrive: flux tilt countdown, then a meltdown and crater (and with meltdowns off)
 - [ ] A full MOX core makes about double the power
-- [ ] FPS stays reasonable looking at a running station, with and without a shader pack
+- [x] FPS stays reasonable looking at a running station, with and without a shader pack (26 Sep 2026: 118 fps with a whole production line running, the same as an empty flat world; unchanged with Complementary Reimagined on)
 
 ## 6. Radiation
 - [ ] Nothing radiates except running reactors and meltdown sites
