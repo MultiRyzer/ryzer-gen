@@ -42,10 +42,9 @@ NeoForge 1.21.1 (21.1.249 or newer, so it runs in ATM10). Standalone: it ships e
 ### Tier 3: the fission power station
 - A large round station with a glass chamber and a giant roof turbine. Feed the control core its parts and it builds itself.
 - The core is where the depth is: you plan every channel as fuel, moderator, control rod or coolant. Heat, fuel economy and output all come from the layout, and the planner rates your design against the best possible layouts.
+- MOX fuel makes double the power of uranium. SCRAM at 900°C, or turn the safeties off and risk a flux tilt and a meltdown that leaves a crater.
 
 ![The core planner rating a layout at 100%](CORE_PLANNER_IMAGE_URL)
-
-- MOX fuel makes double the power of uranium. SCRAM at 900°C, or turn the safeties off and risk a flux tilt and a meltdown that leaves a crater.
 
 ### Radiation
 - Radiation comes **only** from running reactors and meltdown sites. Ores, fuel and waste are safe to carry.
