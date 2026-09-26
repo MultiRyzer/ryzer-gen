@@ -241,18 +241,22 @@ idea {
 // The dev client's shader pack: fetched once into run/shaderpacks (ignored by git, since the pack's
 // licence allows personal use but not redistribution), and set as Iris's pack on first run.
 tasks.register('fetchShaderPack') {
-    onlyIf { project.dev_shaders == 'true' }
-    def pack = file("run/shaderpacks/${project.shader_pack_file}")
+    // Read everything now: the configuration cache forbids touching the project while the task runs.
+    def enabled = project.dev_shaders == 'true'
+    def packName = project.shader_pack_file
+    def packUrl = project.shader_pack_url
+    def pack = file("run/shaderpacks/${packName}")
     def irisConfig = file('run/config/iris.properties')
+    onlyIf { enabled }
     outputs.file pack
     doLast {
         if (!pack.exists()) {
             pack.parentFile.mkdirs()
-            new URL(project.shader_pack_url).withInputStream { input -> pack.withOutputStream { it << input } }
+            new URL(packUrl).withInputStream { input -> pack.withOutputStream { it << input } }
         }
         if (!irisConfig.exists()) {
             irisConfig.parentFile.mkdirs()
-            irisConfig.text = "shaderPack=${project.shader_pack_file}" + System.lineSeparator() + "enableShaders=true" + System.lineSeparator()
+            irisConfig.text = "shaderPack=${packName}" + System.lineSeparator() + "enableShaders=true" + System.lineSeparator()
         }
     }
 }
