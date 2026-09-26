@@ -12,7 +12,7 @@ The text below is the project description. Paste it into both sites (both take M
 
 > **Alpha.** Tiers 1 to 3 are playable. Balance is a first pass and may change between versions. Back up your world before updating.
 
-NeoForge 1.21.1. Standalone: it ships every ore it uses. Optional support for JEI, EMI and Accessories.
+NeoForge 1.21.1 (21.1.249 or newer, so it runs in ATM10). Standalone: it ships every ore it uses. Optional support for JEI, EMI and Accessories.
 
 ## What's in the alpha
 
@@ -56,6 +56,7 @@ Full roadmap and issue tracker: https://github.com/MultiRyzer/ryzer-gen
 
 ## For pack makers
 - FE energy throughout. Data-driven recipes and worldgen.
+- Automation friendly: single-block machines take pipes and cables on any side, and pipes only ever pull results, never ingredients, so AE2 and other storage mods can drive them directly. Multiblocks keep inputs and outputs on separate ports.
 - Every recipe asks for common tags (`c:ingots/uranium`, `c:dusts/lead`, ...), so other mods' materials just work.
 - Every ore's worldgen has a config toggle, so you can turn off ores another mod already supplies.
 - Toggles for radiation, mob radiation, meltdowns, explosion power and crater size, plus output and capacity settings.
