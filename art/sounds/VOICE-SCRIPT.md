@@ -2,16 +2,17 @@
 
 Recorded by Ryzer, then enhanced (Voicebox, Qwen models, Apache 2.0). Raw takes go in `art/sounds/source/` (ignored by git). Each file name is the sound event it becomes. See the roadmap item "Reactor voice announcer".
 
+Only things worth hearing get a line: no "fuel low" warning, since with automation fuel is always running down and being replaced.
+
 Delivery: a control system stating facts. Calm for routine lines, firmer for cautions, urgent but clear for danger. Plain speech; the speaker character is added afterwards.
 
 ## Routine (calm, even, a little clipped)
 | File | Line | Plays when |
 |---|---|---|
-| `voice_reactor_online.wav` | "Reactor online." | The microreactor starts running |
+| `voice_reactor_online.wav` | "Reactor online." | The microreactor starts from a real shutdown: switched on, or refuelled after running out. Not on a routine core swap by pipe |
 | `voice_station_online.wav` | "Station online. All systems nominal." | The fission station finishes building or comes online |
 | `voice_safeties_on.wav` | "Safeties engaged." | Safeties are switched back on |
-| `voice_fuel_low.wav` | "Fuel low." | A core or the rods are nearly spent |
-| `voice_fuel_depleted.wav` | "Fuel depleted. Replace the core." | The microreactor's core is spent |
+| `voice_no_fuel.wav` | "Reactor offline. No fuel." | The reactor has stopped for lack of fuel: its core is spent and no fresh one has arrived (never on a routine swap by pipe) |
 
 ## Caution (firmer, slightly slower, still controlled)
 | File | Line | Plays when |
