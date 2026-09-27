@@ -75,6 +75,7 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] Fitting item icons: redraw them as cards like the Speed Module (a graphite card with a clear symbol per tier), so they are easy to spot in a chest
 - [x] Geiger counter: a new item that gives the clicks and the HUD gauge, so they only run when you carry one (inventory, or an Accessories slot such as the belt). The dosimeter ring keeps its protection but goes quiet. Shift-right-click to mute the clicks but keep the gauge
 - [x] Dosimeter ring worn on the hand: dropped. Nothing shows on the hand, as with other mods' rings, and that is fine
+- [ ] Reactor voice announcer: short spoken lines from the reactor's control system when something happens, made with Voice Studio. First list: safeties off (overdrive on), safeties back on, SCRAM, overheat warning, coolant loss, meltdown imminent, fuel low, station formed and online. Each line its own sound event (packs can replace or silence them), subtitles on, played on the client near the machine and not repeated on a fast loop, and a config toggle to turn the voice off. Check the voice model's licence allows use in a published mod, never clone a real person's voice, and record the model and its licence in `art/sounds/CREDITS.md`
 
 ## Milestone 3: Fission power station
 - [x] Block map drawn and previewed (`art/tools/fission_concept.py`): a 12-wide round tower, 11 high, glass chamber, the roof one giant turbine inside an open steam stack
