@@ -22,3 +22,4 @@ Player-facing changes, newest first. Paste each release's section into the Modri
 ### Fixed
 - Intake pumps only pushed water out of their top, so a pipe joined to a pump's side got no water unless it was set to extract. Pumps now push out of every side but the bottom, into pipes first (so a pipe's panel shows the pump's full output) and into a tank or machine beside them only with what is left. A pipe set to extract from a pump takes all of it.
 - The fluid pipe panel counted intake pumps as tanks.
+- With a shader pack on, the ghost outlines of an unbuilt microreactor or station cast shadows. They no longer do.
