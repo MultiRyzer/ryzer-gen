@@ -104,6 +104,7 @@ public class FluidPipeBlockEntity extends CableBlockEntity<IFluidHandler> {
                 if (!carries(resource)) {
                     return 0;
                 }
+                offered(side);
                 int sent = distribute(resource.copyWithAmount(Math.min(resource.getAmount(), rate(side))), source, null, action);
                 if (action.execute()) {
                     addPushed(side, sent);
