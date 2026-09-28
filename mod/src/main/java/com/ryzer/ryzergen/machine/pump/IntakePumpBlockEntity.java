@@ -1,5 +1,8 @@
 package com.ryzer.ryzergen.machine.pump;
 
+import com.ryzer.ryzergen.cable.CableSide;
+import com.ryzer.ryzergen.cable.CableBlock;
+import com.ryzer.ryzergen.cable.FluidPipeBlock;
 import com.ryzer.ryzergen.Config;
 import com.ryzer.ryzergen.machine.MachineEnergyStorage;
 import com.ryzer.ryzergen.machine.RedstoneMode;
@@ -166,16 +169,33 @@ public class IntakePumpBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     /**
-     * Pushes water into whatever is beside it, on every side but the bottom (where it draws the water
-     * in), so a pipe on any side takes it without an extract setting. Starts one side further round
-     * each tick, so no one side is always served first.
+     * Pushes water into what is beside it, on every side but the bottom (where it draws the water
+     * in). Pipes come first, so what a pump gives shows up on the pipe's panel: a pump pushed straight
+     * into a tank beside it would bypass the pipe and leave the panel reading less than it makes. Other
+     * blocks (a tank or machine touching it) only get what the pipes did not take. If a pipe is set to
+     * extract from the pump, that pipe is in charge: the pump pushes nowhere and leaves its water to be
+     * pulled. Each pass starts one side further round each tick, so no side is always served first.
      */
     private void push(Level level, BlockPos pos) {
-        for (int i = 0; i < PUSH_SIDES.length && !water.isEmpty(); i++) {
-            Direction dir = PUSH_SIDES[(pushFrom + i) % PUSH_SIDES.length];
-            IFluidHandler receiver = level.getCapability(Capabilities.FluidHandler.BLOCK, pos.relative(dir), dir.getOpposite());
-            if (receiver != null) {
-                water.drain(receiver.fill(water.getFluid().copy(), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+        for (Direction dir : PUSH_SIDES) {
+            BlockState neighbour = level.getBlockState(pos.relative(dir));
+            if (neighbour.getBlock() instanceof FluidPipeBlock pipe && !pipe.carriesGas()
+                    && neighbour.getValue(CableBlock.SIDES.get(dir.getOpposite())) == CableSide.EXTRACT) {
+                return;
+            }
+        }
+        for (int pass = 0; pass < 2 && !water.isEmpty(); pass++) {
+            boolean pipes = pass == 0;
+            for (int i = 0; i < PUSH_SIDES.length && !water.isEmpty(); i++) {
+                Direction dir = PUSH_SIDES[(pushFrom + i) % PUSH_SIDES.length];
+                BlockPos next = pos.relative(dir);
+                if ((level.getBlockState(next).getBlock() instanceof FluidPipeBlock) != pipes) {
+                    continue;
+                }
+                IFluidHandler receiver = level.getCapability(Capabilities.FluidHandler.BLOCK, next, dir.getOpposite());
+                if (receiver != null) {
+                    water.drain(receiver.fill(water.getFluid().copy(), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+                }
             }
         }
         pushFrom = (pushFrom + 1) % PUSH_SIDES.length;
