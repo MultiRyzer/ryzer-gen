@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * The intake pump's workings: a small energy buffer, a water tank that fills while it has water
- * and power, and a push out of the port on top every tick, the way the microreactor pushes power.
+ * and power, and a push out of every side but the bottom every tick, the way the microreactor pushes power.
  */
 public class IntakePumpBlockEntity extends BlockEntity implements MenuProvider {
     public static final int ENERGY_CAPACITY = 10_000;
@@ -130,7 +130,7 @@ public class IntakePumpBlockEntity extends BlockEntity implements MenuProvider {
         return energy;
     }
 
-    /** Water can be drawn from any side (it still pushes out of the top on its own). */
+    /** Water can be drawn from any side (it also pushes out of every side but the bottom). */
     public @Nullable IFluidHandler waterFor(@Nullable Direction side) {
         return waterOutput;
     }
@@ -165,15 +165,24 @@ public class IntakePumpBlockEntity extends BlockEntity implements MenuProvider {
         }
     }
 
+    /**
+     * Pushes water into whatever is beside it, on every side but the bottom (where it draws the water
+     * in), so a pipe on any side takes it without an extract setting. Starts one side further round
+     * each tick, so no one side is always served first.
+     */
     private void push(Level level, BlockPos pos) {
-        if (water.isEmpty()) {
-            return;
+        for (int i = 0; i < PUSH_SIDES.length && !water.isEmpty(); i++) {
+            Direction dir = PUSH_SIDES[(pushFrom + i) % PUSH_SIDES.length];
+            IFluidHandler receiver = level.getCapability(Capabilities.FluidHandler.BLOCK, pos.relative(dir), dir.getOpposite());
+            if (receiver != null) {
+                water.drain(receiver.fill(water.getFluid().copy(), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+            }
         }
-        IFluidHandler receiver = level.getCapability(Capabilities.FluidHandler.BLOCK, pos.above(), Direction.DOWN);
-        if (receiver != null) {
-            water.drain(receiver.fill(water.getFluid().copy(), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
-        }
+        pushFrom = (pushFrom + 1) % PUSH_SIDES.length;
     }
+
+    private static final Direction[] PUSH_SIDES = {Direction.UP, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
+    private int pushFrom;
 
     @Override
     public Component getDisplayName() {
