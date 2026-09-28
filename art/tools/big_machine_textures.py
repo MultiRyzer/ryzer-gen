@@ -210,6 +210,45 @@ def shade():
     return tex
 
 
+def swarm_cell():
+    """A sky swarm panel's sun side, seen from far off: a thin bright frame round a 3 x 3 grid of
+    deep blue photovoltaic cells split by fine silver bus lines, with a soft diagonal sheen. Finer
+    and quieter than the sun gate's shades, which are a close-up simulation."""
+    tex = []
+    for y in range(16):
+        row = []
+        for x in range(16):
+            if x in (0, 15) or y in (0, 15):
+                k = 'H'
+            elif x in (5, 10) or y in (5, 10):
+                k = 'I'
+            else:
+                sheen = abs((x - y) - 2) < 2
+                k = 'v' if sheen else ('w' if (x // 5 + y // 5) % 2 else 'g')
+            row.append(solid(k))
+        tex.append(row)
+    return tex
+
+
+def swarm_back():
+    """A sky swarm panel's back, the side seen from the ground: a graphite radiator with fine fins,
+    lit along its top and left edges and shadowed along the others. Closed into a shell, the edges
+    draw the fine grid of seams across it."""
+    tex = []
+    for y in range(16):
+        row = []
+        for x in range(16):
+            if y == 0 or x == 0:
+                k = 'J'
+            elif y == 15 or x == 15:
+                k = 'U'
+            else:
+                k = 'b' if y % 3 == 1 else 'S'
+            row.append(solid(k))
+        tex.append(row)
+    return tex
+
+
 def shade_back():
     """The back: gold foil (multi-layer insulation, as on spacecraft) in a graphite frame, with
     soft creases so it catches the light."""
@@ -241,6 +280,375 @@ def shade_ghost():
     return tex
 
 
+# ---------------------------------------------------------------- the fission station's own set
+# Every part of the station has its own texture, so each reads as what it is: a dark foundation,
+# a light body, a gunmetal vessel head, and colour only where it means something.
+
+def letters(rows):
+    return [[solid(c) for c in row] for row in rows]
+
+
+def fill(k, w=16, h=16):
+    return [[k] * w for _ in range(h)]
+
+
+def skirt():
+    # The foundation band (6 pixels, rows 10 to 15): the darkest part of the station, with a vent
+    # slot per step.
+    k = fill('T')
+    k[10] = ['b'] * 16
+    k[15] = ['K'] * 16
+    for x in range(5, 11):
+        k[12][x] = 'K'
+        k[13][x] = 'U'
+    return letters(k)
+
+
+def deck():
+    # The chamber floor round the core: dark floor plates with rows of grating slots.
+    k = fill('T')
+    for y in range(16):
+        for x in range(16):
+            if y % 4 == 1 and 1 <= x % 8 <= 5:
+                k[y][x] = 'U'
+    k[15] = ['S'] * 16
+    for y in range(16):
+        k[y][15] = 'S'
+    return letters(k)
+
+
+def core_plate():
+    # The pedestal the rods stand in: a light machined plate, seamed once per step.
+    k = fill('E')
+    k[0] = ['A'] * 16
+    k[15] = ['I'] * 16
+    for y in range(16):
+        k[y][15] = 'J'
+    return letters(k)
+
+
+def pillar():
+    # A chamber rib's outer flange (8 across, repeated): lit edge, clean face, a shallow channel.
+    cols = ['A', 'E', 'E', 'I', 'I', 'E', 'F', 'J']
+    k = [[cols[x % 8] for x in range(16)] for _ in range(16)]
+    k[0] = ['J'] * 16                        # a joint per block of height
+    return letters(k)
+
+
+def rib_web():
+    # The web behind the flange, and the inner flange seen through the glass: graphite.
+    cols = ['b', 'S', 'S', 'S', 'S', 'S', 'T', 'U']
+    return letters([[cols[x % 8] for x in range(16)] for _ in range(16)])
+
+
+def clamp():
+    # Collars and shoes that hold the ribs: gunmetal, lit on top, an orange lug.
+    k = fill('u')
+    k[0] = ['H'] * 16
+    k[1] = ['s'] * 16
+    for y in range(16):
+        k[y][0] = 's'
+        k[y][15] = 'z'
+    for y in (2, 3):
+        for x in (4, 5):
+            k[y][x] = 'X'
+        k[y][6] = 'Z'
+    return letters(k)
+
+
+def copper_pipe():
+    # A coolant downcomer (3 across): lit, face, shadow, along its length.
+    cols = ['e', 'R', 'r']
+    return letters([[cols[min(x, 2)] for x in range(16)] for _ in range(16)])
+
+
+def head():
+    # The reactor head, a pressure vessel flange (rows top down, y 96 to 80): a lit lip, gunmetal
+    # plates, the groove for the cyan light line in the middle, a shadowed foot. A seam per step.
+    rows = ['H', 's', 'u', 'u', 'u', 'u', 'z', 'T', 'T', 'z', 's', 'u', 'u', 'u', 'z', 'K']
+    k = [[rows[y]] * 16 for y in range(16)]
+    for y in range(1, 15):
+        if rows[y] != 'T':
+            k[y][15] = 'z'
+            if rows[y] == 'u':
+                k[y][0] = 's'
+    return letters(k)
+
+
+def head_top():
+    k = fill('z')
+    k[0] = ['u'] * 16
+    for y in range(16):
+        k[y][15] = 'T'
+    return letters(k)
+
+
+def rim():
+    k = fill('b')
+    k[0] = ['s'] * 16
+    k[15] = ['T'] * 16
+    return letters(k)
+
+
+def column():
+    # The stack's columns (an I-beam flange, 7 across): graphite with a lit edge.
+    cols = ['s', 'b', 'b', 'S', 'b', 'b', 'T']
+    k = [[cols[x % 7] for x in range(16)] for _ in range(16)]
+    k[0] = ['T'] * 16
+    return letters(k)
+
+
+def vane():
+    # A louvre vane (10 across): a light plate with a lit leading edge.
+    cols = ['A', 'E', 'E', 'E', 'F', 'F', 'F', 'I', 'I', 'J']
+    return letters([[cols[min(x, 9)] for x in range(16)] for _ in range(16)])
+
+
+def stack_panel(half):
+    # The stack's cladding: big light panels two steps wide (half 0 and 1), staggered band to band
+    # like real cladding. Lit along the top, a shadow at the foot, one seam per panel.
+    k = fill('E')
+    k[0] = ['A'] * 16
+    k[1] = ['A'] * 16
+    k[15] = ['I'] * 16
+    for y in range(2, 15):
+        if half == 0:
+            k[y][0] = 'A'
+        else:
+            k[y][15] = 'J'
+    return letters(k)
+
+
+def stack_base():
+    # The stack's dark foot band.
+    k = fill('z')
+    k[6] = ['s'] * 16
+    k[15] = ['T'] * 16
+    for y in range(6, 15):
+        k[y][15] = 'T'
+    return letters(k)
+
+
+def stack_inner():
+    k = fill('T')
+    for y in range(16):
+        k[y][0] = 'S'
+        k[y][1] = 'S'
+        k[y][15] = 'U'
+    return letters(k)
+
+
+def warning():
+    # Aviation marking round the top of the stack (12 pixels, rows 4 to 15): red, white, red.
+    rows = ['x'] * 8 + ['A'] * 4 + ['x'] * 4
+    k = [[rows[y]] * 16 for y in range(16)]
+    k[4] = ['e'] * 16
+    k[8] = ['H'] * 16
+    k[12] = ['e'] * 16
+    k[15] = ['8'] * 16
+    return letters(k)
+
+
+def beacon():
+    k = fill('x')
+    for y in (1, 2):
+        for x in (1, 2):
+            k[y][x] = 'e'
+    return letters(k)
+
+
+GLYPHS = {
+    'R': ['110', '101', '110', '101', '101'],
+    'G': ['011', '100', '101', '101', '011'],
+    '-': ['000', '000', '111', '000', '000'],
+    '1': ['010', '110', '010', '010', '111'],
+}
+
+
+def wide_panel():
+    a, b = stack_panel(0), stack_panel(1)
+    return [[(a if x < 16 else b)[y][x % 16] for x in range(32)] for y in range(16)]
+
+
+def stack_stencil():
+    # The station's number stencilled across two cladding panels (32 x 16), read from the front.
+    k = wide_panel()
+    text = 'RG-1'
+    x0 = (32 - (len(text) * 4 - 1)) // 2
+    for i, ch in enumerate(text):
+        for gy, line in enumerate(GLYPHS[ch]):
+            for gx, bit in enumerate(line):
+                if bit == '1':
+                    k[5 + gy][x0 + i * 4 + gx] = solid('T')
+    return k
+
+
+def stack_hatch():
+    # An access hatch across two cladding panels (32 x 16): a gunmetal door with an orange handle.
+    k = wide_panel()
+    for y in range(3, 15):
+        for x in range(11, 21):
+            edge = y == 3 or x == 11
+            shade = y == 14 or x == 20
+            k[y][x] = solid('s' if edge else 'z' if shade else 'u')
+    for y in (8, 9):
+        k[y][18] = solid('X')
+    return k
+
+
+def halves(tex):
+    """Splits a 32-wide texture into the two 16-wide panels it is drawn on, mirrored so it reads
+    the right way round from outside (u runs to the viewer's left round the station)."""
+    flipped = [row[::-1] for row in tex]
+    return [row[:16] for row in flipped], [row[16:] for row in flipped]
+
+
+def fuel_pin(lit):
+    # A fuel pin (3 across): zirconium-clad pellets glowing green, a darker joint every 6 pixels
+    # where one pellet meets the next.
+    cols = ['7', 'N', 'n'] if lit else ['5', '6', '5']
+    k = [[cols[x % 3] for x in range(16)] for _ in range(16)]
+    for y in (5, 11):
+        k[y] = [('6' if lit else '5')] * 16
+    return letters(k)
+
+
+def spacer():
+    # The spacer grids and end fittings that hold a fuel bundle together: bright steel.
+    k = fill('H')
+    k[0] = ['A'] * 16
+    k[15] = ['I'] * 16
+    return letters(k)
+
+
+def nozzle():
+    k = fill('u')
+    k[0] = ['s'] * 16
+    k[15] = ['z'] * 16
+    for y in range(16):
+        k[y][15] = 'z'
+    return letters(k)
+
+
+def cherenkov():
+    # A coolant channel's water column, glowing Cherenkov blue (the real glow of a reactor's water).
+    cols = ['G', 'c', 'C', 'c', 'G', 'c', 'C', 'c']
+    return letters([[cols[x % 8] for x in range(16)] for _ in range(16)])
+
+
+def moderator():
+    # A graphite moderator column with its bore holes.
+    k = fill('S')
+    for y in range(16):
+        k[y][0] = 'b'
+        k[y][15] = 'T'
+    for y in (3, 11):
+        for x in (3, 4, 11, 12):
+            k[y][x] = 'U'
+    return letters(k)
+
+
+def control():
+    # A control rod: polished steel with depth marks every 4 pixels, so its travel reads.
+    k = fill('E')
+    for y in range(16):
+        k[y][0] = 'A'
+        k[y][15] = 'J'
+    for y in (0, 4, 8, 12):
+        for x in range(2, 7):
+            k[y][x] = 'T'
+    return letters(k)
+
+
+def housing():
+    # The port housing's face: a light plate, lit along the top, with a dark vent strip at the foot.
+    k = fill('F')
+    k[0] = ['A'] * 16
+    k[1] = ['E'] * 16
+    for x in range(16):
+        k[14][x] = 'T' if x % 3 else 'b'
+        k[15][x] = 'U'
+    return letters(k)
+
+
+def housing_slope():
+    # The sloped hood over the ports: graphite, a lit front lip, a cyan light line near the top.
+    k = fill('S')
+    k[0] = ['b'] * 16
+    k[3] = ['i'] * 16
+    k[4] = ['T'] * 16
+    k[15] = ['E'] * 16
+    return letters(k)
+
+
+def housing_cheek():
+    # The cheeks either end of the housing: graphite with a hazard stripe down the front.
+    k = fill('S')
+    for y in range(16):
+        k[y][0] = 'b'
+        k[y][15] = 'U'
+    return letters(k)
+
+
+def hazard_upright():
+    return letters([['Y' if (x + y) % 6 < 3 else 'B' for x in range(16)] for y in range(16)])
+
+
+def tag(colour):
+    # A slim light bar above a port, in the port's ring colour.
+    return letters(fill(colour))
+
+
+STEAM_FRAMES = 16
+
+
+def steam():
+    """Steam rising through the chamber, animated: soft, faint white wisps over a thin haze,
+    drifting up the texture (v) and swaying a little. Wide and low so the rods read through it,
+    and wrapping at the sides so the bands round the chamber show no seams. Drawn translucent."""
+    out = []
+    for f in range(STEAM_FRAMES):
+        phase = 2 * math.pi * f / STEAM_FRAMES
+        for y in range(16):
+            v = 2 * math.pi * y / 16
+            row = []
+            for x in range(16):
+                a = 0.08
+                for base, freq, width in ((3.5, 1, 4.5), (9.0, 2, 3.5), (13.0, 1, 3.0)):
+                    centre = base + 1.5 * math.sin(v * freq + phase + base)
+                    density = 0.5 + 0.5 * math.sin(v * 2 + phase * 2 + base)
+                    dx = abs(x - centre) % 16
+                    dx = min(dx, 16 - dx)
+                    a += 0.45 * density * math.exp(-(dx ** 2) / width)
+                row.append((245, 250, 252, round(70 * min(1.0, a))))
+            out.append(row)
+    return out
+
+
+def publish_station():
+    for name, tex in (('skirt', skirt()), ('deck', deck()), ('core_plate', core_plate()), ('pillar', pillar()),
+                      ('rib_web', rib_web()), ('clamp', clamp()), ('copper_pipe', copper_pipe()), ('head', head()),
+                      ('head_top', head_top()), ('rim', rim()), ('column', column()), ('vane', vane()),
+                      ('stack_a', stack_panel(0)), ('stack_b', stack_panel(1)), ('stack_base', stack_base()),
+                      ('stack_inner', stack_inner()), ('warning', warning()), ('beacon', beacon())):
+        write_texture('block/station/' + name, tex)
+    for name, tex in (('fuel_pin', fuel_pin(True)), ('fuel_pin_off', fuel_pin(False)), ('spacer', spacer()),
+                      ('nozzle', nozzle()), ('cherenkov', cherenkov()), ('moderator', moderator()),
+                      ('control', control()), ('steam', steam()), ('housing', housing()),
+                      ('housing_slope', housing_slope()), ('housing_cheek', housing_cheek()),
+                      ('hazard_upright', hazard_upright()), ('tag_coolant', tag('G')), ('tag_fuel', tag('X')),
+                      ('tag_energy', tag('x'))):
+        write_texture('block/station/' + name, tex)
+    meta = os.path.join(mp.TEXTURES, 'block', 'station', 'steam.png.mcmeta')
+    with open(meta, 'w') as fh:
+        json.dump({'animation': {'frametime': 3, 'interpolate': True}}, fh, indent=2)
+        fh.write('\n')
+    for name, tex in (('stencil', stack_stencil()), ('hatch', stack_hatch())):
+        right, left = halves(tex)
+        write_texture('block/station/' + name + '_a', right)
+        write_texture('block/station/' + name + '_b', left)
+
+
 def publish_all():
     write_texture('block/machine/smooth_glass', smooth_glass())
     write_texture('block/machine/console', console())
@@ -248,10 +656,13 @@ def publish_all():
     write_texture('block/station/rib', rib())
     write_texture('block/station/plinth', plinth())
     write_texture('block/station/front_panel', front_panel())
+    publish_station()
     write_texture('block/fusion/plasma_wisp', plasma_wisp())
     write_texture('block/fusion/arc', arc())
     write_texture('block/sun/photosphere', photosphere())
     write_texture('block/sun/shade', shade())
+    write_texture('block/sun/swarm_cell', swarm_cell())
+    write_texture('block/sun/swarm_back', swarm_back())
     write_texture('block/sun/shade_back', shade_back())
     write_texture('block/sun/shade_ghost', shade_ghost())
     write_texture('block/sun/white', [[(255, 255, 255, 255)] * 16 for _ in range(16)])
