@@ -313,7 +313,11 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
         countingTick = now;
     }
 
-    /** Counts {@code amount} coming in on {@code side} this tick, for the panel. */
+    /**
+     * Counts {@code amount} coming in on {@code side} this tick, for the panel: pushed in by a
+     * neighbour or pulled by an extract side alike. Never write to {@link #moved} directly: open
+     * panels update before block entities tick, so {@link #roll()} would clear it before it is read.
+     */
     protected void addPushed(Direction side, int amount) {
         roll();
         pushed[side.get3DDataValue()] += amount;
