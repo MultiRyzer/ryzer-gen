@@ -69,7 +69,7 @@ public class ItemPipeBlockEntity extends CableBlockEntity<IItemHandler> {
                 int count = Math.min(stack.getCount(), schedule(side)[0]);
                 ItemStack left = distribute(stack.copyWithCount(count), source, null, simulate);
                 if (!simulate) {
-                    pushed[side.get3DDataValue()] += count - left.getCount();
+                    addPushed(side, count - left.getCount());
                 }
                 return stack.copyWithCount(stack.getCount() - count + left.getCount());
             }
@@ -92,8 +92,8 @@ public class ItemPipeBlockEntity extends CableBlockEntity<IItemHandler> {
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, ItemPipeBlockEntity pipe) {
-        pipe.startTick();
-        for (Direction dir : Direction.values()) {
+        pipe.roll();
+        for (Direction dir : CableNetwork.DIRECTIONS) {
             if (state.getValue(CableBlock.SIDES.get(dir)) != CableSide.EXTRACT || --pipe.cooldown[dir.get3DDataValue()] > 0) {
                 continue;
             }

@@ -41,8 +41,8 @@ public class EnergyCableBlock extends CableBlock {
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        // Every cable ticks, not just extractors: one per network (its leader) draws on the batteries.
-        if (level.isClientSide) {
+        // Only extractors tick; the network's battery pass runs once per network from CableNetwork.
+        if (level.isClientSide || !state.getValues().containsValue(CableSide.EXTRACT)) {
             return null;
         }
         return createTickerHelper(type, ModBlockEntities.ENERGY_CABLE.get(), EnergyCableBlockEntity::serverTick);

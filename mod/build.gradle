@@ -166,6 +166,17 @@ dependencies {
     compileOnly "io.wispforest:accessories-neoforge:${accessories_version}"
     localRuntime "io.wispforest:accessories-neoforge:${accessories_version}"
 
+    // Other mods to test alongside (dev_mekanism, dev_pipez, dev_spark in gradle.properties).
+    if (project.dev_mekanism == 'true') {
+        localRuntime "maven.modrinth:mekanism:${mekanism_version}"
+    }
+    if (project.dev_pipez == 'true') {
+        localRuntime "maven.modrinth:pipez:${pipez_version}"
+    }
+    if (project.dev_spark == 'true') {
+        localRuntime "maven.modrinth:spark:${spark_version}"
+    }
+
     // Shaders in the dev client only (dev_shaders in gradle.properties): Iris, and Sodium, which it needs.
     if (project.dev_shaders == 'true') {
         localRuntime "maven.modrinth:iris:${iris_version}"

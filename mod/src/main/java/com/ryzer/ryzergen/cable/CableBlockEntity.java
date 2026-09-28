@@ -37,8 +37,9 @@ import java.util.Set;
 
 /**
  * What every cable and pipe keeps: which sides the wrench disconnected, the fitting on each side,
- * the network it delivers to (cached until any cable changes), what each side moved this tick for
- * the panel, and the panel itself. Subclasses decide what moves and how.
+ * the network it belongs to (shared by all its cables, see {@link CableNetwork}), what each side
+ * moved lately for the panel, and the panel itself. Subclasses decide what moves and how. Only
+ * cables with an extract side tick; the rest only act when something is pushed into them.
  *
  * <p>Fittings (see {@link CableUpgrade}) raise the limit for what comes in on their side, pulled by
  * an extract side or pushed in by a generator. They sync to clients, and the cable's model adds
@@ -61,21 +62,23 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
     private final Set<Direction> disabled = EnumSet.noneOf(Direction.class);
     private final ItemStack[] fittings = {ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY,
             ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
-    protected final List<Target<C>> targets = new ArrayList<>();
-    private int networkVersion = -1;
-    /** One cable picked per network, for work that must run once per tick. */
-    protected boolean leader;
+    /** What the network delivers to: its shared list, so every cable reads the same one. */
+    protected List<Target<C>> targets = List.of();
+    private CableNetwork.@Nullable Net net;
     protected int roundRobin;
     /** What each side moved last tick, for the panel. */
     protected final int[] moved = new int[6];
-    /** What was pushed in on each side this tick, so far. Becomes {@link #moved} as the next tick starts. */
+    /** What was pushed in on each side this tick, so far. Becomes {@link #moved} when the next tick is first touched. */
     protected final int[] pushed = new int[6];
+    /** The game tick {@link #pushed} is counting, so the panel's numbers roll over without ticking every cable. */
+    private long countingTick = Long.MIN_VALUE;
     /** When something last came in on each side, so the panel knows which sides feed the network. */
     private final long[] lastIn = new long[6];
 
     private final ContainerData data = new ContainerData() {
         @Override
         public int get(int index) {
+            roll();
             if (index < 6 * DATA_PER_SIDE) {
                 Direction side = Direction.from3DDataValue(index / DATA_PER_SIDE);
                 return switch (index % DATA_PER_SIDE) {
@@ -179,6 +182,7 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
      * {@link #canGive}). A side that already has a fitting counts too, so it can be taken out.
      */
     public boolean feeds(Direction side) {
+        roll();
         int i = side.get3DDataValue();
         if (side(side) == CableSide.EXTRACT || !fittings[i].isEmpty()) {
             return true;
@@ -286,20 +290,39 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
     }
 
     /** Called as each tick starts: last tick's pushes become what the panel shows for those sides. */
-    protected void startTick() {
+    /**
+     * Moves what was pushed in on the tick being counted into {@link #moved}, once the game has moved
+     * on: last tick's count if that was the previous tick, nothing if the cable sat idle in between.
+     */
+    protected void roll() {
+        if (level == null) {
+            return;
+        }
+        long now = level.getGameTime();
+        if (now == countingTick) {
+            return;
+        }
+        boolean previous = now == countingTick + 1;
         for (int i = 0; i < 6; i++) {
-            if (pushed[i] > 0 && level != null) {
-                lastIn[i] = level.getGameTime();
+            if (pushed[i] > 0) {
+                lastIn[i] = countingTick;
             }
-            moved[i] = pushed[i];
+            moved[i] = previous ? pushed[i] : 0;
             pushed[i] = 0;
         }
+        countingTick = now;
+    }
+
+    /** Counts {@code amount} coming in on {@code side} this tick, for the panel. */
+    protected void addPushed(Direction side, int amount) {
+        roll();
+        pushed[side.get3DDataValue()] += amount;
     }
 
     @Override
     public ModelData getModelData() {
         CableUpgrade[] tiers = new CableUpgrade[6];
-        for (Direction dir : Direction.values()) {
+        for (Direction dir : CableNetwork.DIRECTIONS) {
             tiers[dir.get3DDataValue()] = upgrade(dir);
         }
         return ModelData.builder().with(FITTINGS, tiers).build();
@@ -307,21 +330,43 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
 
     // ------------------------------------------------------------------ network
 
-    /** Rebuilds the cached list of blocks to deliver to if any cable changed. False on the client. */
+    /** Picks up the network's shared list of blocks to deliver to, after any change to it. False on the client. */
     protected boolean refreshTargets() {
         if (!(level instanceof ServerLevel server)) {
             return false;
         }
-        if (networkVersion != CableNetwork.version()) {
-            targets.clear();
-            CableNetwork.Scan scan = CableNetwork.scan(server, worldPosition);
-            leader = scan.leader().equals(worldPosition);
-            for (CableNetwork.Endpoint endpoint : scan.endpoints()) {
-                targets.add(new Target<>(endpoint, BlockCapabilityCache.create(capability(), server, endpoint.pos(), endpoint.side())));
-            }
-            networkVersion = CableNetwork.version();
+        if (net == null || !net.valid()) {
+            net = CableNetwork.get(server, worldPosition);
+            targets = targetsOf(server, net, capability());
         }
         return true;
+    }
+
+    /** A network's shared delivery list, built the first time any of its cables needs it. */
+    @SuppressWarnings("unchecked")
+    protected static <C> List<Target<C>> targetsOf(ServerLevel level, CableNetwork.Net net, BlockCapability<C, @Nullable Direction> capability) {
+        if (net.targets == null) {
+            List<Target<C>> list = new ArrayList<>(net.endpoints().size());
+            for (CableNetwork.Endpoint endpoint : net.endpoints()) {
+                list.add(new Target<>(endpoint, BlockCapabilityCache.create(capability, level, endpoint.pos(), endpoint.side())));
+            }
+            net.targets = List.copyOf(list);
+        }
+        return (List<Target<C>>) net.targets;
+    }
+
+    /** A cable coming into the world (placed, or its chunk loading) changes the networks next to it. */
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        CableNetwork.changed(level, worldPosition);
+    }
+
+    /** So does its chunk unloading: the networks it was part of end at the unloaded edge. */
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
+        CableNetwork.changed(level, worldPosition);
     }
 
     @Override

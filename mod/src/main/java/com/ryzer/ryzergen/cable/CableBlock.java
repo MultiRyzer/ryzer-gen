@@ -139,7 +139,7 @@ public abstract class CableBlock extends BaseEntityBlock {
             }
         }
         if (next != current) {
-            CableNetwork.changed();
+            CableNetwork.changed(level, pos);
             if (level instanceof Level world && !world.isClientSide) {
                 world.invalidateCapabilities(pos);
             }
@@ -154,7 +154,7 @@ public abstract class CableBlock extends BaseEntityBlock {
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())) {
-            CableNetwork.changed();
+            CableNetwork.changed(level, pos);
             if (level.getBlockEntity(pos) instanceof CableBlockEntity<?> cable) {
                 cable.dropFittings(level, pos);
             }
