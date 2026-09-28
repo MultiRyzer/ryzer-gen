@@ -40,7 +40,6 @@ public class DosimeterRingItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("item.ryzergen.dosimeter_ring.tooltip").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("item.ryzergen.dosimeter_ring.protection", Math.round(PROTECTION * 100))
                 .withStyle(ChatFormatting.DARK_AQUA));
         // The dose the ring has recorded: the player's own, as last sent to this client.

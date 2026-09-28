@@ -59,7 +59,5 @@ public class BatteryModuleItem extends Item {
         tooltip.add(Component.translatable("item.ryzergen.battery_module.charge",
                 String.format("%,d", energy(stack)), String.format("%,d", chemistry.capacity())).withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("item.ryzergen.battery_module.rate",
-                String.format("%,d", chemistry.rate())).withStyle(ChatFormatting.DARK_GRAY));
-        tooltip.add(Component.translatable("item.ryzergen.battery_module.hint").withStyle(ChatFormatting.DARK_AQUA));
-    }
+                String.format("%,d", chemistry.rate())).withStyle(ChatFormatting.DARK_GRAY));    }
 }

@@ -25,7 +25,7 @@ Shared machine pieces: `machine/MachineEnergyStorage` (receive-only FE buffer), 
 
 On this machine Gradle fails with "Unable to establish loopback connection" because Java cannot create its internal socket in the default temp folder. Prefix Gradle commands with `JAVA_TOOL_OPTIONS='-Djdk.net.unixdomain.tmpdir=C:\jtmp'` (the folder `C:\jtmp` must exist), and run them outside the sandbox.
 
-Registration uses `DeferredRegister` in `com.ryzer.ryzergen.registry`, wired up in `RyzerGen`. Every new item goes in the Ryzer Gen creative tab automatically. Lang entries are hand-written in `src/main/resources/assets/ryzergen/lang/en_us.json`. Models, blockstates, loot tables, tags, recipes and worldgen come from datagen (`com.ryzer.ryzergen.datagen`), not hand-written JSON.
+Registration uses `DeferredRegister` in `com.ryzer.ryzergen.registry`, wired up in `RyzerGen`. Every new item goes in the Ryzer Gen creative tab automatically, but the tab is sorted by category (`ModCreativeTabs.ordered`), so give a new item its place there; an unplaced one shows near the end. Item tooltips come from the lang file (`client/ItemDetails`): `tooltip.ryzergen.<id>` is the summary and `.details.1`, `.2` and on are the Shift details, coloured with `<v>`, `<g>`, `<w>`, `<r>`, `<k>` and `<i>` markup; give new items both. Lang entries are hand-written in `src/main/resources/assets/ryzergen/lang/en_us.json`. Models, blockstates, loot tables, tags, recipes and worldgen come from datagen (`com.ryzer.ryzergen.datagen`), not hand-written JSON.
 
 Machines live in `com.ryzer.ryzergen.machine.<name>` (block, block entity, menu, screen). The alloy smelter is the template: `ItemStackHandler` inventory exposed through the item handler capability, `ContainerData` for progress, a custom recipe type in `com.ryzer.ryzergen.recipe`. GUI textures go in `textures/gui/`. Tier 1 machines burn furnace fuel, because nothing is powered before the microreactor.
 
@@ -53,6 +53,7 @@ These come from `docs/DESIGN.md`. Check any new feature against them.
 10. **Radiation comes only from running reactors and meltdowns.** Ores, fuel, depleted cores and waste are safe to carry. Effects escalate slowly and never instantly kill outside a meltdown. On by default, config toggle to turn off.
 11. **Upgrade, don't replace.** Batteries grow by adding modules and better chemistries; the dosimeter ring gains new linings. Avoid one block recoloured per tier.
 12. **Coolant is your friend.** Things run hot and cooling them is a big part of the challenge. Water is free, so machines drink a lot of it (the station 4 times its first numbers, 8 in overdrive); better coolants come later.
+13. **Steady state rewards automation.** Every reactor keeps a streak of fuel loads burned without downtime, which raises its output up to a cap that grows with the tier (microreactor 1.5x, fission 2x, later tiers more, each below the next tier's power). Downtime costs part of the streak rather than all of it. New reactors get one too (DESIGN.md section 5).
 
 ## Art style
 
