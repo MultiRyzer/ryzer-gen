@@ -52,6 +52,7 @@ These come from `docs/DESIGN.md`. Check any new feature against them.
 9. **Optional dependencies stay optional.** Curios, Mekanism, EMI/JEI integrations must never be required to load or play.
 10. **Radiation comes only from running reactors and meltdowns.** Ores, fuel, depleted cores and waste are safe to carry. Effects escalate slowly and never instantly kill outside a meltdown. On by default, config toggle to turn off.
 11. **Upgrade, don't replace.** Batteries grow by adding modules and better chemistries; the dosimeter ring gains new linings. Avoid one block recoloured per tier.
+12. **Coolant is your friend.** Things run hot and cooling them is a big part of the challenge. Water is free, so machines drink a lot of it (the station 4 times its first numbers, 8 in overdrive); better coolants come later.
 
 ## Art style
 

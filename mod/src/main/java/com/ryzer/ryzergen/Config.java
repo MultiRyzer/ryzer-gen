@@ -59,6 +59,7 @@ public final class Config {
     public static final ModConfigSpec.IntValue PUMP_ENERGY;
     public static final ModConfigSpec.IntValue TANK_CAPACITY;
     public static final ModConfigSpec.IntValue STATION_OUTPUT;
+    public static final ModConfigSpec.IntValue STATION_WATER_USE;
     public static final ModConfigSpec.BooleanValue STATION_MELTDOWNS;
     public static final ModConfigSpec.DoubleValue STATION_MELTDOWN_POWER;
     public static final ModConfigSpec.IntValue STATION_TILT_SECONDS;
@@ -122,6 +123,10 @@ public final class Config {
         STATION_OUTPUT = BUILDER
                 .comment("Percent of the normal heat each fuel rod makes, and each coolant channel carries (so also power out).")
                 .defineInRange("output_percent", 100, 1, 10_000);
+        STATION_WATER_USE = BUILDER
+                .comment("Percent of the normal water a station boils. Normal is 1 mB per 50 heat (1 per 25 in overdrive):",
+                        "a strong core needs several intake pumps, and more in overdrive.")
+                .defineInRange("water_use_percent", 100, 1, 10_000);
         STATION_MELTDOWNS = BUILDER
                 .comment("With the safeties off, a core left unstable or overheating explodes. Off: the interlock re-arms itself and SCRAMs instead.")
                 .define("meltdowns", true);
