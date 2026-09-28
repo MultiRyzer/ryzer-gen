@@ -30,6 +30,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +60,10 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
     public static final int DATA_REDSTONE = 6;
     public static final int DATA_ENABLED = 7;
     public static final int DATA_MODULES = 8;
-    public static final int DATA_COUNT = 9;
+    public static final int DATA_AUTO_OUTPUT = 9;
+    public static final int DATA_COUNT = 10;
+    /** Auto output tries every this many ticks. */
+    private static final int AUTO_OUTPUT_INTERVAL = 10;
 
     /** UNDERPOWERED: a gated machine getting some power, but less than its full draw. */
     public enum Status { IDLE, RUNNING, NO_POWER, NO_WATER, OUTPUT_FULL, REDSTONE, OFF, UNDERPOWERED }
@@ -76,6 +81,12 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
     private Status status = Status.IDLE;
     private RedstoneMode redstoneMode = RedstoneMode.IGNORED;
     private boolean enabled = true;
+    /**
+     * Pushes finished results into the blocks beside it (a chest, another machine, a pipe). Off by
+     * default, so machines that merely touch never hand each other things unless the player asks.
+     */
+    private boolean autoOutput;
+    private int autoOutputFrom;
     /** Set when the inputs or water change, so the recipe is looked up again. */
     private boolean dirty = true;
     private @Nullable MachineRecipe recipe;
@@ -97,6 +108,7 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
                 case DATA_REDSTONE -> redstoneMode.ordinal();
                 case DATA_ENABLED -> enabled ? 1 : 0;
                 case DATA_MODULES -> modules();
+                case DATA_AUTO_OUTPUT -> autoOutput ? 1 : 0;
                 default -> 0;
             };
         }
@@ -330,6 +342,9 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     private void tick(Level level, BlockPos pos, BlockState state) {
+        if (autoOutput && level.getGameTime() % AUTO_OUTPUT_INTERVAL == 0) {
+            pushResults(level, pos);
+        }
         updateLimits();
         if (dirty) {
             recipe = findRecipe(input(water.getFluid()));
@@ -379,6 +394,40 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
                 }
             }
         }
+    }
+
+    public void toggleAutoOutput() {
+        autoOutput = !autoOutput;
+        setChanged();
+    }
+
+    /**
+     * Offers each result to the blocks beside it, starting one side further round each time. A
+     * two-high machine skips its own upper half.
+     */
+    private void pushResults(Level level, BlockPos pos) {
+        Direction[] sides = Direction.values();
+        for (int i = 0; i < sides.length; i++) {
+            Direction dir = sides[(autoOutputFrom + i) % sides.length];
+            if (machine.tall() && dir == Direction.UP) {
+                continue;
+            }
+            IItemHandler target = level.getCapability(Capabilities.ItemHandler.BLOCK, pos.relative(dir), dir.getOpposite());
+            if (target == null) {
+                continue;
+            }
+            for (int slot = machine.inputs(); slot < machine.slots(); slot++) {
+                ItemStack held = items.getStackInSlot(slot);
+                if (held.isEmpty()) {
+                    continue;
+                }
+                ItemStack left = ItemHandlerHelper.insertItemStacked(target, held.copy(), false);
+                if (left.getCount() != held.getCount()) {
+                    items.setStackInSlot(slot, left);
+                }
+            }
+        }
+        autoOutputFrom = (autoOutputFrom + 1) % sides.length;
     }
 
     public void togglePower() {
@@ -433,6 +482,7 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
         tag.putInt("progress", progress);
         tag.putInt("total", total);
         tag.putBoolean("enabled", enabled);
+        tag.putBoolean("auto_output", autoOutput);
         tag.putInt("redstone_mode", redstoneMode.ordinal());
     }
 
@@ -453,6 +503,7 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
         progress = tag.getInt("progress");
         total = tag.getInt("total");
         enabled = !tag.contains("enabled") || tag.getBoolean("enabled");
+        autoOutput = tag.getBoolean("auto_output");
         redstoneMode = RedstoneMode.byId(tag.getInt("redstone_mode"));
         dirty = true;
     }
