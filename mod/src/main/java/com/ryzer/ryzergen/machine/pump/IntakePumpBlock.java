@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Intake pump: sits one block above the water and draws from the water source block directly
  * below it, without ever draining it. Energy goes in and water can be drawn on any side, and it
- * pushes water out of the port on top itself. Real basis: an intake pump on a jetty, its suction line hanging into the lake.
+ * pushes water out of every side but the bottom itself. Real basis: an intake pump on a jetty, its suction line hanging into the lake.
  */
 public class IntakePumpBlock extends BaseEntityBlock {
     public static final MapCodec<IntakePumpBlock> CODEC = simpleCodec(IntakePumpBlock::new);

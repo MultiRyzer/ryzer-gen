@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
@@ -49,6 +50,22 @@ public class FluidPipeBlockEntity extends CableBlockEntity<IFluidHandler> {
     @Override
     protected int panelMax() {
         return rate();
+    }
+
+    /**
+     * Only blocks that can be filled count as tanks: an intake pump offers its water on every side
+     * but takes nothing in, so it is a source, not a tank.
+     */
+    @Override
+    protected boolean receives(IFluidHandler handler) {
+        FluidStack probe = new FluidStack(gas ? ModFluids.STEAM.get() : Fluids.WATER, 1);
+        for (int tank = 0; tank < handler.getTanks(); tank++) {
+            FluidStack held = handler.getFluidInTank(tank);
+            if (handler.getTankCapacity(tank) > 0 && handler.isFluidValid(tank, held.isEmpty() ? probe : held)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean carries(FluidStack stack) {

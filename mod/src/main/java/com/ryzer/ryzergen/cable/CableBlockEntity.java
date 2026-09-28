@@ -126,11 +126,17 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
         }
         int count = 0;
         for (Target<C> target : targets) {
-            if (target.cache().getCapability() != null) {
+            C capability = target.cache().getCapability();
+            if (capability != null && receives(capability)) {
                 count++;
             }
         }
         return count;
+    }
+
+    /** Whether a block the network reaches can take anything, so the panel counts it. */
+    protected boolean receives(C capability) {
+        return true;
     }
 
     public boolean isDisabled(Direction side) {
