@@ -8,7 +8,10 @@ import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.machine.fission.StationLayout;
 import com.ryzer.ryzergen.machine.fission.StationReactor;
 import com.ryzer.ryzergen.machine.fission.StationRunner;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -68,8 +71,16 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
         pose.translate(-HALF, 0, -HALF);
         draw(buffer, pose, StationGeometry.group("rotor"), light);
         pose.popPose();
-        // The chamber glass last, translucent, so it tints what is behind it rather than cutting it out.
-        draw(buffers.getBuffer(Sheets.translucentCullBlockSheet()), pose, StationGeometry.group("glass"), light);
+        // Steam, then the chamber glass last, both translucent, so they tint what is behind them rather
+        // than cutting it out. The steam fades in with the turbine and is gone when the station stops.
+        VertexConsumer translucent = buffers.getBuffer(Sheets.translucentCullBlockSheet());
+        int steam = Math.round(Math.min(1, core.spin() * 1.2F) * 255);
+        if (steam > 4) {
+            int colour = steam << 24 | 0xFFFFFF;
+            draw(translucent, pose, StationGeometry.group("steam"), light, colour);
+            draw(translucent, pose, plumes(core), light, colour);
+        }
+        draw(translucent, pose, StationGeometry.group("glass"), light);
         pose.popPose();
     }
 
@@ -81,42 +92,127 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
         pose.translate(-HALF, 0, -HALF);
     }
 
-    private static final ResourceLocation GLOW = texture("glow");
-    private static final ResourceLocation GLOW_OFF = texture("glow_off");
-    private static final ResourceLocation DARK = texture("steel_dark");
-    private static final ResourceLocation STEEL = texture("steel");
-    private static final ResourceLocation COPPER = texture("copper");
-    private static final ResourceLocation LEAD = texture("lead");
+    private static final ResourceLocation DARK = texture("microreactor/steel_dark");
+    private static final ResourceLocation COPPER = texture("microreactor/copper");
+    private static final ResourceLocation LEAD = texture("microreactor/lead");
+    private static final ResourceLocation FUEL = texture("station/fuel_pin");
+    private static final ResourceLocation FUEL_OFF = texture("station/fuel_pin_off");
+    private static final ResourceLocation SPACER = texture("station/spacer");
+    private static final ResourceLocation NOZZLE = texture("station/nozzle");
+    private static final ResourceLocation CHERENKOV = texture("station/cherenkov");
+    private static final ResourceLocation MODERATOR = texture("station/moderator");
+    private static final ResourceLocation CONTROL = texture("station/control");
+    private static final ResourceLocation STEAM = texture("station/steam");
 
     private static ResourceLocation texture(String name) {
-        return ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "block/microreactor/" + name);
+        return ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "block/" + name);
+    }
+
+    private static float channelX(int i) {
+        return HALF * 16 + (i % StationReactor.GRID - 2) * 20;
+    }
+
+    private static float channelZ(int i) {
+        return HALF * 16 + (i / StationReactor.GRID - 2) * 20;
     }
 
     /**
-     * The core's 25 channels as the player has loaded them, where the concept design puts them:
-     * columns 20 pixels apart round the centre, standing on the pedestal up to the reactor head.
-     * Coolant channels are copper pipes; fuel glows while the station runs (dim when stopped, dark
-     * once spent); moderators are graphite, control rods steel, lithium target rods gunmetal. Empty channels show just a collar.
+     * The core's 25 channels as the player has loaded them, where the concept design puts them
+     * (fission_concept.py): columns 20 pixels apart round the centre, standing on the pedestal up to
+     * the reactor head. Each kind has its own look, so a layout reads at a glance:
+     * <ul>
+     * <li>fuel: a bundle of four pins held by spacer grids, as real fuel assemblies are built. The
+     * pins glow green while the station runs, dim when it stops, and go dark once spent.</li>
+     * <li>coolant: a column of water in copper hoops, glowing Cherenkov blue while the station runs
+     * (the real glow of a reactor's water).</li>
+     * <li>moderator: a graphite column with bore holes; control: a steel rod on a drive shaft, part
+     * way in; lithium target: lead.</li>
+     * </ul>
+     * Empty channels show just a collar.
      */
     private static List<StationGeometry.Quad> rods(StationCoreBlockEntity core) {
         List<StationGeometry.Quad> quads = new java.util.ArrayList<>();
         StationRunner runner = core.runner();
         boolean running = core.isRunning();
         for (int i = 0; i < StationReactor.CHANNELS; i++) {
-            float x = HALF * 16 + (i % StationReactor.GRID - 2) * 20;
-            float z = HALF * 16 + (i / StationReactor.GRID - 2) * 20;
+            float x = channelX(i);
+            float z = channelZ(i);
             quads.addAll(StationGeometry.box(x - 5, 24, z - 5, x + 5, 27, z + 5, DARK, false));
             ItemStack item = runner.item(i);
-            ResourceLocation texture = switch (runner.type(i)) {
-                case COOLANT -> COPPER;
-                case FUEL -> StationReactor.isFreshFuel(item) ? (running ? GLOW : GLOW_OFF) : StationReactor.isSpent(item) ? DARK : null;
-                case MODERATOR -> item.isEmpty() ? null : DARK;
-                case CONTROL -> item.isEmpty() ? null : STEEL;
-                case TARGET -> item.isEmpty() ? null : LEAD;
-                case EMPTY -> null;
-            };
-            if (texture != null) {
-                quads.addAll(StationGeometry.box(x - 4, 27, z - 4, x + 4, 80, z + 4, texture, texture == GLOW));
+            switch (runner.type(i)) {
+                case FUEL -> {
+                    boolean fresh = StationReactor.isFreshFuel(item);
+                    if (!fresh && !StationReactor.isSpent(item)) {
+                        break;
+                    }
+                    ResourceLocation pins = fresh ? (running ? FUEL : FUEL_OFF) : DARK;
+                    quads.addAll(StationGeometry.box(x - 4.5F, 27, z - 4.5F, x + 4.5F, 30, z + 4.5F, NOZZLE, false));
+                    for (float dx : new float[] {-3.5F, 0.5F}) {
+                        for (float dz : new float[] {-3.5F, 0.5F}) {
+                            quads.addAll(StationGeometry.box(x + dx, 30, z + dz, x + dx + 3, 76, z + dz + 3, pins,
+                                    pins == FUEL));
+                        }
+                    }
+                    for (int y : new int[] {41, 55, 69}) {
+                        quads.addAll(StationGeometry.box(x - 4.5F, y, z - 4.5F, x + 4.5F, y + 1.5F, z + 4.5F, SPACER, false));
+                    }
+                    quads.addAll(StationGeometry.box(x - 4.5F, 76, z - 4.5F, x + 4.5F, 80, z + 4.5F, NOZZLE, false));
+                }
+                case COOLANT -> {
+                    quads.addAll(StationGeometry.box(x - 2.5F, 27, z - 2.5F, x + 2.5F, 80, z + 2.5F, CHERENKOV, running));
+                    for (int y = 29; y < 79; y += 8) {
+                        quads.addAll(StationGeometry.box(x - 3.5F, y, z - 3.5F, x + 3.5F, y + 2, z + 3.5F, COPPER, false));
+                    }
+                }
+                case MODERATOR -> {
+                    if (!item.isEmpty()) {
+                        quads.addAll(StationGeometry.box(x - 4, 27, z - 4, x + 4, 80, z + 4, MODERATOR, false));
+                    }
+                }
+                case CONTROL -> {
+                    if (!item.isEmpty()) {
+                        quads.addAll(StationGeometry.box(x - 4.5F, 27, z - 4.5F, x + 4.5F, 31, z + 4.5F, NOZZLE, false));
+                        quads.addAll(StationGeometry.box(x - 3, 44, z - 3, x + 3, 72, z + 3, CONTROL, false));
+                        quads.addAll(StationGeometry.box(x - 1, 72, z - 1, x + 1, 80, z + 1, SPACER, false));
+                    }
+                }
+                case TARGET -> {
+                    if (!item.isEmpty()) {
+                        quads.addAll(StationGeometry.box(x - 4, 27, z - 4, x + 4, 80, z + 4, LEAD, false));
+                    }
+                }
+                case EMPTY -> {
+                }
+            }
+        }
+        return quads;
+    }
+
+    /**
+     * Steam rising off each coolant channel: two crossed sheets of the animated steam texture, each
+     * with a face both ways (like vanilla fire), from just above the pedestal to the head.
+     */
+    private static List<StationGeometry.Quad> plumes(StationCoreBlockEntity core) {
+        List<StationGeometry.Quad> quads = new java.util.ArrayList<>();
+        StationRunner runner = core.runner();
+        TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(STEAM);
+        float[] uv = {sprite.getU0(), sprite.getV0(), sprite.getU0(), sprite.getV1(), sprite.getU1(), sprite.getV1(),
+                sprite.getU1(), sprite.getV0()};
+        float[] uvBack = {uv[6], uv[7], uv[4], uv[5], uv[2], uv[3], uv[0], uv[1]};
+        for (int i = 0; i < StationReactor.CHANNELS; i++) {
+            if (runner.type(i) != StationReactor.Channel.COOLANT) {
+                continue;
+            }
+            float x = channelX(i) / 16F;
+            float z = channelZ(i) / 16F;
+            float top = 80 / 16F, bottom = 30 / 16F, w = 7 / 16F;
+            for (int axis = 0; axis < 2; axis++) {
+                float sx = axis == 0 ? w : 0, sz = axis == 0 ? 0 : w;
+                float[] front = {x - sx, top, z - sz, x - sx, bottom, z - sz, x + sx, bottom, z + sz, x + sx, top, z + sz};
+                float[] back = {x + sx, top, z + sz, x + sx, bottom, z + sz, x - sx, bottom, z - sz, x - sx, top, z - sz};
+                float[] normal = {sz / w, 0, -sx / w};
+                quads.add(new StationGeometry.Quad(front, uv, normal, false));
+                quads.add(new StationGeometry.Quad(back, uvBack, new float[] {-normal[0], 0, -normal[2]}, false));
             }
         }
         return quads;
@@ -125,6 +221,11 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
     private static final float[] UP = {0, 1, 0};
 
     static void draw(VertexConsumer buffer, PoseStack pose, List<StationGeometry.Quad> quads, int light) {
+        draw(buffer, pose, quads, light, 0xFFFFFFFF);
+    }
+
+    /** Draws quads tinted by {@code colour} (ARGB; its alpha fades translucent ones). */
+    static void draw(VertexConsumer buffer, PoseStack pose, List<StationGeometry.Quad> quads, int light, int colour) {
         PoseStack.Pose last = pose.last();
         for (StationGeometry.Quad quad : quads) {
             int lit = quad.emissive() ? LightTexture.FULL_BRIGHT : light;
@@ -136,7 +237,7 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
             float nx = n[0], ny = n[1], nz = n[2];
             for (int i = 0; i < 4; i++) {
                 buffer.addVertex(last, p[i * 3], p[i * 3 + 1], p[i * 3 + 2])
-                        .setColor(0xFFFFFFFF)
+                        .setColor(colour)
                         .setUv(uv[i * 2], uv[i * 2 + 1])
                         .setOverlay(OverlayTexture.NO_OVERLAY)
                         .setLight(lit)
