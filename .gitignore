@@ -22,3 +22,4 @@ __pycache__/
 
 # Original sound recordings (Pixabay): kept locally, never redistributed as-is. See art/sounds/CREDITS.md.
 art/sounds/source/
+art/sounds/voice_preview/
