@@ -1,5 +1,7 @@
 package com.ryzer.ryzergen.machine.fission;
 
+import com.ryzer.ryzergen.machine.Announcer;
+import org.jetbrains.annotations.Nullable;
 import com.ryzer.ryzergen.Config;
 import com.ryzer.ryzergen.advancement.Milestone;
 import com.ryzer.ryzergen.machine.RedstoneMode;
@@ -221,6 +223,13 @@ public class StationRunner {
     float temperature = AMBIENT;
     private boolean scrammed;
     Status status = Status.OFFLINE;
+    /** The control system's voice, and what it last knew, to speak only on a change. Not saved. */
+    private final Announcer announcer = new Announcer();
+    private @Nullable Boolean announcedSafeties;
+    private @Nullable Boolean announcedScram;
+    /** Ticks since the station last ran: it only says it is online after being down a while. */
+    private int downTicks = RESTART_ANNOUNCE_TICKS;
+    private static final int RESTART_ANNOUNCE_TICKS = 200;
     int output;
     int efficiencyPermille;
     /** How hard the turbine is turning, 0 to 1, for the renderer. */
@@ -444,6 +453,7 @@ public class StationRunner {
                 : temperature < WARM_TEMPERATURE ? Status.WARMING
                 : overdrive ? Status.OVERDRIVE
                 : Status.ONLINE;
+        announce(level, centre, before);
         // Nearby clients follow the alarm closely, so it can speed up as the core heats.
         if (status != before || (status.critical() && level.getGameTime() % 5 == 0)) {
             changed.run();
@@ -453,6 +463,35 @@ public class StationRunner {
                 && analysis.rating() >= 0.999F) {
             ModTriggers.MILESTONE.get().triggerNearby(level, centre, Milestone.STATION_PERFECT);
         }
+    }
+
+    /** Speaks when something worth hearing has changed since the last tick. */
+    private void announce(ServerLevel level, Vec3 at, Status before) {
+        boolean running = status == Status.ONLINE || status == Status.OVERDRIVE;
+        boolean wasRunning = before == Status.ONLINE || before == Status.OVERDRIVE;
+        // Most urgent first: a line only plays if nothing more urgent is already being said.
+        if ((status == Status.RUNAWAY || status == Status.UNSTABLE) && before != Status.RUNAWAY && before != Status.UNSTABLE) {
+            announcer.say(level, at, Announcer.Line.MELTDOWN_RISK);
+        }
+        // Not on the first tick after loading a station that was already scrammed.
+        if (scrammed && announcedScram != null && !announcedScram) {
+            announcer.say(level, at, Announcer.Line.SCRAM);
+        }
+        announcedScram = scrammed;
+        if (status == Status.FLUX_TILT && before != Status.FLUX_TILT) {
+            announcer.say(level, at, Announcer.Line.FLUX_TILT);
+        }
+        if (status == Status.OVERHEAT && before != Status.OVERHEAT) {
+            announcer.say(level, at, Announcer.Line.OVERHEAT);
+        }
+        if (announcedSafeties != null && announcedSafeties != safeties) {
+            announcer.say(level, at, safeties ? Announcer.Line.SAFETIES_ON : Announcer.Line.SAFETIES_OFF);
+        }
+        announcedSafeties = safeties;
+        if (running && !wasRunning && downTicks >= RESTART_ANNOUNCE_TICKS) {
+            announcer.say(level, at, Announcer.Line.STATION_ONLINE);
+        }
+        downTicks = running ? 0 : Math.min(downTicks + 1, RESTART_ANNOUNCE_TICKS);
     }
 
     /**

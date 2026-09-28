@@ -67,6 +67,7 @@ public final class Config {
     public static final ModConfigSpec.IntValue STEAM_PER_WATER;
     public static final ModConfigSpec.IntValue LEAD_ACID_CAPACITY;
     public static final ModConfigSpec.IntValue LEAD_ACID_RATE;
+    public static final ModConfigSpec.BooleanValue ANNOUNCER_ENABLED;
     public static final ModConfigSpec.BooleanValue RADIATION_ENABLED;
     public static final ModConfigSpec.DoubleValue RADIATION_STRENGTH;
     public static final ModConfigSpec.BooleanValue RADIATION_MOBS;
@@ -133,6 +134,13 @@ public final class Config {
         STATION_TILT_SECONDS = BUILDER
                 .comment("In overdrive, how long a fuel channel may sit without a live rod before the core goes unstable.")
                 .defineInRange("flux_tilt_seconds", 300, 10, 3600);
+        BUILDER.pop();
+
+        BUILDER.comment("The reactor announcer: spoken warnings from the reactors' control systems.").push("announcer");
+        ANNOUNCER_ENABLED = BUILDER
+                .comment("Reactors speak when something worth hearing happens (safeties, SCRAM, coolant loss, meltdown).",
+                        "Off here turns it off for everyone; each player can also use the Voice/Speech volume slider.")
+                .define("enabled", true);
         BUILDER.pop();
 
         BUILDER.comment("Radiation. Only running reactors and meltdowns emit it.").push("radiation");

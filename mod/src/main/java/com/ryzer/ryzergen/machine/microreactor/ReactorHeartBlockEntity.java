@@ -6,6 +6,7 @@ import com.ryzer.ryzergen.cable.GasPipeBlock;
 import com.ryzer.ryzergen.advancement.Milestone;
 import com.ryzer.ryzergen.registry.ModTriggers;
 import com.ryzer.ryzergen.Config;
+import com.ryzer.ryzergen.machine.Announcer;
 import com.ryzer.ryzergen.machine.RedstoneMode;
 import com.ryzer.ryzergen.radiation.RadiationSources;
 import com.ryzer.ryzergen.material.ModTags;
@@ -87,6 +88,10 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
     private static final int WARM_TEMPERATURE = 400;
     /** Where a dry core in overdrive is heading. It melts down on the way, at MAX_TEMPERATURE. */
     private static final int RUNAWAY_TEMPERATURE = 1_200;
+    /** The announcer warns of a meltdown from here. */
+    private static final int MELTDOWN_WARNING_TEMPERATURE = 750;
+    /** Stopped at least this long (ten seconds) before "Reactor online" is worth saying. */
+    private static final int RESTART_ANNOUNCE_TICKS = 200;
     /** Cold side of the heat engine: water near ambient, or hot air through a dry jacket. */
     private static final double WATER_SINK = 20;
     private static final double DRY_SINK = 250;
@@ -340,6 +345,12 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
     private int efficiency;
     /** Interlocks armed. Off means overdrive. */
     private boolean safeties = true;
+    /** The control system's voice, and what it last knew, to speak only on a change. Not saved. */
+    private final Announcer announcer = new Announcer();
+    private @Nullable Boolean announcedSafeties;
+    /** Ticks the reactor has been stopped: it only says it is online after a real shutdown. */
+    private int stoppedTicks = RESTART_ANNOUNCE_TICKS;
+    private boolean meltdownAnnounced;
     /** Keep running on a full buffer and vent the surplus, rather than standing by. */
     private boolean dumpExcess;
     private int fuelTicks;
@@ -495,6 +506,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         if (heart.status == Status.COOLANT_LOSS) {
             heart.alarm((ServerLevel) level, origin, facing);
         }
+        heart.announce((ServerLevel) level, MicroreactorStructure.centre(origin, facing), before, running);
         // Nearby clients follow a coolant loss closely, so the alarm can speed up with the heat.
         boolean alarmChanged = (before == Status.COOLANT_LOSS) != (heart.status == Status.COOLANT_LOSS);
         if (alarmChanged || (heart.status == Status.COOLANT_LOSS && level.getGameTime() % 5 == 0)) {
@@ -513,6 +525,30 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         if (level.getGameTime() % 20 == 0) {
             heart.ejectSpentCore(level, origin, facing);
         }
+    }
+
+    /** Speaks when something worth hearing has changed since the last tick. */
+    private void announce(ServerLevel level, Vec3 at, Status before, boolean running) {
+        if (announcedSafeties != null && announcedSafeties != safeties) {
+            announcer.say(level, at, safeties ? Announcer.Line.SAFETIES_ON : Announcer.Line.SAFETIES_OFF);
+        }
+        announcedSafeties = safeties;
+        if (status == Status.COOLANT_LOSS && before != Status.COOLANT_LOSS) {
+            announcer.say(level, at, Announcer.Line.COOLANT_LOSS);
+        }
+        // About six seconds before it melts (it heats 2°C a tick with no coolant).
+        if (status == Status.COOLANT_LOSS && temperature >= MELTDOWN_WARNING_TEMPERATURE && !meltdownAnnounced) {
+            meltdownAnnounced = true;
+            announcer.say(level, at, Announcer.Line.MELTDOWN_RISK);
+        } else if (temperature < MELTDOWN_WARNING_TEMPERATURE - 50) {
+            meltdownAnnounced = false;
+        }
+        // Online after a real shutdown only: not after a pipe swaps in a fresh core, and not while
+        // it stands by on a full buffer.
+        if (running && !before.running() && stoppedTicks >= RESTART_ANNOUNCE_TICKS) {
+            announcer.say(level, at, Announcer.Line.REACTOR_ONLINE);
+        }
+        stoppedTicks = running || status == Status.STANDBY ? 0 : Math.min(stoppedTicks + 1, RESTART_ANNOUNCE_TICKS);
     }
 
     private void updateTemperature(Status status, boolean cooled) {
