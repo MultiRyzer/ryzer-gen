@@ -7,7 +7,9 @@ Player-facing changes, newest first. Paste each release's section into the Modri
 ### New
 - **Reactor announcer.** The microreactor and the fission station now speak when something worth hearing happens: safeties off and on, SCRAM, overheating, flux tilt, coolant loss, meltdown imminent, and coming online after a shutdown. It sounds like an emergency PA. Turn it down with the vanilla Voice/Speech volume slider, or off for everyone with `announcer.enabled` in the common config.
 
-- **Auto output** button on the Core Cracker, Reprocessor, Fuel Fabricator and Lithium Extractor (top left of the machine area, a hopper key). When on, the machine pushes its results into the blocks beside it: a chest, another machine or a pipe. Off by default, so machines that only touch never hand each other things.
+- **Auto output** on the Core Cracker, Reprocessor, Fuel Fabricator and Lithium Extractor: a tab on the right edge of the machine's screen, with a hopper key and a light that glows green while it is on. When on, the machine pushes its results into the blocks beside it: a chest, another machine or a pipe. Off by default, so machines that only touch never hand each other things.
+
+- **Flow Scanner.** Hold it and every pipe and cable input nearby shows what comes in on it, as a floating label coloured by how close that input is to its limit (green idle, yellow half, red at the limit). The quickest way to find a bottleneck in a big network.
 
 ### Changed
 - **Coolant is your friend.** The fission station boils 4 times as much water, and 8 times in overdrive. A strong core now needs several intake pumps (about 5 for the best uranium layout, 9 for MOX, twice that in overdrive). `fission_station.water_use_percent` scales it.

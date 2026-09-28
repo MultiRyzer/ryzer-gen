@@ -75,7 +75,10 @@ public class RyzerGen {
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
-        event.registrar("1").playToClient(RadiationPayload.TYPE, RadiationPayload.STREAM_CODEC, RadiationClientState::receive);
+        event.registrar("1")
+                .playToClient(RadiationPayload.TYPE, RadiationPayload.STREAM_CODEC, RadiationClientState::receive)
+                .playToClient(com.ryzer.ryzergen.scanner.FlowScanPayload.TYPE, com.ryzer.ryzergen.scanner.FlowScanPayload.STREAM_CODEC,
+                        com.ryzer.ryzergen.scanner.FlowScanClientState::receive);
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {

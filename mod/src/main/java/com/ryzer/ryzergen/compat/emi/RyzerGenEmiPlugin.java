@@ -33,6 +33,11 @@ public class RyzerGenEmiPlugin implements EmiPlugin {
 
     @Override
     public void register(EmiRegistry registry) {
+        // The processing machines' auto output tab sticks out of the panel's right edge: keep EMI's lists off it.
+        registry.addExclusionArea(com.ryzer.ryzergen.machine.processing.ProcessingScreen.class, (screen, out) ->
+                out.accept(new dev.emi.emi.api.widget.Bounds(screen.getGuiLeft() + com.ryzer.ryzergen.machine.processing.ProcessingScreen.TAB_X,
+                        screen.getGuiTop() + com.ryzer.ryzergen.machine.processing.ProcessingScreen.TAB_Y,
+                        com.ryzer.ryzergen.machine.processing.ProcessingScreen.TAB_W, com.ryzer.ryzergen.machine.processing.ProcessingScreen.TAB_H)));
         registry.addCategory(ALLOYING);
         registry.addWorkstation(ALLOYING, ALLOY_SMELTER);
         registry.addWorkstation(ALLOYING, EmiStack.of(ModItems.ELECTRIC_ALLOY_SMELTER.get()));

@@ -62,6 +62,32 @@ def panel(t, w, h):
         t.set(x, y, 'U')
 
 
+def side_tab(t, x0, y0, w, h):
+    """A tab that sticks out of a panel's right edge, like Mekanism's side tabs: the panel's casing
+    and bevel, open on the left (drawn overlapping the panel's edge, so the two read as one piece),
+    cut corners on the right."""
+    for y in range(h):
+        for x in range(w):
+            t.set(x0 + x, y0 + y, 'F')
+    t.rect(x0, y0, x0 + w - 1, y0, 'U')
+    t.rect(x0, y0 + h - 1, x0 + w - 1, y0 + h - 1, 'U')
+    t.rect(x0 + w - 1, y0, x0 + w - 1, y0 + h - 1, 'U')
+    t.rect(x0, y0 + 1, x0 + w - 2, y0 + 1, 'A')
+    t.rect(x0, y0 + 2, x0 + w - 3, y0 + 2, 'E')
+    t.rect(x0, y0 + h - 2, x0 + w - 2, y0 + h - 2, 'J')
+    t.rect(x0, y0 + h - 3, x0 + w - 3, y0 + h - 3, 'I')
+    t.rect(x0 + w - 2, y0 + 1, x0 + w - 2, y0 + h - 2, 'J')
+    t.rect(x0 + w - 3, y0 + 2, x0 + w - 3, y0 + h - 3, 'I')
+    t.px[y0][x0 + w - 1] = None
+    t.px[y0 + h - 1][x0 + w - 1] = None
+    t.set(x0 + w - 2, y0 + 1, 'U')
+    t.set(x0 + w - 2, y0 + h - 2, 'U')
+
+
+SPRITE_SIDE_TAB = (176, 56)
+SIDE_TAB_SIZE = (22, 26)
+
+
 def recess(t, x, y, w, h, fill='S', shadow='U', light='b'):
     """A sunken area: shadow on the top and left, light on the bottom and right."""
     t.rect(x, y, x + w - 1, y + h - 1, fill)
@@ -556,6 +582,8 @@ def processing(inputs, outputs, water):
     keycap(t, 192, 20, True)
     for i, (on, hover) in enumerate(((True, False), (True, True), (False, False), (False, True))):
         power_key(t, 176 + i * 16, 36, on, hover)
+    # The auto output tab, drawn by the screen on the panel's right edge (ProcessingScreen).
+    side_tab(t, *SPRITE_SIDE_TAB, *SIDE_TAB_SIZE)
     return t
 
 

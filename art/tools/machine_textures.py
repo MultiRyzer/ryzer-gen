@@ -318,6 +318,32 @@ def geiger_counter_item():
     return t
 
 
+def flow_scanner_item():
+    """The Flow Scanner: a handheld reader held upright, light casing with a graphite frame, a dark
+    screen showing four bars rising from green to red (how full a pipe is), a cyan status light and
+    a short orange probe on top."""
+    body = {(x, y) for x in range(3, 13) for y in range(3, 15)}
+    t = shape_item(body, 'F', 'A', 'J', highlight='A')
+    # Probe on top, off centre.
+    for y in (0, 1, 2):
+        t.set(10, y, 'X' if y else 'Z')
+    t.set(11, 2, 'Z')
+    # Screen: a dark window with four bars, short to tall, green to red.
+    t.rect(4, 4, 11, 10, 'U')
+    for x, height, colour in ((5, 1, 'n'), (7, 2, 'Y'), (9, 4, 'a'), (10, 5, 'x')):
+        for y in range(10 - height, 10):
+            t.set(x, y, colour)
+    t.set(6, 9, 'n')
+    t.set(8, 9, 'Y')
+    t.set(8, 8, 'Y')
+    # Buttons and the status light.
+    t.set(5, 12, 'S')
+    t.set(7, 12, 'S')
+    t.set(10, 12, 'i')
+    t.set(10, 13, 'f')
+    return t
+
+
 def speed_module_item():
     """A speed module: a graphite circuit card with a double cyan chevron and gold edge contacts."""
     card = {(x, y) for x in range(2, 14) for y in range(3, 12)}
@@ -421,6 +447,7 @@ TEXTURES = {
     'item/home_battery': home_battery_item,
     'item/speed_module': speed_module_item,
     'item/geiger_counter': geiger_counter_item,
+    'item/flow_scanner': flow_scanner_item,
     'block/fitting_silver': lambda: fitting_block('silver'),
     'block/fitting_busbar': lambda: fitting_block('busbar'),
     'block/fitting_cryogenic': lambda: fitting_block('cryogenic'),

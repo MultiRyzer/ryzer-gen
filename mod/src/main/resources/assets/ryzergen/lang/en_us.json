@@ -393,6 +393,8 @@
   "jei.ryzergen.info.fittings": "Fits one side of a cable or pipe, in its panel (right-click the cable with an empty hand). It raises the limit for what comes in on that side: pulled by an extract side, pushed in by a generator, or drawn from a battery. Silver 8x, Busbar 32x, Cryogenic 1024x. Each tier is crafted from the one before.",
   "item.ryzergen.dosimeter_ring.dose": "Recorded dose: %s mSv",
   "item.ryzergen.geiger_counter": "Geiger Counter",
+  "item.ryzergen.flow_scanner": "Flow Scanner",
+  "item.ryzergen.flow_scanner.tooltip": "Hold it to see what comes into every pipe and cable nearby. Green is idle, red is at the input's limit.",
   "item.ryzergen.geiger_counter.tooltip": "Shows your dose and the radiation around you, and clicks near sources. Carry it, or clip it to your belt. Shift-right-click to mute.",
   "item.ryzergen.geiger_counter.muted": "Clicks: off",
   "item.ryzergen.geiger_counter.unmuted": "Clicks: on",

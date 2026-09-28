@@ -52,6 +52,9 @@ public final class ModItems {
             properties -> new BatteryModuleItem(BatteryChemistry.LEAD_ACID, properties));
     public static final DeferredItem<DosimeterRingItem> DOSIMETER_RING = ITEMS.registerItem("dosimeter_ring", DosimeterRingItem::new);
     public static final DeferredItem<GeigerCounterItem> GEIGER_COUNTER = ITEMS.registerItem("geiger_counter", GeigerCounterItem::new);
+    /** Hold it to see what flows into every pipe and cable nearby, against each input's limit. */
+    public static final DeferredItem<com.ryzer.ryzergen.scanner.FlowScannerItem> FLOW_SCANNER =
+            ITEMS.registerItem("flow_scanner", com.ryzer.ryzergen.scanner.FlowScannerItem::new);
     public static final DeferredItem<Item> GRAPHITE = ITEMS.registerSimpleItem("graphite");
     public static final DeferredItem<Item> STEEL_INGOT = ITEMS.registerSimpleItem("steel_ingot");
     /** Tier 1 circuit: iron, copper and redstone. */
