@@ -19,16 +19,17 @@ import net.neoforged.neoforge.registries.DeferredHolder;
  * everyone.
  */
 public final class Announcer {
+    /** Each line's sound, how urgent it is, and how long it lasts (echo included). */
     public enum Line {
-        REACTOR_ONLINE(ModSounds.VOICE_REACTOR_ONLINE, 0, 1.6F),
-        STATION_ONLINE(ModSounds.VOICE_STATION_ONLINE, 0, 3.0F),
-        SAFETIES_ON(ModSounds.VOICE_SAFETIES_ON, 0, 1.4F),
-        SAFETIES_OFF(ModSounds.VOICE_SAFETIES_OFF, 1, 4.8F),
-        OVERHEAT(ModSounds.VOICE_OVERHEAT, 1, 2.7F),
-        FLUX_TILT(ModSounds.VOICE_FLUX_TILT, 1, 2.3F),
-        SCRAM(ModSounds.VOICE_SCRAM, 2, 3.2F),
-        COOLANT_LOSS(ModSounds.VOICE_COOLANT_LOSS, 2, 1.9F),
-        MELTDOWN_RISK(ModSounds.VOICE_MELTDOWN_RISK, 3, 4.5F);
+        REACTOR_ONLINE(ModSounds.VOICE_REACTOR_ONLINE, 0, 2.0F),
+        STATION_ONLINE(ModSounds.VOICE_STATION_ONLINE, 0, 3.5F),
+        SAFETIES_ON(ModSounds.VOICE_SAFETIES_ON, 0, 1.9F),
+        SAFETIES_OFF(ModSounds.VOICE_SAFETIES_OFF, 1, 5.3F),
+        OVERHEAT(ModSounds.VOICE_OVERHEAT, 1, 3.1F),
+        FLUX_TILT(ModSounds.VOICE_FLUX_TILT, 1, 2.9F),
+        SCRAM(ModSounds.VOICE_SCRAM, 2, 3.7F),
+        COOLANT_LOSS(ModSounds.VOICE_COOLANT_LOSS, 2, 2.3F),
+        MELTDOWN_RISK(ModSounds.VOICE_MELTDOWN_RISK, 3, 5.1F);
 
         private final DeferredHolder<SoundEvent, SoundEvent> sound;
         private final int priority;

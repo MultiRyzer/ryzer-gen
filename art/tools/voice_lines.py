@@ -5,8 +5,9 @@ art/sounds/source/ (ignored by git). Each label marks where a line starts; the l
 label. For every line it:
   1. trims the silence round it, keeping a short breath of room at each end,
   2. gently lowers the room noise between words (a soft expander, not a gate that chops),
-  3. gives it a control-room speaker character: less low end, a little more presence, the top
-     rolled off above the speaker's range, light compression and a short, quiet room echo,
+  3. gives it an emergency public-address character: a horn speaker's narrow range (little bass,
+     the top rolled off), a touch of grit, light compression, then the echo of a large hard room
+     (a reverb tail and a faint slapback off a far wall),
   4. levels it to a common loudness with a peak ceiling, so every line sits together in game.
 Then it writes mono Ogg Vorbis to mod/src/main/resources/assets/ryzergen/sounds/voice/ and WAV
 previews (before and after) to art/sounds/voice_preview/ (ignored by git) to listen to.
@@ -98,14 +99,14 @@ def expand(x, rate, floor_db, ratio=2.5):
 
 
 def speaker_eq(x, rate):
-    """A zero-phase EQ drawn as a gain curve over frequency: bass cut below about 170 Hz, a small
-    presence lift near 2.5 kHz, and the top rolled off above about 7 kHz."""
+    """A zero-phase EQ drawn as a gain curve over frequency, shaped like a horn loudspeaker: bass
+    cut below about 300 Hz, a presence lift near 2 kHz, and the top rolled off above about 5 kHz."""
     n = 1 << int(np.ceil(np.log2(len(x) + rate)))
     spectrum = np.fft.rfft(x, n)
     f = np.fft.rfftfreq(n, 1 / rate)
-    high_pass = 1 / np.sqrt(1 + (170 / np.maximum(f, 1)) ** 4)
-    low_pass = 1 / np.sqrt(1 + (f / 7000) ** 4)
-    presence = 1 + (db(3) - 1) * np.exp(-0.5 * (np.log2(np.maximum(f, 1) / 2500) / 0.6) ** 2)
+    high_pass = 1 / np.sqrt(1 + (300 / np.maximum(f, 1)) ** 4)
+    low_pass = 1 / np.sqrt(1 + (f / 5000) ** 6)
+    presence = 1 + (db(5) - 1) * np.exp(-0.5 * (np.log2(np.maximum(f, 1) / 2000) / 0.7) ** 2)
     return np.fft.irfft(spectrum * high_pass * low_pass * presence, n)[:len(x)]
 
 
@@ -117,15 +118,37 @@ def compress(x, rate, threshold_db=-24.0, ratio=3.0):
     return x * gain
 
 
+def grit(x, drive=2.0):
+    """The slight break-up of a loudspeaker pushed hard."""
+    peak = max(np.max(np.abs(x)), 1e-9)
+    return np.tanh(x / peak * drive) / np.tanh(drive) * peak
+
+
+REVERB_SECONDS = 1.1       # the time the tail takes to fade by 60 dB
+REVERB_LEVEL_DB = -9       # the tail against the direct voice
+SLAPBACK = (0.16, -17)     # a single echo off a far wall: delay in s, level in dB
+
+
 def room(x, rate):
-    """A few quiet early reflections, as off the hard walls of a small control room."""
-    y = np.concatenate([x, np.zeros(int(0.3 * rate))])
-    for delay, level in ((0.019, -16), (0.031, -19), (0.047, -22), (0.071, -26), (0.103, -30)):
-        d = int(delay * rate)
-        tap = np.zeros_like(y)
-        tap[d:d + len(x)] = x
-        y += tap * db(level)
-    return y
+    """The echo of a large hard room: early reflections, a smooth decaying tail and a faint
+    slapback, made as an impulse response (fixed noise, so every line gets the same room) and
+    applied by convolution."""
+    length = int((REVERB_SECONDS + 0.2) * rate)
+    t = np.arange(length) / rate
+    noise = np.random.default_rng(7).standard_normal(length)
+    tail = noise * np.exp(-6.91 * t / REVERB_SECONDS) * np.minimum(t / 0.02, 1)
+    # Darker as it decays, as air and soft surfaces take the top out of a real echo.
+    n = 1 << int(np.ceil(np.log2(length)))
+    f = np.fft.rfftfreq(n, 1 / rate)
+    tail = np.fft.irfft(np.fft.rfft(tail, n) / np.sqrt(1 + (f / 3500) ** 2), n)[:length]
+    impulse = tail / np.sqrt(np.sum(tail ** 2)) * db(REVERB_LEVEL_DB)
+    for delay, level in ((0.023, -12), (0.041, -14), (0.067, -17)):
+        impulse[int(delay * rate)] += db(level)
+    impulse[int(SLAPBACK[0] * rate)] += db(SLAPBACK[1])
+    impulse[0] = 1.0
+    size = len(x) + length
+    n = 1 << int(np.ceil(np.log2(size)))
+    return np.fft.irfft(np.fft.rfft(x, n) * np.fft.rfft(impulse, n), n)[:size]
 
 
 def level(x):
@@ -162,8 +185,8 @@ def main():
         env = envelope(raw, rate, 0.05)
         local_db = 20 * np.log10(max(np.percentile(env, 10), 1e-9))
         clean = expand(raw, rate, max(floor_db, local_db))
-        done = level(room(compress(speaker_eq(clean, rate), rate), rate))
-        done = trim(done, rate, -50)
+        done = level(room(compress(grit(speaker_eq(clean, rate)), rate), rate))
+        done = trim(done, rate, -55)
         sf.write(os.path.join(OUT, name + '.ogg'), done, rate, format='OGG', subtype='VORBIS')
         sf.write(os.path.join(PREVIEW, name + '_dry.wav'), level(clean), rate)
         sf.write(os.path.join(PREVIEW, name + '.wav'), done, rate)
