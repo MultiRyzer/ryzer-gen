@@ -106,7 +106,7 @@ public class FluidPipeBlockEntity extends CableBlockEntity<IFluidHandler> {
                 }
                 int sent = distribute(resource.copyWithAmount(Math.min(resource.getAmount(), rate(side))), source, null, action);
                 if (action.execute()) {
-                    pushed[side.get3DDataValue()] += sent;
+                    addPushed(side, sent);
                 }
                 return sent;
             }
@@ -124,8 +124,8 @@ public class FluidPipeBlockEntity extends CableBlockEntity<IFluidHandler> {
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, FluidPipeBlockEntity pipe) {
-        pipe.startTick();
-        for (Direction dir : Direction.values()) {
+        pipe.roll();
+        for (Direction dir : CableNetwork.DIRECTIONS) {
             if (state.getValue(CableBlock.SIDES.get(dir)) != CableSide.EXTRACT) {
                 continue;
             }

@@ -10,6 +10,11 @@ Player-facing changes, newest first. Paste each release's section into the Modri
 ### Changed
 - **Coolant is your friend.** The fission station boils 4 times as much water, and 8 times in overdrive. A strong core now needs several intake pumps (about 5 for the best uranium layout, 9 for MOX, twice that in overdrive). `fission_station.water_use_percent` scales it.
 
+### Performance
+- Pipes and cables share one network per group of joined pipes, scanned once, and a change only rebuilds the networks it touches. Before, placing or wrenching any pipe anywhere made every cable in the world rescan its whole network, which could stutter in big bases.
+- Energy cables only tick when they have an extract side, like item and fluid pipes already did.
+- Networks no longer stop at 4,096 blocks, and scans no longer load chunks.
+
 ### Fixed
 - Intake pumps only pushed water out of their top, so a pipe joined to a pump's side got no water unless it was set to extract. Pumps now push out of every side but the bottom.
 - The fluid pipe panel counted intake pumps as tanks.
