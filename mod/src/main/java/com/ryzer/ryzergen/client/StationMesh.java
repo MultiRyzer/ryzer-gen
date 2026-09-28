@@ -83,11 +83,28 @@ public final class StationMesh implements AutoCloseable {
         buffer.close();
     }
 
+    private static Method shadowPass;
     private static Method shaderPackInUse;
     private static Object irisApi;
     private static boolean lookedUp;
     /** Asking Iris failed once: from then on, always draw the safe way. */
     private static boolean irisBroken;
+
+    /**
+     * Whether Iris is drawing its shadow pass (the world again, from the sun). Overlays that are not
+     * part of the world (ghost outlines, Flow Scanner labels) skip it, so they cast no shadows.
+     */
+    public static boolean renderingShadows() {
+        shadersInUse();
+        if (shadowPass == null || irisBroken) {
+            return false;
+        }
+        try {
+            return (boolean) shadowPass.invoke(irisApi);
+        } catch (Throwable failed) {
+            return false;
+        }
+    }
 
     /** Whether a shader pack is active (Iris API, looked up by name so it is never a dependency). */
     public static boolean shadersInUse() {
@@ -97,6 +114,11 @@ public final class StationMesh implements AutoCloseable {
                 Class<?> api = Class.forName("net.irisshaders.iris.api.v0.IrisApi");
                 irisApi = api.getMethod("getInstance").invoke(null);
                 shaderPackInUse = api.getMethod("isShaderPackInUse");
+                try {
+                    shadowPass = api.getMethod("isRenderingShadowPass");
+                } catch (Throwable older) {
+                    shadowPass = null;
+                }
             } catch (Throwable absent) {
                 shaderPackInUse = null;
             }
