@@ -30,7 +30,9 @@ import java.util.List;
  */
 @EventBusSubscriber(modid = RyzerGen.MOD_ID, value = Dist.CLIENT)
 public final class FlowScannerLabels {
-    private static final float SCALE = 0.02F;
+    private static final float SCALE = 0.026F;
+    /** A dark plate behind the text, so every colour reads against any background. */
+    private static final int PLATE = 0xC0101216;
     /** How full, to colour: green idle, yellow half, orange three quarters, red nearly full, dark red at the limit. */
     private static final float[] STOPS = {0, 0.5F, 0.75F, 0.9F, 1};
     private static final int[] COLOURS = {0x44D65E, 0xF0D030, 0xF08A1E, 0xE0503C, 0xA81818};
@@ -60,8 +62,9 @@ public final class FlowScannerLabels {
         for (FlowScanPayload.Entry entry : entries) {
             BlockPos pos = BlockPos.of(entry.pos());
             Direction side = Direction.from3DDataValue(entry.side());
-            // At the input face, a little above it so it clears the pipe.
-            Vec3 at = Vec3.atCenterOf(pos).add(side.getStepX() * 0.36, 0.34 + side.getStepY() * 0.2, side.getStepZ() * 0.36);
+            // Above the pipe, nudged a little towards its input side: at the face itself the label
+            // would sink into the machine it comes from.
+            Vec3 at = Vec3.atCenterOf(pos).add(side.getStepX() * 0.15, 0.62 + Math.max(0, side.getStepY()) * 0.3, side.getStepZ() * 0.15);
             if (at.distanceToSqr(camera) > FlowScanner.RADIUS * FlowScanner.RADIUS) {
                 continue;
             }
@@ -75,11 +78,11 @@ public final class FlowScannerLabels {
             pose.scale(SCALE, -SCALE, SCALE);
             Matrix4f matrix = pose.last().pose();
             float x = -font.width(text) / 2F;
-            // Like a name tag: faint through walls, then solid where it can be seen.
-            font.drawInBatch(text, x, 0, 0x40000000 | colour, false, matrix, buffers, Font.DisplayMode.SEE_THROUGH,
-                    0x50000000, LightTexture.FULL_BRIGHT);
-            font.drawInBatch(text, x, 0, 0xFF000000 | colour, false, matrix, buffers, Font.DisplayMode.NORMAL,
-                    0, LightTexture.FULL_BRIGHT);
+            // Like a name tag: dimmer through walls, then solid on a dark plate where it can be seen.
+            font.drawInBatch(text, x, 0, 0x90000000 | colour, false, matrix, buffers, Font.DisplayMode.SEE_THROUGH,
+                    0x70101216, LightTexture.FULL_BRIGHT);
+            font.drawInBatch(text, x, 0, 0xFF000000 | colour, true, matrix, buffers, Font.DisplayMode.NORMAL,
+                    PLATE, LightTexture.FULL_BRIGHT);
             pose.popPose();
         }
         buffers.endBatch();
