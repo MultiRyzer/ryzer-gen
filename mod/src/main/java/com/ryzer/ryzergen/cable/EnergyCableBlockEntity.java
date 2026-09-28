@@ -52,6 +52,9 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
         return new IEnergyStorage() {
             @Override
             public int receiveEnergy(int amount, boolean simulate) {
+                if (amount > 0) {
+                    offered(side);
+                }
                 int sent = distribute(Math.min(amount, rate(side)), source, null, simulate);
                 if (!simulate) {
                     addPushed(side, sent);

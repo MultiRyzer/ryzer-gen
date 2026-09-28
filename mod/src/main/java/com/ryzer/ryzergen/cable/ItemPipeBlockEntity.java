@@ -78,6 +78,7 @@ public class ItemPipeBlockEntity extends CableBlockEntity<IItemHandler> {
                 if (stack.isEmpty()) {
                     return stack;
                 }
+                offered(side);
                 int count = Math.min(stack.getCount(), schedule(side)[0]);
                 ItemStack left = distribute(stack.copyWithCount(count), source, null, simulate);
                 if (!simulate) {

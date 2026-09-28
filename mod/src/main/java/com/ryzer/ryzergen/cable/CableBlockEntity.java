@@ -357,6 +357,16 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
      * neighbour or pulled by an extract side alike. Never write to {@link #moved} directly: open
      * panels update before block entities tick, so {@link #roll()} would clear it before it is read.
      */
+    /**
+     * A block tried to push in on {@code side}, whether or not anything fitted: it still counts as an
+     * input, so a network whose tanks are full shows 0 there rather than losing the side.
+     */
+    protected void offered(Direction side) {
+        if (level != null) {
+            lastIn[side.get3DDataValue()] = level.getGameTime();
+        }
+    }
+
     protected void addPushed(Direction side, int amount) {
         roll();
         pushed[side.get3DDataValue()] += amount;
