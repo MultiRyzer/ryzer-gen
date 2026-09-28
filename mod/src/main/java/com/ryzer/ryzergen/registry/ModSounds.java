@@ -30,6 +30,17 @@ public final class ModSounds {
     /** One Geiger counter click from the dosimeter ring. */
     public static final DeferredHolder<SoundEvent, SoundEvent> DOSIMETER_CLICK = register("dosimeter_click");
 
+    /** The reactor announcer's voice lines (machine/Announcer), spoken by Ryzer. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_REACTOR_ONLINE = register("voice_reactor_online");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_STATION_ONLINE = register("voice_station_online");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_SAFETIES_ON = register("voice_safeties_on");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_SAFETIES_OFF = register("voice_safeties_off");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_OVERHEAT = register("voice_overheat");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_FLUX_TILT = register("voice_flux_tilt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_SCRAM = register("voice_scram");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_COOLANT_LOSS = register("voice_coolant_loss");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_MELTDOWN_RISK = register("voice_meltdown_risk");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, name)));
     }

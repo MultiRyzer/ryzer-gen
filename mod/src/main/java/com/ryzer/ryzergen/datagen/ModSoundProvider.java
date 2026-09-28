@@ -54,5 +54,33 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         add(ModSounds.LITHIUM_EXTRACTOR, definition()
                 .subtitle("subtitles.ryzergen.lithium_extractor")
                 .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "reprocessor")).volume(RECORDING_VOLUME * 0.8F).pitch(1.15F)));
+            // The reactor announcer: Ryzer's voice, cut by art/tools/voice_lines.py.
+        add(ModSounds.VOICE_REACTOR_ONLINE, definition()
+                .subtitle("subtitles.ryzergen.voice_reactor_online")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/reactor_online"))));
+        add(ModSounds.VOICE_STATION_ONLINE, definition()
+                .subtitle("subtitles.ryzergen.voice_station_online")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/station_online"))));
+        add(ModSounds.VOICE_SAFETIES_ON, definition()
+                .subtitle("subtitles.ryzergen.voice_safeties_on")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/safeties_on"))));
+        add(ModSounds.VOICE_SAFETIES_OFF, definition()
+                .subtitle("subtitles.ryzergen.voice_safeties_off")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/safeties_off"))));
+        add(ModSounds.VOICE_OVERHEAT, definition()
+                .subtitle("subtitles.ryzergen.voice_overheat")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/overheat"))));
+        add(ModSounds.VOICE_FLUX_TILT, definition()
+                .subtitle("subtitles.ryzergen.voice_flux_tilt")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/flux_tilt"))));
+        add(ModSounds.VOICE_SCRAM, definition()
+                .subtitle("subtitles.ryzergen.voice_scram")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/scram"))));
+        add(ModSounds.VOICE_COOLANT_LOSS, definition()
+                .subtitle("subtitles.ryzergen.voice_coolant_loss")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/coolant_loss"))));
+        add(ModSounds.VOICE_MELTDOWN_RISK, definition()
+                .subtitle("subtitles.ryzergen.voice_meltdown_risk")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/meltdown_risk"))));
     }
 }
