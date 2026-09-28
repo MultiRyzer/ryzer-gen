@@ -70,7 +70,6 @@ public class GeigerCounterItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("item.ryzergen.geiger_counter.tooltip").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable(isMuted(stack) ? "item.ryzergen.geiger_counter.muted" : "item.ryzergen.geiger_counter.unmuted")
                 .withStyle(ChatFormatting.DARK_AQUA));
     }
