@@ -50,8 +50,14 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 public class StationRunner {
     public static final int WATER_CAPACITY = 16_000;
     public static final int ENERGY_CAPACITY = 2_000_000;
-    /** Thermal FE carried away per mB of water boiled. */
+    /**
+     * Thermal FE one mB of water carries away before the water-use factor: water is cheap, so a
+     * station drinks a lot of it (coolant is your friend, design section 5). Running it takes 4
+     * times this much water, and overdrive 8 times, scaled by {@code fission_station.water_use_percent}.
+     */
     public static final float HEAT_PER_WATER = 200;
+    public static final float WATER_USE = 4;
+    public static final float OVERDRIVE_WATER_USE = 8;
     /** Thermal FE to warm the core by one degree. */
     private static final float HEAT_CAPACITY = 20_000;
     public static final float AMBIENT = 20;
@@ -388,13 +394,14 @@ public class StationRunner {
         // water allow. Heat no coolant can reach (see StationReactor) stays and warms the core. With
         // the reaction stopped, every coolant channel works on cooling the core down.
         float stored = (temperature - AMBIENT) * HEAT_CAPACITY;
-        float byWater = water.getFluidAmount() * HEAT_PER_WATER;
+        float heatPerWater = heatPerWater(overdrive);
+        float byWater = water.getFluidAmount() * heatPerWater;
         float carryable = generation > 0 ? Math.max(0, generation - analysis.stranded()) : 0;
         int working = generation > 0 && analysis.working() > 0 ? analysis.working() : analysis.coolants();
         float potential = working * analysis.capacity() * StationReactor.coolingRamp(temperature);
         float removed = Math.max(0, Math.min(potential, Math.min(carryable + stored, byWater)));
         if (removed > 0) {
-            water.drain((int) Math.ceil(removed / HEAT_PER_WATER), IFluidHandler.FluidAction.EXECUTE);
+            water.drain((int) Math.ceil(removed / heatPerWater), IFluidHandler.FluidAction.EXECUTE);
         }
         temperature += (generation - removed) / HEAT_CAPACITY;
         // A stopped core slowly loses its heat to the air. Not while it runs: the plan (and the
@@ -463,6 +470,12 @@ public class StationRunner {
                 && analysis.rating() >= 0.999F) {
             ModTriggers.MILESTONE.get().triggerNearby(level, centre, Milestone.STATION_PERFECT);
         }
+    }
+
+    /** Thermal FE each mB of water carries away: less in overdrive, where it boils off hotter and faster. */
+    public static float heatPerWater(boolean overdrive) {
+        float use = (overdrive ? OVERDRIVE_WATER_USE : WATER_USE) * Config.get(Config.STATION_WATER_USE) / 100F;
+        return HEAT_PER_WATER / Math.max(0.01F, use);
     }
 
     /** Speaks when something worth hearing has changed since the last tick. */
