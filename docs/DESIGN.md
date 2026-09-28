@@ -115,6 +115,37 @@ Rule 2: **power is the price.** The machines that make the next tier's key mater
 
 Circuits follow their own logic: basic, advanced, radiation-hardened, cryogenic, photonic. Each tier's circuit needs something only the previous tier made possible.
 
+### Steady state (rewarding automation)
+A reactor that never stops runs better. Every reactor keeps a **steady-state streak**: how much fuel it has burned without downtime. The longer the streak, the more power it makes from the same fuel, up to a cap that grows with the tier. So a well-automated plant, refuelled by pipes the moment a core runs out, pulls ahead of one refuelled by hand. It rewards exactly the automation rule 3 asks for.
+
+- **The streak** counts full fuel loads burned without downtime: one core for the microreactor, one load of every fuel channel for the station (about 30 minutes of running each, 40 for a microreactor core). It builds up with running time, so topping up or swapping part-used fuel gains nothing.
+- **Downtime** is a reactor that should be running but is not, for more than 5 seconds:
+  - its fuel runs out and is not replaced in time: the microreactor's core is spent or missing, or a planned fuel channel in the station holds a spent rod or none
+  - a SCRAM, or an overheat
+  - switched off by hand or by redstone (a pause for maintenance still counts, so refuelling slowly with the reactor off gains nothing)
+- **Paused, not broken:** while its energy buffer is full and it stands by (follow load), while its chunk is unloaded, and while the server is off. None of these are the player's fault.
+- **Decay, not reset:** each downtime costs a quarter of the streak, so one slow swap or a power cut after a long run is a setback, not a disaster. Repeated misses compound. A meltdown ends it, as it ends the reactor. Breaking the reactor to move it loses the streak.
+- **The bonus** raises electrical output only. Fuel burns at the same rate and the core makes the same heat, so water use and cooling do not change: it is more energy per core, which is efficiency. Each tier has its own cap, reached along the same curve:
+
+| Streak (fuel loads) | Share of the tier's bonus |
+|---|---|
+| 32 | a quarter |
+| 128 | half |
+| 512 | all of it |
+
+Between milestones it grows smoothly, and it starts climbing from the first load.
+
+| Tier | Cap | At 32 loads | At 128 | At 512 |
+|---|---|---|---|---|
+| Microreactor | 1.5x | 1.125x | 1.25x | 1.5x |
+| Fission station | 2x | 1.25x | 1.5x | 2x |
+| Breeder | 2.5x | 1.375x | 1.75x | 2.5x |
+| Fusion | 3x | 1.5x | 2x | 3x |
+
+- **Showing it:** the reactor's screen shows the streak, the bonus now and the next milestone. The announcer calls each milestone ("steady state reached", which needs a new recording), and each tier's cap is an advancement.
+- **Real basis:** CANDU reactors are refuelled while running, which is much of why they run so much of the time. A reactor that stops loses more than the stop itself: xenon-135 builds up after shutdown and holds a restarted core back for hours (the "iodine pit"), and every stop and start fatigues the vessel. The honest fudge is the size of the bonus: think of it as the core settling into its best equilibrium the longer it runs undisturbed.
+- **Balance:** it makes the current tier's power better, so progress is faster (see Power is the price), but each tier's cap stays below what the next tier makes, so a tier is never skipped. The milestones are a first pass: 512 station loads is some 250 hours, a long-term trophy rather than a target, and play-testing will tell whether the curve should be shorter. Config: `steady_state.enabled`, the cap per tier, and a scale for the milestone counts.
+
 ## 6. Tier 1: Microreactor
 
 Inspired by the new generation of transportable microreactors. It gets its own original name and look in the mod, not a real product's name. Meant to feel like a basic early machine, in the spirit of Oritech's small early multiblocks: simple to build, no layout rules to learn.
