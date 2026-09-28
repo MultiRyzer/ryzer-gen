@@ -10,8 +10,8 @@ blended over the solid parts.
     d.cylinder('steel', 0, 16, 90)
     d.export(path); d.save_png(path)
 
-Quads carry a group: the game draws 'static' from a mesh, turns 'rotor', and draws 'glass'
-translucent every frame. The picture blends 'glass' and adds the light of 'plasma' (a concept-only
+Quads carry a group: the game draws 'static' from a mesh, turns 'rotor', and draws 'glass' (and
+'steam', faded by the machine's power) translucent every frame. The picture blends 'glass' and adds the light of 'plasma' (a concept-only
 group for glow the game draws in code). Groups listed in `concept_only` appear in the picture but are not exported
 (the station's rods, which the game draws from the player's layout).
 """
@@ -333,7 +333,7 @@ class Design:
                         zbuf[py][px] = depth
                         img[py][px] = (int(r * light), int(g * light), int(b * light))
 
-        blended = ('plasma', 'glass')
+        blended = ('steam', 'plumes', 'plasma', 'glass')
         for q in visible:
             if q[3] not in blended:
                 raster(q, False)
