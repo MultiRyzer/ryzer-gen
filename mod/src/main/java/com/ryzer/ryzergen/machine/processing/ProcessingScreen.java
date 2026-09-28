@@ -38,9 +38,18 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
     private static final int KEY_X = 133;
     private static final int POWER_Y = 17;
     private static final int REDSTONE_Y = 35;
-    /** The auto output key: top left of the bay, in line with the power key, clear of every machine's slots and water well. */
-    private static final int AUTO_X = 26;
-    private static final int AUTO_Y = 17;
+    /**
+     * The auto output tab on the panel's right edge (its sprite is drawn by gui_textures.py,
+     * processing()), overlapping the edge by 3 pixels so the two read as one piece, with the key in it.
+     */
+    public static final int TAB_X = 173;
+    public static final int TAB_Y = 16;
+    public static final int TAB_W = 22;
+    public static final int TAB_H = 26;
+    private static final int SPRITE_TAB_U = 176;
+    private static final int SPRITE_TAB_V = 56;
+    private static final int AUTO_X = TAB_X + 3;
+    private static final int AUTO_Y = TAB_Y + 5;
     private static final int STATUS_X = 28;
     private static final int STATUS_Y = 58;
     // Sprites, right of the panel: the lit arrow, the redstone keycap (plain and hovered), then the
@@ -95,7 +104,9 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
         graphics.renderItem(icon, 0, 0);
         graphics.pose().popPose();
 
-        // Auto output: a keycap with a hopper, and a small light that glows green while it is on.
+        // Auto output: a tab on the right edge holding a keycap with a hopper, and a small light
+        // that glows green while it is on.
+        graphics.blit(texture, leftPos + TAB_X, topPos + TAB_Y, SPRITE_TAB_U, SPRITE_TAB_V, TAB_W, TAB_H);
         boolean autoHover = isOver(AUTO_X, AUTO_Y, mouseX, mouseY);
         graphics.blit(texture, leftPos + AUTO_X, topPos + AUTO_Y, autoHover ? 192 : 176, SPRITE_KEY_V, 16, 16);
         graphics.pose().pushPose();
