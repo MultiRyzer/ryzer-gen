@@ -56,7 +56,8 @@ public final class MicroreactorGhostPreview {
 
     @SubscribeEvent
     public static void render(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+        // Not in a shader pack's shadow pass: an overlay should not cast shadows.
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS || StationMesh.renderingShadows()) {
             return;
         }
         Minecraft minecraft = Minecraft.getInstance();
