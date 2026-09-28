@@ -38,6 +38,9 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
     private static final int KEY_X = 133;
     private static final int POWER_Y = 17;
     private static final int REDSTONE_Y = 35;
+    /** The auto output key: top left of the bay, in line with the power key, clear of every machine's slots and water well. */
+    private static final int AUTO_X = 26;
+    private static final int AUTO_Y = 17;
     private static final int STATUS_X = 28;
     private static final int STATUS_Y = 58;
     // Sprites, right of the panel: the lit arrow, the redstone keycap (plain and hovered), then the
@@ -91,6 +94,17 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
         graphics.pose().scale(0.7F, 0.7F, 1);
         graphics.renderItem(icon, 0, 0);
         graphics.pose().popPose();
+
+        // Auto output: a keycap with a hopper, and a small light that glows green while it is on.
+        boolean autoHover = isOver(AUTO_X, AUTO_Y, mouseX, mouseY);
+        graphics.blit(texture, leftPos + AUTO_X, topPos + AUTO_Y, autoHover ? 192 : 176, SPRITE_KEY_V, 16, 16);
+        graphics.pose().pushPose();
+        graphics.pose().translate(leftPos + AUTO_X + 2.5F, topPos + AUTO_Y + 1.5F, 0);
+        graphics.pose().scale(0.7F, 0.7F, 1);
+        graphics.renderItem(new ItemStack(Items.HOPPER), 0, 0);
+        graphics.pose().popPose();
+        int light = menu.autoOutput() ? 0xFF44D65E : 0xFF2B3036;
+        graphics.fill(leftPos + AUTO_X + 12, topPos + AUTO_Y + 2, leftPos + AUTO_X + 14, topPos + AUTO_Y + 4, light);
     }
 
     @Override
@@ -164,6 +178,11 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
             graphics.renderComponentTooltip(font, List.of(
                     Component.translatable(menu.enabled() ? "gui.ryzergen.processing.power.on" : "gui.ryzergen.processing.power.off"),
                     Component.translatable("gui.ryzergen.power.hint").withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
+        } else if (isOver(AUTO_X, AUTO_Y, mouseX, mouseY)) {
+            graphics.renderComponentTooltip(font, List.of(
+                    Component.translatable(menu.autoOutput() ? "gui.ryzergen.processing.auto_output.on" : "gui.ryzergen.processing.auto_output.off"),
+                    Component.translatable("gui.ryzergen.processing.auto_output.hint").withStyle(style -> style.withColor(DIM)),
+                    Component.translatable("gui.ryzergen.power.hint").withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
         } else if (isOver(KEY_X, REDSTONE_Y, mouseX, mouseY)) {
             String mode = switch (menu.redstoneMode()) {
                 case IGNORED -> "gui.ryzergen.redstone.ignored";
@@ -179,7 +198,8 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0 && minecraft != null && minecraft.gameMode != null) {
             int id = isOver(KEY_X, POWER_Y, mouseX, mouseY) ? ProcessingMenu.BUTTON_POWER
-                    : isOver(KEY_X, REDSTONE_Y, mouseX, mouseY) ? ProcessingMenu.BUTTON_REDSTONE : -1;
+                    : isOver(KEY_X, REDSTONE_Y, mouseX, mouseY) ? ProcessingMenu.BUTTON_REDSTONE
+                    : isOver(AUTO_X, AUTO_Y, mouseX, mouseY) ? ProcessingMenu.BUTTON_AUTO_OUTPUT : -1;
             if (id >= 0) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, id);
                 minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
