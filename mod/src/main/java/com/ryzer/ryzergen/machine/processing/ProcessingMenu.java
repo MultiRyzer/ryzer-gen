@@ -27,6 +27,7 @@ import static com.ryzer.ryzergen.machine.processing.ProcessingBlockEntity.*;
 public class ProcessingMenu extends AbstractContainerMenu {
     public static final int BUTTON_POWER = 0;
     public static final int BUTTON_REDSTONE = 1;
+    public static final int BUTTON_AUTO_OUTPUT = 2;
 
     public static final int SLOT_Y = 35;
     public static final int OUTPUT_X = 113;
@@ -121,19 +122,25 @@ public class ProcessingMenu extends AbstractContainerMenu {
         return data.get(DATA_ENABLED) != 0;
     }
 
+    public boolean autoOutput() {
+        return data.get(DATA_AUTO_OUTPUT) != 0;
+    }
+
     public int modules() {
         return data.get(DATA_MODULES);
     }
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
-        if (id != BUTTON_POWER && id != BUTTON_REDSTONE) {
+        if (id != BUTTON_POWER && id != BUTTON_REDSTONE && id != BUTTON_AUTO_OUTPUT) {
             return false;
         }
         access.execute((level, pos) -> {
             if (level.getBlockEntity(pos) instanceof ProcessingBlockEntity entity) {
                 if (id == BUTTON_POWER) {
                     entity.togglePower();
+                } else if (id == BUTTON_AUTO_OUTPUT) {
+                    entity.toggleAutoOutput();
                 } else {
                     entity.cycleRedstoneMode();
                 }
