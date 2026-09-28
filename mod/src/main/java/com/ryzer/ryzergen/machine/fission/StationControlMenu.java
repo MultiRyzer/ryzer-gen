@@ -241,7 +241,7 @@ public class StationControlMenu extends AbstractContainerMenu {
             return true;
         }
         if (id == BUTTON_SAFETY) {
-            runner.toggleSafeties();
+            runner.toggleSafeties(true);
             if (!runner.safeties && player instanceof ServerPlayer serverPlayer) {
                 ModTriggers.MILESTONE.get().trigger(serverPlayer, Milestone.STATION_OVERDRIVE);
             }
