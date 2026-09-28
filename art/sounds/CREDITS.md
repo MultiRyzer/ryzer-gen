@@ -13,4 +13,6 @@ The original recordings are not in this repository: the licence allows using the
 | Reprocessor | Basement Water Pump | freesound_community |
 | Fuel Fabricator | Lowering Ramp | freesound_community |
 
+The reactor announcer's voice lines (`sounds/voice/`) are spoken by Ryzer and processed by `art/tools/voice_lines.py`. No AI voice model is involved, so there is no model licence to credit.
+
 The microreactor's running hum is vanilla's beacon hum, pitched down, and the dosimeter click is vanilla's note block hi-hat, pitched up. Neither file is shipped.
