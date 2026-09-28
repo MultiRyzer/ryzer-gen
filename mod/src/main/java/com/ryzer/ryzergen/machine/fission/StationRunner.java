@@ -233,6 +233,8 @@ public class StationRunner {
     private final Announcer announcer = new Announcer();
     private @Nullable Boolean announcedSafeties;
     private @Nullable Boolean announcedScram;
+    /** The current SCRAM came from the player re-arming the safeties: a controlled shutdown. Not saved. */
+    private boolean plannedScram;
     /** Ticks since the station last ran: it only says it is online after being down a while. */
     private int downTicks = RESTART_ANNOUNCE_TICKS;
     private static final int RESTART_ANNOUNCE_TICKS = 200;
@@ -301,13 +303,15 @@ public class StationRunner {
 
     /**
      * The safety switch. Disarming is the player's choice; re-arming SCRAMs the core at once, which
-     * is also the only way to save one gone unstable.
+     * is also the only way to save one gone unstable. {@code byPlayer} is false when the interlock
+     * does it: a SCRAM the player chose is a controlled shutdown, so the announcer does not warn.
      */
-    void toggleSafeties() {
+    void toggleSafeties(boolean byPlayer) {
         safeties = !safeties;
         if (safeties) {
             if (unstable || temperature >= RESET_TEMPERATURE) {
                 scrammed = true;
+                plannedScram = byPlayer;
             }
             unstable = false;
             tiltTicks = 0;
@@ -381,7 +385,7 @@ public class StationRunner {
                     unstable = true;
                 } else {
                     // Meltdowns are off: the interlock refuses to stay disarmed.
-                    toggleSafeties();
+                    toggleSafeties(false);
                     scrammed = true;
                     overdrive = false;
                 }
@@ -421,7 +425,7 @@ public class StationRunner {
                 meltdown(level, core, facing, centre);
                 return;
             }
-            toggleSafeties();
+            toggleSafeties(false);
             scrammed = true;
         }
 
@@ -486,11 +490,15 @@ public class StationRunner {
         if ((status == Status.RUNAWAY || status == Status.UNSTABLE) && before != Status.RUNAWAY && before != Status.UNSTABLE) {
             announcer.say(level, at, Announcer.Line.MELTDOWN_RISK);
         }
-        // Not on the first tick after loading a station that was already scrammed.
-        if (scrammed && announcedScram != null && !announcedScram) {
+        // Not on the first tick after loading a station that was already scrammed, and not when the
+        // player caused it by re-arming the safeties (that says "Safeties engaged" instead).
+        if (scrammed && announcedScram != null && !announcedScram && !plannedScram) {
             announcer.say(level, at, Announcer.Line.SCRAM);
         }
         announcedScram = scrammed;
+        if (!scrammed) {
+            plannedScram = false;
+        }
         if (status == Status.FLUX_TILT && before != Status.FLUX_TILT) {
             announcer.say(level, at, Announcer.Line.FLUX_TILT);
         }
