@@ -132,7 +132,7 @@ public class FluidPipeBlockEntity extends CableBlockEntity<IFluidHandler> {
             BlockPos sourcePos = pos.relative(dir);
             IFluidHandler source = level.getCapability(Capabilities.FluidHandler.BLOCK, sourcePos, dir.getOpposite());
             if (source != null) {
-                pipe.moved[dir.get3DDataValue()] += pipe.pull(source, sourcePos, pipe.rate(dir));
+                pipe.addPushed(dir, pipe.pull(source, sourcePos, pipe.rate(dir)));
             }
         }
     }

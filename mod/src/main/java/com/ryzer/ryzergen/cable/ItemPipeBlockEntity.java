@@ -102,7 +102,7 @@ public class ItemPipeBlockEntity extends CableBlockEntity<IItemHandler> {
             BlockPos sourcePos = pos.relative(dir);
             IItemHandler source = level.getCapability(Capabilities.ItemHandler.BLOCK, sourcePos, dir.getOpposite());
             if (source != null) {
-                pipe.moved[dir.get3DDataValue()] += pipe.pull(level, source, sourcePos, schedule[0]);
+                pipe.addPushed(dir, pipe.pull(level, source, sourcePos, schedule[0]));
             }
         }
     }

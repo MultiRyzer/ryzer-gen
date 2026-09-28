@@ -100,7 +100,7 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
             }
             int available = source.extractEnergy(cable.rate(dir), true);
             if (available > 0) {
-                cable.moved[dir.get3DDataValue()] += source.extractEnergy(cable.distribute(available, sourcePos, source, false), false);
+                cable.addPushed(dir, source.extractEnergy(cable.distribute(available, sourcePos, source, false), false));
             }
         }
     }
