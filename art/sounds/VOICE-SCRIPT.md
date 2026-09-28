@@ -20,6 +20,7 @@ Delivery: a control system stating facts. Calm for routine lines, firmer for cau
 | `voice_safeties_off.wav` | "Warning. Safeties disengaged. Overdrive active." | Safeties are switched off |
 | `voice_overheat.wav` | "Warning. Core temperature rising." | The core climbs towards its limit |
 | `voice_scram.wav` | "SCRAM. Emergency shutdown." | The station SCRAMs ("scram" as one word) |
+| `voice_controlled_shutdown.wav` | "Safeties engaged. Controlled shutdown." | The player re-arms the safeties and that shuts the station down |
 | `voice_flux_tilt.wav` | "Warning. Flux tilt detected." | The station's overdrive countdown starts |
 
 ## Danger (urgent, no shouting)

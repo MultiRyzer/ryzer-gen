@@ -34,6 +34,7 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_REACTOR_ONLINE = register("voice_reactor_online");
     public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_STATION_ONLINE = register("voice_station_online");
     public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_SAFETIES_ON = register("voice_safeties_on");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_CONTROLLED_SHUTDOWN = register("voice_controlled_shutdown");
     public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_SAFETIES_OFF = register("voice_safeties_off");
     public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_OVERHEAT = register("voice_overheat");
     public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_FLUX_TILT = register("voice_flux_tilt");

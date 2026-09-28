@@ -86,6 +86,12 @@
     ],
     "subtitle": "subtitles.ryzergen.station_hum"
   },
+  "voice_controlled_shutdown": {
+    "sounds": [
+      "ryzergen:voice/controlled_shutdown"
+    ],
+    "subtitle": "subtitles.ryzergen.voice_controlled_shutdown"
+  },
   "voice_coolant_loss": {
     "sounds": [
       "ryzergen:voice/coolant_loss"

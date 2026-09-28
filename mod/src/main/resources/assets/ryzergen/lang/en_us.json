@@ -144,6 +144,7 @@
   "subtitles.ryzergen.voice_overheat": "Reactor: \"Warning. Core temperature rising\"",
   "subtitles.ryzergen.voice_flux_tilt": "Station: \"Warning. Flux tilt detected\"",
   "subtitles.ryzergen.voice_scram": "Station: \"SCRAM. Emergency shutdown\"",
+  "subtitles.ryzergen.voice_controlled_shutdown": "Station: \"Safeties engaged. Controlled shutdown\"",
   "subtitles.ryzergen.voice_coolant_loss": "Reactor: \"Alert. Coolant loss\"",
   "subtitles.ryzergen.voice_meltdown_risk": "Reactor: \"Danger. Meltdown imminent. Evacuate\"",
   "message.ryzergen.cable.extract": "Side set to extract: pulls from this block",

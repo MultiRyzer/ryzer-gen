@@ -1,7 +1,7 @@
 """Builds the reactor announcer's voice lines from Ryzer's recording (art/sounds/VOICE-SCRIPT.md).
 
 Reads one recording of every take and the label file Audacity exported with it, both in
-art/sounds/source/ (ignored by git). Each label marks where a line starts; the line runs to the next
+art/sounds/source/ (ignored by git), plus any lines recorded later on their own (SINGLES). Each label marks where a line starts; the line runs to the next
 label. For every line it:
   1. trims the silence round it, keeping a short breath of room at each end,
   2. gently lowers the room noise between words (a soft expander, not a gate that chops),
@@ -40,6 +40,13 @@ LINES = {
     'alert coolant loss': 'coolant_loss',
     'danger meltdown imminent evacuate': 'meltdown_risk',
     'warning flux tilt detected': 'flux_tilt',
+    'safeties engaged controlled shutdown': 'controlled_shutdown',
+}
+
+# Lines recorded later, one take to a file (no label file needed): the file in art/sounds/source
+# and the sound's name.
+SINGLES = {
+    'Safetied Engaged, Controlled Shutdown.wav': 'controlled_shutdown',
 }
 
 TARGET_RMS_DB = -18.0      # loudness of the spoken part
@@ -173,13 +180,9 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     os.makedirs(PREVIEW, exist_ok=True)
     made = set()
-    for i, (start, text) in enumerate(marks):
-        end = marks[i + 1][0] if i + 1 < len(marks) else len(signal) / rate
-        name = LINES.get(key(text))
-        if name is None:
-            print(f'skipped "{text}" (not in the script)')
-            continue
-        raw = trim(signal[int(start * rate):int(end * rate)], rate)
+
+    def build(name, segment, label):
+        raw = trim(segment, rate)
         # The room can change during a session (a fan starting), so each line uses its own
         # noise floor when that is louder than the recording's quietest stretch.
         env = envelope(raw, rate, 0.05)
@@ -191,7 +194,25 @@ def main():
         sf.write(os.path.join(PREVIEW, name + '_dry.wav'), level(clean), rate)
         sf.write(os.path.join(PREVIEW, name + '.wav'), done, rate)
         made.add(name)
-        print(f'{name:16} {len(done) / rate:4.1f} s  from "{text}"')
+        print(f'{name:20} {len(done) / rate:4.1f} s  from "{label}"')
+
+    for file, name in SINGLES.items():
+        path = os.path.join(SOURCES, file)
+        if os.path.exists(path):
+            single, single_rate = sf.read(path)
+            if single.ndim > 1:
+                single = single.mean(axis=1)
+            if single_rate != rate:
+                raise SystemExit(f'{file} is {single_rate} Hz; record at {rate} Hz like the rest')
+            build(name, single, file)
+
+    for i, (start, text) in enumerate(marks):
+        end = marks[i + 1][0] if i + 1 < len(marks) else len(signal) / rate
+        name = LINES.get(key(text))
+        if name is None:
+            print(f'skipped "{text}" (not in the script)')
+            continue
+        build(name, signal[int(start * rate):int(end * rate)], text)
     missing = sorted(set(LINES.values()) - made)
     if missing:
         print('still to record:', ', '.join(missing))

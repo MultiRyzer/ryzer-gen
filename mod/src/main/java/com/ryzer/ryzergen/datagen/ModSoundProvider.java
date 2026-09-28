@@ -64,6 +64,9 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         add(ModSounds.VOICE_SAFETIES_ON, definition()
                 .subtitle("subtitles.ryzergen.voice_safeties_on")
                 .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/safeties_on"))));
+        add(ModSounds.VOICE_CONTROLLED_SHUTDOWN, definition()
+                .subtitle("subtitles.ryzergen.voice_controlled_shutdown")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/controlled_shutdown"))));
         add(ModSounds.VOICE_SAFETIES_OFF, definition()
                 .subtitle("subtitles.ryzergen.voice_safeties_off")
                 .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/safeties_off"))));
