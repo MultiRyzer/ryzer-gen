@@ -224,6 +224,17 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('N', Items.NOTE_BLOCK)
                 .unlockedBy("has_uranium", has(OreType.URANIUM.dropTag()))
                 .save(output);
+        // Flow Scanner: a probe (copper), a screen over a basic board, in an iron case.
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FLOW_SCANNER.get())
+                .pattern(" C ")
+                .pattern("IGI")
+                .pattern("IBI")
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('G', Tags.Items.GLASS_PANES)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('B', ModTags.CIRCUITS_BASIC)
+                .unlockedBy("has_basic_control_board", has(ModTags.CIRCUITS_BASIC))
+                .save(output);
         // Dosimeter ring: a fluorite chip (a real thermoluminescent dosimeter material) set in an iron band.
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.DOSIMETER_RING.get())
                 .pattern(" F ")

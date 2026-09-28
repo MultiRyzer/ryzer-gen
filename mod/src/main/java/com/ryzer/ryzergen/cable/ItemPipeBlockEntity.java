@@ -44,6 +44,18 @@ public class ItemPipeBlockEntity extends CableBlockEntity<IItemHandler> {
         return batch() * 20 / interval();
     }
 
+    /** Items per second, with this side's fitting (bigger batches, then shorter waits). */
+    @Override
+    protected int limit(Direction side) {
+        int[] schedule = schedule(side);
+        return (int) Math.min(Integer.MAX_VALUE, (long) schedule[0] * 20 / Math.max(1, schedule[1]));
+    }
+
+    @Override
+    protected int ticksPerUnit() {
+        return 20;
+    }
+
     /** What a block on {@code side} sees: items pushed in are passed along, nothing comes back out. */
     public @Nullable IItemHandler itemsFor(@Nullable Direction side) {
         if (side == null || side(side) != CableSide.CONNECTED) {

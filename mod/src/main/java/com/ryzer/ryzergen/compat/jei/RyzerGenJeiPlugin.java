@@ -123,6 +123,13 @@ public class RyzerGenJeiPlugin implements IModPlugin {
                 return List.of(IGuiClickableArea.createBasic(ProcessingScreen.ARROW_X, ProcessingScreen.ARROW_Y, 24, 17,
                         MACHINES.get(screen.getMenu().machine())));
             }
+
+            /** The auto output tab sticks out of the panel's right edge: keep JEI's item list off it. */
+            @Override
+            public List<net.minecraft.client.renderer.Rect2i> getGuiExtraAreas(ProcessingScreen screen) {
+                return List.of(new net.minecraft.client.renderer.Rect2i(screen.getGuiLeft() + ProcessingScreen.TAB_X,
+                        screen.getGuiTop() + ProcessingScreen.TAB_Y, ProcessingScreen.TAB_W, ProcessingScreen.TAB_H));
+            }
         });
     }
 }

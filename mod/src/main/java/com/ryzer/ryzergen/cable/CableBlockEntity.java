@@ -72,6 +72,12 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
     protected final int[] pushed = new int[6];
     /** The game tick {@link #pushed} is counting, so the panel's numbers roll over without ticking every cable. */
     private long countingTick = Long.MIN_VALUE;
+    /**
+     * Each side's recent intake per tick, smoothed over about a second, for the Flow Scanner: item
+     * pipes move in batches every so often, so a single tick's count would flicker between 0 and a batch.
+     */
+    private final float[] average = new float[6];
+    private static final float AVERAGE_WEIGHT = 0.05F;
     /** When something last came in on each side, so the panel knows which sides feed the network. */
     private final long[] lastIn = new long[6];
 
@@ -303,14 +309,47 @@ public abstract class CableBlockEntity<C> extends BlockEntity implements MenuPro
             return;
         }
         boolean previous = now == countingTick + 1;
+        long idle = countingTick == Long.MIN_VALUE ? 0 : Math.min(now - countingTick - 1, 200);
+        double fade = Math.pow(1 - AVERAGE_WEIGHT, idle);
         for (int i = 0; i < 6; i++) {
             if (pushed[i] > 0) {
                 lastIn[i] = countingTick;
             }
+            average[i] = (float) ((average[i] * (1 - AVERAGE_WEIGHT) + pushed[i] * AVERAGE_WEIGHT) * fade);
             moved[i] = previous ? pushed[i] : 0;
             pushed[i] = 0;
         }
         countingTick = now;
+    }
+
+    /** One input's reading for the Flow Scanner: its recent rate and its limit, in the panel's unit. */
+    public record FlowReading(Direction side, float rate, int limit) {}
+
+    /**
+     * What comes into the network on each side that feeds it (an extract side, or a block pushing
+     * in), against that side's limit with its fitting. Only inputs have a limit in this design:
+     * things go from where they enter straight to where they are going, so that is where a network
+     * can bottleneck.
+     */
+    public List<FlowReading> readings() {
+        roll();
+        List<FlowReading> out = new ArrayList<>();
+        for (Direction side : panelSides()) {
+            if (feeds(side)) {
+                out.add(new FlowReading(side, average[side.get3DDataValue()] * ticksPerUnit(), limit(side)));
+            }
+        }
+        return out;
+    }
+
+    /** The most {@code side} can take in, in the panel's unit, with its fitting. */
+    protected int limit(Direction side) {
+        return upgrade(side).scale(panelMax());
+    }
+
+    /** Ticks in the panel's unit of time: 1 for per-tick rates (FE/t, mB/t), 20 for per-second ones. */
+    protected int ticksPerUnit() {
+        return 1;
     }
 
     /**

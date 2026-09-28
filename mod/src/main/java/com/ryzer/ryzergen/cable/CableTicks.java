@@ -14,6 +14,7 @@ public final class CableTicks {
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (event.getLevel() instanceof net.minecraft.server.level.ServerLevel level) {
             CableNetwork.endOfTick(level);
+            com.ryzer.ryzergen.scanner.FlowScanner.tick(level);
         }
     }
 }
