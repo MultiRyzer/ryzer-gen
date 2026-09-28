@@ -49,9 +49,9 @@ description='''
 Power progression through real physics: from a small microreactor, through the fuel cycle, fission and fusion, to a Dyson swarm around a sun you can walk on.
 '''
 
-# The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
-#[[mixins]]
-#config="${mod_id}.mixins.json"
+# Client mixins for the Dyson swarm's sky (darkening the sky and daylight, the moon going dark).
+[[mixins]]
+config="${mod_id}.mixins.json"
 
 # The [[accessTransformers]] block allows you to declare where your AT file is.
 # If this block is omitted, a fallback attempt will be made to load an AT from META-INF/accesstransformer.cfg

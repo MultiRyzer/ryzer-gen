@@ -78,7 +78,9 @@ public class RyzerGen {
         event.registrar("1")
                 .playToClient(RadiationPayload.TYPE, RadiationPayload.STREAM_CODEC, RadiationClientState::receive)
                 .playToClient(com.ryzer.ryzergen.scanner.FlowScanPayload.TYPE, com.ryzer.ryzergen.scanner.FlowScanPayload.STREAM_CODEC,
-                        com.ryzer.ryzergen.scanner.FlowScanClientState::receive);
+                        com.ryzer.ryzergen.scanner.FlowScanClientState::receive)
+                .playToClient(com.ryzer.ryzergen.sky.SunSwarmPayload.TYPE, com.ryzer.ryzergen.sky.SunSwarmPayload.STREAM_CODEC,
+                        com.ryzer.ryzergen.sky.SunSwarmClient::receive);
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
