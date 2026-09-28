@@ -69,6 +69,7 @@ public final class Config {
     public static final ModConfigSpec.IntValue LEAD_ACID_CAPACITY;
     public static final ModConfigSpec.IntValue LEAD_ACID_RATE;
     public static final ModConfigSpec.BooleanValue ANNOUNCER_ENABLED;
+    public static final ModConfigSpec.BooleanValue ROUND_SUN;
     public static final ModConfigSpec.BooleanValue RADIATION_ENABLED;
     public static final ModConfigSpec.DoubleValue RADIATION_STRENGTH;
     public static final ModConfigSpec.BooleanValue RADIATION_MOBS;
@@ -146,6 +147,13 @@ public final class Config {
                 .comment("Reactors speak when something worth hearing happens (safeties, SCRAM, coolant loss, meltdown).",
                         "Off here turns it off for everyone; each player can also use the Voice/Speech volume slider.")
                 .define("enabled", true);
+        BUILDER.pop();
+
+        BUILDER.comment("The overworld's sky.").push("sky");
+        ROUND_SUN = BUILDER
+                .comment("Draw the overworld's sun as a round, glowing disc in place of vanilla's square one.",
+                        "Read on each client. The Dyson swarm always uses it.")
+                .define("round_sun", true);
         BUILDER.pop();
 
         BUILDER.comment("Radiation. Only running reactors and meltdowns emit it.").push("radiation");

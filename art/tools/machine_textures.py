@@ -344,6 +344,30 @@ def flow_scanner_item():
     return t
 
 
+def swarm_controller_item():
+    """The Swarm Controller (a creative-only dev tool): a graphite handset with a dark screen showing
+    the sun ringed by an orbit, and a big red key under a hazard-striped guard."""
+    body = {(x, y) for x in range(4, 12) for y in range(1, 15)}
+    t = shape_item(body, 'S', 'b', 'T', highlight='J')
+    # Screen: the sun (gold, hot centre) inside a cyan orbit.
+    t.rect(5, 2, 10, 7, 'U')
+    for x, y in ((7, 4), (8, 4), (7, 5), (8, 5)):
+        t.set(x, y, 'Y')
+    t.set(7, 4, 'e')
+    for x, y in ((6, 3), (9, 3), (6, 6), (9, 6), (5, 4), (10, 5)):
+        t.set(x, y, 'i')
+    # The key: red, lit on its top edge, in a hazard-striped guard.
+    for x in range(5, 11):
+        t.set(x, 9, 'Y' if x % 2 else 'B')
+        t.set(x, 13, 'Y' if x % 2 == 0 else 'B')
+    for y in (10, 11, 12):
+        t.set(5, y, 'B')
+        t.set(10, y, 'B')
+        for x in range(6, 10):
+            t.set(x, y, 'x' if y > 10 else 'e')
+    return t
+
+
 def speed_module_item():
     """A speed module: a graphite circuit card with a double cyan chevron and gold edge contacts."""
     card = {(x, y) for x in range(2, 14) for y in range(3, 12)}
@@ -448,6 +472,7 @@ TEXTURES = {
     'item/speed_module': speed_module_item,
     'item/geiger_counter': geiger_counter_item,
     'item/flow_scanner': flow_scanner_item,
+    'item/swarm_controller': swarm_controller_item,
     'block/fitting_silver': lambda: fitting_block('silver'),
     'block/fitting_busbar': lambda: fitting_block('busbar'),
     'block/fitting_cryogenic': lambda: fitting_block('cryogenic'),

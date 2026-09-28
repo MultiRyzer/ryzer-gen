@@ -1,0 +1,15 @@
+{
+    "vertex": "ryzergen:wormhole",
+    "fragment": "ryzergen:wormhole",
+    "samplers": [
+        { "name": "Scene" },
+        { "name": "SceneDepth" }
+    ],
+    "uniforms": [
+        { "name": "Centre", "type": "float", "count": 2, "values": [ 0.5, 0.5 ] },
+        { "name": "Radius", "type": "float", "count": 1, "values": [ 0.1 ] },
+        { "name": "Aspect", "type": "float", "count": 1, "values": [ 1.0 ] },
+        { "name": "Spin", "type": "float", "count": 1, "values": [ 0.0 ] },
+        { "name": "Time", "type": "float", "count": 1, "values": [ 0.0 ] }
+    ]
+}

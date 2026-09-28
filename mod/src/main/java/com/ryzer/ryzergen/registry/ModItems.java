@@ -55,6 +55,9 @@ public final class ModItems {
     /** Hold it to see what flows into every pipe and cable nearby, against each input's limit. */
     public static final DeferredItem<com.ryzer.ryzergen.scanner.FlowScannerItem> FLOW_SCANNER =
             ITEMS.registerItem("flow_scanner", com.ryzer.ryzergen.scanner.FlowScannerItem::new);
+    /** Creative-only test tool: launches the Dyson swarm round the sun and closes it (see sky/SunSwarm). */
+    public static final DeferredItem<com.ryzer.ryzergen.sky.SwarmControllerItem> SWARM_CONTROLLER =
+            ITEMS.registerItem("swarm_controller", com.ryzer.ryzergen.sky.SwarmControllerItem::new);
     public static final DeferredItem<Item> GRAPHITE = ITEMS.registerSimpleItem("graphite");
     public static final DeferredItem<Item> STEEL_INGOT = ITEMS.registerSimpleItem("steel_ingot");
     /** Tier 1 circuit: iron, copper and redstone. */
