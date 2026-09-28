@@ -490,10 +490,12 @@ public class StationRunner {
         if ((status == Status.RUNAWAY || status == Status.UNSTABLE) && before != Status.RUNAWAY && before != Status.UNSTABLE) {
             announcer.say(level, at, Announcer.Line.MELTDOWN_RISK);
         }
-        // Not on the first tick after loading a station that was already scrammed, and not when the
-        // player caused it by re-arming the safeties (that says "Safeties engaged" instead).
-        if (scrammed && announcedScram != null && !announcedScram && !plannedScram) {
-            announcer.say(level, at, Announcer.Line.SCRAM);
+        // Not on the first tick after loading a station that was already scrammed. When the player
+        // caused it by re-arming the safeties, it is a controlled shutdown, not an alarm.
+        boolean controlledShutdown = false;
+        if (scrammed && announcedScram != null && !announcedScram) {
+            controlledShutdown = plannedScram;
+            announcer.say(level, at, plannedScram ? Announcer.Line.CONTROLLED_SHUTDOWN : Announcer.Line.SCRAM);
         }
         announcedScram = scrammed;
         if (!scrammed) {
@@ -505,7 +507,8 @@ public class StationRunner {
         if (status == Status.OVERHEAT && before != Status.OVERHEAT) {
             announcer.say(level, at, Announcer.Line.OVERHEAT);
         }
-        if (announcedSafeties != null && announcedSafeties != safeties) {
+        // The controlled shutdown line already says the safeties are engaged.
+        if (announcedSafeties != null && announcedSafeties != safeties && !controlledShutdown) {
             announcer.say(level, at, safeties ? Announcer.Line.SAFETIES_ON : Announcer.Line.SAFETIES_OFF);
         }
         announcedSafeties = safeties;
