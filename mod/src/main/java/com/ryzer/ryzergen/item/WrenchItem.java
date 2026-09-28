@@ -132,7 +132,7 @@ public class WrenchItem extends Item {
         }
         CableSide next = current == CableSide.EXTRACT ? CableSide.CONNECTED : CableSide.EXTRACT;
         level.setBlock(pos, state.setValue(CableBlock.SIDES.get(side), next), Block.UPDATE_ALL);
-        CableNetwork.changed();
+        CableNetwork.changed(level, pos);
         level.invalidateCapabilities(pos);
         return Component.translatable(next == CableSide.EXTRACT ? "message.ryzergen.cable.extract" : "message.ryzergen.cable.insert");
     }

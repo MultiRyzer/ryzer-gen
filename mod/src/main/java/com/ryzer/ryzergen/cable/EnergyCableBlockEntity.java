@@ -4,6 +4,7 @@ import com.ryzer.ryzergen.Config;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
@@ -11,8 +12,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * An energy cable. Cables with an extract side pull energy each tick; every cable passes on energy
@@ -20,13 +20,10 @@ import java.util.Set;
  *
  * <p>Energy storage on the network (anything that both accepts and gives energy, such as the home
  * battery) is a buffer, as in Mekanism: machines are served first and buffers take the surplus.
- * At the end of each tick the network tops machines up from its buffers, so one plain cable to a
+ * At the end of each tick each network tops its machines up from its buffers (CableNetwork runs it once per network), so one plain cable to a
  * battery both charges it and draws on it, with no extract side needed.
  */
 public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
-    /** Network leaders with buffers, waiting to top up their machines at the end of this tick. */
-    private static final Set<EnergyCableBlockEntity> PENDING_DRAIN = new LinkedHashSet<>();
-
     public EnergyCableBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.ENERGY_CABLE.get(), pos, state);
     }
@@ -57,7 +54,7 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
             public int receiveEnergy(int amount, boolean simulate) {
                 int sent = distribute(Math.min(amount, rate(side)), source, null, simulate);
                 if (!simulate) {
-                    pushed[side.get3DDataValue()] += sent;
+                    addPushed(side, sent);
                 }
                 return sent;
             }
@@ -89,12 +86,10 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
         };
     }
 
+    /** Only cables with an extract side tick: they pull from the block on that side. */
     public static void serverTick(Level level, BlockPos pos, BlockState state, EnergyCableBlockEntity cable) {
-        if (cable.refreshTargets() && cable.leader) {
-            PENDING_DRAIN.add(cable);
-        }
-        cable.startTick();
-        for (Direction dir : Direction.values()) {
+        cable.roll();
+        for (Direction dir : CableNetwork.DIRECTIONS) {
             if (state.getValue(CableBlock.SIDES.get(dir)) != CableSide.EXTRACT) {
                 continue;
             }
@@ -111,37 +106,28 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
     }
 
     /**
-     * Runs after every block entity has ticked, so machines have already had this tick's generation:
-     * whatever they still want comes out of the network's buffers.
+     * Runs once per energy network after every block entity has ticked, so machines have already had
+     * this tick's generation: whatever they still want comes out of the network's buffers.
      */
-    public static void drainBuffers(Level level) {
-        var it = PENDING_DRAIN.iterator();
-        while (it.hasNext()) {
-            EnergyCableBlockEntity cable = it.next();
-            if (cable.level != level) {
-                continue;
-            }
-            it.remove();
-            if (!cable.isRemoved() && cable.refreshTargets()) {
-                cable.drain();
-            }
+    static void drain(ServerLevel level, CableNetwork.Net net) {
+        List<Target<IEnergyStorage>> targets = targetsOf(level, net, Capabilities.EnergyStorage.BLOCK);
+        if (targets.isEmpty()) {
+            return;
         }
-    }
-
-    private void drain() {
         for (Target<IEnergyStorage> target : targets) {
             IEnergyStorage buffer = target.cache().getCapability();
             if (buffer == null || !isBuffer(buffer)) {
                 continue;
             }
-            int available = buffer.extractEnergy(drawRate(target.endpoint()), true);
-            int wanted = available > 0 ? deliver(available, null, buffer, false, true) : 0;
+            int available = buffer.extractEnergy(drawRate(level, target.endpoint()), true);
+            int wanted = available > 0 ? deliver(targets, net.roundRobin, available, null, buffer, false, true) : 0;
             if (wanted > 0) {
                 int drawn = buffer.extractEnergy(wanted, false);
-                deliver(drawn, null, buffer, false, false);
-                countDraw(target.endpoint(), drawn);
+                deliver(targets, net.roundRobin, drawn, null, buffer, false, false);
+                countDraw(level, target.endpoint(), drawn);
             }
         }
+        net.roundRobin = (net.roundRobin + 1) % targets.size();
     }
 
     /** The network draws on storage without an extract side, so a battery's side feeds it. */
@@ -158,19 +144,19 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
      * The most the network may draw from a battery this tick: the fitting on the side of the cable
      * that touches it, like any other input. The battery's own rate limits it too.
      */
-    private int drawRate(CableNetwork.Endpoint endpoint) {
+    private static int drawRate(ServerLevel level, CableNetwork.Endpoint endpoint) {
         BlockPos cablePos = endpoint.pos().relative(endpoint.side());
-        if (level != null && level.getBlockEntity(cablePos) instanceof CableBlockEntity<?> cable) {
+        if (level.isLoaded(cablePos) && level.getBlockEntity(cablePos) instanceof CableBlockEntity<?> cable) {
             return cable.upgrade(endpoint.side().getOpposite()).scale(rate());
         }
         return rate();
     }
 
     /** Counts a battery's draw as coming in on the side of the cable that touches it, for that cable's panel. */
-    private void countDraw(CableNetwork.Endpoint endpoint, int amount) {
+    private static void countDraw(ServerLevel level, CableNetwork.Endpoint endpoint, int amount) {
         BlockPos cablePos = endpoint.pos().relative(endpoint.side());
-        if (amount > 0 && level != null && level.getBlockEntity(cablePos) instanceof CableBlockEntity<?> cable) {
-            cable.pushed[endpoint.side().getOpposite().get3DDataValue()] += amount;
+        if (amount > 0 && level.isLoaded(cablePos) && level.getBlockEntity(cablePos) instanceof CableBlockEntity<?> cable) {
+            cable.addPushed(endpoint.side().getOpposite(), amount);
         }
     }
 
@@ -204,20 +190,21 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
         if (amount <= 0 || !refreshTargets()) {
             return 0;
         }
-        int sent = deliver(amount, exceptPos, exceptStorage, false, simulate);
-        sent += deliver(amount - sent, exceptPos, exceptStorage, true, simulate);
+        int sent = deliver(targets, roundRobin, amount, exceptPos, exceptStorage, false, simulate);
+        sent += deliver(targets, roundRobin, amount - sent, exceptPos, exceptStorage, true, simulate);
         if (!simulate && !targets.isEmpty()) {
             roundRobin = (roundRobin + 1) % targets.size();
         }
         return sent;
     }
 
-    /** One pass over either the machines or the buffers, starting at the round-robin position. */
-    private int deliver(int amount, @Nullable BlockPos exceptPos, @Nullable IEnergyStorage exceptStorage, boolean buffers, boolean simulate) {
+    /** One pass over either the machines or the buffers, starting at {@code start}. */
+    private static int deliver(List<Target<IEnergyStorage>> targets, int start, int amount, @Nullable BlockPos exceptPos,
+                               @Nullable IEnergyStorage exceptStorage, boolean buffers, boolean simulate) {
         int sent = 0;
         int count = targets.size();
         for (int i = 0; i < count && sent < amount; i++) {
-            Target<IEnergyStorage> target = targets.get((roundRobin + i) % count);
+            Target<IEnergyStorage> target = targets.get((start + i) % count);
             if (target.endpoint().pos().equals(exceptPos)) {
                 continue;
             }
