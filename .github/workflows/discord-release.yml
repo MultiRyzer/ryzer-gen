@@ -1,0 +1,34 @@
+# Posts the release notes to Discord when a release is published, split into messages that fit.
+# Needs the repository secret DISCORD_WEBHOOK (the channel's webhook URL). Run it by hand from the
+# Actions tab, with a tag, to post an earlier release's notes.
+name: Release notes to Discord
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to post (for example v0.1.2-alpha)
+        required: true
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read the release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json name,url,body > release.json
+      - name: Post to Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          export RELEASE_NAME="$(jq -r .name release.json)"
+          export RELEASE_URL="$(jq -r .url release.json)"
+          export RELEASE_BODY="$(jq -r .body release.json)"
+          python3 .github/scripts/discord_release.py
