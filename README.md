@@ -8,6 +8,8 @@ A NeoForge mod for Minecraft 1.21.1 (the version ATM10 runs on) about power prog
 
 Community, help and work in progress: [the Ryzer Gen Discord](https://discord.gg/cmUZcRtqfg). Bugs: [GitHub issues](https://github.com/MultiRyzer/ryzer-gen/issues).
 
+Opus 5.5 assisted.
+
 MIT licensed (see `LICENSE`). Sounds keep their own licence; see `art/sounds/CREDITS.md`.
 
 ## Folder layout
