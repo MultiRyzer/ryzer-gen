@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.fission;
 
+import com.ryzer.ryzergen.machine.pool.HotFuel;
 import com.ryzer.ryzergen.Config;
 import com.ryzer.ryzergen.registry.ModDataComponents;
 import com.ryzer.ryzergen.registry.ModItems;
@@ -201,7 +202,7 @@ public final class StationReactor {
 
     /** The spent rod a fuel rod becomes. */
     public static ItemStack spentFor(ItemStack rod) {
-        return new ItemStack(rod.is(ModItems.MOX_FUEL_ROD.get()) ? ModItems.SPENT_MOX_ROD.get() : ModItems.SPENT_URANIUM_ROD.get());
+        return HotFuel.mark(new ItemStack(rod.is(ModItems.MOX_FUEL_ROD.get()) ? ModItems.SPENT_MOX_ROD.get() : ModItems.SPENT_URANIUM_ROD.get()));
     }
 
     /**

@@ -1,0 +1,59 @@
+{
+  "parent": "minecraft:block/block",
+  "children": {
+    "solid": {
+      "ambientocclusion": false,
+      "elements": [
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            2,
+            0
+          ],
+          "to": [
+            16,
+            16,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "cullface": "down",
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            0,
+            0
+          ],
+          "to": [
+            16,
+            2,
+            16
+          ]
+        }
+      ],
+      "render_type": "minecraft:cutout",
+      "textures": {
+        "trim": "ryzergen:block/microreactor/steel_dark"
+      }
+    }
+  },
+  "item_render_order": [
+    "solid"
+  ],
+  "loader": "neoforge:composite",
+  "textures": {
+    "particle": "ryzergen:block/container/liner"
+  }
+}

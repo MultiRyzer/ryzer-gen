@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "ISI",
+    "S S",
+    "ISI"
+  ],
+  "result": {
+    "count": 16,
+    "id": "ryzergen:container_frame"
+  }
+}

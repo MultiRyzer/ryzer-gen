@@ -47,13 +47,15 @@ public final class ModCreativeTabs {
                 List.of(ModItems.REACTOR_HEART, ModItems.REACTOR_MACHINE_UNIT, ModItems.COOLANT_JACKET,
                         ModItems.ALLOY_SMELTER, ModItems.ELECTRIC_ALLOY_SMELTER, ModItems.INTAKE_PUMP,
                         ModItems.CORE_CRACKER, ModItems.REPROCESSOR, ModItems.FUEL_FABRICATOR, ModItems.LITHIUM_EXTRACTOR,
+                        ModItems.POOL_CONTROLLER, ModItems.POOL_LINER, ModItems.POOL_CRANE,
+                        ModItems.BATTERY_CONTROLLER, ModItems.CONTAINER_FRAME, ModItems.THERMAL_UNIT,
                         ModItems.STATION_CORE, ModItems.STATION_CASING, ModItems.STATION_GLASS, ModItems.TURBINE_ROTOR),
                 // Pipes and cables
                 List.of(ModItems.ENERGY_CABLE, ModItems.ITEM_PIPE, ModItems.FLUID_PIPE, ModItems.GAS_PIPE),
                 // Storage
                 List.of(ModItems.HOME_BATTERY, ModItems.FLUID_TANK, ModItems.PRESSURE_TANK, ModItems.WASTE_CASK),
                 // Upgrades and modules
-                List.of(ModItems.LEAD_ACID_MODULE, ModItems.SPEED_MODULE,
+                List.of(ModItems.LEAD_ACID_MODULE, ModItems.LFP_BATTERY_RACK, ModItems.SPEED_MODULE,
                         ModItems.SILVER_FITTINGS, ModItems.BUSBAR_FITTINGS, ModItems.CRYOGENIC_FITTINGS),
                 // Fuel and rods
                 List.of(ModItems.TRISO_PELLETS, ModItems.SEALED_FUEL_CORE, ModItems.DEPLETED_FUEL_CORE,

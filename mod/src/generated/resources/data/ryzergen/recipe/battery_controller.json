@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:circuits/advanced"
+    },
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "R": {
+      "tag": "c:storage_blocks/redstone"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "SAS",
+    "GRG",
+    "SAS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:battery_controller"
+  }
+}

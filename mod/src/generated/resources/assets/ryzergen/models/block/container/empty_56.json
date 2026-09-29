@@ -1,0 +1,408 @@
+{
+  "parent": "minecraft:block/block",
+  "children": {
+    "solid": {
+      "ambientocclusion": false,
+      "elements": [
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "east": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            14,
+            0.25
+          ],
+          "to": [
+            15.75,
+            15.75,
+            3
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "east": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            13,
+            14,
+            3
+          ],
+          "to": [
+            15.75,
+            15.75,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#gunmetal"
+            },
+            "east": {
+              "texture": "#gunmetal"
+            },
+            "north": {
+              "texture": "#gunmetal"
+            },
+            "up": {
+              "texture": "#gunmetal"
+            },
+            "west": {
+              "cullface": "west",
+              "texture": "#gunmetal"
+            }
+          },
+          "from": [
+            0,
+            14,
+            3
+          ],
+          "to": [
+            13,
+            15,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "east": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "up": {
+              "cullface": "up",
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            14,
+            3
+          ],
+          "to": [
+            1,
+            16,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "east": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            14,
+            15
+          ],
+          "to": [
+            13,
+            15.75,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#accent"
+            },
+            "east": {
+              "cullface": "east",
+              "texture": "#accent"
+            },
+            "north": {
+              "cullface": "north",
+              "texture": "#accent"
+            },
+            "south": {
+              "texture": "#accent"
+            },
+            "up": {
+              "cullface": "up",
+              "texture": "#accent"
+            },
+            "west": {
+              "texture": "#accent"
+            }
+          },
+          "from": [
+            13,
+            14,
+            0
+          ],
+          "to": [
+            16,
+            16,
+            3
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#gunmetal"
+            },
+            "east": {
+              "texture": "#gunmetal"
+            },
+            "north": {
+              "texture": "#gunmetal"
+            },
+            "south": {
+              "texture": "#gunmetal"
+            },
+            "up": {
+              "texture": "#gunmetal"
+            },
+            "west": {
+              "texture": "#gunmetal"
+            }
+          },
+          "from": [
+            1,
+            1,
+            0.5
+          ],
+          "to": [
+            15,
+            14,
+            3
+          ]
+        },
+        {
+          "faces": {
+            "east": {
+              "texture": "#shroud_46x44",
+              "uv": [
+                10.333334,
+                0.0,
+                15.333334,
+                4.666667
+              ]
+            },
+            "north": {
+              "texture": "#liner"
+            },
+            "up": {
+              "texture": "#liner"
+            },
+            "west": {
+              "texture": "#liner"
+            }
+          },
+          "from": [
+            13,
+            0,
+            1
+          ],
+          "to": [
+            15.5,
+            14,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "east": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            3,
+            0,
+            3
+          ],
+          "to": [
+            4,
+            13,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "east": {
+              "texture": "#guard",
+              "uv": [
+                9.333334,
+                0.0,
+                13.333334,
+                4.0
+              ]
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            15,
+            0,
+            4
+          ],
+          "to": [
+            15.25,
+            12,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "east": {
+              "cullface": "east",
+              "texture": "#trim"
+            },
+            "north": {
+              "cullface": "north",
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            15,
+            0,
+            0
+          ],
+          "to": [
+            16,
+            14,
+            1
+          ]
+        },
+        {
+          "faces": {
+            "east": {
+              "texture": "#trim"
+            },
+            "north": {
+              "cullface": "north",
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            0,
+            0
+          ],
+          "to": [
+            1,
+            14,
+            3
+          ]
+        },
+        {
+          "faces": {
+            "east": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            0,
+            0.25
+          ],
+          "to": [
+            15,
+            1,
+            3
+          ]
+        }
+      ],
+      "render_type": "minecraft:cutout",
+      "textures": {
+        "accent": "ryzergen:block/machine/family/accent",
+        "guard": "ryzergen:block/container/guard",
+        "gunmetal": "ryzergen:block/container/gunmetal",
+        "liner": "ryzergen:block/container/liner",
+        "shroud_46x44": "ryzergen:block/container/shroud_46x44",
+        "trim": "ryzergen:block/microreactor/steel_dark"
+      }
+    }
+  },
+  "item_render_order": [
+    "solid"
+  ],
+  "loader": "neoforge:composite",
+  "textures": {
+    "particle": "ryzergen:block/container/liner"
+  }
+}

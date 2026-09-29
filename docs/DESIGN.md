@@ -275,6 +275,19 @@ Throughput: one reprocessor does 180 jobs an hour and one fabricator 360, agains
 - One cask holds about a day of a uranium station's waste (40 an hour). If the reprocessor's output backs up it simply pauses, like any machine.
 - Real basis: dry cask storage, where spent fuel sits in sealed steel and concrete casks.
 
+### Spent Fuel Pool (the fuel cycle's first multiblock, being built)
+Spent fuel comes out of a reactor too hot to handle: its fission products keep decaying and give off heat for years. Real plants lower it into a deep pool of water, where the water carries the heat away and shields the radiation, and only reprocess it once it has cooled. The pool makes that a real step. Concept: `art/tools/pool_concept.py`.
+
+- **Required.** Reactors mark the depleted cores and spent rods they give out as *hot*. The Core Cracker and the Reprocessor refuse hot items, so everything spent passes through a pool first. Items already in players' worlds carry no mark, so they count as cooled and nobody's store is stranded (a changelog note). Config `fuel_cycle.require_cooling` turns the mark off for packs that want the old loop.
+- **Shape:** 5 long, 3 wide and 3 high. Every block face is one framed plate, with a pixel of graphite frame on each block edge, and every feature is centred on its plate. The front has two windows (a pane per block face, lower two rows) onto the racks, the trefoil signs on its end bays and the controller's console in the middle. Inside, two rows of racks on the floor with the stored fuel glowing Cherenkov blue under the water, and a yellow gantry crane on rails inside the rim (a block entity renderer, so it can move later). The back wall is set in, and the cooling loop sits in the recess: a return line, a pump, a heat exchanger and mitred copper pipe.
+- **Parts (rule 3):** Pool Liner blocks are the cheap bulk; the cost is in the Pool Controller (front middle, middle row) and the Pool Crane (top middle).
+- **Building:** as the fission station: place the controller on the ground, a ghost outline shows the shape, feed the controller the parts and it builds the pool itself round it. When the last part is in, the controller swaps with the liner above it, so the formed pool has its console on the middle row. A pool broken apart and rebuilt keeps its controller there and builds from it.
+- **Running it:** 18 rack slots, one item each. An item cools for a set time (first numbers: 5 minutes for a microreactor core, 10 for a station rod, config), then moves to the output slots. The GUI shows each slot's time left, the water level and the output.
+- **Water:** a 16,000 mB tank. Decay heat boils water off at about 2 mB/t per hot item (rule 12). Cooling runs only while the water covers the racks (half the tank); below that the timers pause. Nothing melts and nothing radiates: rule 10 keeps radiation to running reactors and meltdowns. The formed model shows the pool dry, full, or full with fuel glowing in the racks.
+- **Ports:** inputs on your left as you face the front (hot fuel and water in, on the east end for a pool facing north), cooled fuel out on your right (the west end). Capabilities only on the port faces, only while formed.
+- **Marking:** a multiblock has room for an authentic radiation trefoil, so the pool carries two.
+- Real basis: every nuclear plant stores spent fuel in a pool for years before it goes to dry casks or reprocessing. Our minutes stand in for years, an honest fudge.
+
 ### Machine recipes (first pass)
 - **Core Cracker:** 4 steel, 2 pistons (the jaws), 2 iron and 1 basic control board. It is the first tier 2 machine, needed the moment the first core runs out, so it takes a basic board.
 - **Reprocessor:** 4 lead (shielding), 2 advanced control boards, 2 steel and a cauldron (the dissolver).
@@ -333,7 +346,8 @@ Size is fixed, so the lever is the core layout (rule 1: knowledge, not volume). 
 ### Running it
 - Heat from the core boils the water fed in at the base; steam drives the turbine; FE comes out of the base. Real basis: a boiling water reactor, which boils its coolant in the core and sends the steam straight to the turbine.
 - Output target: a few thousand FE/t per station, so two or three run a mid-game base. Scaling targets across tiers, set against ATM10 (default configs): microreactor 200 to 460 FE/t, fission 2,000 to 20,000, breeder 20,000 to 100,000, fusion 100,000 to 1,000,000, the swarm above that.
-- Too hot with too little water, the core heats up; at 900°C an automatic SCRAM stops the reaction until it cools below 400°C.
+- Too hot with too little water, the core heats up; at 900°C an automatic SCRAM stops the reaction until it cools below 400°C. The SCRAM trips the turbine too: while the core cools, its steam goes round the turbine to the condenser, so it makes no power and the heat it built up is lost. Overloading a core is a real loss, not a free ride. Real basis: a reactor trip trips the turbine, and the decay heat is dumped through the steam dump valves.
+- Coolant is local in the running station as on the control screen: heat that no coolant channel can reach (a rod with none beside it, or more than a channel carries) stays in the core, and the other channels do not carry it off, so a core the screen calls too hot climbs until it SCRAMs (or, in overdrive, melts down).
 - Ports on the base, on the two flat sides so the front (the core's screen) stays clear of pipes and cables. As you face the front, inputs are on your left: water in and fuel in (the fuel port takes anything a channel is planned for: rods, graphite, control rods). Outputs are on your right: energy out, and the output port (orange ring), which pushes spent rods into whatever is beside it and lets pipes pull from it. Later waste leaves the same way. Inputs and outputs on opposite sides keep the pipe feeding fresh rods apart from the one carrying spent ones away (the microreactor's fuel ports taught the same lesson).
 - Breaking the core drops its rods and blocks.
 
@@ -394,6 +408,7 @@ A deuterium-tritium tokamak cannot be built or fuelled without fission. Its fuel
 
 ### Deuterium: heavy water
 - **Heavy Water Plant:** water becomes a little heavy water, on fission power. Real basis: heavy water is separated from ordinary water in large plants.
+- A multiblock: a row of tall exchange towers in stages (a cascade), so building more stages is the efficiency the design rewards (section 5). Real basis: the Girdler sulfide process runs water and gas past each other in tall towers, stage after stage.
 - Two uses: deuterium for fusion, and a better moderator for the fission station (a heavy water channel), as in heavy-water reactors such as CANDU.
 
 ### Palladium: the use for fission waste
@@ -403,6 +418,7 @@ A deuterium-tritium tokamak cannot be built or fuelled without fission. Its fuel
 ### Magnets: yttrium and liquid nitrogen
 - **Monazite processing:** monazite gives yttrium (and thorium, for tier 4). Yttrium goes into superconducting tape, wound into the magnet coils. Real basis: this family of superconductors (yttrium barium copper oxide) works at liquid nitrogen temperature, and newer compact tokamaks use it.
 - **Cryo Plant:** separates liquid nitrogen from air, on fission power, to keep the coils cold.
+- A multiblock: an air intake and compressors feeding a tall insulated cold box (the distillation column), with a frosted storage dewar. Real basis: air separation units are exactly this shape.
 - The cryogenic cable fittings use the same yttrium.
 
 ### First wall: tungsten
@@ -552,10 +568,14 @@ Simple rule: each module adds both capacity and charge/discharge rate. The chemi
   - A charge bar of 8 cyan LED segments runs up the front post, lit (emissive) in eighths of the charge, so you can read how full it is from across the room.
 
 ### Tier 2: Container battery (grid scale)
-- A shipping-container-sized multiblock. Original design, based on the idea of real container batteries.
-- Place the container frame, then fill the rack slots along the walls with battery racks. Racks appear visibly as they are added.
-- A **thermal management block** is required, part of the coolant block family. Real grid batteries need active cooling.
-- Chemistries: LFP racks, then **sodium-ion racks**, a real, cheaper grid chemistry. Sodium comes from salt electrolysis.
+- **Next to build**, after the Spent Fuel Pool. Concept: `art/tools/container_concept.py`. Original design, based on the idea of real container batteries.
+- **Shape:** 8 long, 3 wide and 3 high: a white container the size of a 20 foot shipping container (seven blocks) with orange corner castings, and a gunmetal fan unit on its east end. Laid out on the pool's grid: one framed plate per block face, every feature centred.
+- **Modular:** the front has 20 module slots, one per block face round the controller's console in the middle bay. An empty slot is a hatch in a white plate, so a new container is a clean white box. Right-click an LFP rack module into a slot and that face turns into a glazed door with the rack set back behind the glass, lit, and the block gives light; shift right-click takes it out. Capacity and rate grow with each rack (rule 11).
+- **Racks:** LFP (lithium iron phosphate), made with lithium from the Lithium Extractor, so the container is a real step up from the home battery and unlocks around fission. Sodium-ion racks, a real, cheaper grid chemistry, come later in the same slots.
+- **Thermal management:** the fan unit fills the east end: one big fan (a block entity renderer, spinning while the battery works) with coolant in at its hub. Without coolant the battery charges and discharges at a quarter of its rate. Real grid batteries need active cooling.
+- **Ports:** coolant in at the fan's hub (east end), and an energy port on the back at each end. Each energy port both takes energy in and gives it out, as the home battery does, so a cable network treats the container as a battery (machines first, surplus into storage) and the cables' own settings decide the flow. Three vents between them along the back's middle row. The west end carries two electrical hazard signs.
+- **Parts and building:** 70 Container Frame blocks are the bulk; the cost is in the Battery Controller (the console) and the Thermal Unit (the fan's hub), and above all the racks. Built like the pool: place the controller on the ground, feed it the parts and it builds the container round it, then swaps up into its console.
+- **Numbers (first pass, config):** each LFP rack holds 2M FE and moves 2,000 FE/t, so a full container holds 40M FE at 40,000 FE/t. The fan unit uses 2 mB of coolant per tick while energy flows, from an 8,000 mB tank.
 
 ### Endgame: Superconducting storage
 - **SMES (superconducting magnetic energy storage):** a real technology that stores energy in the magnetic field of a superconducting coil and charges or discharges almost instantly.

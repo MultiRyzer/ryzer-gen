@@ -1,0 +1,161 @@
+{
+  "parent": "minecraft:block/block",
+  "children": {
+    "solid": {
+      "ambientocclusion": false,
+      "elements": [
+        {
+          "faces": {
+            "east": {
+              "cullface": "east",
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            0,
+            0
+          ],
+          "to": [
+            16,
+            14,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#liner"
+            },
+            "east": {
+              "cullface": "east",
+              "texture": "#liner"
+            },
+            "up": {
+              "texture": "#liner"
+            }
+          },
+          "from": [
+            0,
+            14,
+            0
+          ],
+          "to": [
+            16,
+            15,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "east": {
+              "texture": "#trim"
+            },
+            "up": {
+              "cullface": "up",
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            14,
+            0
+          ],
+          "to": [
+            1,
+            16,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "up": {
+              "cullface": "up",
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            15,
+            14,
+            0
+          ],
+          "to": [
+            16,
+            16,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            14,
+            0
+          ],
+          "to": [
+            16,
+            15.75,
+            1
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            14,
+            15
+          ],
+          "to": [
+            16,
+            15.75,
+            16
+          ]
+        }
+      ],
+      "render_type": "minecraft:cutout",
+      "textures": {
+        "liner": "ryzergen:block/container/liner",
+        "trim": "ryzergen:block/microreactor/steel_dark"
+      }
+    }
+  },
+  "item_render_order": [
+    "solid"
+  ],
+  "loader": "neoforge:composite",
+  "textures": {
+    "particle": "ryzergen:block/container/liner"
+  }
+}

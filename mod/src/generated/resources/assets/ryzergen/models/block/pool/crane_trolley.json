@@ -1,0 +1,76 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#paint"
+        },
+        "east": {
+          "texture": "#yellow_8x2",
+          "uv": [
+            0.0,
+            0.0,
+            8.0,
+            2.0
+          ]
+        },
+        "north": {
+          "texture": "#yellow_10x2",
+          "uv": [
+            0.0,
+            0.0,
+            10.0,
+            2.0
+          ]
+        },
+        "south": {
+          "texture": "#yellow_10x2",
+          "uv": [
+            0.0,
+            0.0,
+            10.0,
+            2.0
+          ]
+        },
+        "up": {
+          "texture": "#hoist_10x8",
+          "uv": [
+            0.0,
+            0.0,
+            10.0,
+            8.0
+          ]
+        },
+        "west": {
+          "texture": "#yellow_8x2",
+          "uv": [
+            0.0,
+            0.0,
+            8.0,
+            2.0
+          ]
+        }
+      },
+      "from": [
+        -5,
+        5,
+        -1
+      ],
+      "to": [
+        5,
+        7,
+        7
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "hoist_10x8": "ryzergen:block/pool/hoist_10x8",
+    "paint": "ryzergen:block/pool/paint",
+    "particle": "ryzergen:block/pool/paint",
+    "yellow_10x2": "ryzergen:block/pool/yellow_10x2",
+    "yellow_8x2": "ryzergen:block/pool/yellow_8x2"
+  }
+}

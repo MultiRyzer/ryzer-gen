@@ -1,5 +1,7 @@
 package com.ryzer.ryzergen.registry;
 
+import com.ryzer.ryzergen.battery.container.BatteryControllerBlockEntity;
+import com.ryzer.ryzergen.machine.pool.PoolControllerBlockEntity;
 import com.ryzer.ryzergen.machine.fusion.FusionPreviewBlockEntity;
 import com.ryzer.ryzergen.machine.sun.SunGatePreviewBlockEntity;
 import com.ryzer.ryzergen.RyzerGen;
@@ -100,6 +102,12 @@ public final class ModBlockEntities {
             BLOCK_ENTITIES.register("lithium_extractor", () -> BlockEntityType.Builder.of(
                     (pos, state) -> new ProcessingBlockEntity(ProcessingMachine.LITHIUM_EXTRACTOR, pos, state), ModBlocks.LITHIUM_EXTRACTOR.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BatteryControllerBlockEntity>> BATTERY_CONTROLLER =
+            BLOCK_ENTITIES.register("battery_controller",
+                    () -> BlockEntityType.Builder.of(BatteryControllerBlockEntity::new, ModBlocks.BATTERY_CONTROLLER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PoolControllerBlockEntity>> POOL_CONTROLLER =
+            BLOCK_ENTITIES.register("pool_controller",
+                    () -> BlockEntityType.Builder.of(PoolControllerBlockEntity::new, ModBlocks.POOL_CONTROLLER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WasteCaskBlockEntity>> WASTE_CASK =
             BLOCK_ENTITIES.register("waste_cask",
                     () -> BlockEntityType.Builder.of(WasteCaskBlockEntity::new, ModBlocks.WASTE_CASK.get()).build(null));

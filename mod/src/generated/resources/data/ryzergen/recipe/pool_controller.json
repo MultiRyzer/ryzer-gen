@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "tag": "c:circuits/basic"
+    },
+    "C": {
+      "item": "minecraft:cauldron"
+    },
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "SBS",
+    "GCG",
+    "SBS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:pool_controller"
+  }
+}

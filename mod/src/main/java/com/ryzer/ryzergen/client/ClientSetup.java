@@ -1,5 +1,14 @@
 package com.ryzer.ryzergen.client;
 
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import com.ryzer.ryzergen.registry.ModParticles;
+import com.ryzer.ryzergen.battery.container.ContainerScreen;
+import com.ryzer.ryzergen.battery.container.ContainerBuildScreen;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.minecraft.client.renderer.BiomeColors;
+import com.ryzer.ryzergen.machine.pool.PoolScreen;
+import com.ryzer.ryzergen.machine.pool.PoolBuildScreen;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.compat.accessories.AccessoriesClient;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -47,6 +56,10 @@ public final class ClientSetup {
         event.register(ModMenus.INTAKE_PUMP.get(), IntakePumpScreen::new);
         event.register(ModMenus.STATION_CORE.get(), StationCoreScreen::new);
         event.register(ModMenus.STATION_CONTROL.get(), StationControlScreen::new);
+        event.register(ModMenus.POOL_BUILD.get(), PoolBuildScreen::new);
+        event.register(ModMenus.POOL.get(), PoolScreen::new);
+        event.register(ModMenus.CONTAINER_BUILD.get(), ContainerBuildScreen::new);
+        event.register(ModMenus.CONTAINER_BATTERY.get(), ContainerScreen::new);
         event.register(ModMenus.MICROREACTOR.get(), MicroreactorScreen::new);
         event.register(ModMenus.CORE_CRACKER.get(), ProcessingScreen::new);
         event.register(ModMenus.REPROCESSOR.get(), ProcessingScreen::new);
@@ -54,10 +67,31 @@ public final class ClientSetup {
         event.register(ModMenus.LITHIUM_EXTRACTOR.get(), ProcessingScreen::new);
     }
 
+    /**
+     * The Spent Fuel Pool's water is vanilla's still water, which is grey: tint it with the biome's
+     * water colour, as water blocks are, so a pool matches the water round it.
+     */
+    @SubscribeEvent
+    public static void registerBlockColours(RegisterColorHandlersEvent.Block event) {
+        event.register((state, level, pos, tint) -> tint != 0 ? -1
+                        : level != null && pos != null ? BiomeColors.getAverageWaterColor(level, pos) : 0xFF3F76E4,
+                ModBlocks.POOL_LINER.get(), ModBlocks.POOL_CRANE.get(), ModBlocks.POOL_CONTROLLER.get());
+    }
+
+    @SubscribeEvent
+    public static void registerParticles(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(ModParticles.POOL_BUBBLE.get(), PoolBubbleParticle.Provider::new);
+    }
+
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.PRESSURE_TANK.get(), PressureTankRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.STATION_CORE.get(), StationRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.POOL_CONTROLLER.get(), PoolRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.CORE_CRACKER.get(), CoreCrackerRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.FUEL_FABRICATOR.get(), FuelFabricatorRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.LITHIUM_EXTRACTOR.get(), LithiumExtractorRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.BATTERY_CONTROLLER.get(), ContainerFanRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.FUSION_PREVIEW.get(), FusionPreviewRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.SUN_GATE_PREVIEW.get(), SunGateRenderer::new);
     }
@@ -68,9 +102,17 @@ public final class ClientSetup {
         event.enqueueWork(AccessoriesClient::register);
     }
 
-    /** Each tier's fitting on each side, a small model of its own, added to cables that have one. */
+    /**
+     * Each tier's fitting on each side, a small model of its own, added to cables that have one; and
+     * the models machines' renderers turn (the Core Cracker's flywheels).
+     */
     @SubscribeEvent
     public static void registerFittingModels(ModelEvent.RegisterAdditional event) {
+        event.register(CoreCrackerRenderer.FLYWHEEL);
+        event.register(FuelFabricatorRenderer.RAM);
+        for (ModelResourceLocation part : PoolRenderer.CRANE_PARTS) {
+            event.register(part);
+        }
         for (CableUpgrade tier : CableUpgrade.values()) {
             if (tier == CableUpgrade.NONE) {
                 continue;

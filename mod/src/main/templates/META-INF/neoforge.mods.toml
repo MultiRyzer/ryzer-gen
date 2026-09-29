@@ -47,6 +47,8 @@ authors="Ryzer"
 # The description text for the mod (multi line!) (#mandatory)
 description='''
 Power progression through real physics: from a small microreactor, through the fuel cycle, fission and fusion, to a Dyson swarm around a sun you can walk on.
+
+Discord: https://discord.gg/cmUZcRtqfg
 '''
 
 # Client mixins for the Dyson swarm's sky (darkening the sky and daylight, the moon going dark).

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "ryzergen:block/pool/part_controller",
+    "side": "ryzergen:block/pool/part_liner",
+    "top": "ryzergen:block/pool/part_liner"
+  }
+}

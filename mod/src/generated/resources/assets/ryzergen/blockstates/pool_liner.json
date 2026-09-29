@@ -1,0 +1,2065 @@
+{
+  "variants": {
+    "cell=0,facing=east,look=active": {
+      "model": "ryzergen:block/pool_liner"
+    },
+    "cell=0,facing=east,look=dry": {
+      "model": "ryzergen:block/pool_liner"
+    },
+    "cell=0,facing=east,look=wet": {
+      "model": "ryzergen:block/pool_liner"
+    },
+    "cell=0,facing=north,look=active": {
+      "model": "ryzergen:block/pool_liner"
+    },
+    "cell=0,facing=north,look=dry": {
+      "model": "ryzergen:block/pool_liner"
+    },
+    "cell=0,facing=north,look=wet": {
+      "model": "ryzergen:block/pool_liner"
+    },
+    "cell=0,facing=south,look=active": {
+      "model": "ryzergen:block/pool_liner"
+    },
+    "cell=0,facing=south,look=dry": {
+      "model": "ryzergen:block/pool_liner"
+    },
+    "cell=0,facing=south,look=wet": {
+      "model": "ryzergen:block/pool_liner"
+    },
+    "cell=0,facing=west,look=active": {
+      "model": "ryzergen:block/pool_liner"
+    },
+    "cell=0,facing=west,look=dry": {
+      "model": "ryzergen:block/pool_liner"
+    },
+    "cell=0,facing=west,look=wet": {
+      "model": "ryzergen:block/pool_liner"
+    },
+    "cell=1,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_1",
+      "y": 90
+    },
+    "cell=1,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_1",
+      "y": 90
+    },
+    "cell=1,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_1",
+      "y": 90
+    },
+    "cell=1,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_1"
+    },
+    "cell=1,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_1"
+    },
+    "cell=1,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_1"
+    },
+    "cell=1,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_1",
+      "y": 180
+    },
+    "cell=1,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_1",
+      "y": 180
+    },
+    "cell=1,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_1",
+      "y": 180
+    },
+    "cell=1,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_1",
+      "y": 270
+    },
+    "cell=1,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_1",
+      "y": 270
+    },
+    "cell=1,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_1",
+      "y": 270
+    },
+    "cell=10,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_10",
+      "y": 90
+    },
+    "cell=10,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_10",
+      "y": 90
+    },
+    "cell=10,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_10",
+      "y": 90
+    },
+    "cell=10,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_10"
+    },
+    "cell=10,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_10"
+    },
+    "cell=10,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_10"
+    },
+    "cell=10,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_10",
+      "y": 180
+    },
+    "cell=10,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_10",
+      "y": 180
+    },
+    "cell=10,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_10",
+      "y": 180
+    },
+    "cell=10,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_10",
+      "y": 270
+    },
+    "cell=10,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_10",
+      "y": 270
+    },
+    "cell=10,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_10",
+      "y": 270
+    },
+    "cell=11,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_11",
+      "y": 90
+    },
+    "cell=11,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_11",
+      "y": 90
+    },
+    "cell=11,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_11",
+      "y": 90
+    },
+    "cell=11,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_11"
+    },
+    "cell=11,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_11"
+    },
+    "cell=11,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_11"
+    },
+    "cell=11,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_11",
+      "y": 180
+    },
+    "cell=11,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_11",
+      "y": 180
+    },
+    "cell=11,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_11",
+      "y": 180
+    },
+    "cell=11,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_11",
+      "y": 270
+    },
+    "cell=11,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_11",
+      "y": 270
+    },
+    "cell=11,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_11",
+      "y": 270
+    },
+    "cell=12,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_12",
+      "y": 90
+    },
+    "cell=12,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_12",
+      "y": 90
+    },
+    "cell=12,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_12",
+      "y": 90
+    },
+    "cell=12,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_12"
+    },
+    "cell=12,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_12"
+    },
+    "cell=12,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_12"
+    },
+    "cell=12,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_12",
+      "y": 180
+    },
+    "cell=12,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_12",
+      "y": 180
+    },
+    "cell=12,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_12",
+      "y": 180
+    },
+    "cell=12,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_12",
+      "y": 270
+    },
+    "cell=12,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_12",
+      "y": 270
+    },
+    "cell=12,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_12",
+      "y": 270
+    },
+    "cell=13,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_13",
+      "y": 90
+    },
+    "cell=13,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_13",
+      "y": 90
+    },
+    "cell=13,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_13",
+      "y": 90
+    },
+    "cell=13,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_13"
+    },
+    "cell=13,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_13"
+    },
+    "cell=13,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_13"
+    },
+    "cell=13,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_13",
+      "y": 180
+    },
+    "cell=13,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_13",
+      "y": 180
+    },
+    "cell=13,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_13",
+      "y": 180
+    },
+    "cell=13,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_13",
+      "y": 270
+    },
+    "cell=13,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_13",
+      "y": 270
+    },
+    "cell=13,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_13",
+      "y": 270
+    },
+    "cell=14,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_14",
+      "y": 90
+    },
+    "cell=14,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_14",
+      "y": 90
+    },
+    "cell=14,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_14",
+      "y": 90
+    },
+    "cell=14,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_14"
+    },
+    "cell=14,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_14"
+    },
+    "cell=14,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_14"
+    },
+    "cell=14,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_14",
+      "y": 180
+    },
+    "cell=14,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_14",
+      "y": 180
+    },
+    "cell=14,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_14",
+      "y": 180
+    },
+    "cell=14,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_14",
+      "y": 270
+    },
+    "cell=14,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_14",
+      "y": 270
+    },
+    "cell=14,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_14",
+      "y": 270
+    },
+    "cell=15,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_15",
+      "y": 90
+    },
+    "cell=15,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_15",
+      "y": 90
+    },
+    "cell=15,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_15",
+      "y": 90
+    },
+    "cell=15,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_15"
+    },
+    "cell=15,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_15"
+    },
+    "cell=15,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_15"
+    },
+    "cell=15,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_15",
+      "y": 180
+    },
+    "cell=15,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_15",
+      "y": 180
+    },
+    "cell=15,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_15",
+      "y": 180
+    },
+    "cell=15,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_15",
+      "y": 270
+    },
+    "cell=15,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_15",
+      "y": 270
+    },
+    "cell=15,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_15",
+      "y": 270
+    },
+    "cell=16,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_16",
+      "y": 90
+    },
+    "cell=16,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_16",
+      "y": 90
+    },
+    "cell=16,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_16",
+      "y": 90
+    },
+    "cell=16,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_16"
+    },
+    "cell=16,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_16"
+    },
+    "cell=16,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_16"
+    },
+    "cell=16,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_16",
+      "y": 180
+    },
+    "cell=16,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_16",
+      "y": 180
+    },
+    "cell=16,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_16",
+      "y": 180
+    },
+    "cell=16,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_16",
+      "y": 270
+    },
+    "cell=16,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_16",
+      "y": 270
+    },
+    "cell=16,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_16",
+      "y": 270
+    },
+    "cell=17,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_17",
+      "y": 90
+    },
+    "cell=17,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_17",
+      "y": 90
+    },
+    "cell=17,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_17",
+      "y": 90
+    },
+    "cell=17,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_17"
+    },
+    "cell=17,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_17"
+    },
+    "cell=17,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_17"
+    },
+    "cell=17,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_17",
+      "y": 180
+    },
+    "cell=17,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_17",
+      "y": 180
+    },
+    "cell=17,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_17",
+      "y": 180
+    },
+    "cell=17,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_17",
+      "y": 270
+    },
+    "cell=17,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_17",
+      "y": 270
+    },
+    "cell=17,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_17",
+      "y": 270
+    },
+    "cell=18,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_18",
+      "y": 90
+    },
+    "cell=18,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_18",
+      "y": 90
+    },
+    "cell=18,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_18",
+      "y": 90
+    },
+    "cell=18,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_18"
+    },
+    "cell=18,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_18"
+    },
+    "cell=18,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_18"
+    },
+    "cell=18,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_18",
+      "y": 180
+    },
+    "cell=18,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_18",
+      "y": 180
+    },
+    "cell=18,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_18",
+      "y": 180
+    },
+    "cell=18,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_18",
+      "y": 270
+    },
+    "cell=18,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_18",
+      "y": 270
+    },
+    "cell=18,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_18",
+      "y": 270
+    },
+    "cell=19,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_19",
+      "y": 90
+    },
+    "cell=19,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_19",
+      "y": 90
+    },
+    "cell=19,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_19",
+      "y": 90
+    },
+    "cell=19,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_19"
+    },
+    "cell=19,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_19"
+    },
+    "cell=19,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_19"
+    },
+    "cell=19,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_19",
+      "y": 180
+    },
+    "cell=19,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_19",
+      "y": 180
+    },
+    "cell=19,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_19",
+      "y": 180
+    },
+    "cell=19,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_19",
+      "y": 270
+    },
+    "cell=19,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_19",
+      "y": 270
+    },
+    "cell=19,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_19",
+      "y": 270
+    },
+    "cell=2,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_2",
+      "y": 90
+    },
+    "cell=2,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_2",
+      "y": 90
+    },
+    "cell=2,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_2",
+      "y": 90
+    },
+    "cell=2,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_2"
+    },
+    "cell=2,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_2"
+    },
+    "cell=2,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_2"
+    },
+    "cell=2,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_2",
+      "y": 180
+    },
+    "cell=2,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_2",
+      "y": 180
+    },
+    "cell=2,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_2",
+      "y": 180
+    },
+    "cell=2,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_2",
+      "y": 270
+    },
+    "cell=2,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_2",
+      "y": 270
+    },
+    "cell=2,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_2",
+      "y": 270
+    },
+    "cell=20,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_20",
+      "y": 90
+    },
+    "cell=20,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_20",
+      "y": 90
+    },
+    "cell=20,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_20",
+      "y": 90
+    },
+    "cell=20,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_20"
+    },
+    "cell=20,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_20"
+    },
+    "cell=20,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_20"
+    },
+    "cell=20,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_20",
+      "y": 180
+    },
+    "cell=20,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_20",
+      "y": 180
+    },
+    "cell=20,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_20",
+      "y": 180
+    },
+    "cell=20,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_20",
+      "y": 270
+    },
+    "cell=20,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_20",
+      "y": 270
+    },
+    "cell=20,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_20",
+      "y": 270
+    },
+    "cell=21,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_21",
+      "y": 90
+    },
+    "cell=21,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_21",
+      "y": 90
+    },
+    "cell=21,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_21",
+      "y": 90
+    },
+    "cell=21,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_21"
+    },
+    "cell=21,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_21"
+    },
+    "cell=21,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_21"
+    },
+    "cell=21,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_21",
+      "y": 180
+    },
+    "cell=21,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_21",
+      "y": 180
+    },
+    "cell=21,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_21",
+      "y": 180
+    },
+    "cell=21,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_21",
+      "y": 270
+    },
+    "cell=21,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_21",
+      "y": 270
+    },
+    "cell=21,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_21",
+      "y": 270
+    },
+    "cell=22,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_22",
+      "y": 90
+    },
+    "cell=22,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_22",
+      "y": 90
+    },
+    "cell=22,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_22",
+      "y": 90
+    },
+    "cell=22,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_22"
+    },
+    "cell=22,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_22"
+    },
+    "cell=22,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_22"
+    },
+    "cell=22,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_22",
+      "y": 180
+    },
+    "cell=22,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_22",
+      "y": 180
+    },
+    "cell=22,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_22",
+      "y": 180
+    },
+    "cell=22,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_22",
+      "y": 270
+    },
+    "cell=22,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_22",
+      "y": 270
+    },
+    "cell=22,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_22",
+      "y": 270
+    },
+    "cell=23,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_23",
+      "y": 90
+    },
+    "cell=23,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_23",
+      "y": 90
+    },
+    "cell=23,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_23",
+      "y": 90
+    },
+    "cell=23,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_23"
+    },
+    "cell=23,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_23"
+    },
+    "cell=23,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_23"
+    },
+    "cell=23,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_23",
+      "y": 180
+    },
+    "cell=23,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_23",
+      "y": 180
+    },
+    "cell=23,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_23",
+      "y": 180
+    },
+    "cell=23,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_23",
+      "y": 270
+    },
+    "cell=23,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_23",
+      "y": 270
+    },
+    "cell=23,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_23",
+      "y": 270
+    },
+    "cell=24,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_24",
+      "y": 90
+    },
+    "cell=24,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_24",
+      "y": 90
+    },
+    "cell=24,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_24",
+      "y": 90
+    },
+    "cell=24,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_24"
+    },
+    "cell=24,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_24"
+    },
+    "cell=24,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_24"
+    },
+    "cell=24,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_24",
+      "y": 180
+    },
+    "cell=24,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_24",
+      "y": 180
+    },
+    "cell=24,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_24",
+      "y": 180
+    },
+    "cell=24,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_24",
+      "y": 270
+    },
+    "cell=24,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_24",
+      "y": 270
+    },
+    "cell=24,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_24",
+      "y": 270
+    },
+    "cell=25,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_25",
+      "y": 90
+    },
+    "cell=25,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_25",
+      "y": 90
+    },
+    "cell=25,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_25",
+      "y": 90
+    },
+    "cell=25,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_25"
+    },
+    "cell=25,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_25"
+    },
+    "cell=25,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_25"
+    },
+    "cell=25,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_25",
+      "y": 180
+    },
+    "cell=25,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_25",
+      "y": 180
+    },
+    "cell=25,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_25",
+      "y": 180
+    },
+    "cell=25,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_25",
+      "y": 270
+    },
+    "cell=25,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_25",
+      "y": 270
+    },
+    "cell=25,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_25",
+      "y": 270
+    },
+    "cell=26,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_26",
+      "y": 90
+    },
+    "cell=26,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_26",
+      "y": 90
+    },
+    "cell=26,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_26",
+      "y": 90
+    },
+    "cell=26,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_26"
+    },
+    "cell=26,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_26"
+    },
+    "cell=26,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_26"
+    },
+    "cell=26,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_26",
+      "y": 180
+    },
+    "cell=26,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_26",
+      "y": 180
+    },
+    "cell=26,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_26",
+      "y": 180
+    },
+    "cell=26,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_26",
+      "y": 270
+    },
+    "cell=26,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_26",
+      "y": 270
+    },
+    "cell=26,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_26",
+      "y": 270
+    },
+    "cell=27,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_27",
+      "y": 90
+    },
+    "cell=27,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_27",
+      "y": 90
+    },
+    "cell=27,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_27",
+      "y": 90
+    },
+    "cell=27,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_27"
+    },
+    "cell=27,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_27"
+    },
+    "cell=27,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_27"
+    },
+    "cell=27,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_27",
+      "y": 180
+    },
+    "cell=27,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_27",
+      "y": 180
+    },
+    "cell=27,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_27",
+      "y": 180
+    },
+    "cell=27,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_27",
+      "y": 270
+    },
+    "cell=27,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_27",
+      "y": 270
+    },
+    "cell=27,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_27",
+      "y": 270
+    },
+    "cell=28,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_28",
+      "y": 90
+    },
+    "cell=28,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_28",
+      "y": 90
+    },
+    "cell=28,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_28",
+      "y": 90
+    },
+    "cell=28,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_28"
+    },
+    "cell=28,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_28"
+    },
+    "cell=28,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_28"
+    },
+    "cell=28,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_28",
+      "y": 180
+    },
+    "cell=28,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_28",
+      "y": 180
+    },
+    "cell=28,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_28",
+      "y": 180
+    },
+    "cell=28,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_28",
+      "y": 270
+    },
+    "cell=28,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_28",
+      "y": 270
+    },
+    "cell=28,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_28",
+      "y": 270
+    },
+    "cell=29,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_29",
+      "y": 90
+    },
+    "cell=29,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_29",
+      "y": 90
+    },
+    "cell=29,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_29",
+      "y": 90
+    },
+    "cell=29,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_29"
+    },
+    "cell=29,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_29"
+    },
+    "cell=29,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_29"
+    },
+    "cell=29,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_29",
+      "y": 180
+    },
+    "cell=29,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_29",
+      "y": 180
+    },
+    "cell=29,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_29",
+      "y": 180
+    },
+    "cell=29,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_29",
+      "y": 270
+    },
+    "cell=29,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_29",
+      "y": 270
+    },
+    "cell=29,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_29",
+      "y": 270
+    },
+    "cell=3,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_3",
+      "y": 90
+    },
+    "cell=3,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_3",
+      "y": 90
+    },
+    "cell=3,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_3",
+      "y": 90
+    },
+    "cell=3,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_3"
+    },
+    "cell=3,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_3"
+    },
+    "cell=3,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_3"
+    },
+    "cell=3,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_3",
+      "y": 180
+    },
+    "cell=3,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_3",
+      "y": 180
+    },
+    "cell=3,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_3",
+      "y": 180
+    },
+    "cell=3,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_3",
+      "y": 270
+    },
+    "cell=3,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_3",
+      "y": 270
+    },
+    "cell=3,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_3",
+      "y": 270
+    },
+    "cell=30,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_30",
+      "y": 90
+    },
+    "cell=30,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_30",
+      "y": 90
+    },
+    "cell=30,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_30",
+      "y": 90
+    },
+    "cell=30,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_30"
+    },
+    "cell=30,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_30"
+    },
+    "cell=30,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_30"
+    },
+    "cell=30,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_30",
+      "y": 180
+    },
+    "cell=30,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_30",
+      "y": 180
+    },
+    "cell=30,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_30",
+      "y": 180
+    },
+    "cell=30,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_30",
+      "y": 270
+    },
+    "cell=30,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_30",
+      "y": 270
+    },
+    "cell=30,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_30",
+      "y": 270
+    },
+    "cell=31,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_31",
+      "y": 90
+    },
+    "cell=31,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_31",
+      "y": 90
+    },
+    "cell=31,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_31",
+      "y": 90
+    },
+    "cell=31,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_31"
+    },
+    "cell=31,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_31"
+    },
+    "cell=31,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_31"
+    },
+    "cell=31,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_31",
+      "y": 180
+    },
+    "cell=31,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_31",
+      "y": 180
+    },
+    "cell=31,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_31",
+      "y": 180
+    },
+    "cell=31,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_31",
+      "y": 270
+    },
+    "cell=31,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_31",
+      "y": 270
+    },
+    "cell=31,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_31",
+      "y": 270
+    },
+    "cell=32,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_32",
+      "y": 90
+    },
+    "cell=32,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_32",
+      "y": 90
+    },
+    "cell=32,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_32",
+      "y": 90
+    },
+    "cell=32,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_32"
+    },
+    "cell=32,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_32"
+    },
+    "cell=32,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_32"
+    },
+    "cell=32,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_32",
+      "y": 180
+    },
+    "cell=32,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_32",
+      "y": 180
+    },
+    "cell=32,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_32",
+      "y": 180
+    },
+    "cell=32,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_32",
+      "y": 270
+    },
+    "cell=32,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_32",
+      "y": 270
+    },
+    "cell=32,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_32",
+      "y": 270
+    },
+    "cell=33,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_33",
+      "y": 90
+    },
+    "cell=33,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_33",
+      "y": 90
+    },
+    "cell=33,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_33",
+      "y": 90
+    },
+    "cell=33,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_33"
+    },
+    "cell=33,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_33"
+    },
+    "cell=33,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_33"
+    },
+    "cell=33,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_33",
+      "y": 180
+    },
+    "cell=33,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_33",
+      "y": 180
+    },
+    "cell=33,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_33",
+      "y": 180
+    },
+    "cell=33,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_33",
+      "y": 270
+    },
+    "cell=33,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_33",
+      "y": 270
+    },
+    "cell=33,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_33",
+      "y": 270
+    },
+    "cell=34,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_34",
+      "y": 90
+    },
+    "cell=34,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_34",
+      "y": 90
+    },
+    "cell=34,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_34",
+      "y": 90
+    },
+    "cell=34,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_34"
+    },
+    "cell=34,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_34"
+    },
+    "cell=34,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_34"
+    },
+    "cell=34,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_34",
+      "y": 180
+    },
+    "cell=34,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_34",
+      "y": 180
+    },
+    "cell=34,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_34",
+      "y": 180
+    },
+    "cell=34,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_34",
+      "y": 270
+    },
+    "cell=34,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_34",
+      "y": 270
+    },
+    "cell=34,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_34",
+      "y": 270
+    },
+    "cell=35,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_35",
+      "y": 90
+    },
+    "cell=35,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_35",
+      "y": 90
+    },
+    "cell=35,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_35",
+      "y": 90
+    },
+    "cell=35,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_35"
+    },
+    "cell=35,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_35"
+    },
+    "cell=35,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_35"
+    },
+    "cell=35,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_35",
+      "y": 180
+    },
+    "cell=35,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_35",
+      "y": 180
+    },
+    "cell=35,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_35",
+      "y": 180
+    },
+    "cell=35,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_35",
+      "y": 270
+    },
+    "cell=35,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_35",
+      "y": 270
+    },
+    "cell=35,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_35",
+      "y": 270
+    },
+    "cell=36,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_36",
+      "y": 90
+    },
+    "cell=36,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_36",
+      "y": 90
+    },
+    "cell=36,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_36",
+      "y": 90
+    },
+    "cell=36,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_36"
+    },
+    "cell=36,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_36"
+    },
+    "cell=36,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_36"
+    },
+    "cell=36,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_36",
+      "y": 180
+    },
+    "cell=36,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_36",
+      "y": 180
+    },
+    "cell=36,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_36",
+      "y": 180
+    },
+    "cell=36,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_36",
+      "y": 270
+    },
+    "cell=36,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_36",
+      "y": 270
+    },
+    "cell=36,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_36",
+      "y": 270
+    },
+    "cell=37,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_37",
+      "y": 90
+    },
+    "cell=37,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_37",
+      "y": 90
+    },
+    "cell=37,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_37",
+      "y": 90
+    },
+    "cell=37,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_37"
+    },
+    "cell=37,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_37"
+    },
+    "cell=37,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_37"
+    },
+    "cell=37,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_37",
+      "y": 180
+    },
+    "cell=37,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_37",
+      "y": 180
+    },
+    "cell=37,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_37",
+      "y": 180
+    },
+    "cell=37,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_37",
+      "y": 270
+    },
+    "cell=37,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_37",
+      "y": 270
+    },
+    "cell=37,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_37",
+      "y": 270
+    },
+    "cell=38,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_38",
+      "y": 90
+    },
+    "cell=38,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_38",
+      "y": 90
+    },
+    "cell=38,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_38",
+      "y": 90
+    },
+    "cell=38,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_38"
+    },
+    "cell=38,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_38"
+    },
+    "cell=38,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_38"
+    },
+    "cell=38,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_38",
+      "y": 180
+    },
+    "cell=38,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_38",
+      "y": 180
+    },
+    "cell=38,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_38",
+      "y": 180
+    },
+    "cell=38,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_38",
+      "y": 270
+    },
+    "cell=38,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_38",
+      "y": 270
+    },
+    "cell=38,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_38",
+      "y": 270
+    },
+    "cell=39,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_39",
+      "y": 90
+    },
+    "cell=39,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_39",
+      "y": 90
+    },
+    "cell=39,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_39",
+      "y": 90
+    },
+    "cell=39,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_39"
+    },
+    "cell=39,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_39"
+    },
+    "cell=39,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_39"
+    },
+    "cell=39,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_39",
+      "y": 180
+    },
+    "cell=39,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_39",
+      "y": 180
+    },
+    "cell=39,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_39",
+      "y": 180
+    },
+    "cell=39,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_39",
+      "y": 270
+    },
+    "cell=39,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_39",
+      "y": 270
+    },
+    "cell=39,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_39",
+      "y": 270
+    },
+    "cell=4,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_4",
+      "y": 90
+    },
+    "cell=4,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_4",
+      "y": 90
+    },
+    "cell=4,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_4",
+      "y": 90
+    },
+    "cell=4,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_4"
+    },
+    "cell=4,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_4"
+    },
+    "cell=4,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_4"
+    },
+    "cell=4,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_4",
+      "y": 180
+    },
+    "cell=4,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_4",
+      "y": 180
+    },
+    "cell=4,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_4",
+      "y": 180
+    },
+    "cell=4,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_4",
+      "y": 270
+    },
+    "cell=4,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_4",
+      "y": 270
+    },
+    "cell=4,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_4",
+      "y": 270
+    },
+    "cell=40,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_40",
+      "y": 90
+    },
+    "cell=40,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_40",
+      "y": 90
+    },
+    "cell=40,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_40",
+      "y": 90
+    },
+    "cell=40,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_40"
+    },
+    "cell=40,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_40"
+    },
+    "cell=40,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_40"
+    },
+    "cell=40,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_40",
+      "y": 180
+    },
+    "cell=40,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_40",
+      "y": 180
+    },
+    "cell=40,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_40",
+      "y": 180
+    },
+    "cell=40,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_40",
+      "y": 270
+    },
+    "cell=40,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_40",
+      "y": 270
+    },
+    "cell=40,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_40",
+      "y": 270
+    },
+    "cell=41,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_41",
+      "y": 90
+    },
+    "cell=41,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_41",
+      "y": 90
+    },
+    "cell=41,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_41",
+      "y": 90
+    },
+    "cell=41,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_41"
+    },
+    "cell=41,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_41"
+    },
+    "cell=41,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_41"
+    },
+    "cell=41,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_41",
+      "y": 180
+    },
+    "cell=41,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_41",
+      "y": 180
+    },
+    "cell=41,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_41",
+      "y": 180
+    },
+    "cell=41,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_41",
+      "y": 270
+    },
+    "cell=41,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_41",
+      "y": 270
+    },
+    "cell=41,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_41",
+      "y": 270
+    },
+    "cell=42,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_42",
+      "y": 90
+    },
+    "cell=42,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_42",
+      "y": 90
+    },
+    "cell=42,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_42",
+      "y": 90
+    },
+    "cell=42,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_42"
+    },
+    "cell=42,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_42"
+    },
+    "cell=42,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_42"
+    },
+    "cell=42,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_42",
+      "y": 180
+    },
+    "cell=42,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_42",
+      "y": 180
+    },
+    "cell=42,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_42",
+      "y": 180
+    },
+    "cell=42,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_42",
+      "y": 270
+    },
+    "cell=42,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_42",
+      "y": 270
+    },
+    "cell=42,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_42",
+      "y": 270
+    },
+    "cell=43,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_43",
+      "y": 90
+    },
+    "cell=43,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_43",
+      "y": 90
+    },
+    "cell=43,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_43",
+      "y": 90
+    },
+    "cell=43,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_43"
+    },
+    "cell=43,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_43"
+    },
+    "cell=43,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_43"
+    },
+    "cell=43,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_43",
+      "y": 180
+    },
+    "cell=43,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_43",
+      "y": 180
+    },
+    "cell=43,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_43",
+      "y": 180
+    },
+    "cell=43,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_43",
+      "y": 270
+    },
+    "cell=43,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_43",
+      "y": 270
+    },
+    "cell=43,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_43",
+      "y": 270
+    },
+    "cell=44,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_44",
+      "y": 90
+    },
+    "cell=44,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_44",
+      "y": 90
+    },
+    "cell=44,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_44",
+      "y": 90
+    },
+    "cell=44,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_44"
+    },
+    "cell=44,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_44"
+    },
+    "cell=44,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_44"
+    },
+    "cell=44,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_44",
+      "y": 180
+    },
+    "cell=44,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_44",
+      "y": 180
+    },
+    "cell=44,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_44",
+      "y": 180
+    },
+    "cell=44,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_44",
+      "y": 270
+    },
+    "cell=44,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_44",
+      "y": 270
+    },
+    "cell=44,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_44",
+      "y": 270
+    },
+    "cell=45,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_45",
+      "y": 90
+    },
+    "cell=45,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_45",
+      "y": 90
+    },
+    "cell=45,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_45",
+      "y": 90
+    },
+    "cell=45,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_45"
+    },
+    "cell=45,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_45"
+    },
+    "cell=45,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_45"
+    },
+    "cell=45,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_45",
+      "y": 180
+    },
+    "cell=45,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_45",
+      "y": 180
+    },
+    "cell=45,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_45",
+      "y": 180
+    },
+    "cell=45,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_45",
+      "y": 270
+    },
+    "cell=45,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_45",
+      "y": 270
+    },
+    "cell=45,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_45",
+      "y": 270
+    },
+    "cell=5,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_5",
+      "y": 90
+    },
+    "cell=5,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_5",
+      "y": 90
+    },
+    "cell=5,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_5",
+      "y": 90
+    },
+    "cell=5,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_5"
+    },
+    "cell=5,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_5"
+    },
+    "cell=5,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_5"
+    },
+    "cell=5,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_5",
+      "y": 180
+    },
+    "cell=5,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_5",
+      "y": 180
+    },
+    "cell=5,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_5",
+      "y": 180
+    },
+    "cell=5,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_5",
+      "y": 270
+    },
+    "cell=5,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_5",
+      "y": 270
+    },
+    "cell=5,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_5",
+      "y": 270
+    },
+    "cell=6,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_6",
+      "y": 90
+    },
+    "cell=6,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_6",
+      "y": 90
+    },
+    "cell=6,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_6",
+      "y": 90
+    },
+    "cell=6,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_6"
+    },
+    "cell=6,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_6"
+    },
+    "cell=6,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_6"
+    },
+    "cell=6,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_6",
+      "y": 180
+    },
+    "cell=6,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_6",
+      "y": 180
+    },
+    "cell=6,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_6",
+      "y": 180
+    },
+    "cell=6,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_6",
+      "y": 270
+    },
+    "cell=6,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_6",
+      "y": 270
+    },
+    "cell=6,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_6",
+      "y": 270
+    },
+    "cell=7,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_7",
+      "y": 90
+    },
+    "cell=7,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_7",
+      "y": 90
+    },
+    "cell=7,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_7",
+      "y": 90
+    },
+    "cell=7,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_7"
+    },
+    "cell=7,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_7"
+    },
+    "cell=7,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_7"
+    },
+    "cell=7,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_7",
+      "y": 180
+    },
+    "cell=7,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_7",
+      "y": 180
+    },
+    "cell=7,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_7",
+      "y": 180
+    },
+    "cell=7,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_7",
+      "y": 270
+    },
+    "cell=7,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_7",
+      "y": 270
+    },
+    "cell=7,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_7",
+      "y": 270
+    },
+    "cell=8,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_8",
+      "y": 90
+    },
+    "cell=8,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_8",
+      "y": 90
+    },
+    "cell=8,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_8",
+      "y": 90
+    },
+    "cell=8,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_8"
+    },
+    "cell=8,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_8"
+    },
+    "cell=8,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_8"
+    },
+    "cell=8,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_8",
+      "y": 180
+    },
+    "cell=8,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_8",
+      "y": 180
+    },
+    "cell=8,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_8",
+      "y": 180
+    },
+    "cell=8,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_8",
+      "y": 270
+    },
+    "cell=8,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_8",
+      "y": 270
+    },
+    "cell=8,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_8",
+      "y": 270
+    },
+    "cell=9,facing=east,look=active": {
+      "model": "ryzergen:block/pool/active_9",
+      "y": 90
+    },
+    "cell=9,facing=east,look=dry": {
+      "model": "ryzergen:block/pool/dry_9",
+      "y": 90
+    },
+    "cell=9,facing=east,look=wet": {
+      "model": "ryzergen:block/pool/wet_9",
+      "y": 90
+    },
+    "cell=9,facing=north,look=active": {
+      "model": "ryzergen:block/pool/active_9"
+    },
+    "cell=9,facing=north,look=dry": {
+      "model": "ryzergen:block/pool/dry_9"
+    },
+    "cell=9,facing=north,look=wet": {
+      "model": "ryzergen:block/pool/wet_9"
+    },
+    "cell=9,facing=south,look=active": {
+      "model": "ryzergen:block/pool/active_9",
+      "y": 180
+    },
+    "cell=9,facing=south,look=dry": {
+      "model": "ryzergen:block/pool/dry_9",
+      "y": 180
+    },
+    "cell=9,facing=south,look=wet": {
+      "model": "ryzergen:block/pool/wet_9",
+      "y": 180
+    },
+    "cell=9,facing=west,look=active": {
+      "model": "ryzergen:block/pool/active_9",
+      "y": 270
+    },
+    "cell=9,facing=west,look=dry": {
+      "model": "ryzergen:block/pool/dry_9",
+      "y": 270
+    },
+    "cell=9,facing=west,look=wet": {
+      "model": "ryzergen:block/pool/wet_9",
+      "y": 270
+    }
+  }
+}

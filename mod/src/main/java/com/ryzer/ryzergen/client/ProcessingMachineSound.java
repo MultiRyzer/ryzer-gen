@@ -51,6 +51,7 @@ public class ProcessingMachineSound extends AbstractTickableSoundInstance {
 
     /** Client ticker: starts the loop when the machine starts working and none is playing. */
     public static void clientTick(Level level, BlockPos pos, BlockState state, ProcessingBlockEntity machine) {
+        machine.turn(state.getValue(ProcessingBlock.ACTIVE));
         if (!state.getValue(ProcessingBlock.ACTIVE)) {
             return;
         }

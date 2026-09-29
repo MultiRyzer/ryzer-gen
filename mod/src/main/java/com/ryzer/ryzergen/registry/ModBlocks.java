@@ -1,5 +1,10 @@
 package com.ryzer.ryzergen.registry;
 
+import com.ryzer.ryzergen.battery.container.ContainerPartBlock;
+import com.ryzer.ryzergen.battery.container.BatteryControllerBlock;
+import com.ryzer.ryzergen.machine.pool.PoolPartBlock;
+import com.ryzer.ryzergen.machine.pool.PoolLook;
+import com.ryzer.ryzergen.machine.pool.PoolControllerBlock;
 import com.ryzer.ryzergen.machine.fusion.FusionPreviewBlock;
 import com.ryzer.ryzergen.machine.sun.SunGatePreviewBlock;
 import com.ryzer.ryzergen.RyzerGen;
@@ -41,9 +46,9 @@ public final class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(RyzerGen.MOD_ID);
 
     public static final DeferredBlock<AlloySmelterBlock> ALLOY_SMELTER = BLOCKS.register("alloy_smelter",
-            () -> new AlloySmelterBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FURNACE)));
+            () -> new AlloySmelterBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FURNACE).noOcclusion()));
     public static final DeferredBlock<ElectricAlloySmelterBlock> ELECTRIC_ALLOY_SMELTER = BLOCKS.register("electric_alloy_smelter",
-            () -> new ElectricAlloySmelterBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)
+            () -> new ElectricAlloySmelterBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
                     .lightLevel(state -> state.getValue(ElectricAlloySmelterBlock.ACTIVE) ? 7 : 0)));
 
     public static final DeferredBlock<ReactorHeartBlock> REACTOR_HEART = BLOCKS.register("reactor_heart",
@@ -87,6 +92,22 @@ public final class ModBlocks {
             () -> new StationPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
     public static final DeferredBlock<StationCoreBlock> STATION_CORE = BLOCKS.register("station_core",
             () -> new StationCoreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+    // Spent Fuel Pool parts (design section 7). Formed, they draw the pool's combined model; with
+    // fuel cooling in it, the water glows and lights the room a little.
+    public static final DeferredBlock<PoolPartBlock> POOL_LINER = BLOCKS.register("pool_liner",
+            () -> new PoolPartBlock(poolProperties()));
+    public static final DeferredBlock<PoolPartBlock> POOL_CRANE = BLOCKS.register("pool_crane",
+            () -> new PoolPartBlock(poolProperties()));
+    public static final DeferredBlock<PoolControllerBlock> POOL_CONTROLLER = BLOCKS.register("pool_controller",
+            () -> new PoolControllerBlock(poolProperties()));
+    // Container Battery parts (design section 12). Formed, they draw the container's combined
+    // model; a slot with a rack in it lights up.
+    public static final DeferredBlock<ContainerPartBlock> CONTAINER_FRAME = BLOCKS.register("container_frame",
+            () -> new ContainerPartBlock(containerProperties()));
+    public static final DeferredBlock<ContainerPartBlock> THERMAL_UNIT = BLOCKS.register("thermal_unit",
+            () -> new ContainerPartBlock(containerProperties()));
+    public static final DeferredBlock<BatteryControllerBlock> BATTERY_CONTROLLER = BLOCKS.register("battery_controller",
+            () -> new BatteryControllerBlock(containerProperties()));
     public static final DeferredBlock<Block> GRAPHITE_BLOCK = BLOCKS.registerSimpleBlock("graphite_block",
             BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK));
     // Creative-only test blocks (no recipe): endless power and endless water.
@@ -123,6 +144,16 @@ public final class ModBlocks {
     private static BlockBehaviour.Properties machineProperties() {
         return BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
                 .lightLevel(state -> state.getValue(ProcessingBlock.ACTIVE) ? 5 : 0);
+    }
+
+    private static BlockBehaviour.Properties containerProperties() {
+        return BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).pushReaction(PushReaction.BLOCK)
+                .lightLevel(state -> state.getValue(ContainerPartBlock.INSTALLED) ? 6 : 0);
+    }
+
+    private static BlockBehaviour.Properties poolProperties() {
+        return BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).pushReaction(PushReaction.BLOCK)
+                .lightLevel(state -> state.getValue(PoolPartBlock.LOOK) == PoolLook.ACTIVE ? 4 : 0);
     }
 
     /** A running microreactor glows through its porthole and screens. */

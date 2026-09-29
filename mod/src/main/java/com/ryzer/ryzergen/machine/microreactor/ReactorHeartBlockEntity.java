@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.microreactor;
 
+import com.ryzer.ryzergen.machine.pool.HotFuel;
 import com.ryzer.ryzergen.cable.CableBlock;
 import com.ryzer.ryzergen.cable.CableSide;
 import com.ryzer.ryzergen.cable.GasPipeBlock;
@@ -605,7 +606,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
                 fuel.setStackInSlot(0, burnt);
             } else {
                 // Spent: swapped out whole for the fuel cycle, as the design says.
-                fuel.setStackInSlot(0, new ItemStack(ModItems.DEPLETED_FUEL_CORE.get()));
+                fuel.setStackInSlot(0, HotFuel.mark(new ItemStack(ModItems.DEPLETED_FUEL_CORE.get())));
             }
         }
     }

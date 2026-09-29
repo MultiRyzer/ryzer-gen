@@ -2,6 +2,40 @@
 
 Player-facing changes, newest first. Paste each release's section into the Modrinth and CurseForge changelog and the GitHub release notes.
 
+## 0.1.2-alpha (29 September 2026)
+
+### New
+- **Moving machines.** Machines now show what they are doing while they work:
+  - The Core Cracker's flywheels spin on their axle.
+  - The Fuel Fabricator's press strokes down onto its bed.
+  - The Lithium Extractor's columns fill with light as brine is pumped up, hold at the top, squeeze back down and rest.
+  - The fission station's rods rise to the reactor head while it runs and sink halfway when it stops. A newly loaded rod comes in halfway and rises (it works at once).
+  - The Spent Fuel Pool's crane runs to the racks when fuel finishes cooling, lifts a rod and carries it to the output end (at most once every ten seconds). Hot fuel bubbles under the water.
+  - The Container Battery's fan spins while energy flows.
+- **Spent Fuel Pool.** Spent fuel now comes out of reactors *hot*, still giving off decay heat, and must cool before the Core Cracker or Reprocessor will take it. Place a Pool Controller on the ground, feed it 43 Pool Liner and a Pool Crane, and it builds a 5 by 3 by 3 pool itself (a ghost outline shows where); the controller then moves up to sit in the middle of the front. Fill it with water, then load the hot fuel into its 18 racks, where it glows blue under the water: a core cools in 5 minutes, a fission rod in 10. Decay heat boils the water off, so keep it topped up. Hot fuel and water go in on its left end as you face it, and cooled fuel comes out on the right. **Before you update:** fuel you already have counts as cooled, so nothing is stranded. Packs that want the old loop can turn the step off with `fuel_cycle.require_cooling` in the common config.
+- **Container Battery.** Grid-scale storage: a white shipping container with a gunmetal fan unit on one end. Place a Battery Controller on the ground, feed it 70 Container Frame and a Thermal Unit, and it builds the 8 by 3 by 3 container itself. Its front has 20 hatches: right-click an LFP Battery Rack into one and that hatch becomes a lit, glazed door, adding 2M FE and 2,000 FE/t. Shift-right-click with an empty hand takes a rack out with its charge. Its two energy ports on the back each take energy in or give it out, so your cables decide the flow and a network treats it as a battery. Coolant goes in at the fan's hub; without coolant it runs at a quarter of its rate. The fan spins while energy flows.
+- **The Lithium Extractor is out of preview.** LFP racks need lithium, so the extractor and lithium dust now load in every game. Target rods and tritium stay behind `preview.next_tier`.
+- **Every machine redesigned.** The alloy smelter, electric alloy smelter, Core Cracker, Reprocessor, Fuel Fabricator, Lithium Extractor and Intake Pump are now proper 3D machines that share one family look:
+  - The alloy smelter is a brick hearth with a fire door that glows while it burns, under a hood and flue.
+  - The electric alloy smelter shows its induction coil and crucible, which glow while it works.
+  - The Core Cracker has a jaw crusher, a flywheel and a hopper mouth.
+  - The Reprocessor has a dissolver vessel below and a lead-lined column above, with a sight glass where the solution bubbles teal while it works, a hazard band and a label plate.
+  - The Fuel Fabricator has a press cylinder over a rod loading bed.
+  - The Lithium Extractor has a brine basin and a column that lights up while it works.
+  - The Intake Pump is a blue motor on a pump casing, with a copper discharge nozzle.
+- **Pipes meet something.** Every machine's top reaches the top of the block (the Core Cracker's hopper, the smelter's flue, a flanged connector on the rest) and its back carries a connector, so pipes and cables join cleanly. The electric smelter, Fuel Fabricator and Lithium Extractor carry theirs on a service frame.
+- **New surfaces.** No texture is flat colour any more: a subtle finish on every surface, and designed panels with screws on the big faces.
+- **The microreactor, rebuilt to the new standard:** staved vessel with bolted flanges and a flat closure head with a lit control drive, radiators on the coolant housing, plated panels, round pipes. The ports have not moved.
+- **New logo:** the fission station, running.
+- **Hold Shift for details.** Every machine, tool, fuel and part has a short summary under its name, and more while you hold Shift, colour coded: values in cyan, benefits in green, cautions in gold, dangers in red and controls in yellow.
+- **The creative tab is sorted by type:** tools, machines, pipes, storage, upgrades, fuel, ore blocks, raw ores, ingots, materials and boards, with the creative and preview items last.
+
+### Fixed
+- **Batteries no longer drain into each other.** Energy a cable pulls out of a battery now only goes to machines, never into another battery, so a Container Battery on the same network as your modular batteries no longer empties them.
+- **Fission station coolant is local, as the control screen says.** Heat that no coolant channel can reach (a rod with no coolant beside it, or more than one channel can carry) now stays in the core. Before, the other coolant channels quietly carried it off, so a core the control screen called too hot ran fine. **Before you update:** if a station's control screen says *too hot*, fix its layout, or it will climb until it SCRAMs. In overdrive it will melt down.
+- **A SCRAM trips the turbine.** While a SCRAMmed core cools, its steam now goes round the turbine and it makes no power, as in a real plant. Before, the turbine kept turning on the stored heat, so overloading a core and letting it SCRAM cost almost nothing.
+- Thanks to u/MushroomMan234, whose [Fission Station Calculator](https://moddecoded.com/tools/ryzer-gen/fission-station-calculator/) on Mod Decoded simulates the station tick by tick and found both.
+
 ## 0.1.1-alpha (28 September 2026)
 
 ### New

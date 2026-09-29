@@ -55,7 +55,7 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
                 if (amount > 0) {
                     offered(side);
                 }
-                int sent = distribute(Math.min(amount, rate(side)), source, null, simulate);
+                int sent = distribute(Math.min(amount, rate(side)), source, null, true, simulate);
                 if (!simulate) {
                     addPushed(side, sent);
                 }
@@ -103,7 +103,12 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
             }
             int available = source.extractEnergy(cable.rate(dir), true);
             if (available > 0) {
-                cable.addPushed(dir, source.extractEnergy(cable.distribute(available, sourcePos, source, false), false));
+                // Pulled from a battery, energy only feeds machines: filling another battery with it
+                // would just move charge from one store to another (and drain a home battery into a
+                // container battery beside it).
+                int wanted = cable.distribute(available, sourcePos, source, !isBuffer(source), true);
+                int taken = source.extractEnergy(wanted, false);
+                cable.addPushed(dir, cable.distribute(taken, sourcePos, source, !isBuffer(source), false));
             }
         }
     }
@@ -185,16 +190,20 @@ public class EnergyCableBlockEntity extends CableBlockEntity<IEnergyStorage> {
     }
 
     /**
-     * Shares {@code amount} across the network: machines first, then buffers with what is left. Never
-     * back into where it came from, found by position ({@code exceptPos}) or, for a source that
-     * spans two blocks like the battery cabinet, by its storage ({@code exceptStorage}).
+     * Shares {@code amount} across the network: machines first, then (with {@code toBuffers}) buffers
+     * with what is left. Never back into where it came from, found by position ({@code exceptPos})
+     * or, for a source that spans two blocks like the battery cabinet, by its storage
+     * ({@code exceptStorage}).
      */
-    private int distribute(int amount, @Nullable BlockPos exceptPos, @Nullable IEnergyStorage exceptStorage, boolean simulate) {
+    private int distribute(int amount, @Nullable BlockPos exceptPos, @Nullable IEnergyStorage exceptStorage, boolean toBuffers,
+                           boolean simulate) {
         if (amount <= 0 || !refreshTargets()) {
             return 0;
         }
         int sent = deliver(targets, roundRobin, amount, exceptPos, exceptStorage, false, simulate);
-        sent += deliver(targets, roundRobin, amount - sent, exceptPos, exceptStorage, true, simulate);
+        if (toBuffers) {
+            sent += deliver(targets, roundRobin, amount - sent, exceptPos, exceptStorage, true, simulate);
+        }
         if (!simulate && !targets.isEmpty()) {
             roundRobin = (roundRobin + 1) % targets.size();
         }

@@ -1,0 +1,1351 @@
+{
+ "size": [
+  1,
+  2,
+  2
+ ],
+ "textures": {
+  "accent": {
+   "path": "ryzergen:block/microreactor/accent",
+   "canvas": 16,
+   "translucent": false
+  },
+  "copper": {
+   "path": "ryzergen:block/microreactor/copper",
+   "canvas": 16,
+   "translucent": false
+  },
+  "flange_13x2": {
+   "path": "ryzergen:block/microreactor/flange_13x2",
+   "canvas": 16,
+   "translucent": false
+  },
+  "flange_14x2": {
+   "path": "ryzergen:block/microreactor/flange_14x2",
+   "canvas": 16,
+   "translucent": false
+  },
+  "glow": {
+   "path": "ryzergen:block/microreactor/glow",
+   "canvas": 16,
+   "translucent": false
+  },
+  "glow_off": {
+   "path": "ryzergen:block/microreactor/glow_off",
+   "canvas": 16,
+   "translucent": false
+  },
+  "grille": {
+   "path": "ryzergen:block/microreactor/grille",
+   "canvas": 16,
+   "translucent": false
+  },
+  "hazard": {
+   "path": "ryzergen:block/microreactor/hazard",
+   "canvas": 16,
+   "translucent": false
+  },
+  "head_11x12": {
+   "path": "ryzergen:block/microreactor/head_11x12",
+   "canvas": 16,
+   "translucent": false
+  },
+  "housing_12x20": {
+   "path": "ryzergen:block/microreactor/housing_12x20",
+   "canvas": 32,
+   "translucent": false
+  },
+  "housing_14x20": {
+   "path": "ryzergen:block/microreactor/housing_14x20",
+   "canvas": 32,
+   "translucent": false
+  },
+  "lead": {
+   "path": "ryzergen:block/microreactor/lead",
+   "canvas": 16,
+   "translucent": false
+  },
+  "pipex_7x2": {
+   "path": "ryzergen:block/microreactor/pipex_7x2",
+   "canvas": 16,
+   "translucent": false
+  },
+  "pipey_2x7": {
+   "path": "ryzergen:block/microreactor/pipey_2x7",
+   "canvas": 16,
+   "translucent": false
+  },
+  "pipey_6x6": {
+   "path": "ryzergen:block/microreactor/pipey_6x6",
+   "canvas": 16,
+   "translucent": false
+  },
+  "port_coolant": {
+   "path": "ryzergen:block/microreactor/port_coolant",
+   "canvas": 16,
+   "translucent": false
+  },
+  "port_energy": {
+   "path": "ryzergen:block/microreactor/port_energy",
+   "canvas": 16,
+   "translucent": false
+  },
+  "port_fuel": {
+   "path": "ryzergen:block/microreactor/port_fuel",
+   "canvas": 16,
+   "translucent": false
+  },
+  "port_steam": {
+   "path": "ryzergen:block/microreactor/port_steam",
+   "canvas": 16,
+   "translucent": false
+  },
+  "porthole": {
+   "path": "ryzergen:block/microreactor/porthole",
+   "canvas": 16,
+   "translucent": false
+  },
+  "porthole_on": {
+   "path": "ryzergen:block/microreactor/porthole_on",
+   "canvas": 16,
+   "translucent": false
+  },
+  "radiator_13x8": {
+   "path": "ryzergen:block/microreactor/radiator_13x8",
+   "canvas": 16,
+   "translucent": false
+  },
+  "screen": {
+   "path": "ryzergen:block/microreactor/screen",
+   "canvas": 16,
+   "translucent": false
+  },
+  "steel": {
+   "path": "ryzergen:block/microreactor/steel",
+   "canvas": 16,
+   "translucent": false
+  },
+  "steel_dark": {
+   "path": "ryzergen:block/microreactor/steel_dark",
+   "canvas": 16,
+   "translucent": false
+  }
+ },
+ "states": {
+  "idle": [
+   {
+    "material": "steel_dark",
+    "from": [
+     0,
+     0,
+     0
+    ],
+    "to": [
+     16,
+     2,
+     32
+    ],
+    "faces": {
+     "north": "hazard",
+     "south": "hazard",
+     "west": "hazard",
+     "east": "hazard"
+    }
+   },
+   {
+    "material": "steel",
+    "from": [
+     1,
+     2,
+     1
+    ],
+    "to": [
+     15,
+     3,
+     31
+    ]
+   },
+   {
+    "material": "accent",
+    "from": [
+     0,
+     2,
+     0
+    ],
+    "to": [
+     3,
+     5,
+     3
+    ]
+   },
+   {
+    "material": "accent",
+    "from": [
+     0,
+     2,
+     29
+    ],
+    "to": [
+     3,
+     5,
+     32
+    ]
+   },
+   {
+    "material": "accent",
+    "from": [
+     13,
+     2,
+     0
+    ],
+    "to": [
+     16,
+     5,
+     3
+    ]
+   },
+   {
+    "material": "accent",
+    "from": [
+     13,
+     2,
+     29
+    ],
+    "to": [
+     16,
+     5,
+     32
+    ]
+   },
+   {
+    "material": "lead",
+    "from": [
+     3,
+     3,
+     3
+    ],
+    "to": [
+     13,
+     26,
+     15
+    ]
+   },
+   {
+    "material": "lead",
+    "from": [
+     2,
+     3,
+     5
+    ],
+    "to": [
+     14,
+     26,
+     13
+    ]
+   },
+   {
+    "material": "lead",
+    "from": [
+     5,
+     3,
+     2
+    ],
+    "to": [
+     11,
+     26,
+     16
+    ]
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     1.5,
+     9,
+     1.5
+    ],
+    "to": [
+     14.5,
+     11,
+     15.5
+    ],
+    "decals": {
+     "north": "flange_13x2",
+     "south": "flange_13x2",
+     "west": "flange_14x2",
+     "east": "flange_14x2"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     1.5,
+     20,
+     1.5
+    ],
+    "to": [
+     14.5,
+     22,
+     15.5
+    ],
+    "decals": {
+     "north": "flange_13x2",
+     "south": "flange_13x2",
+     "west": "flange_14x2",
+     "east": "flange_14x2"
+    }
+   },
+   {
+    "material": "glow_off",
+    "from": [
+     1.4,
+     9.75,
+     1.4
+    ],
+    "to": [
+     14.6,
+     10.25,
+     15.6
+    ]
+   },
+   {
+    "material": "glow_off",
+    "from": [
+     1.4,
+     20.75,
+     1.4
+    ],
+    "to": [
+     14.6,
+     21.25,
+     15.6
+    ]
+   },
+   {
+    "material": "glow_off",
+    "from": [
+     1.9,
+     22.25,
+     16.4
+    ],
+    "to": [
+     14.1,
+     22.75,
+     30.1
+    ]
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     1.5,
+     26,
+     1.5
+    ],
+    "to": [
+     14.5,
+     28,
+     15.5
+    ],
+    "decals": {
+     "north": "flange_13x2",
+     "south": "flange_13x2",
+     "west": "flange_14x2",
+     "east": "flange_14x2"
+    }
+   },
+   {
+    "material": "lead",
+    "from": [
+     2.5,
+     28,
+     2.5
+    ],
+    "to": [
+     13.5,
+     29,
+     14.5
+    ],
+    "decals": {
+     "up": "head_11x12"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     6,
+     29,
+     6.5
+    ],
+    "to": [
+     10,
+     30,
+     10.5
+    ]
+   },
+   {
+    "material": "glow_off",
+    "from": [
+     5.9,
+     30,
+     6.4
+    ],
+    "to": [
+     10.1,
+     30.5,
+     10.6
+    ]
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     6,
+     30.5,
+     6.5
+    ],
+    "to": [
+     10,
+     31.5,
+     10.5
+    ]
+   },
+   {
+    "material": "steel",
+    "from": [
+     3,
+     11,
+     1
+    ],
+    "to": [
+     13,
+     21,
+     2
+    ],
+    "decals": {
+     "north": "porthole"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     3,
+     3,
+     0
+    ],
+    "to": [
+     13,
+     9,
+     3
+    ],
+    "decals": {
+     "north": "screen"
+    },
+    "glow": [
+     "north"
+    ]
+   },
+   {
+    "material": "steel",
+    "from": [
+     2,
+     3,
+     16
+    ],
+    "to": [
+     14,
+     23,
+     30
+    ],
+    "decals": {
+     "west": "housing_14x20",
+     "east": "housing_14x20",
+     "south": "housing_12x20"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     1.5,
+     23,
+     16.5
+    ],
+    "to": [
+     14.5,
+     24,
+     30.5
+    ]
+   },
+   {
+    "material": "steel",
+    "from": [
+     4,
+     16,
+     30
+    ],
+    "to": [
+     12,
+     22,
+     30.5
+    ],
+    "decals": {
+     "south": "grille"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     0.75,
+     14,
+     16.5
+    ],
+    "to": [
+     2,
+     22,
+     29.5
+    ],
+    "decals": {
+     "west": "radiator_13x8"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     14,
+     14,
+     16.5
+    ],
+    "to": [
+     15.25,
+     22,
+     29.5
+    ],
+    "decals": {
+     "east": "radiator_13x8"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     1,
+     4,
+     13
+    ],
+    "to": [
+     3,
+     6,
+     20
+    ],
+    "decals": {
+     "west": "pipex_7x2",
+     "east": "pipex_7x2",
+     "up": "pipey_2x7"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     13,
+     4,
+     13
+    ],
+    "to": [
+     15,
+     6,
+     20
+    ],
+    "decals": {
+     "west": "pipex_7x2",
+     "east": "pipex_7x2",
+     "up": "pipey_2x7"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     4,
+     4,
+     30
+    ],
+    "to": [
+     12,
+     12,
+     31
+    ]
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     3,
+     3,
+     31
+    ],
+    "to": [
+     13,
+     13,
+     32
+    ],
+    "decals": {
+     "south": "port_energy"
+    }
+   },
+   {
+    "material": "steel",
+    "from": [
+     4,
+     24,
+     20
+    ],
+    "to": [
+     12,
+     25,
+     28
+    ]
+   },
+   {
+    "material": "copper",
+    "from": [
+     5,
+     25,
+     21
+    ],
+    "to": [
+     11,
+     31,
+     27
+    ],
+    "decals": {
+     "north": "pipey_6x6",
+     "south": "pipey_6x6",
+     "west": "pipey_6x6",
+     "east": "pipey_6x6"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     3,
+     31,
+     19
+    ],
+    "to": [
+     13,
+     32,
+     29
+    ],
+    "decals": {
+     "up": "port_coolant"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     14,
+     4,
+     20
+    ],
+    "to": [
+     15,
+     12,
+     28
+    ]
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     15,
+     3,
+     19
+    ],
+    "to": [
+     16,
+     13,
+     29
+    ],
+    "decals": {
+     "east": "port_steam"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     1,
+     4,
+     4
+    ],
+    "to": [
+     2,
+     12,
+     12
+    ]
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     0,
+     3,
+     3
+    ],
+    "to": [
+     1,
+     13,
+     13
+    ],
+    "decals": {
+     "west": "port_fuel"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     14,
+     4,
+     4
+    ],
+    "to": [
+     15,
+     12,
+     12
+    ]
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     15,
+     3,
+     3
+    ],
+    "to": [
+     16,
+     13,
+     13
+    ],
+    "decals": {
+     "east": "port_fuel"
+    }
+   }
+  ],
+  "running": [
+   {
+    "material": "steel_dark",
+    "from": [
+     0,
+     0,
+     0
+    ],
+    "to": [
+     16,
+     2,
+     32
+    ],
+    "faces": {
+     "north": "hazard",
+     "south": "hazard",
+     "west": "hazard",
+     "east": "hazard"
+    }
+   },
+   {
+    "material": "steel",
+    "from": [
+     1,
+     2,
+     1
+    ],
+    "to": [
+     15,
+     3,
+     31
+    ]
+   },
+   {
+    "material": "accent",
+    "from": [
+     0,
+     2,
+     0
+    ],
+    "to": [
+     3,
+     5,
+     3
+    ]
+   },
+   {
+    "material": "accent",
+    "from": [
+     0,
+     2,
+     29
+    ],
+    "to": [
+     3,
+     5,
+     32
+    ]
+   },
+   {
+    "material": "accent",
+    "from": [
+     13,
+     2,
+     0
+    ],
+    "to": [
+     16,
+     5,
+     3
+    ]
+   },
+   {
+    "material": "accent",
+    "from": [
+     13,
+     2,
+     29
+    ],
+    "to": [
+     16,
+     5,
+     32
+    ]
+   },
+   {
+    "material": "lead",
+    "from": [
+     3,
+     3,
+     3
+    ],
+    "to": [
+     13,
+     26,
+     15
+    ]
+   },
+   {
+    "material": "lead",
+    "from": [
+     2,
+     3,
+     5
+    ],
+    "to": [
+     14,
+     26,
+     13
+    ]
+   },
+   {
+    "material": "lead",
+    "from": [
+     5,
+     3,
+     2
+    ],
+    "to": [
+     11,
+     26,
+     16
+    ]
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     1.5,
+     9,
+     1.5
+    ],
+    "to": [
+     14.5,
+     11,
+     15.5
+    ],
+    "decals": {
+     "north": "flange_13x2",
+     "south": "flange_13x2",
+     "west": "flange_14x2",
+     "east": "flange_14x2"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     1.5,
+     20,
+     1.5
+    ],
+    "to": [
+     14.5,
+     22,
+     15.5
+    ],
+    "decals": {
+     "north": "flange_13x2",
+     "south": "flange_13x2",
+     "west": "flange_14x2",
+     "east": "flange_14x2"
+    }
+   },
+   {
+    "material": "glow",
+    "from": [
+     1.4,
+     9.75,
+     1.4
+    ],
+    "to": [
+     14.6,
+     10.25,
+     15.6
+    ],
+    "glow": [
+     "down",
+     "east",
+     "north",
+     "south",
+     "up",
+     "west"
+    ]
+   },
+   {
+    "material": "glow",
+    "from": [
+     1.4,
+     20.75,
+     1.4
+    ],
+    "to": [
+     14.6,
+     21.25,
+     15.6
+    ],
+    "glow": [
+     "down",
+     "east",
+     "north",
+     "south",
+     "up",
+     "west"
+    ]
+   },
+   {
+    "material": "glow",
+    "from": [
+     1.9,
+     22.25,
+     16.4
+    ],
+    "to": [
+     14.1,
+     22.75,
+     30.1
+    ],
+    "glow": [
+     "down",
+     "east",
+     "north",
+     "south",
+     "up",
+     "west"
+    ]
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     1.5,
+     26,
+     1.5
+    ],
+    "to": [
+     14.5,
+     28,
+     15.5
+    ],
+    "decals": {
+     "north": "flange_13x2",
+     "south": "flange_13x2",
+     "west": "flange_14x2",
+     "east": "flange_14x2"
+    }
+   },
+   {
+    "material": "lead",
+    "from": [
+     2.5,
+     28,
+     2.5
+    ],
+    "to": [
+     13.5,
+     29,
+     14.5
+    ],
+    "decals": {
+     "up": "head_11x12"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     6,
+     29,
+     6.5
+    ],
+    "to": [
+     10,
+     30,
+     10.5
+    ]
+   },
+   {
+    "material": "glow",
+    "from": [
+     5.9,
+     30,
+     6.4
+    ],
+    "to": [
+     10.1,
+     30.5,
+     10.6
+    ],
+    "glow": [
+     "down",
+     "east",
+     "north",
+     "south",
+     "up",
+     "west"
+    ]
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     6,
+     30.5,
+     6.5
+    ],
+    "to": [
+     10,
+     31.5,
+     10.5
+    ]
+   },
+   {
+    "material": "steel",
+    "from": [
+     3,
+     11,
+     1
+    ],
+    "to": [
+     13,
+     21,
+     2
+    ],
+    "decals": {
+     "north": "porthole_on"
+    },
+    "glow": [
+     "north"
+    ]
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     3,
+     3,
+     0
+    ],
+    "to": [
+     13,
+     9,
+     3
+    ],
+    "decals": {
+     "north": "screen"
+    },
+    "glow": [
+     "north"
+    ]
+   },
+   {
+    "material": "steel",
+    "from": [
+     2,
+     3,
+     16
+    ],
+    "to": [
+     14,
+     23,
+     30
+    ],
+    "decals": {
+     "west": "housing_14x20",
+     "east": "housing_14x20",
+     "south": "housing_12x20"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     1.5,
+     23,
+     16.5
+    ],
+    "to": [
+     14.5,
+     24,
+     30.5
+    ]
+   },
+   {
+    "material": "steel",
+    "from": [
+     4,
+     16,
+     30
+    ],
+    "to": [
+     12,
+     22,
+     30.5
+    ],
+    "decals": {
+     "south": "grille"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     0.75,
+     14,
+     16.5
+    ],
+    "to": [
+     2,
+     22,
+     29.5
+    ],
+    "decals": {
+     "west": "radiator_13x8"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     14,
+     14,
+     16.5
+    ],
+    "to": [
+     15.25,
+     22,
+     29.5
+    ],
+    "decals": {
+     "east": "radiator_13x8"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     1,
+     4,
+     13
+    ],
+    "to": [
+     3,
+     6,
+     20
+    ],
+    "decals": {
+     "west": "pipex_7x2",
+     "east": "pipex_7x2",
+     "up": "pipey_2x7"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     13,
+     4,
+     13
+    ],
+    "to": [
+     15,
+     6,
+     20
+    ],
+    "decals": {
+     "west": "pipex_7x2",
+     "east": "pipex_7x2",
+     "up": "pipey_2x7"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     4,
+     4,
+     30
+    ],
+    "to": [
+     12,
+     12,
+     31
+    ]
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     3,
+     3,
+     31
+    ],
+    "to": [
+     13,
+     13,
+     32
+    ],
+    "decals": {
+     "south": "port_energy"
+    }
+   },
+   {
+    "material": "steel",
+    "from": [
+     4,
+     24,
+     20
+    ],
+    "to": [
+     12,
+     25,
+     28
+    ]
+   },
+   {
+    "material": "copper",
+    "from": [
+     5,
+     25,
+     21
+    ],
+    "to": [
+     11,
+     31,
+     27
+    ],
+    "decals": {
+     "north": "pipey_6x6",
+     "south": "pipey_6x6",
+     "west": "pipey_6x6",
+     "east": "pipey_6x6"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     3,
+     31,
+     19
+    ],
+    "to": [
+     13,
+     32,
+     29
+    ],
+    "decals": {
+     "up": "port_coolant"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     14,
+     4,
+     20
+    ],
+    "to": [
+     15,
+     12,
+     28
+    ]
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     15,
+     3,
+     19
+    ],
+    "to": [
+     16,
+     13,
+     29
+    ],
+    "decals": {
+     "east": "port_steam"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     1,
+     4,
+     4
+    ],
+    "to": [
+     2,
+     12,
+     12
+    ]
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     0,
+     3,
+     3
+    ],
+    "to": [
+     1,
+     13,
+     13
+    ],
+    "decals": {
+     "west": "port_fuel"
+    }
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     14,
+     4,
+     4
+    ],
+    "to": [
+     15,
+     12,
+     12
+    ]
+   },
+   {
+    "material": "steel_dark",
+    "from": [
+     15,
+     3,
+     3
+    ],
+    "to": [
+     16,
+     13,
+     13
+    ],
+    "decals": {
+     "east": "port_fuel"
+    }
+   }
+  ]
+ }
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "ryzergen:block/container/part_controller",
+    "side": "ryzergen:block/container/part_frame",
+    "top": "ryzergen:block/container/part_frame"
+  }
+}

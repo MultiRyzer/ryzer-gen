@@ -69,6 +69,13 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] A test pass through the whole loop in game
 - [x] Speed upgrades for the machines: a Speed Module, up to 4 per machine, each adding a full speed at the square of the power
 - [x] Machine sounds: our own sound events for each machine working, looped on the client while it runs (sources in `art/sounds/CREDITS.md`)
+- [x] Machine redesign (0.1.2): all seven single-block machines rebuilt as box models on shared family textures (`art/tools/machine_family.py`, one texture script per machine)
+- [x] Pipe connections on every single-block machine: the top reaches the block's top over the pipe's centre and the back carries a neutral connector (the intake pump's discharge flange on top)
+- [x] Surface finish (`pixelart.finish`) on every machine texture, and designed panels on big flat faces (Core Cracker frame, electric smelter and fuel fabricator cabinets)
+- [x] Core Cracker flywheels turn while it works (a model of their own on a block entity renderer)
+- [x] Machine animations: Fuel Fabricator press stroke, Lithium Extractor column glow pulse, station rods rise while running and sink halfway when stopped (new rods come in halfway), Spent Fuel Pool crane run when fuel cools (at most every 10 seconds)
+- [x] Microreactor on the design pipeline (`microreactor_concept.py`): staves, bolted flanges, closure head, radiators, plated housing; new logo of the fission station (`mod_icon.py`)
+- [ ] Electric alloy smelter sound: a working loop like the fuel cycle machines (an induction hum), from a recording the user sources into `art/sounds/source/`
 
 ## Polish
 - [x] Cable and pipe fittings: silver, busbar and cryogenic, one slot per machine side in the panel, each tier crafted from the last, shown on the cable
@@ -78,6 +85,15 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [ ] Steady state (design section 5): a streak of fuel loads burned without downtime raises a reactor's output, up to 1.5x for the microreactor and 2x for the fission station (later tiers higher). Downtime past 5 seconds costs a quarter of the streak; standby, unloaded chunks and a stopped server only pause it. Shown on the reactor's screen, milestones called by the announcer (a new line to record) and an advancement per cap. Config: on/off, cap per tier, milestone scale
 - [ ] Meltdown waste: a meltdown (microreactor and up) leaves radioactive debris in and around its crater, such as corium (melted core) and contaminated rubble. It keeps the site radioactive and is hard to clear: it needs proper tools or a process to remove it, and it goes into Waste Casks rather than being broken like stone. Radiation from meltdowns is already allowed by design rule 10; the debris makes the site a lasting problem to deal with, not just a hole
 - [x] Reactor voice announcer (0.1.1): short spoken lines from the reactor's control system when something happens, made with Voicebox (MIT app; VoiceStudio does not run on AMD GPUs on Windows). First list: safeties off (overdrive on), safeties back on, SCRAM, overheat warning, flux tilt, coolant loss, meltdown imminent, out of fuel (only once the reactor has actually stopped, never on a routine swap by pipe), reactor and station online. No fuel-low warning: automated fuel is always running low. Each line its own sound event (packs can replace or silence them), subtitles on, played on the client near the machine and not repeated on a fast loop, and a config toggle to turn the voice off. Licences checked 28 Sep 2026: Qwen CustomVoice and Qwen3-TTS (Apache 2.0), Kokoro (Apache 2.0) and Chatterbox (MIT) are fine for a published mod; LuxTTS and HumeAI TADA are unchecked. Plan: a Qwen CustomVoice preset voice (Kokoro as the fallback), no cloning. OmniVoice (VoiceStudio's default) is CC-BY-NC, so never use it. Never clone a real person's voice, and record the engine, model and licence in `art/sounds/CREDITS.md`
+
+## Milestone 2b: First multiblocks after the station
+- [x] Spent Fuel Pool concept (`art/tools/pool_concept.py`): the framed-plate grid, windows, trefoils, crane inside the rim, cooling loop with mitred pipes on the back
+- [x] Spent Fuel Pool build (design section 7): liner, controller and crane parts; auto-build with a ghost outline; formed model cut by datagen from the exported design (`art/designs/spent_fuel_pool.json`, three looks: dry, full, cooling); hot mark on spent fuel from reactors, refused by the cracker and reprocessor; 18 cooling slots, water tank and boil-off; GUI; config `fuel_cycle.require_cooling` and cooling times; recipes, tooltips; changelog note
+- [ ] Spent Fuel Pool, still to do: test in game; JEI and EMI info page; an advancement; the crane on a block entity renderer so it moves
+- [x] Container Battery concept (`art/tools/container_concept.py`): white container, 20 hatch slots on the front, gunmetal fan unit on the east end, power on the back
+- [x] Container Battery build (design section 12): frame, controller and thermal unit parts; auto-build from the ground with the controller swapping up to its console; LFP racks installed per slot (model and light per block); fan on a block entity renderer; quarter rate without coolant; readout with a slot map; the Lithium Extractor out of preview for the racks' lithium
+- [ ] Container Battery, still to do: test in game; JEI and EMI info page; an advancement; sodium-ion racks later
+- [ ] Heavy Water Plant and Cryo Plant are designed as multiblocks too (milestone 4). No cooling tower for now
 
 ## Milestone 3: Fission power station
 - [x] Block map drawn and previewed (`art/tools/fission_concept.py`): a 12-wide round tower, 11 high, glass chamber, the roof one giant turbine inside an open steam stack
@@ -100,7 +116,7 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 
 ## Public alpha (0.1.0-alpha): tiers 1 to 3
 The first public build: the microreactor, home battery, pipes and steam, the fuel cycle and the fission station. Page text in `docs/MOD-PAGE.md`.
-- [x] Unfinished next-tier content (Lithium Extractor, target rods) behind the `preview.next_tier` config, off by default: no recipes, hidden from the creative tab, JEI and EMI, no target tool in the station grid
+- [x] Unfinished next-tier content (target rods; the Lithium Extractor left the preview in 0.1.2 for the Container Battery) behind the `preview.next_tier` config, off by default: no recipes, hidden from the creative tab, JEI and EMI, no target tool in the station grid
 - [x] MIT licence (sounds keep their Pixabay licence), version `0.1.0-alpha`, GitHub links in the mod metadata
 - [x] Mod page description with a player-facing roadmap
 - [x] Mod icon (`art/tools/mod_icon.py`, rendered from the formed microreactor), also the in-game logo
@@ -121,9 +137,9 @@ The first public build: the microreactor, home battery, pipes and steam, the fue
 - [x] Power is the price (design section 5): gated machines in `machine/processing` (two-tick buffer, full draw every tick or no progress, UNDERPOWERED status), draw and time scaled per machine in the common config (`machines.<id>`), time left and energy to finish on the arrow's tooltip
 - [ ] Waste Refinery: palladium from fission waste, the rest vitrified
 - [ ] Tritium extraction from irradiated target rods (palladium membranes)
-- [ ] Heavy Water Plant, and a heavy water moderator channel in the station
+- [ ] Heavy Water Plant (a multiblock cascade of exchange towers), and a heavy water moderator channel in the station
 - [ ] Monazite processing (yttrium, and thorium for tier 4)
-- [ ] Cryo Plant (liquid nitrogen)
+- [ ] Cryo Plant (a multiblock: compressors and a cold box; liquid nitrogen)
 - [ ] Superconducting tape and magnet coils; tungsten tiles
 - [ ] Uranium glass (decorative light block)
 - [ ] A better coolant for the fission station (open question 21): a coolant channel filled with it carries more heat, so a MOX core can be pushed harder and target rods breed tritium faster. Made by a later process, and used again by later tiers

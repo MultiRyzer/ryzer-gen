@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "tag": "minecraft:stone_bricks"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "SBS",
+    "B B",
+    "SBS"
+  ],
+  "result": {
+    "count": 16,
+    "id": "ryzergen:pool_liner"
+  }
+}

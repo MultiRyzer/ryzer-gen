@@ -1,0 +1,229 @@
+{
+  "parent": "minecraft:block/block",
+  "children": {
+    "solid": {
+      "ambientocclusion": false,
+      "elements": [
+        {
+          "faces": {
+            "down": {
+              "texture": "#liner"
+            },
+            "east": {
+              "texture": "#liner"
+            },
+            "north": {
+              "texture": "#liner"
+            },
+            "south": {
+              "texture": "#panel_14x14",
+              "uv": [
+                0.0,
+                0.0,
+                14.0,
+                14.0
+              ]
+            },
+            "up": {
+              "texture": "#liner"
+            },
+            "west": {
+              "texture": "#liner"
+            }
+          },
+          "from": [
+            1,
+            1,
+            9
+          ],
+          "to": [
+            15,
+            15,
+            10.5
+          ]
+        },
+        {
+          "faces": {
+            "east": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            0,
+            9
+          ],
+          "to": [
+            1,
+            15,
+            11
+          ]
+        },
+        {
+          "faces": {
+            "north": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            15,
+            0,
+            9
+          ],
+          "to": [
+            16,
+            15,
+            11
+          ]
+        },
+        {
+          "faces": {
+            "north": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            0,
+            9
+          ],
+          "to": [
+            16,
+            1,
+            10.75
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "up": {
+              "cullface": "up",
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            15,
+            9
+          ],
+          "to": [
+            16,
+            16,
+            11
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#bright"
+            },
+            "north": {
+              "texture": "#bright"
+            },
+            "south": {
+              "texture": "#bright"
+            },
+            "up": {
+              "texture": "#rail_74x2",
+              "uv": [
+                2.6000001,
+                0.0,
+                5.8,
+                0.4
+              ]
+            }
+          },
+          "from": [
+            0,
+            8,
+            7
+          ],
+          "to": [
+            16,
+            9,
+            9
+          ]
+        }
+      ],
+      "render_type": "minecraft:cutout",
+      "textures": {
+        "bright": "ryzergen:block/machine/family/bright",
+        "liner": "ryzergen:block/pool/liner",
+        "panel_14x14": "ryzergen:block/pool/panel_14x14",
+        "rail_74x2": "ryzergen:block/pool/rail_74x2",
+        "trim": "ryzergen:block/microreactor/steel_dark"
+      }
+    },
+    "translucent": {
+      "ambientocclusion": false,
+      "elements": [
+        {
+          "faces": {
+            "south": {
+              "texture": "#water",
+              "tintindex": 0
+            },
+            "up": {
+              "texture": "#water",
+              "tintindex": 0
+            }
+          },
+          "from": [
+            0,
+            0,
+            0
+          ],
+          "to": [
+            16,
+            6,
+            9
+          ]
+        }
+      ],
+      "render_type": "minecraft:translucent",
+      "textures": {
+        "water": "minecraft:block/water_still"
+      }
+    }
+  },
+  "item_render_order": [
+    "solid",
+    "translucent"
+  ],
+  "loader": "neoforge:composite",
+  "textures": {
+    "particle": "ryzergen:block/pool/liner"
+  }
+}

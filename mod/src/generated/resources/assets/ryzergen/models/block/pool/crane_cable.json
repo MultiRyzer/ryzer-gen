@@ -1,0 +1,68 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#cable"
+        },
+        "east": {
+          "texture": "#rope_2x1",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            1.0
+          ]
+        },
+        "north": {
+          "texture": "#rope_2x1",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            1.0
+          ]
+        },
+        "south": {
+          "texture": "#rope_2x1",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            1.0
+          ]
+        },
+        "up": {
+          "texture": "#cable"
+        },
+        "west": {
+          "texture": "#rope_2x1",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            1.0
+          ]
+        }
+      },
+      "from": [
+        -1,
+        0,
+        2
+      ],
+      "to": [
+        1,
+        1,
+        4
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "cable": "ryzergen:block/machine/family/lid",
+    "particle": "ryzergen:block/pool/paint",
+    "rope_2x1": "ryzergen:block/pool/rope_2x1"
+  }
+}

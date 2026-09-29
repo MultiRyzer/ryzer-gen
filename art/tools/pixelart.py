@@ -164,6 +164,64 @@ def material(fill, noise, seed, count=24):
     return t
 
 
+# ---------------------------------------------------------------- the surface finish
+#
+# Large flat fills read as plastic. Real machines (and Mekanism's textures) have a surface: soft,
+# low-contrast variation a few percent either way, and a little light from above. finish() gives
+# a texture that, in true colour, only on fill pixels (all four neighbours the same colour), so
+# bevels, outlines, lights and details stay exactly as drawn. The pattern is fixed per texture
+# name, so republishing never changes it. It is not grime: the tones stay close.
+
+def _hash01(x, y, seed):
+    n = (x * 374761393 + y * 668265263 + seed * 2246822519) & 0xFFFFFFFF
+    n = (n ^ (n >> 13)) * 1274126177 & 0xFFFFFFFF
+    return ((n ^ (n >> 16)) & 0xFFFF) / 0xFFFF
+
+
+def _soft_noise(x, y, seed, scale=3.0):
+    """Value noise a few pixels across: soft blobs rather than single-pixel speckle."""
+    fx, fy = x / scale, y / scale
+    x0, y0 = int(fx // 1), int(fy // 1)
+    tx, ty = fx - x0, fy - y0
+    tx, ty = tx * tx * (3 - 2 * tx), ty * ty * (3 - 2 * ty)
+    top = _hash01(x0, y0, seed) * (1 - tx) + _hash01(x0 + 1, y0, seed) * tx
+    bottom = _hash01(x0, y0 + 1, seed) * (1 - tx) + _hash01(x0 + 1, y0 + 1, seed) * tx
+    return top * (1 - ty) + bottom * ty
+
+
+def finish(tex, seed, strength=1.0):
+    """The texture as RGBA rows with the surface finish on its fills."""
+    w, h = tex.w, tex.h
+    out = []
+    for y in range(h):
+        row = []
+        for x in range(w):
+            c = tex.px[y][x]
+            if c is None:
+                row.append((0, 0, 0, 0))
+                continue
+            r, g, b = int(c[0:2], 16), int(c[2:4], 16), int(c[4:6], 16)
+            fill = all(0 <= x + dx < w and 0 <= y + dy < h and tex.px[y + dy][x + dx] == c
+                       for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
+            if fill:
+                n = _soft_noise(x, y, seed) - 0.5 + (_hash01(x, y, seed + 9) - 0.5) * 0.35
+                light = 0.5 - y / max(1, h - 1)
+                f = 1 + (n * 0.12 + light * 0.06) * strength
+                r, g, b = (max(0, min(255, round(v * f))) for v in (r, g, b))
+            row.append((r, g, b, 255))
+        out.append(row)
+    return out
+
+
+def publish_finished(name, tex, strength=1.0):
+    """publish(), with the surface finish (see finish()). The pattern's seed is the name's."""
+    rows = finish(tex, zlib.crc32(name.encode()) & 0xFFFF, strength)
+    for base in (ART_TEXTURES, MOD_TEXTURES):
+        out = os.path.join(base, name + '.png')
+        os.makedirs(os.path.dirname(out), exist_ok=True)
+        write_png(out, rows)
+
+
 def publish(name, tex):
     """Writes a texture to art/textures and into the mod's assets, e.g. publish('gui/microreactor', t)."""
     for base in (ART_TEXTURES, MOD_TEXTURES):

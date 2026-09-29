@@ -1,0 +1,203 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#paint"
+        },
+        "east": {
+          "texture": "#stripes_3x3",
+          "uv": [
+            0.0,
+            0.0,
+            3.0,
+            3.0
+          ]
+        },
+        "north": {
+          "texture": "#truck_12x3",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            3.0
+          ]
+        },
+        "south": {
+          "texture": "#truck_12x3",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            3.0
+          ]
+        },
+        "up": {
+          "texture": "#yellow_12x3",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            3.0
+          ]
+        },
+        "west": {
+          "texture": "#stripes_3x3",
+          "uv": [
+            0.0,
+            0.0,
+            3.0,
+            3.0
+          ]
+        }
+      },
+      "from": [
+        -6,
+        1,
+        -16
+      ],
+      "to": [
+        6,
+        4,
+        -13
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#paint"
+        },
+        "east": {
+          "texture": "#stripes_3x3",
+          "uv": [
+            0.0,
+            0.0,
+            3.0,
+            3.0
+          ]
+        },
+        "north": {
+          "texture": "#truck_12x3",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            3.0
+          ]
+        },
+        "south": {
+          "texture": "#truck_12x3",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            3.0
+          ]
+        },
+        "up": {
+          "texture": "#yellow_12x3",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            3.0
+          ]
+        },
+        "west": {
+          "texture": "#stripes_3x3",
+          "uv": [
+            0.0,
+            0.0,
+            3.0,
+            3.0
+          ]
+        }
+      },
+      "from": [
+        -6,
+        1,
+        19
+      ],
+      "to": [
+        6,
+        4,
+        22
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#paint"
+        },
+        "east": {
+          "texture": "#girder_34x3",
+          "uv": [
+            0.0,
+            0.0,
+            11.333334,
+            1.0
+          ]
+        },
+        "north": {
+          "texture": "#stripes_8x3",
+          "uv": [
+            0.0,
+            0.0,
+            8.0,
+            3.0
+          ]
+        },
+        "south": {
+          "texture": "#stripes_8x3",
+          "uv": [
+            0.0,
+            0.0,
+            8.0,
+            3.0
+          ]
+        },
+        "up": {
+          "texture": "#deck_8x34",
+          "uv": [
+            0.0,
+            0.0,
+            2.6666667,
+            11.333334
+          ]
+        },
+        "west": {
+          "texture": "#girder_34x3",
+          "uv": [
+            0.0,
+            0.0,
+            11.333334,
+            1.0
+          ]
+        }
+      },
+      "from": [
+        -4,
+        2,
+        -14
+      ],
+      "to": [
+        4,
+        5,
+        20
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "deck_8x34": "ryzergen:block/pool/deck_8x34",
+    "girder_34x3": "ryzergen:block/pool/girder_34x3",
+    "paint": "ryzergen:block/pool/paint",
+    "particle": "ryzergen:block/pool/paint",
+    "stripes_3x3": "ryzergen:block/pool/stripes_3x3",
+    "stripes_8x3": "ryzergen:block/pool/stripes_8x3",
+    "truck_12x3": "ryzergen:block/pool/truck_12x3",
+    "yellow_12x3": "ryzergen:block/pool/yellow_12x3"
+  }
+}

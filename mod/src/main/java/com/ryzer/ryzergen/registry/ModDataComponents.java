@@ -32,5 +32,13 @@ public final class ModDataComponents {
             COMPONENTS.registerComponentType("muted",
                     builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
 
+    /**
+     * Spent fuel fresh out of a reactor, still giving off decay heat: it must cool in a Spent Fuel
+     * Pool before the Core Cracker or Reprocessor takes it. Items without it count as cooled.
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> HOT =
+            COMPONENTS.registerComponentType("hot",
+                    builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
+
     private ModDataComponents() {}
 }

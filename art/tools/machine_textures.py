@@ -9,10 +9,10 @@ import math
 from pixelart import *  # noqa: F401,F403
 
 
-# ---------------------------------------------------------------- electric alloy smelter
+# ---------------------------------------------------------------- shared body panel
 #
-# A 3D model (see electricSmelterModel in datagen): graphite body in a light steel frame. These are
-# its own textures; the frame, trim, grille and port reuse the microreactor's.
+# The redesigned machines draw their own textures (machine_family.py and one script per machine);
+# this graphite panel is still used by the battery rack.
 
 def machine_body():
     """Graphite body panel with vertical ribs every four pixels, mapped by position."""
@@ -21,40 +21,6 @@ def machine_body():
     for x in (3, 7, 11, 15):
         t.rect(x, 0, x, 15, 'T')
         t.rect(x - 1, 0, x - 1, 15, 'b')
-    return t
-
-
-COIL = [
-    '........',
-    '.#...#..',
-    '#.#.#.#.',
-    '...#...#',
-]
-
-
-def smelter_window(lit):
-    """10 x 8 window onto the heating coil: dark when idle, glowing orange while working."""
-    t = Tex()
-    t.rect(0, 0, 9, 7, 'T')
-    t.rect(0, 0, 9, 0, 'b')
-    t.rect(0, 0, 0, 7, 'b')
-    t.rect(1, 1, 8, 6, 'Z' if lit else 'U')
-    if lit:
-        t.rect(1, 4, 8, 6, 'X')
-    for y, row in enumerate(COIL):
-        for x, c in enumerate(row):
-            if c == '#':
-                t.set(1 + x, 2 + y, 'e' if lit else 'b')
-    t.set(8, 1, 'b' if not lit else 'a')
-    return t
-
-
-def lamp(lit):
-    """8 x 1 status strip under the window."""
-    t = Tex()
-    t.rect(0, 0, 7, 0, 'n' if lit else 'T')
-    if lit:
-        t.set(0, 0, 'N')
     return t
 
 
@@ -459,10 +425,6 @@ def home_battery_item():
 
 TEXTURES = {
     'block/machine/body': machine_body,
-    'block/machine/smelter_window': lambda: smelter_window(False),
-    'block/machine/smelter_window_on': lambda: smelter_window(True),
-    'block/machine/lamp_off': lambda: lamp(False),
-    'block/machine/lamp_on': lambda: lamp(True),
     'item/wrench': wrench_item,
     'item/dosimeter_ring': dosimeter_ring,
     'block/machine/module_lead_acid': module_front,

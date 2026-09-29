@@ -22,6 +22,7 @@ Summary line for the short description field:
 ![The fission power station at sunset](HERO_IMAGE_URL)
 
 [![Source on GitHub](https://img.shields.io/badge/source-GitHub-181717?style=for-the-badge&logo=github)](https://github.com/MultiRyzer/ryzer-gen)
+[![Discord](https://img.shields.io/badge/Discord-join-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/cmUZcRtqfg)
 [![Issues](https://img.shields.io/github/issues/MultiRyzer/ryzer-gen?style=for-the-badge&label=issues)](https://github.com/MultiRyzer/ryzer-gen/issues)
 [![MIT licence](https://img.shields.io/badge/licence-MIT-2E7D32?style=for-the-badge)](https://github.com/MultiRyzer/ryzer-gen/blob/main/LICENSE)
 ![NeoForge 1.21.1](https://img.shields.io/badge/NeoForge-1.21.1-D9731F?style=for-the-badge)
@@ -91,6 +92,8 @@ Want an early look at the next tier? Set `preview.next_tier = true` in `ryzergen
 
 Full roadmap and issue tracker: https://github.com/MultiRyzer/ryzer-gen
 
+Join the [Discord](https://discord.gg/cmUZcRtqfg) for help, core designs, work in progress and a say in what comes next.
+
 ## For pack makers
 - FE energy throughout. Data-driven recipes and worldgen.
 - Automation friendly: single-block machines take pipes and cables on any side, and pipes only ever pull results, never ingredients, so AE2 and other storage mods can drive them directly. Multiblocks keep inputs and outputs on separate ports.
@@ -107,7 +110,7 @@ Full roadmap and issue tracker: https://github.com/MultiRyzer/ryzer-gen
 - **Can I use it in my modpack?** Yes, any pack. It is MIT licensed.
 - **Is radiation dangerous to carry around?** No. Only running reactors and meltdown sites emit it, and it can be turned off.
 - **Shader packs?** Yes, it works with Iris and shader packs. The wormhole's light-bending only shows without one; with a shader pack on it shows as a simpler picture.
-- **Found a bug?** Please open an issue on GitHub with your log and the steps to reproduce it.
+- **Found a bug?** Please open an issue on GitHub with your log and the steps to reproduce it. For questions, ask in `#help` on the [Discord](https://discord.gg/cmUZcRtqfg).
 
 ## How it was made
 Ryzer Gen is designed by Ryzer. The code was written with help from Claude, an AI assistant. The textures are drawn in code by the mod's own scripts; material textures build on vanilla shapes. Sounds are credited below.
