@@ -1,0 +1,2188 @@
+{
+  "variants": {
+    "cell=0,facing=east,installed=false": {
+      "model": "ryzergen:block/container_frame"
+    },
+    "cell=0,facing=east,installed=true": {
+      "model": "ryzergen:block/container_frame"
+    },
+    "cell=0,facing=north,installed=false": {
+      "model": "ryzergen:block/container_frame"
+    },
+    "cell=0,facing=north,installed=true": {
+      "model": "ryzergen:block/container_frame"
+    },
+    "cell=0,facing=south,installed=false": {
+      "model": "ryzergen:block/container_frame"
+    },
+    "cell=0,facing=south,installed=true": {
+      "model": "ryzergen:block/container_frame"
+    },
+    "cell=0,facing=west,installed=false": {
+      "model": "ryzergen:block/container_frame"
+    },
+    "cell=0,facing=west,installed=true": {
+      "model": "ryzergen:block/container_frame"
+    },
+    "cell=1,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_1",
+      "y": 90
+    },
+    "cell=1,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_1",
+      "y": 90
+    },
+    "cell=1,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_1"
+    },
+    "cell=1,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_1"
+    },
+    "cell=1,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_1",
+      "y": 180
+    },
+    "cell=1,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_1",
+      "y": 180
+    },
+    "cell=1,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_1",
+      "y": 270
+    },
+    "cell=1,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_1",
+      "y": 270
+    },
+    "cell=10,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_10",
+      "y": 90
+    },
+    "cell=10,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_10",
+      "y": 90
+    },
+    "cell=10,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_10"
+    },
+    "cell=10,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_10"
+    },
+    "cell=10,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_10",
+      "y": 180
+    },
+    "cell=10,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_10",
+      "y": 180
+    },
+    "cell=10,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_10",
+      "y": 270
+    },
+    "cell=10,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_10",
+      "y": 270
+    },
+    "cell=11,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_11",
+      "y": 90
+    },
+    "cell=11,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_11",
+      "y": 90
+    },
+    "cell=11,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_11"
+    },
+    "cell=11,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_11"
+    },
+    "cell=11,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_11",
+      "y": 180
+    },
+    "cell=11,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_11",
+      "y": 180
+    },
+    "cell=11,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_11",
+      "y": 270
+    },
+    "cell=11,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_11",
+      "y": 270
+    },
+    "cell=12,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_12",
+      "y": 90
+    },
+    "cell=12,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_12",
+      "y": 90
+    },
+    "cell=12,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_12"
+    },
+    "cell=12,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_12"
+    },
+    "cell=12,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_12",
+      "y": 180
+    },
+    "cell=12,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_12",
+      "y": 180
+    },
+    "cell=12,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_12",
+      "y": 270
+    },
+    "cell=12,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_12",
+      "y": 270
+    },
+    "cell=13,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_13",
+      "y": 90
+    },
+    "cell=13,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_13",
+      "y": 90
+    },
+    "cell=13,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_13"
+    },
+    "cell=13,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_13"
+    },
+    "cell=13,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_13",
+      "y": 180
+    },
+    "cell=13,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_13",
+      "y": 180
+    },
+    "cell=13,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_13",
+      "y": 270
+    },
+    "cell=13,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_13",
+      "y": 270
+    },
+    "cell=14,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_14",
+      "y": 90
+    },
+    "cell=14,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_14",
+      "y": 90
+    },
+    "cell=14,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_14"
+    },
+    "cell=14,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_14"
+    },
+    "cell=14,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_14",
+      "y": 180
+    },
+    "cell=14,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_14",
+      "y": 180
+    },
+    "cell=14,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_14",
+      "y": 270
+    },
+    "cell=14,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_14",
+      "y": 270
+    },
+    "cell=15,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_15",
+      "y": 90
+    },
+    "cell=15,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_15",
+      "y": 90
+    },
+    "cell=15,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_15"
+    },
+    "cell=15,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_15"
+    },
+    "cell=15,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_15",
+      "y": 180
+    },
+    "cell=15,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_15",
+      "y": 180
+    },
+    "cell=15,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_15",
+      "y": 270
+    },
+    "cell=15,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_15",
+      "y": 270
+    },
+    "cell=16,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_16",
+      "y": 90
+    },
+    "cell=16,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_16",
+      "y": 90
+    },
+    "cell=16,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_16"
+    },
+    "cell=16,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_16"
+    },
+    "cell=16,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_16",
+      "y": 180
+    },
+    "cell=16,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_16",
+      "y": 180
+    },
+    "cell=16,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_16",
+      "y": 270
+    },
+    "cell=16,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_16",
+      "y": 270
+    },
+    "cell=17,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_17",
+      "y": 90
+    },
+    "cell=17,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_17",
+      "y": 90
+    },
+    "cell=17,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_17"
+    },
+    "cell=17,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_17"
+    },
+    "cell=17,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_17",
+      "y": 180
+    },
+    "cell=17,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_17",
+      "y": 180
+    },
+    "cell=17,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_17",
+      "y": 270
+    },
+    "cell=17,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_17",
+      "y": 270
+    },
+    "cell=18,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_18",
+      "y": 90
+    },
+    "cell=18,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_18",
+      "y": 90
+    },
+    "cell=18,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_18"
+    },
+    "cell=18,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_18"
+    },
+    "cell=18,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_18",
+      "y": 180
+    },
+    "cell=18,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_18",
+      "y": 180
+    },
+    "cell=18,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_18",
+      "y": 270
+    },
+    "cell=18,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_18",
+      "y": 270
+    },
+    "cell=19,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_19",
+      "y": 90
+    },
+    "cell=19,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_19",
+      "y": 90
+    },
+    "cell=19,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_19"
+    },
+    "cell=19,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_19"
+    },
+    "cell=19,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_19",
+      "y": 180
+    },
+    "cell=19,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_19",
+      "y": 180
+    },
+    "cell=19,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_19",
+      "y": 270
+    },
+    "cell=19,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_19",
+      "y": 270
+    },
+    "cell=2,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_2",
+      "y": 90
+    },
+    "cell=2,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_2",
+      "y": 90
+    },
+    "cell=2,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_2"
+    },
+    "cell=2,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_2"
+    },
+    "cell=2,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_2",
+      "y": 180
+    },
+    "cell=2,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_2",
+      "y": 180
+    },
+    "cell=2,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_2",
+      "y": 270
+    },
+    "cell=2,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_2",
+      "y": 270
+    },
+    "cell=20,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_20",
+      "y": 90
+    },
+    "cell=20,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_20",
+      "y": 90
+    },
+    "cell=20,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_20"
+    },
+    "cell=20,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_20"
+    },
+    "cell=20,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_20",
+      "y": 180
+    },
+    "cell=20,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_20",
+      "y": 180
+    },
+    "cell=20,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_20",
+      "y": 270
+    },
+    "cell=20,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_20",
+      "y": 270
+    },
+    "cell=21,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_21",
+      "y": 90
+    },
+    "cell=21,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_21",
+      "y": 90
+    },
+    "cell=21,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_21"
+    },
+    "cell=21,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_21"
+    },
+    "cell=21,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_21",
+      "y": 180
+    },
+    "cell=21,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_21",
+      "y": 180
+    },
+    "cell=21,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_21",
+      "y": 270
+    },
+    "cell=21,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_21",
+      "y": 270
+    },
+    "cell=22,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_22",
+      "y": 90
+    },
+    "cell=22,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_22",
+      "y": 90
+    },
+    "cell=22,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_22"
+    },
+    "cell=22,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_22"
+    },
+    "cell=22,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_22",
+      "y": 180
+    },
+    "cell=22,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_22",
+      "y": 180
+    },
+    "cell=22,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_22",
+      "y": 270
+    },
+    "cell=22,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_22",
+      "y": 270
+    },
+    "cell=23,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_23",
+      "y": 90
+    },
+    "cell=23,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_23",
+      "y": 90
+    },
+    "cell=23,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_23"
+    },
+    "cell=23,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_23"
+    },
+    "cell=23,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_23",
+      "y": 180
+    },
+    "cell=23,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_23",
+      "y": 180
+    },
+    "cell=23,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_23",
+      "y": 270
+    },
+    "cell=23,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_23",
+      "y": 270
+    },
+    "cell=24,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_24",
+      "y": 90
+    },
+    "cell=24,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_24",
+      "y": 90
+    },
+    "cell=24,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_24"
+    },
+    "cell=24,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_24"
+    },
+    "cell=24,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_24",
+      "y": 180
+    },
+    "cell=24,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_24",
+      "y": 180
+    },
+    "cell=24,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_24",
+      "y": 270
+    },
+    "cell=24,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_24",
+      "y": 270
+    },
+    "cell=25,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_25",
+      "y": 90
+    },
+    "cell=25,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_25",
+      "y": 90
+    },
+    "cell=25,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_25"
+    },
+    "cell=25,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_25"
+    },
+    "cell=25,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_25",
+      "y": 180
+    },
+    "cell=25,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_25",
+      "y": 180
+    },
+    "cell=25,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_25",
+      "y": 270
+    },
+    "cell=25,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_25",
+      "y": 270
+    },
+    "cell=26,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_26",
+      "y": 90
+    },
+    "cell=26,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_26",
+      "y": 90
+    },
+    "cell=26,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_26"
+    },
+    "cell=26,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_26"
+    },
+    "cell=26,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_26",
+      "y": 180
+    },
+    "cell=26,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_26",
+      "y": 180
+    },
+    "cell=26,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_26",
+      "y": 270
+    },
+    "cell=26,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_26",
+      "y": 270
+    },
+    "cell=27,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_27",
+      "y": 90
+    },
+    "cell=27,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_27",
+      "y": 90
+    },
+    "cell=27,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_27"
+    },
+    "cell=27,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_27"
+    },
+    "cell=27,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_27",
+      "y": 180
+    },
+    "cell=27,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_27",
+      "y": 180
+    },
+    "cell=27,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_27",
+      "y": 270
+    },
+    "cell=27,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_27",
+      "y": 270
+    },
+    "cell=28,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_28",
+      "y": 90
+    },
+    "cell=28,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_28",
+      "y": 90
+    },
+    "cell=28,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_28"
+    },
+    "cell=28,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_28"
+    },
+    "cell=28,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_28",
+      "y": 180
+    },
+    "cell=28,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_28",
+      "y": 180
+    },
+    "cell=28,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_28",
+      "y": 270
+    },
+    "cell=28,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_28",
+      "y": 270
+    },
+    "cell=29,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_29",
+      "y": 90
+    },
+    "cell=29,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_29",
+      "y": 90
+    },
+    "cell=29,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_29"
+    },
+    "cell=29,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_29"
+    },
+    "cell=29,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_29",
+      "y": 180
+    },
+    "cell=29,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_29",
+      "y": 180
+    },
+    "cell=29,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_29",
+      "y": 270
+    },
+    "cell=29,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_29",
+      "y": 270
+    },
+    "cell=3,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_3",
+      "y": 90
+    },
+    "cell=3,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_3",
+      "y": 90
+    },
+    "cell=3,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_3"
+    },
+    "cell=3,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_3"
+    },
+    "cell=3,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_3",
+      "y": 180
+    },
+    "cell=3,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_3",
+      "y": 180
+    },
+    "cell=3,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_3",
+      "y": 270
+    },
+    "cell=3,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_3",
+      "y": 270
+    },
+    "cell=30,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_30",
+      "y": 90
+    },
+    "cell=30,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_30",
+      "y": 90
+    },
+    "cell=30,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_30"
+    },
+    "cell=30,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_30"
+    },
+    "cell=30,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_30",
+      "y": 180
+    },
+    "cell=30,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_30",
+      "y": 180
+    },
+    "cell=30,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_30",
+      "y": 270
+    },
+    "cell=30,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_30",
+      "y": 270
+    },
+    "cell=31,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_31",
+      "y": 90
+    },
+    "cell=31,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_31",
+      "y": 90
+    },
+    "cell=31,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_31"
+    },
+    "cell=31,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_31"
+    },
+    "cell=31,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_31",
+      "y": 180
+    },
+    "cell=31,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_31",
+      "y": 180
+    },
+    "cell=31,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_31",
+      "y": 270
+    },
+    "cell=31,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_31",
+      "y": 270
+    },
+    "cell=32,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_32",
+      "y": 90
+    },
+    "cell=32,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_32",
+      "y": 90
+    },
+    "cell=32,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_32"
+    },
+    "cell=32,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_32"
+    },
+    "cell=32,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_32",
+      "y": 180
+    },
+    "cell=32,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_32",
+      "y": 180
+    },
+    "cell=32,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_32",
+      "y": 270
+    },
+    "cell=32,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_32",
+      "y": 270
+    },
+    "cell=33,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_33",
+      "y": 90
+    },
+    "cell=33,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_33",
+      "y": 90
+    },
+    "cell=33,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_33"
+    },
+    "cell=33,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_33"
+    },
+    "cell=33,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_33",
+      "y": 180
+    },
+    "cell=33,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_33",
+      "y": 180
+    },
+    "cell=33,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_33",
+      "y": 270
+    },
+    "cell=33,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_33",
+      "y": 270
+    },
+    "cell=34,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_34",
+      "y": 90
+    },
+    "cell=34,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_34",
+      "y": 90
+    },
+    "cell=34,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_34"
+    },
+    "cell=34,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_34"
+    },
+    "cell=34,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_34",
+      "y": 180
+    },
+    "cell=34,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_34",
+      "y": 180
+    },
+    "cell=34,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_34",
+      "y": 270
+    },
+    "cell=34,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_34",
+      "y": 270
+    },
+    "cell=35,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_35",
+      "y": 90
+    },
+    "cell=35,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_35",
+      "y": 90
+    },
+    "cell=35,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_35"
+    },
+    "cell=35,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_35"
+    },
+    "cell=35,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_35",
+      "y": 180
+    },
+    "cell=35,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_35",
+      "y": 180
+    },
+    "cell=35,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_35",
+      "y": 270
+    },
+    "cell=35,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_35",
+      "y": 270
+    },
+    "cell=36,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_36",
+      "y": 90
+    },
+    "cell=36,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_36",
+      "y": 90
+    },
+    "cell=36,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_36"
+    },
+    "cell=36,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_36"
+    },
+    "cell=36,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_36",
+      "y": 180
+    },
+    "cell=36,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_36",
+      "y": 180
+    },
+    "cell=36,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_36",
+      "y": 270
+    },
+    "cell=36,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_36",
+      "y": 270
+    },
+    "cell=37,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_37",
+      "y": 90
+    },
+    "cell=37,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_37",
+      "y": 90
+    },
+    "cell=37,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_37"
+    },
+    "cell=37,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_37"
+    },
+    "cell=37,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_37",
+      "y": 180
+    },
+    "cell=37,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_37",
+      "y": 180
+    },
+    "cell=37,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_37",
+      "y": 270
+    },
+    "cell=37,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_37",
+      "y": 270
+    },
+    "cell=38,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_38",
+      "y": 90
+    },
+    "cell=38,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_38",
+      "y": 90
+    },
+    "cell=38,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_38"
+    },
+    "cell=38,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_38"
+    },
+    "cell=38,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_38",
+      "y": 180
+    },
+    "cell=38,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_38",
+      "y": 180
+    },
+    "cell=38,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_38",
+      "y": 270
+    },
+    "cell=38,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_38",
+      "y": 270
+    },
+    "cell=39,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_39",
+      "y": 90
+    },
+    "cell=39,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_39",
+      "y": 90
+    },
+    "cell=39,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_39"
+    },
+    "cell=39,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_39"
+    },
+    "cell=39,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_39",
+      "y": 180
+    },
+    "cell=39,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_39",
+      "y": 180
+    },
+    "cell=39,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_39",
+      "y": 270
+    },
+    "cell=39,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_39",
+      "y": 270
+    },
+    "cell=4,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_4",
+      "y": 90
+    },
+    "cell=4,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_4",
+      "y": 90
+    },
+    "cell=4,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_4"
+    },
+    "cell=4,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_4"
+    },
+    "cell=4,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_4",
+      "y": 180
+    },
+    "cell=4,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_4",
+      "y": 180
+    },
+    "cell=4,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_4",
+      "y": 270
+    },
+    "cell=4,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_4",
+      "y": 270
+    },
+    "cell=40,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_40",
+      "y": 90
+    },
+    "cell=40,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_40",
+      "y": 90
+    },
+    "cell=40,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_40"
+    },
+    "cell=40,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_40"
+    },
+    "cell=40,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_40",
+      "y": 180
+    },
+    "cell=40,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_40",
+      "y": 180
+    },
+    "cell=40,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_40",
+      "y": 270
+    },
+    "cell=40,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_40",
+      "y": 270
+    },
+    "cell=41,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_41",
+      "y": 90
+    },
+    "cell=41,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_41",
+      "y": 90
+    },
+    "cell=41,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_41"
+    },
+    "cell=41,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_41"
+    },
+    "cell=41,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_41",
+      "y": 180
+    },
+    "cell=41,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_41",
+      "y": 180
+    },
+    "cell=41,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_41",
+      "y": 270
+    },
+    "cell=41,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_41",
+      "y": 270
+    },
+    "cell=42,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_42",
+      "y": 90
+    },
+    "cell=42,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_42",
+      "y": 90
+    },
+    "cell=42,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_42"
+    },
+    "cell=42,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_42"
+    },
+    "cell=42,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_42",
+      "y": 180
+    },
+    "cell=42,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_42",
+      "y": 180
+    },
+    "cell=42,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_42",
+      "y": 270
+    },
+    "cell=42,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_42",
+      "y": 270
+    },
+    "cell=43,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_43",
+      "y": 90
+    },
+    "cell=43,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_43",
+      "y": 90
+    },
+    "cell=43,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_43"
+    },
+    "cell=43,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_43"
+    },
+    "cell=43,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_43",
+      "y": 180
+    },
+    "cell=43,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_43",
+      "y": 180
+    },
+    "cell=43,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_43",
+      "y": 270
+    },
+    "cell=43,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_43",
+      "y": 270
+    },
+    "cell=44,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_44",
+      "y": 90
+    },
+    "cell=44,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_44",
+      "y": 90
+    },
+    "cell=44,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_44"
+    },
+    "cell=44,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_44"
+    },
+    "cell=44,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_44",
+      "y": 180
+    },
+    "cell=44,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_44",
+      "y": 180
+    },
+    "cell=44,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_44",
+      "y": 270
+    },
+    "cell=44,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_44",
+      "y": 270
+    },
+    "cell=45,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_45",
+      "y": 90
+    },
+    "cell=45,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_45",
+      "y": 90
+    },
+    "cell=45,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_45"
+    },
+    "cell=45,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_45"
+    },
+    "cell=45,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_45",
+      "y": 180
+    },
+    "cell=45,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_45",
+      "y": 180
+    },
+    "cell=45,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_45",
+      "y": 270
+    },
+    "cell=45,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_45",
+      "y": 270
+    },
+    "cell=46,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_46",
+      "y": 90
+    },
+    "cell=46,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_46",
+      "y": 90
+    },
+    "cell=46,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_46"
+    },
+    "cell=46,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_46"
+    },
+    "cell=46,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_46",
+      "y": 180
+    },
+    "cell=46,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_46",
+      "y": 180
+    },
+    "cell=46,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_46",
+      "y": 270
+    },
+    "cell=46,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_46",
+      "y": 270
+    },
+    "cell=47,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_47",
+      "y": 90
+    },
+    "cell=47,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_47",
+      "y": 90
+    },
+    "cell=47,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_47"
+    },
+    "cell=47,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_47"
+    },
+    "cell=47,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_47",
+      "y": 180
+    },
+    "cell=47,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_47",
+      "y": 180
+    },
+    "cell=47,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_47",
+      "y": 270
+    },
+    "cell=47,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_47",
+      "y": 270
+    },
+    "cell=48,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_48",
+      "y": 90
+    },
+    "cell=48,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_48",
+      "y": 90
+    },
+    "cell=48,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_48"
+    },
+    "cell=48,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_48"
+    },
+    "cell=48,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_48",
+      "y": 180
+    },
+    "cell=48,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_48",
+      "y": 180
+    },
+    "cell=48,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_48",
+      "y": 270
+    },
+    "cell=48,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_48",
+      "y": 270
+    },
+    "cell=49,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_49",
+      "y": 90
+    },
+    "cell=49,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_49",
+      "y": 90
+    },
+    "cell=49,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_49"
+    },
+    "cell=49,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_49"
+    },
+    "cell=49,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_49",
+      "y": 180
+    },
+    "cell=49,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_49",
+      "y": 180
+    },
+    "cell=49,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_49",
+      "y": 270
+    },
+    "cell=49,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_49",
+      "y": 270
+    },
+    "cell=5,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_5",
+      "y": 90
+    },
+    "cell=5,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_5",
+      "y": 90
+    },
+    "cell=5,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_5"
+    },
+    "cell=5,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_5"
+    },
+    "cell=5,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_5",
+      "y": 180
+    },
+    "cell=5,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_5",
+      "y": 180
+    },
+    "cell=5,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_5",
+      "y": 270
+    },
+    "cell=5,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_5",
+      "y": 270
+    },
+    "cell=50,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_50",
+      "y": 90
+    },
+    "cell=50,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_50",
+      "y": 90
+    },
+    "cell=50,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_50"
+    },
+    "cell=50,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_50"
+    },
+    "cell=50,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_50",
+      "y": 180
+    },
+    "cell=50,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_50",
+      "y": 180
+    },
+    "cell=50,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_50",
+      "y": 270
+    },
+    "cell=50,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_50",
+      "y": 270
+    },
+    "cell=51,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_51",
+      "y": 90
+    },
+    "cell=51,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_51",
+      "y": 90
+    },
+    "cell=51,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_51"
+    },
+    "cell=51,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_51"
+    },
+    "cell=51,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_51",
+      "y": 180
+    },
+    "cell=51,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_51",
+      "y": 180
+    },
+    "cell=51,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_51",
+      "y": 270
+    },
+    "cell=51,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_51",
+      "y": 270
+    },
+    "cell=52,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_52",
+      "y": 90
+    },
+    "cell=52,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_52",
+      "y": 90
+    },
+    "cell=52,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_52"
+    },
+    "cell=52,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_52"
+    },
+    "cell=52,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_52",
+      "y": 180
+    },
+    "cell=52,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_52",
+      "y": 180
+    },
+    "cell=52,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_52",
+      "y": 270
+    },
+    "cell=52,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_52",
+      "y": 270
+    },
+    "cell=53,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_53",
+      "y": 90
+    },
+    "cell=53,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_53",
+      "y": 90
+    },
+    "cell=53,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_53"
+    },
+    "cell=53,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_53"
+    },
+    "cell=53,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_53",
+      "y": 180
+    },
+    "cell=53,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_53",
+      "y": 180
+    },
+    "cell=53,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_53",
+      "y": 270
+    },
+    "cell=53,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_53",
+      "y": 270
+    },
+    "cell=54,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_54",
+      "y": 90
+    },
+    "cell=54,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_54",
+      "y": 90
+    },
+    "cell=54,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_54"
+    },
+    "cell=54,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_54"
+    },
+    "cell=54,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_54",
+      "y": 180
+    },
+    "cell=54,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_54",
+      "y": 180
+    },
+    "cell=54,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_54",
+      "y": 270
+    },
+    "cell=54,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_54",
+      "y": 270
+    },
+    "cell=55,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_55",
+      "y": 90
+    },
+    "cell=55,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_55",
+      "y": 90
+    },
+    "cell=55,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_55"
+    },
+    "cell=55,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_55"
+    },
+    "cell=55,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_55",
+      "y": 180
+    },
+    "cell=55,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_55",
+      "y": 180
+    },
+    "cell=55,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_55",
+      "y": 270
+    },
+    "cell=55,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_55",
+      "y": 270
+    },
+    "cell=56,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_56",
+      "y": 90
+    },
+    "cell=56,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_56",
+      "y": 90
+    },
+    "cell=56,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_56"
+    },
+    "cell=56,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_56"
+    },
+    "cell=56,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_56",
+      "y": 180
+    },
+    "cell=56,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_56",
+      "y": 180
+    },
+    "cell=56,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_56",
+      "y": 270
+    },
+    "cell=56,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_56",
+      "y": 270
+    },
+    "cell=57,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_57",
+      "y": 90
+    },
+    "cell=57,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_57",
+      "y": 90
+    },
+    "cell=57,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_57"
+    },
+    "cell=57,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_57"
+    },
+    "cell=57,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_57",
+      "y": 180
+    },
+    "cell=57,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_57",
+      "y": 180
+    },
+    "cell=57,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_57",
+      "y": 270
+    },
+    "cell=57,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_57",
+      "y": 270
+    },
+    "cell=58,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_58",
+      "y": 90
+    },
+    "cell=58,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_58",
+      "y": 90
+    },
+    "cell=58,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_58"
+    },
+    "cell=58,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_58"
+    },
+    "cell=58,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_58",
+      "y": 180
+    },
+    "cell=58,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_58",
+      "y": 180
+    },
+    "cell=58,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_58",
+      "y": 270
+    },
+    "cell=58,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_58",
+      "y": 270
+    },
+    "cell=59,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_59",
+      "y": 90
+    },
+    "cell=59,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_59",
+      "y": 90
+    },
+    "cell=59,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_59"
+    },
+    "cell=59,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_59"
+    },
+    "cell=59,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_59",
+      "y": 180
+    },
+    "cell=59,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_59",
+      "y": 180
+    },
+    "cell=59,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_59",
+      "y": 270
+    },
+    "cell=59,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_59",
+      "y": 270
+    },
+    "cell=6,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_6",
+      "y": 90
+    },
+    "cell=6,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_6",
+      "y": 90
+    },
+    "cell=6,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_6"
+    },
+    "cell=6,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_6"
+    },
+    "cell=6,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_6",
+      "y": 180
+    },
+    "cell=6,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_6",
+      "y": 180
+    },
+    "cell=6,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_6",
+      "y": 270
+    },
+    "cell=6,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_6",
+      "y": 270
+    },
+    "cell=60,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_60",
+      "y": 90
+    },
+    "cell=60,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_60",
+      "y": 90
+    },
+    "cell=60,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_60"
+    },
+    "cell=60,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_60"
+    },
+    "cell=60,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_60",
+      "y": 180
+    },
+    "cell=60,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_60",
+      "y": 180
+    },
+    "cell=60,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_60",
+      "y": 270
+    },
+    "cell=60,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_60",
+      "y": 270
+    },
+    "cell=61,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_61",
+      "y": 90
+    },
+    "cell=61,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_61",
+      "y": 90
+    },
+    "cell=61,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_61"
+    },
+    "cell=61,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_61"
+    },
+    "cell=61,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_61",
+      "y": 180
+    },
+    "cell=61,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_61",
+      "y": 180
+    },
+    "cell=61,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_61",
+      "y": 270
+    },
+    "cell=61,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_61",
+      "y": 270
+    },
+    "cell=62,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_62",
+      "y": 90
+    },
+    "cell=62,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_62",
+      "y": 90
+    },
+    "cell=62,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_62"
+    },
+    "cell=62,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_62"
+    },
+    "cell=62,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_62",
+      "y": 180
+    },
+    "cell=62,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_62",
+      "y": 180
+    },
+    "cell=62,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_62",
+      "y": 270
+    },
+    "cell=62,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_62",
+      "y": 270
+    },
+    "cell=63,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_63",
+      "y": 90
+    },
+    "cell=63,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_63",
+      "y": 90
+    },
+    "cell=63,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_63"
+    },
+    "cell=63,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_63"
+    },
+    "cell=63,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_63",
+      "y": 180
+    },
+    "cell=63,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_63",
+      "y": 180
+    },
+    "cell=63,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_63",
+      "y": 270
+    },
+    "cell=63,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_63",
+      "y": 270
+    },
+    "cell=64,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_64",
+      "y": 90
+    },
+    "cell=64,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_64",
+      "y": 90
+    },
+    "cell=64,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_64"
+    },
+    "cell=64,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_64"
+    },
+    "cell=64,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_64",
+      "y": 180
+    },
+    "cell=64,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_64",
+      "y": 180
+    },
+    "cell=64,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_64",
+      "y": 270
+    },
+    "cell=64,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_64",
+      "y": 270
+    },
+    "cell=65,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_65",
+      "y": 90
+    },
+    "cell=65,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_65",
+      "y": 90
+    },
+    "cell=65,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_65"
+    },
+    "cell=65,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_65"
+    },
+    "cell=65,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_65",
+      "y": 180
+    },
+    "cell=65,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_65",
+      "y": 180
+    },
+    "cell=65,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_65",
+      "y": 270
+    },
+    "cell=65,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_65",
+      "y": 270
+    },
+    "cell=66,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_66",
+      "y": 90
+    },
+    "cell=66,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_66",
+      "y": 90
+    },
+    "cell=66,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_66"
+    },
+    "cell=66,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_66"
+    },
+    "cell=66,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_66",
+      "y": 180
+    },
+    "cell=66,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_66",
+      "y": 180
+    },
+    "cell=66,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_66",
+      "y": 270
+    },
+    "cell=66,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_66",
+      "y": 270
+    },
+    "cell=67,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_67",
+      "y": 90
+    },
+    "cell=67,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_67",
+      "y": 90
+    },
+    "cell=67,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_67"
+    },
+    "cell=67,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_67"
+    },
+    "cell=67,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_67",
+      "y": 180
+    },
+    "cell=67,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_67",
+      "y": 180
+    },
+    "cell=67,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_67",
+      "y": 270
+    },
+    "cell=67,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_67",
+      "y": 270
+    },
+    "cell=68,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_68",
+      "y": 90
+    },
+    "cell=68,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_68",
+      "y": 90
+    },
+    "cell=68,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_68"
+    },
+    "cell=68,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_68"
+    },
+    "cell=68,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_68",
+      "y": 180
+    },
+    "cell=68,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_68",
+      "y": 180
+    },
+    "cell=68,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_68",
+      "y": 270
+    },
+    "cell=68,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_68",
+      "y": 270
+    },
+    "cell=69,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_69",
+      "y": 90
+    },
+    "cell=69,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_69",
+      "y": 90
+    },
+    "cell=69,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_69"
+    },
+    "cell=69,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_69"
+    },
+    "cell=69,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_69",
+      "y": 180
+    },
+    "cell=69,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_69",
+      "y": 180
+    },
+    "cell=69,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_69",
+      "y": 270
+    },
+    "cell=69,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_69",
+      "y": 270
+    },
+    "cell=7,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_7",
+      "y": 90
+    },
+    "cell=7,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_7",
+      "y": 90
+    },
+    "cell=7,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_7"
+    },
+    "cell=7,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_7"
+    },
+    "cell=7,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_7",
+      "y": 180
+    },
+    "cell=7,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_7",
+      "y": 180
+    },
+    "cell=7,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_7",
+      "y": 270
+    },
+    "cell=7,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_7",
+      "y": 270
+    },
+    "cell=70,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_70",
+      "y": 90
+    },
+    "cell=70,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_70",
+      "y": 90
+    },
+    "cell=70,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_70"
+    },
+    "cell=70,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_70"
+    },
+    "cell=70,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_70",
+      "y": 180
+    },
+    "cell=70,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_70",
+      "y": 180
+    },
+    "cell=70,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_70",
+      "y": 270
+    },
+    "cell=70,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_70",
+      "y": 270
+    },
+    "cell=71,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_71",
+      "y": 90
+    },
+    "cell=71,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_71",
+      "y": 90
+    },
+    "cell=71,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_71"
+    },
+    "cell=71,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_71"
+    },
+    "cell=71,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_71",
+      "y": 180
+    },
+    "cell=71,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_71",
+      "y": 180
+    },
+    "cell=71,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_71",
+      "y": 270
+    },
+    "cell=71,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_71",
+      "y": 270
+    },
+    "cell=72,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_72",
+      "y": 90
+    },
+    "cell=72,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_72",
+      "y": 90
+    },
+    "cell=72,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_72"
+    },
+    "cell=72,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_72"
+    },
+    "cell=72,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_72",
+      "y": 180
+    },
+    "cell=72,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_72",
+      "y": 180
+    },
+    "cell=72,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_72",
+      "y": 270
+    },
+    "cell=72,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_72",
+      "y": 270
+    },
+    "cell=8,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_8",
+      "y": 90
+    },
+    "cell=8,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_8",
+      "y": 90
+    },
+    "cell=8,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_8"
+    },
+    "cell=8,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_8"
+    },
+    "cell=8,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_8",
+      "y": 180
+    },
+    "cell=8,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_8",
+      "y": 180
+    },
+    "cell=8,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_8",
+      "y": 270
+    },
+    "cell=8,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_8",
+      "y": 270
+    },
+    "cell=9,facing=east,installed=false": {
+      "model": "ryzergen:block/container/empty_9",
+      "y": 90
+    },
+    "cell=9,facing=east,installed=true": {
+      "model": "ryzergen:block/container/full_9",
+      "y": 90
+    },
+    "cell=9,facing=north,installed=false": {
+      "model": "ryzergen:block/container/empty_9"
+    },
+    "cell=9,facing=north,installed=true": {
+      "model": "ryzergen:block/container/full_9"
+    },
+    "cell=9,facing=south,installed=false": {
+      "model": "ryzergen:block/container/empty_9",
+      "y": 180
+    },
+    "cell=9,facing=south,installed=true": {
+      "model": "ryzergen:block/container/full_9",
+      "y": 180
+    },
+    "cell=9,facing=west,installed=false": {
+      "model": "ryzergen:block/container/empty_9",
+      "y": 270
+    },
+    "cell=9,facing=west,installed=true": {
+      "model": "ryzergen:block/container/full_9",
+      "y": 270
+    }
+  }
+}

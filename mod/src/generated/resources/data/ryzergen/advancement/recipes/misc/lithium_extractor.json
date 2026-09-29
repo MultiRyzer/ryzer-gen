@@ -1,9 +1,4 @@
 {
-  "neoforge:conditions": [
-    {
-      "type": "ryzergen:preview"
-    }
-  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_salt": {

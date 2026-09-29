@@ -1,0 +1,323 @@
+{
+  "parent": "minecraft:block/block",
+  "children": {
+    "solid": {
+      "ambientocclusion": false,
+      "elements": [
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            1,
+            2,
+            4
+          ],
+          "to": [
+            16,
+            16,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "cullface": "down",
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0.25,
+            0,
+            0.25
+          ],
+          "to": [
+            16,
+            2,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "cullface": "down",
+              "texture": "#accent"
+            },
+            "east": {
+              "texture": "#accent"
+            },
+            "north": {
+              "cullface": "north",
+              "texture": "#accent"
+            },
+            "south": {
+              "texture": "#accent"
+            },
+            "up": {
+              "texture": "#accent"
+            },
+            "west": {
+              "cullface": "west",
+              "texture": "#accent"
+            }
+          },
+          "from": [
+            0,
+            0,
+            0
+          ],
+          "to": [
+            3,
+            2.25,
+            3
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#liner"
+            },
+            "east": {
+              "texture": "#liner"
+            },
+            "north": {
+              "texture": "#hatch_14x13",
+              "uv": [
+                0.0,
+                0.0,
+                14.0,
+                13.0
+              ]
+            },
+            "south": {
+              "texture": "#liner"
+            },
+            "up": {
+              "texture": "#liner"
+            },
+            "west": {
+              "texture": "#liner"
+            }
+          },
+          "from": [
+            1,
+            2,
+            0.5
+          ],
+          "to": [
+            15,
+            15,
+            3
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#liner"
+            },
+            "east": {
+              "texture": "#liner"
+            },
+            "north": {
+              "texture": "#liner"
+            },
+            "south": {
+              "texture": "#liner"
+            },
+            "up": {
+              "texture": "#liner"
+            },
+            "west": {
+              "texture": "#panel_14x13",
+              "uv": [
+                0.0,
+                0.0,
+                14.0,
+                13.0
+              ]
+            }
+          },
+          "from": [
+            0.5,
+            2,
+            1
+          ],
+          "to": [
+            3,
+            15,
+            15
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "east": {
+              "texture": "#trim"
+            },
+            "north": {
+              "cullface": "north",
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "west": {
+              "cullface": "west",
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            2,
+            0
+          ],
+          "to": [
+            1,
+            16,
+            1
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "north": {
+              "cullface": "north",
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            15,
+            2,
+            0
+          ],
+          "to": [
+            16,
+            16,
+            3
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "east": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "west": {
+              "cullface": "west",
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            2,
+            15
+          ],
+          "to": [
+            3,
+            16,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            1,
+            15,
+            0.25
+          ],
+          "to": [
+            16,
+            16,
+            3
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "east": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0.25,
+            15,
+            1
+          ],
+          "to": [
+            3,
+            16,
+            16
+          ]
+        }
+      ],
+      "render_type": "minecraft:cutout",
+      "textures": {
+        "accent": "ryzergen:block/machine/family/accent",
+        "hatch_14x13": "ryzergen:block/container/hatch_14x13",
+        "liner": "ryzergen:block/container/liner",
+        "panel_14x13": "ryzergen:block/container/panel_14x13",
+        "trim": "ryzergen:block/microreactor/steel_dark"
+      }
+    }
+  },
+  "item_render_order": [
+    "solid"
+  ],
+  "loader": "neoforge:composite",
+  "textures": {
+    "particle": "ryzergen:block/container/liner"
+  }
+}

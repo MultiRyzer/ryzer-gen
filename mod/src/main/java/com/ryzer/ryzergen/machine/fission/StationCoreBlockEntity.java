@@ -314,11 +314,54 @@ public class StationCoreBlockEntity extends BlockEntity implements MenuProvider 
         return rotorBefore + (rotor - rotorBefore) * partialTick;
     }
 
+    /**
+     * How far each channel's rod stands up, as players see it: 1 fully raised (the station
+     * running), 0.5 lowered halfway (stopped). A rod just loaded starts halfway and rises; the rods
+     * ease between. Client only; the rods work at once whatever they show.
+     */
+    private final float[] lift = new float[StationReactor.CHANNELS];
+    private final float[] liftBefore = new float[StationReactor.CHANNELS];
+    private final boolean[] rodIn = new boolean[StationReactor.CHANNELS];
+    private boolean liftReady;
+    /** How far a rod moves in a tick: halfway in a little over two seconds. */
+    private static final float LIFT_SPEED = 0.01F;
+
+    /** Whether a channel holds something drawn as a rod that rises and falls: fuel, control or target. */
+    private boolean holdsRod(int channel) {
+        return switch (runner.type(channel)) {
+            case FUEL -> StationReactor.isFreshFuel(runner.item(channel)) || StationReactor.isSpent(runner.item(channel));
+            case CONTROL, TARGET -> !runner.item(channel).isEmpty();
+            default -> false;
+        };
+    }
+
+    private void moveRods() {
+        float target = isRunning() ? 1 : 0.5F;
+        for (int i = 0; i < StationReactor.CHANNELS; i++) {
+            boolean in = holdsRod(i);
+            if (in && (!rodIn[i] || !liftReady)) {
+                // Already there when the world loads; a new rod comes in halfway.
+                lift[i] = liftReady ? 0.5F : target;
+                liftBefore[i] = lift[i];
+            }
+            rodIn[i] = in;
+            liftBefore[i] = lift[i];
+            lift[i] += Math.max(-LIFT_SPEED, Math.min(LIFT_SPEED, target - lift[i]));
+        }
+        liftReady = true;
+    }
+
+    /** How far a channel's rod stands up this frame, 0.5 to 1. */
+    public float lift(int channel, float partialTick) {
+        return liftBefore[channel] + (lift[channel] - liftBefore[channel]) * partialTick;
+    }
+
     public static void clientTick(Level level, BlockPos pos, BlockState state, StationCoreBlockEntity core) {
         StationGhostPreview.track(core);
         if (!core.isFormed()) {
             return;
         }
+        core.moveRods();
         StationAlarmSound.update(core);
         core.spin += (core.runner.turbine - core.spin) * 0.02F;
         StationHumSound.update(core);

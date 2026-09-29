@@ -63,7 +63,7 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
         if (StationMesh.shadersInUse()) {
             draw(buffer, pose, StationGeometry.group("static"), light);
         }
-        draw(buffer, pose, rods(core), light);
+        draw(buffer, pose, rods(core, partialTick), light);
         pose.pushPose();
         float angle = core.rotorAngle(partialTick);
         pose.translate(HALF, 0, HALF);
@@ -130,7 +130,7 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
      * </ul>
      * Empty channels show just a collar.
      */
-    private static List<StationGeometry.Quad> rods(StationCoreBlockEntity core) {
+    private static List<StationGeometry.Quad> rods(StationCoreBlockEntity core, float partialTick) {
         List<StationGeometry.Quad> quads = new java.util.ArrayList<>();
         StationRunner runner = core.runner();
         boolean running = core.isRunning();
@@ -139,6 +139,10 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
             float z = channelZ(i);
             quads.addAll(StationGeometry.box(x - 5, 24, z - 5, x + 5, 27, z + 5, DARK, false));
             ItemStack item = runner.item(i);
+            // Rods stand fully up while the station runs and sink halfway (into the pedestal) when
+            // it stops: the whole rod shifts down, all but the collar.
+            List<StationGeometry.Quad> rod = new java.util.ArrayList<>();
+            float shift = (core.lift(i, partialTick) - 1) * ROD_LENGTH;
             switch (runner.type(i)) {
                 case FUEL -> {
                     boolean fresh = StationReactor.isFreshFuel(item);
@@ -146,17 +150,17 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
                         break;
                     }
                     ResourceLocation pins = fresh ? (running ? FUEL : FUEL_OFF) : DARK;
-                    quads.addAll(StationGeometry.box(x - 4.5F, 27, z - 4.5F, x + 4.5F, 30, z + 4.5F, NOZZLE, false));
+                    rod.addAll(StationGeometry.box(x - 4.5F, 27 + shift, z - 4.5F, x + 4.5F, 30 + shift, z + 4.5F, NOZZLE, false));
                     for (float dx : new float[] {-3.5F, 0.5F}) {
                         for (float dz : new float[] {-3.5F, 0.5F}) {
-                            quads.addAll(StationGeometry.box(x + dx, 30, z + dz, x + dx + 3, 76, z + dz + 3, pins,
+                            rod.addAll(StationGeometry.box(x + dx, 30 + shift, z + dz, x + dx + 3, 76 + shift, z + dz + 3, pins,
                                     pins == FUEL));
                         }
                     }
                     for (int y : new int[] {41, 55, 69}) {
-                        quads.addAll(StationGeometry.box(x - 4.5F, y, z - 4.5F, x + 4.5F, y + 1.5F, z + 4.5F, SPACER, false));
+                        rod.addAll(StationGeometry.box(x - 4.5F, y + shift, z - 4.5F, x + 4.5F, y + 1.5F + shift, z + 4.5F, SPACER, false));
                     }
-                    quads.addAll(StationGeometry.box(x - 4.5F, 76, z - 4.5F, x + 4.5F, 80, z + 4.5F, NOZZLE, false));
+                    rod.addAll(StationGeometry.box(x - 4.5F, 76 + shift, z - 4.5F, x + 4.5F, 80 + shift, z + 4.5F, NOZZLE, false));
                 }
                 case COOLANT -> {
                     quads.addAll(StationGeometry.box(x - 2.5F, 27, z - 2.5F, x + 2.5F, 80, z + 2.5F, CHERENKOV, running));
@@ -171,22 +175,26 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
                 }
                 case CONTROL -> {
                     if (!item.isEmpty()) {
-                        quads.addAll(StationGeometry.box(x - 4.5F, 27, z - 4.5F, x + 4.5F, 31, z + 4.5F, NOZZLE, false));
-                        quads.addAll(StationGeometry.box(x - 3, 44, z - 3, x + 3, 72, z + 3, CONTROL, false));
-                        quads.addAll(StationGeometry.box(x - 1, 72, z - 1, x + 1, 80, z + 1, SPACER, false));
+                        rod.addAll(StationGeometry.box(x - 4.5F, 27 + shift, z - 4.5F, x + 4.5F, 31 + shift, z + 4.5F, NOZZLE, false));
+                        rod.addAll(StationGeometry.box(x - 3, 44 + shift, z - 3, x + 3, 72 + shift, z + 3, CONTROL, false));
+                        rod.addAll(StationGeometry.box(x - 1, 72 + shift, z - 1, x + 1, 80 + shift, z + 1, SPACER, false));
                     }
                 }
                 case TARGET -> {
                     if (!item.isEmpty()) {
-                        quads.addAll(StationGeometry.box(x - 4, 27, z - 4, x + 4, 80, z + 4, LEAD, false));
+                        rod.addAll(StationGeometry.box(x - 4, 27 + shift, z - 4, x + 4, 80 + shift, z + 4, LEAD, false));
                     }
                 }
                 case EMPTY -> {
                 }
             }
+            quads.addAll(rod);
         }
         return quads;
     }
+
+    /** A rod's length from the pedestal to the reactor head, in pixels: half of it sinks when lowered. */
+    private static final float ROD_LENGTH = 53;
 
     /**
      * Steam rising off each coolant channel: two crossed sheets of the animated steam texture, each

@@ -1,0 +1,68 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#accent"
+        },
+        "east": {
+          "texture": "#stripes_6x3",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            3.0
+          ]
+        },
+        "north": {
+          "texture": "#stripes_6x3",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            3.0
+          ]
+        },
+        "south": {
+          "texture": "#stripes_6x3",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            3.0
+          ]
+        },
+        "up": {
+          "texture": "#accent"
+        },
+        "west": {
+          "texture": "#stripes_6x3",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            3.0
+          ]
+        }
+      },
+      "from": [
+        -3,
+        -2,
+        0
+      ],
+      "to": [
+        3,
+        1,
+        6
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "accent": "ryzergen:block/machine/family/accent",
+    "particle": "ryzergen:block/pool/paint",
+    "stripes_6x3": "ryzergen:block/pool/stripes_6x3"
+  }
+}

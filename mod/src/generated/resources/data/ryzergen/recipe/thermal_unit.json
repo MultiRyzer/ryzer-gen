@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "tag": "c:circuits/basic"
+    },
+    "C": {
+      "tag": "c:ingots/copper"
+    },
+    "I": {
+      "item": "minecraft:iron_bars"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "SCS",
+    "CIC",
+    "SBS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:thermal_unit"
+  }
+}

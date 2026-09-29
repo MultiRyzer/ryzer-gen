@@ -68,7 +68,14 @@ public final class Config {
     public static final ModConfigSpec.IntValue STEAM_PER_WATER;
     public static final ModConfigSpec.IntValue LEAD_ACID_CAPACITY;
     public static final ModConfigSpec.IntValue LEAD_ACID_RATE;
+    public static final ModConfigSpec.IntValue LFP_RACK_CAPACITY;
+    public static final ModConfigSpec.IntValue LFP_RACK_RATE;
+    public static final ModConfigSpec.IntValue CONTAINER_COOLANT_USE;
     public static final ModConfigSpec.BooleanValue ANNOUNCER_ENABLED;
+    public static final ModConfigSpec.BooleanValue REQUIRE_COOLING;
+    public static final ModConfigSpec.IntValue CORE_COOLING_SECONDS;
+    public static final ModConfigSpec.IntValue ROD_COOLING_SECONDS;
+    public static final ModConfigSpec.IntValue POOL_WATER_USE;
     public static final ModConfigSpec.BooleanValue ROUND_SUN;
     public static final ModConfigSpec.BooleanValue RADIATION_ENABLED;
     public static final ModConfigSpec.DoubleValue RADIATION_STRENGTH;
@@ -118,6 +125,15 @@ public final class Config {
         LEAD_ACID_RATE = BUILDER
                 .comment("FE per tick one lead-acid module can charge or discharge.")
                 .defineInRange("lead_acid_rate", 500, 1, 1_000_000);
+        LFP_RACK_CAPACITY = BUILDER
+                .comment("FE one LFP rack holds in a Container Battery (20 slots).")
+                .defineInRange("lfp_rack_capacity", 2_000_000, 1, 100_000_000);
+        LFP_RACK_RATE = BUILDER
+                .comment("FE per tick one LFP rack can take in or give out. A quarter of it without coolant.")
+                .defineInRange("lfp_rack_rate", 2_000, 1, 1_000_000);
+        CONTAINER_COOLANT_USE = BUILDER
+                .comment("mB of coolant (water) a Container Battery's fan unit uses per tick while energy moves.")
+                .defineInRange("container_coolant_use", 2, 0, 1_000);
         BUILDER.pop();
 
         BUILDER.comment("Fission power station.").push("fission_station");
@@ -140,6 +156,22 @@ public final class Config {
         STATION_TILT_SECONDS = BUILDER
                 .comment("In overdrive, how long a fuel channel may sit without a live rod before the core goes unstable.")
                 .defineInRange("flux_tilt_seconds", 300, 10, 3600);
+        BUILDER.pop();
+
+        BUILDER.comment("The fuel cycle.").push("fuel_cycle");
+        REQUIRE_COOLING = BUILDER
+                .comment("Spent fuel comes out of reactors hot and must cool in a Spent Fuel Pool before the Core Cracker or",
+                        "Reprocessor takes it. Off: reactors give out spent fuel already cool, and the pool is optional.")
+                .define("require_cooling", true);
+        CORE_COOLING_SECONDS = BUILDER
+                .comment("Seconds a depleted microreactor core cools in the pool.")
+                .defineInRange("core_cooling_seconds", 300, 1, 86_400);
+        ROD_COOLING_SECONDS = BUILDER
+                .comment("Seconds a spent fission rod cools in the pool.")
+                .defineInRange("rod_cooling_seconds", 600, 1, 86_400);
+        POOL_WATER_USE = BUILDER
+                .comment("mB of water each cooling item boils off per tick in the pool (decay heat).")
+                .defineInRange("pool_water_use", 2, 0, 1_000);
         BUILDER.pop();
 
         BUILDER.comment("The reactor announcer: spoken warnings from the reactors' control systems.").push("announcer");

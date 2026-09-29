@@ -1,5 +1,9 @@
 package com.ryzer.ryzergen.datagen;
 
+import com.ryzer.ryzergen.battery.container.ContainerPartBlock;
+import com.ryzer.ryzergen.battery.container.ContainerLayout;
+import com.ryzer.ryzergen.machine.pool.PoolPartBlock;
+import com.ryzer.ryzergen.machine.pool.PoolLayout;
 import com.ryzer.ryzergen.storage.PressureTankBlock;
 import com.ryzer.ryzergen.machine.processing.ProcessingBlock;
 import com.ryzer.ryzergen.machine.processing.TallProcessingBlock;
@@ -18,6 +22,7 @@ import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterBlock;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorPartBlock;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorSlot;
 import com.ryzer.ryzergen.registry.ModBlocks;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -33,6 +38,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -64,6 +70,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
         lithiumExtractor();
         wasteCask();
         stationParts();
+        spentFuelPool();
+        containerBattery();
         simpleBlockWithItem(ModBlocks.CREATIVE_BATTERY.get(), models().cubeBottomTop("creative_battery",
                 modLoc("block/creative_battery_side"), modLoc("block/creative_top"), modLoc("block/creative_top")));
         simpleBlockWithItem(ModBlocks.CREATIVE_WATER_TANK.get(), models().cubeBottomTop("creative_water_tank",
@@ -98,11 +106,99 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockItem(block, single);
     }
 
-    /** One quarter of the assembled 3D microreactor, built facing north. */
+    /**
+     * The Spent Fuel Pool's parts. Alone each shows its own faces (the controller's front carries the
+     * console); formed, each draws its cell of the pool's design (art/tools/pool_concept.py) in the
+     * pool's current look, turned to face the way the controller does.
+     */
+    private void spentFuelPool() {
+        DesignModel design = DesignModel.load("spent_fuel_pool");
+        Map<String, ModelFile> formed = new HashMap<>();
+        for (String look : design.stateNames()) {
+            if (look.startsWith("crane_")) {
+                // The crane's moving parts: whole models its renderer puts in place (PoolRenderer),
+                // with the park position (the design's CRANE_ORIGIN) as their origin.
+                design.buildPart(models().getBuilder("block/pool/" + look).parent(models().getExistingFile(mcLoc("block/block"))),
+                        look, 40, 40, 19, "paint");
+                continue;
+            }
+            for (int index = 1; index <= PoolLayout.CELLS; index++) {
+                BlockPos cell = PoolLayout.cell(index);
+                BlockModelBuilder model = models().getBuilder("block/pool/" + look + "_" + index)
+                        .parent(models().getExistingFile(mcLoc("block/block")));
+                design.build(model, look, cell.getX(), cell.getY(), cell.getZ(), "liner", models()::nested);
+                formed.put(look + "_" + index, model);
+            }
+        }
+        ModelFile liner = models().cubeAll("pool_liner", modLoc("block/pool/part_liner"));
+        ModelFile crane = models().cubeAll("pool_crane", modLoc("block/pool/part_crane"));
+        ModelFile controller = models().orientable("pool_controller", modLoc("block/pool/part_liner"),
+                modLoc("block/pool/part_controller"), modLoc("block/pool/part_liner"));
+        Map<Block, ModelFile> alone = Map.of(ModBlocks.POOL_LINER.get(), liner, ModBlocks.POOL_CRANE.get(), crane,
+                ModBlocks.POOL_CONTROLLER.get(), controller);
+        alone.forEach((block, single) -> {
+            getVariantBuilder(block).forAllStates(state -> {
+                int cell = state.getValue(PoolPartBlock.CELL);
+                boolean turns = cell > 0 || block == ModBlocks.POOL_CONTROLLER.get();
+                return ConfiguredModel.builder()
+                        .modelFile(cell > 0 ? formed.get(state.getValue(PoolPartBlock.LOOK).getSerializedName() + "_" + cell) : single)
+                        .rotationY(turns ? ((int) state.getValue(PoolPartBlock.FACING).toYRot() + 180) % 360 : 0)
+                        .build();
+            });
+            simpleBlockItem(block, single);
+        });
+    }
+
+    /**
+     * The Container Battery's parts. Alone each shows its own faces; formed, each draws its cell of
+     * the container's design (art/tools/container_concept.py), a front block showing its slot with
+     * a rack in it when INSTALLED, turned to face the way the controller does.
+     */
+    private void containerBattery() {
+        DesignModel design = DesignModel.load("container_battery");
+        Map<String, ModelFile> formed = new HashMap<>();
+        for (String look : design.stateNames()) {
+            for (int index = 1; index <= ContainerLayout.CELLS; index++) {
+                BlockPos cell = ContainerLayout.cell(index);
+                BlockModelBuilder model = models().getBuilder("block/container/" + look + "_" + index)
+                        .parent(models().getExistingFile(mcLoc("block/block")));
+                design.build(model, look, cell.getX(), cell.getY(), cell.getZ(), "liner", models()::nested);
+                formed.put(look + "_" + index, model);
+            }
+        }
+        ModelFile frame = models().cubeAll("container_frame", modLoc("block/container/part_frame"));
+        ModelFile thermal = models().cubeAll("thermal_unit", modLoc("block/container/part_thermal"));
+        ModelFile controller = models().orientable("battery_controller", modLoc("block/container/part_frame"),
+                modLoc("block/container/part_controller"), modLoc("block/container/part_frame"));
+        Map<Block, ModelFile> alone = Map.of(ModBlocks.CONTAINER_FRAME.get(), frame, ModBlocks.THERMAL_UNIT.get(), thermal,
+                ModBlocks.BATTERY_CONTROLLER.get(), controller);
+        alone.forEach((block, single) -> {
+            getVariantBuilder(block).forAllStates(state -> {
+                int cell = state.getValue(ContainerPartBlock.CELL);
+                boolean turns = cell > 0 || block == ModBlocks.BATTERY_CONTROLLER.get();
+                String look = state.getValue(ContainerPartBlock.INSTALLED) ? "full" : "empty";
+                return ConfiguredModel.builder()
+                        .modelFile(cell > 0 ? formed.get(look + "_" + cell) : single)
+                        .rotationY(turns ? ((int) state.getValue(ContainerPartBlock.FACING).toYRot() + 180) % 360 : 0)
+                        .build();
+            });
+            simpleBlockItem(block, single);
+        });
+    }
+
+    /** The formed microreactor's design (art/tools/microreactor_concept.py), read once. */
+    private DesignModel microreactorDesign;
+
+    /** One quarter of the assembled 3D microreactor, built facing north, cut from its design. */
     private ModelFile formedQuarter(MicroreactorSlot slot, boolean running) {
+        if (microreactorDesign == null) {
+            microreactorDesign = DesignModel.load("microreactor");
+        }
         BlockModelBuilder model = models().getBuilder("microreactor_" + slot.getSerializedName() + (running ? "_running" : ""))
                 .parent(models().getExistingFile(mcLoc("block/block")));
-        MicroreactorModel.build(model, slot, running, name -> modLoc("block/microreactor/" + name));
+        boolean back = slot == MicroreactorSlot.LOWER_BACK || slot == MicroreactorSlot.UPPER_BACK;
+        boolean upper = slot == MicroreactorSlot.UPPER_FRONT || slot == MicroreactorSlot.UPPER_BACK;
+        microreactorDesign.build(model, running ? "running" : "idle", 0, upper ? 1 : 0, back ? 1 : 0, "steel", models()::nested);
         return model;
     }
 
@@ -253,31 +349,45 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockItem(block, off);
     }
 
+    /**
+     * Electric Alloy Smelter, facing north: an induction furnace, as real ones are built, in the
+     * service frame: the power cabinet across the back (the lit screen and a light strip on its
+     * front, vents on its sides), and in the bay under the roof the crucible in its coil, the coil's
+     * clamp bars holding its turns apart, the crucible's rim with its pour spout, and copper busbars
+     * from the coil back into the cabinet. The coil and the crucible's mouth glow while it works.
+     * Its own textures: art/tools/electric_smelter_textures.py.
+     */
     private ModelFile electricSmelterModel(String name, boolean active) {
         BoxModel boxes = new BoxModel();
-        boxes.add("trim", 0, 0, 0, 16, 2, 16);
-        boxes.add("trim", 0, 14, 0, 16, 16, 16);
-        for (float x : new float[] {0, 14}) {
-            for (float z : new float[] {0, 14}) {
-                boxes.add("frame", x, 2, z, x + 2, 14, z + 2);
-            }
+        boxes.add("skid", 0, 0, 0, 16, 2, 16);
+        serviceFrame(boxes, 9, 2, "lpanel_13x12", 2);
+        boxes.add("cabinet", 3.5F, 10.5F, 8.5F, 12.5F, 12.5F, 9).decal(Direction.NORTH, "screen").glow(Direction.NORTH);
+        lampStrip(boxes, active, 2, 13.25F, 8.75F, 14, 13.75F, 9);
+        boxes.add("cabinet", 14.5F, 5, 10, 15, 11, 14).decal(Direction.EAST, "vent");
+        boxes.add("cabinet", 1, 5, 10, 1.5F, 11, 14).decal(Direction.WEST, "vent");
+        // The crucible in its coil, in the bay.
+        boxes.add("metal", 3, 2, 3, 13, 3, 8.5F);
+        boxes.add(active ? "coil_on" : "coil", 3.5F, 3, 3.5F, 12.5F, 10, 8.5F);
+        // The coil's clamp bars, which hold its turns apart, as on a real induction coil.
+        for (float x : new float[] {5, 10.25F}) {
+            boxes.add("metal", x, 3, 3, x + 0.75F, 10, 3.5F);
         }
-        boxes.add("body", 1, 2, 1, 15, 14, 15);
-        BoxModel.Box window = boxes.add("frame", 3, 4, 0.5F, 13, 12, 1)
-                .decal(Direction.NORTH, active ? "smelter_window_on" : "smelter_window");
+        for (float z : new float[] {4.5F, 7}) {
+            boxes.add("metal", 3, 3, z, 3.5F, 10, z + 0.75F);
+            boxes.add("metal", 12.5F, 3, z, 13, 10, z + 0.75F);
+        }
+        BoxModel.Box rim = boxes.add("metal", 4, 10, 4, 12, 11, 8).face(Direction.UP, active ? "mouth_on" : "mouth");
         if (active) {
-            window.glow(Direction.NORTH);
+            rim.glow(Direction.UP);
         }
-        boxes.add("frame", 4, 2.5F, 0.5F, 12, 3.5F, 1).decal(Direction.NORTH, active ? "lamp_on" : "lamp_off");
-        boxes.add("frame", 15, 5, 4, 15.5F, 11, 12).decal(Direction.EAST, "grille");
-        boxes.add("frame", 0.5F, 5, 4, 1, 11, 12).decal(Direction.WEST, "grille");
+        boxes.add("metal", 7, 10, 3.25F, 9, 10.5F, 4);
+        // Busbars from the coil's sides back into the cabinet.
+        for (float x : new float[] {2.75F, 12.5F}) {
+            boxes.add("copper", x, 5, 5.5F, x + 0.75F, 5.75F, 9);
+            boxes.add("copper", x, 7.5F, 5.5F, x + 0.75F, 8.25F, 9);
+        }
         BlockModelBuilder model = models().getBuilder(name).parent(models().getExistingFile(mcLoc("block/block")));
-        boxes.build(model, "frame", texture -> switch (texture) {
-            case "frame" -> modLoc("block/microreactor/steel");
-            case "trim" -> modLoc("block/microreactor/steel_dark");
-            case "grille" -> modLoc("block/microreactor/" + texture);
-            default -> modLoc("block/machine/" + texture);
-        });
+        boxes.build(model, "cabinet", machineParts("electric_smelter"));
         return model;
     }
 
@@ -290,30 +400,33 @@ public class ModBlockStateProvider extends BlockStateProvider {
     }
 
     /**
-     * Intake pump, facing north: a hazard-striped skid, a strainer with intake grilles low down (where
-     * the water comes in), the pump casing at the front with a light strip, the gunmetal motor behind
-     * it, and a copper riser on top with a cap (it pushes water out of the top; pipes and cables
-     * connect on any side, so no ports are drawn).
+     * Intake pump, facing north: a vertical pump set, as on a real intake. A rounded gunmetal pump
+     * casing (the volute) on the family skid, a bright flange ring, the electric motor standing on it
+     * in water-blue with cooling fins, its fan cover and shaft cap on top, and a copper discharge
+     * nozzle with a flange at the front. A light strip round the casing while it runs. Pipes and
+     * cables connect on any side, so no ports are drawn. Its own textures:
+     * art/tools/intake_pump_textures.py.
      */
     private ModelFile intakePumpModel(String name, boolean running) {
         BoxModel boxes = new BoxModel();
-        boxes.add("steel_dark", 0, 0, 0, 16, 2, 16).sides("hazard");
-        boxes.add("steel", 1, 2, 1, 15, 7, 15);
-        boxes.add("steel", 0.5F, 3, 3, 1, 6, 13).decal(Direction.WEST, "grille");
-        boxes.add("steel", 15, 3, 3, 15.5F, 6, 13).decal(Direction.EAST, "grille");
-        boxes.add("steel", 3, 3, 0.5F, 13, 6, 1).decal(Direction.NORTH, "grille");
-        boxes.add("steel_dark", 0.5F, 7, 0.5F, 15.5F, 8, 15.5F);
-        // Pump casing at the front, with a light strip round it.
-        boxes.add("steel", 3, 8, 1, 13, 14, 8);
-        boxes.add(running ? "glow" : "glow_off", 2.9F, 12.25F, 0.9F, 13.1F, 12.75F, 8);
-        // Motor behind it: a gunmetal drum, two overlapping boxes for a rounded look.
-        boxes.add("lead", 4, 8, 8, 12, 14, 15);
-        boxes.add("lead", 3, 9, 8, 13, 13, 15);
-        // Water out: a copper riser with a graphite cap on top.
-        boxes.add("copper", 5, 14, 5, 11, 15, 11);
-        boxes.add("steel_dark", 4.5F, 15, 4.5F, 11.5F, 16, 11.5F);
-        BlockModelBuilder model = models().getBuilder(name).parent(models().getExistingFile(mcLoc("block/block")));
-        boxes.build(model, "steel", texture -> modLoc("block/microreactor/" + texture));
+        boxes.add("skid", 0, 0, 0, 16, 2, 16);
+        // The volute, rounded with two boxes of different heights (no shared faces to flicker).
+        boxes.add("metal", 2.5F, 2, 2.5F, 13.5F, 7, 13.5F);
+        boxes.add("metal", 2, 2, 3.5F, 14, 6.5F, 12.5F);
+        lampStrip(boxes, running, 3, 5, 2.25F, 13, 5.5F, 2.5F);
+        boxes.add("bright", 3.5F, 7, 3.5F, 12.5F, 7.5F, 12.5F);
+        // The motor.
+        boxes.add("motor", 4, 7.5F, 4, 12, 14, 12);
+        boxes.add("motor", 3.5F, 7.5F, 4.75F, 12.5F, 13.75F, 11.25F);
+        boxes.add("fan_cover", 4.5F, 14, 4.5F, 11.5F, 15, 11.5F);
+        // Water leaves by the top: the discharge flange a pipe meets, on a neck through the fan cover.
+        topConnector(boxes, 15, 16);
+        backConnector(boxes, 12);
+        // Discharge nozzle.
+        boxes.add("copper", 6.5F, 3, 0.5F, 9.5F, 6, 2.5F);
+        boxes.add("bright", 6, 2.5F, 1, 10, 6.5F, 1.5F);
+        BlockModelBuilder model = boxModel(name);
+        boxes.build(model, "metal", machineParts("intake_pump"));
         return model;
     }
 
@@ -423,10 +536,74 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockItem(ModBlocks.SUN_GATE_PREVIEW.get(), fusionPreview);
     }
 
+    /** The machine family's shared textures (art/tools/machine_family.py). */
+    private static final java.util.Set<String> FAMILY = java.util.Set.of(
+            "skid", "cabinet", "lid", "screen", "vent", "metal", "bright", "copper", "accent", "hazard", "connector");
+
+    /*
+     * Where pipes meet a single-block machine. Pipes and cables connect on any side (MachineItemPort),
+     * but a pipe should meet something: the machine's top reaches the top of the block over the
+     * pipe's centre (its own feature where it has one: a hopper, a flue), and the back carries a
+     * connector, a neutral graphite flange round a socket, centred on the face where a pipe meets it,
+     * on a neck from the body. Neutral, not a port's colour: any side takes anything. The front stays
+     * clean for the screen; flanks are left to the machine's own features.
+     */
+
+    /**
+     * The service frame some machines are built in, so their pipes meet a flat back and a flat top:
+     * a rear cabinet across the back (its front at z {@code cabinetFront}, from {@code cabinetBottom}
+     * up, a designed panel {@code backPanel} on its back), a flat roof over the whole machine, two
+     * corner posts at the front holding it up (from {@code postBottom}), and the connectors on the
+     * roof and the cabinet's back. The machine's working parts sit in the open bay under the roof.
+     */
+    private static void serviceFrame(BoxModel boxes, float cabinetFront, float cabinetBottom, String backPanel, float postBottom) {
+        boxes.add("cabinet", 1.5F, cabinetBottom, cabinetFront, 14.5F, 14, 15.5F).decal(Direction.SOUTH, backPanel);
+        boxes.add("metal", 1.5F, 14, 1.5F, 14.5F, 15.5F, 15.5F).decal(Direction.UP, "lpanel_13x14");
+        for (float x : new float[] {1.5F, 13}) {
+            boxes.add("metal", x, postBottom, 1.5F, x + 1.5F, 14, 3);
+        }
+        topConnector(boxes, 15.5F, 16);
+        backConnector(boxes, 15.5F);
+    }
+
+    /** The back's connector: a 6 x 6 neck from the body's back (at z {@code body}) to an 8 x 8 flange flush with the block's back. */
+    private static void backConnector(BoxModel boxes, float body) {
+        backConnector(boxes, body, 8);
+    }
+
+    /** The back's connector, centred at height {@code y} (8 on a one-block machine). */
+    private static void backConnector(BoxModel boxes, float body, float y) {
+        if (body < 15.5F) {
+            boxes.add("metal", 5, y - 3, body, 11, y + 3, 15.5F);
+        }
+        boxes.add("metal", 4, y - 4, 15.5F, 12, y + 4, 16).decal(Direction.SOUTH, "connector");
+    }
+
+    /** The top's connector: a 4 x 4 neck from the body's top (at y {@code body}) to an 8 x 8 flange flush with {@code top}. */
+    private static void topConnector(BoxModel boxes, float body, float top) {
+        if (body < top - 0.5F) {
+            boxes.add("metal", 6, body, 6, 10, top - 0.5F, 10);
+        }
+        boxes.add("metal", 4, top - 0.5F, 4, 12, top, 12).decal(Direction.UP, "connector");
+    }
+
+    /**
+     * Textures for one of the redesigned machines: the family's shared ones, the microreactor's
+     * light strip, and the rest from the machine's own folder (its art/tools script).
+     */
+    private java.util.function.Function<String, ResourceLocation> machineParts(String machine) {
+        return name -> switch (name) {
+            case "glow", "glow_off" -> modLoc("block/microreactor/" + name);
+            // lpanel_WxH: the family's designed panels, drawn at the size of the face they cover.
+            default -> FAMILY.contains(name) || name.startsWith("lpanel_") ? modLoc("block/machine/family/" + name)
+                    : modLoc("block/machine/" + machine + "/" + name);
+        };
+    }
+
     /** Our shared material and decal textures, by short name. */
     private ResourceLocation machineTexture(String name) {
         return switch (name) {
-            case "body", "lamp_on", "lamp_off" -> modLoc("block/machine/" + name);
+            case "body" -> modLoc("block/machine/" + name);
             default -> modLoc("block/microreactor/" + name);
         };
     }
@@ -446,33 +623,58 @@ public class ModBlockStateProvider extends BlockStateProvider {
     }
 
     /**
-     * Core Cracker, facing north: a hazard-striped skid, a light casing with a jaw crusher's
-     * flywheels on either side, a grilled access door on the front with a light strip over it, and the
-     * feed hopper on top. No ports drawn: pipes and cables connect on any side.
+     * Core Cracker, facing north: a jaw crusher, as used to crack hard ceramics. A heavy ribbed
+     * frame on the family skid, a stepped feed hopper on top, a spoked flywheel either side with an
+     * orange hub (the flywheel stores the energy that drives the jaws through each stroke), a panel
+     * with the lit screen and a light strip on the front, and a discharge chute below it where the
+     * cracked kernels drop out. Each flywheel is three boxes a little apart in depth, so it reads
+     * round and no two faces share a plane. Its own textures: art/tools/core_cracker_textures.py.
      */
     private ModelFile coreCrackerModel(String name, boolean active) {
         BoxModel boxes = new BoxModel();
-        boxes.add("steel_dark", 0, 0, 0, 16, 2, 16).sides("hazard");
-        boxes.add("steel", 1, 2, 1, 15, 13, 15);
-        boxes.add("steel_dark", 0.5F, 13, 0.5F, 15.5F, 14, 15.5F);
-        // Flywheels: gunmetal drums on both sides, two overlapping boxes for a rounded look.
-        for (float x : new float[] {0, 15}) {
-            boxes.add("lead", x, 4, 5, x + 1, 11, 11);
-            boxes.add("lead", x, 5, 4, x + 1, 10, 12);
-            boxes.add("accent", x + (x == 0 ? -0.25F : 1), 7, 7, x + (x == 0 ? 0 : 1.25F), 8, 9);
-        }
-        // Access door, with an orange latch.
-        boxes.add("steel_dark", 3, 3, 0.5F, 13, 11, 1).decal(Direction.NORTH, "grille");
-        boxes.add("accent", 11.5F, 6, 0, 12.5F, 8, 0.5F);
-        lampStrip(boxes, active, 2, 12, 0.75F, 14, 12.5F, 1);
-        // Feed hopper on top.
-        boxes.add("steel", 2.5F, 14, 2.5F, 13.5F, 15, 13.5F);
+        boxes.add("skid", 0, 0, 0, 16, 2, 16);
+        // The cast frame: each side a designed panel drawn at its size (10 x 9), not a tile.
+        boxes.add("crusher", 3, 2, 3, 13, 11, 13).decal(Direction.NORTH, "frame_side").decal(Direction.SOUTH, "frame_side")
+                .decal(Direction.WEST, "frame_side").decal(Direction.EAST, "frame_side");
+        // The flywheels on both flanks are a model of their own (coreCrackerFlywheel), which the
+        // machine's renderer turns while it works; their axle caps stay here.
+        boxes.add("accent", 0.6F, 6.75F, 7.25F, 1, 8.25F, 8.75F);
+        boxes.add("accent", 15, 6.75F, 7.25F, 15.4F, 8.25F, 8.75F);
+        // Front: the panel with its screen and light strip, and the chute below.
+        boxes.add("cabinet", 3.25F, 5.5F, 2.5F, 12.75F, 9, 3);
+        boxes.add("cabinet", 3.5F, 6.5F, 2.25F, 12.5F, 8.5F, 2.5F).decal(Direction.NORTH, "screen").glow(Direction.NORTH);
+        lampStrip(boxes, active, 3.5F, 9.5F, 2.75F, 12.5F, 10, 3);
+        boxes.add("metal", 5, 2, 1.5F, 11, 5, 3).decal(Direction.NORTH, "chute");
+        boxes.add("accent", 5, 4.75F, 1.25F, 11, 5.25F, 1.5F);
+        // The feed hopper, widening upwards.
+        boxes.add("bright", 4, 11, 4, 12, 12.5F, 12);
+        boxes.add("bright", 3, 12.5F, 3, 13, 14, 13);
+        // The hopper's mouth rises to the top of the block, where a pipe from above meets it.
+        boxes.add("bright", 2.5F, 14, 2.5F, 13.5F, 16, 13.5F).face(Direction.UP, "hopper_mouth");
+        backConnector(boxes, 13);
         BlockModelBuilder model = boxModel(name);
-        boxes.build(model, "steel", this::machineTexture);
+        boxes.build(model, "crusher", machineParts("core_cracker"));
         return model;
     }
 
+    /**
+     * The Core Cracker's two flywheels, where they sit on its flanks, as a model of their own: the
+     * machine's renderer turns it about their axle (y 7.5, z 8) while it works. Each wheel is three
+     * overlapping boxes, rounded, each face a shade inset from the next so none share a plane.
+     */
+    private void coreCrackerFlywheel() {
+        BoxModel boxes = new BoxModel();
+        float[][] wheel = {{5, 11, 2.5F, 12.5F}, {4, 12, 3.5F, 11.5F}, {3, 13, 4.5F, 10.5F}};
+        for (int i = 0; i < wheel.length; i++) {
+            float inset = i * 0.1F;
+            boxes.add("flywheel", 1 + inset, wheel[i][2], wheel[i][0], 2.5F + inset, wheel[i][3], wheel[i][1]);
+            boxes.add("flywheel", 13.5F - inset, wheel[i][2], wheel[i][0], 15 - inset, wheel[i][3], wheel[i][1]);
+        }
+        boxes.build(boxModel("core_cracker_flywheel"), "flywheel", machineParts("core_cracker"));
+    }
+
     private void coreCracker() {
+        coreCrackerFlywheel();
         Block block = ModBlocks.CORE_CRACKER.get();
         ModelFile off = coreCrackerModel("core_cracker", false);
         ModelFile on = coreCrackerModel("core_cracker_on", true);
@@ -481,31 +683,48 @@ public class ModBlockStateProvider extends BlockStateProvider {
     }
 
     /**
-     * Reprocessor, two high, facing north: a light dissolver tank on a hazard-striped skid, and
-     * above it a gunmetal
-     * lead-lined column with a sight glass that glows while it works, a copper line running up
-     * from the tank, and a cap. No ports drawn: pipes and cables connect on any side. Drawn as one
-     * 32-high design and cut per block.
+     * Reprocessor, two high, facing north: a rounded welded dissolver vessel on a hazard-striped
+     * skid (it handles hot, radioactive fuel, so it earns the stripes), with a sight glass onto the
+     * solution that glows teal with rising bubbles while it works, and a light strip on its cap.
+     * Above it the lead-lined separation column with bright rings, a hazard band and label plate, a copper
+     * line up the east flank from the vessel, a lid, and connectors on the cap and the back. Rounded shapes are two boxes of different
+     * heights, so no faces share a plane. No ports drawn: pipes and cables connect on any side. One
+     * 32-high design, cut per block. Its own textures: art/tools/reprocessor_textures.py.
      */
     private BoxModel reprocessorBoxes(boolean active) {
         BoxModel boxes = new BoxModel();
-        boxes.add("steel_dark", 0, 0, 0, 16, 2, 16).sides("hazard");
-        boxes.add("steel", 1, 2, 1, 15, 14, 15);
-        boxes.add("steel_dark", 3, 4, 0.5F, 13, 10, 1).decal(Direction.NORTH, "grille");
-        lampStrip(boxes, active, 2, 11.5F, 0.75F, 14, 12, 1);
-        boxes.add("steel_dark", 0.5F, 14, 0.5F, 15.5F, 15.5F, 15.5F);
-        // The column: gunmetal lead lining, rounded with two overlapping boxes, and trim bands.
-        boxes.add("lead", 3, 15.5F, 2, 13, 29, 14);
-        boxes.add("lead", 2, 15.5F, 3, 14, 29, 13);
-        boxes.add("steel_dark", 1.5F, 21, 1.5F, 14.5F, 22, 14.5F);
-        // Sight glass on the front, glowing while it works.
-        boxes.add("steel_dark", 6, 16.5F, 1.25F, 10, 28, 2);
-        lampStrip(boxes, active, 7, 17.5F, 1, 9, 27, 1.25F);
-        // Copper line from the tank up the back corner into the column. It stands clear of the trim
-        // band (which reaches 14.5), so no face of it lies on one of the band's and flickers.
-        boxes.add("copper", 13, 15.5F, 13, 15, 26, 15);
-        // Cap.
-        boxes.add("steel_dark", 1.5F, 29, 1.5F, 14.5F, 31, 14.5F);
+        boxes.add("skid", 0, 0, 0, 16, 2, 16).sides("hazard");
+        // The dissolver vessel.
+        boxes.add("vessel", 2, 2, 3, 14, 13, 13);
+        boxes.add("vessel", 3, 2, 2, 13, 12.5F, 14);
+        boxes.add("metal", 6.5F, 2.25F, 1.9F, 9.5F, 12.75F, 2);
+        BoxModel.Box sight = boxes.add("metal", 7, 2.5F, 1.75F, 9, 12.5F, 2).decal(Direction.NORTH, active ? "sight_on" : "sight");
+        if (active) {
+            sight.glow(Direction.NORTH);
+        }
+        boxes.add("metal", 2.5F, 13, 2.5F, 13.5F, 14, 13.5F);
+        lampStrip(boxes, active, 3, 13.25F, 2.25F, 13, 13.75F, 2.5F);
+        // The column.
+        boxes.add("column", 4, 14, 3, 12, 30, 13);
+        boxes.add("column", 3, 14, 4, 13, 29.5F, 12);
+        for (float y : new float[] {17, 28}) {
+            boxes.add("bright", 2.75F, y, 2.75F, 13.25F, y + 0.75F, 13.25F);
+        }
+        // Marked as process plants mark their vessels: a hazard band round the column and a label
+        // plate below it, by shape and colour. A radiation trefoil cannot be drawn well this small;
+        // multiblocks, with room for an authentic one, may carry it.
+        boxes.add("hazard", 2.9F, 22, 2.9F, 13.1F, 24, 13.1F);
+        boxes.add("column", 5, 18.5F, 2.85F, 11, 21.5F, 3).decal(Direction.NORTH, "label");
+        // Copper line up the east flank (the back is the connector's), from the vessel into the
+        // column: a flange on the vessel, a riser standing clear of the rings and the band, and a
+        // flanged stub into the column.
+        boxes.add("bright", 14, 9.25F, 7, 14.5F, 11.25F, 9);
+        boxes.add("copper", 14.25F, 9.5F, 7.25F, 15.75F, 26.5F, 8.75F);
+        boxes.add("copper", 13, 25, 7.25F, 14.25F, 26.5F, 8.75F);
+        boxes.add("bright", 12.9F, 24.75F, 7, 13.4F, 26.75F, 9);
+        boxes.add("lid", 3.5F, 30, 3.5F, 12.5F, 31, 12.5F);
+        topConnector(boxes, 31, 32);
+        backConnector(boxes, 14);
         return boxes;
     }
 
@@ -515,14 +734,14 @@ public class ModBlockStateProvider extends BlockStateProvider {
         for (int lit = 0; lit < 2; lit++) {
             for (DoubleBlockHalf half : DoubleBlockHalf.values()) {
                 BlockModelBuilder model = boxModel("reprocessor_" + half.getSerializedName() + (lit == 1 ? "_on" : ""));
-                reprocessorBoxes(lit == 1).build(model, "steel", this::machineTexture, half == DoubleBlockHalf.LOWER ? 0 : 16);
+                reprocessorBoxes(lit == 1).build(model, "vessel", machineParts("reprocessor"), half == DoubleBlockHalf.LOWER ? 0 : 16);
                 halves[lit][half.ordinal()] = model;
             }
         }
         horizontalBlock(block, state -> halves[state.getValue(ProcessingBlock.ACTIVE) ? 1 : 0][state.getValue(TallProcessingBlock.HALF).ordinal()]);
         // The item shows the whole machine, scaled down to fit a slot.
         BlockModelBuilder item = models().getBuilder("reprocessor_item").parent(models().getExistingFile(mcLoc("block/block")));
-        reprocessorBoxes(false).buildWhole(item, "steel", this::machineTexture);
+        reprocessorBoxes(false).buildWhole(item, "vessel", machineParts("reprocessor"));
         item.transforms()
                 .transform(ItemDisplayContext.GUI).rotation(30, 225, 0).translation(0, -3.2F, 0).scale(0.4F).end()
                 .transform(ItemDisplayContext.GROUND).translation(0, 1, 0).scale(0.2F).end()
@@ -535,56 +754,68 @@ public class ModBlockStateProvider extends BlockStateProvider {
     }
 
     /**
-     * Fuel Fabricator, facing north: a hazard-striped skid, a light lower cabinet with a grille and a
-     * light strip, a graphite worktop, and an open press bay above it (corner posts, a gunmetal ram,
-     * a copper rod lying on the tray) under a housing. No ports drawn: pipes and cables connect on any side.
+     * Fuel Fabricator, facing north: a pellet press and rod loading station, as fuel plants use. A
+     * family cabinet with the lit screen and a light strip and a gunmetal worktop, and on it the
+     * service frame (a cabinet across the back, the roof on posts): under the roof a hydraulic
+     * press, two uprights with an orange hydraulic cylinder hanging from the roof between them and a
+     * bright ram and platen over the bed with its pellet die, and at the front a loading tray with
+     * two finished fuel rods and their orange end caps. Its own textures:
+     * art/tools/fuel_fabricator_textures.py.
      */
     private ModelFile fuelFabricatorModel(String name, boolean active) {
         BoxModel boxes = new BoxModel();
-        boxes.add("steel_dark", 0, 0, 0, 16, 2, 16).sides("hazard");
-        boxes.add("steel", 1, 2, 1, 15, 10, 15);
-        boxes.add("steel_dark", 3, 3, 0.5F, 13, 7, 1).decal(Direction.NORTH, "grille");
-        lampStrip(boxes, active, 2, 8, 0.75F, 14, 8.5F, 1);
-        boxes.add("steel_dark", 0.5F, 10, 0.5F, 15.5F, 11, 15.5F);
-        for (float x : new float[] {1, 13}) {
-            for (float z : new float[] {1, 13}) {
-                boxes.add("steel_dark", x, 11, z, x + 2, 14, z + 2);
-            }
+        boxes.add("skid", 0, 0, 0, 16, 2, 16);
+        boxes.add("cabinet", 1.5F, 2, 1.5F, 14.5F, 8, 15.5F).decal(Direction.NORTH, "lpanel_13x6")
+                .decal(Direction.SOUTH, "lpanel_13x6").decal(Direction.WEST, "lpanel_14x6").decal(Direction.EAST, "lpanel_14x6");
+        boxes.add("cabinet", 3.5F, 4.5F, 1.25F, 12.5F, 6.5F, 1.5F).decal(Direction.NORTH, "screen").glow(Direction.NORTH);
+        lampStrip(boxes, active, 2, 7, 1.25F, 14, 7.5F, 1.5F);
+        boxes.add("metal", 1, 8, 1, 15, 9, 15);
+        serviceFrame(boxes, 11, 9, "lpanel_13x5", 9);
+        // The press: its uprights carry the roof, the cylinder hangs from it.
+        boxes.add("metal", 2.5F, 9, 6, 4.5F, 14, 10);
+        boxes.add("metal", 11.5F, 9, 6, 13.5F, 14, 10);
+        boxes.add("cylinder", 6, 11.5F, 6.5F, 10, 14, 9.5F);
+        // The ram and platen press up and down while it works: a model of their own
+        // (fuelFabricatorRam), moved by its renderer.
+        boxes.add("metal", 5, 9, 5.5F, 11, 9.5F, 10.5F).face(Direction.UP, "bed");
+        // The loading tray with two finished rods.
+        boxes.add("metal", 3, 9, 1.5F, 13, 9.5F, 5);
+        for (float z : new float[] {2, 3.25F}) {
+            boxes.add("rod", 3.5F, 9.5F, z, 12.25F, 10.25F, z + 0.75F);
+            boxes.add("accent", 12.25F, 9.5F, z, 12.75F, 10.25F, z + 0.75F);
         }
-        // The press: a gunmetal ram over a tray with a copper fuel rod on it.
-        boxes.add("lead", 5, 12, 5, 11, 14, 11);
-        boxes.add("steel", 3, 11, 6, 13, 11.5F, 10);
-        boxes.add("copper", 4.5F, 11.5F, 7.5F, 12, 12, 8.5F);
-        boxes.add("accent", 4, 11.5F, 7.5F, 4.5F, 12, 8.5F);
-        boxes.add("steel", 1, 14, 1, 15, 15, 15);
         BlockModelBuilder model = boxModel(name);
-        boxes.build(model, "steel", this::machineTexture);
+        boxes.build(model, "cabinet", machineParts("fuel_fabricator"));
         return model;
     }
 
     /**
-     * Lithium Extractor, facing north: a hazard-striped skid, a light cabinet with a grille and a
-     * light strip, and a glass brine column on top with a sorbent bed that glows while it works,
-     * copper lines down its sides. No ports drawn: pipes and cables connect on any side.
+     * Lithium Extractor, facing north: direct lithium extraction from brine, as real plants do it. A
+     * brine basin on the family skid, white salt crusting its edge, in the service frame (a cabinet
+     * across the back, the roof on posts standing on the basin's rim): under the roof two frosted
+     * ion-exchange columns standing in the brine, whose sorbent beds glow cyan while brine runs
+     * through them, and a small control box at the front with the lit screen and a light strip.
+     * Rounded columns are two boxes of different heights, so no faces share a plane. Its own
+     * textures: art/tools/lithium_extractor_textures.py.
      */
     private ModelFile lithiumExtractorModel(String name, boolean active) {
         BoxModel boxes = new BoxModel();
-        boxes.add("steel_dark", 0, 0, 0, 16, 2, 16).sides("hazard");
-        boxes.add("steel", 1, 2, 1, 15, 8, 15);
-        boxes.add("steel_dark", 3, 3, 0.5F, 13, 7, 1).decal(Direction.NORTH, "grille");
-        boxes.add("steel_dark", 0.5F, 8, 0.5F, 15.5F, 9, 15.5F);
-        // The column: a graphite frame with a sight glass on each side, the sorbent bed inside.
-        boxes.add("steel_dark", 3, 9, 3, 13, 10, 13);
-        boxes.add("steel_dark", 3, 14, 3, 13, 15, 13);
-        for (float x : new float[] {3, 12}) {
-            for (float z : new float[] {3, 12}) {
-                boxes.add("steel_dark", x, 10, z, x + 1, 14, z + 1);
-            }
+        boxes.add("skid", 0, 0, 0, 16, 2, 16);
+        boxes.add("basin", 1.5F, 2, 1.5F, 14.5F, 5, 14.5F).face(Direction.UP, "brine");
+        serviceFrame(boxes, 12, 2, "lpanel_13x12", 5);
+        // Unlit here: while it works, its renderer lights the sorbent beds in a glow that rises up
+        // the columns and falls back.
+        String column = "column";
+        for (float x : new float[] {5, 11}) {
+            boxes.add(column, x - 2, 5, 7, x + 2, 14, 11);
+            boxes.add(column, x - 1.5F, 5, 6.5F, x + 1.5F, 13.75F, 11.5F);
         }
-        lampStrip(boxes, active, 5, 10, 5, 11, 14, 11);
-        boxes.add("copper", 1.5F, 9, 7, 2.5F, 13, 9);
+        // Control box.
+        boxes.add("cabinet", 3.5F, 5, 1.25F, 12.5F, 9, 4.5F);
+        boxes.add("cabinet", 3.5F, 6.5F, 1, 12.5F, 8.5F, 1.25F).decal(Direction.NORTH, "screen").glow(Direction.NORTH);
+        lampStrip(boxes, active, 4, 5.5F, 1, 12, 6, 1.25F);
         BlockModelBuilder model = boxModel(name);
-        boxes.build(model, "steel", this::machineTexture);
+        boxes.build(model, "basin", machineParts("lithium_extractor"));
         return model;
     }
 
@@ -596,7 +827,20 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockItem(block, off);
     }
 
+    /**
+     * The Fuel Fabricator's ram and platen, at the bottom of their stroke (the platen on the bed):
+     * its renderer lifts them 1.5 pixels to rest and presses them down in turn while it works. The
+     * ram runs up into the cylinder, so it never shows a gap.
+     */
+    private void fuelFabricatorRam() {
+        BoxModel boxes = new BoxModel();
+        boxes.add("bright", 7, 10, 7, 9, 13.5F, 9);
+        boxes.add("bright", 6.5F, 9.5F, 7, 9.5F, 10, 9);
+        boxes.build(boxModel("fuel_fabricator_ram"), "bright", machineParts("fuel_fabricator"));
+    }
+
     private void fuelFabricator() {
+        fuelFabricatorRam();
         Block block = ModBlocks.FUEL_FABRICATOR.get();
         ModelFile off = fuelFabricatorModel("fuel_fabricator", false);
         ModelFile on = fuelFabricatorModel("fuel_fabricator_on", true);
@@ -712,11 +956,38 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     private void alloySmelter() {
         Block block = ModBlocks.ALLOY_SMELTER.get();
-        ModelFile off = models().orientable("alloy_smelter",
-                modLoc("block/alloy_smelter_side"), modLoc("block/alloy_smelter_front"), modLoc("block/alloy_smelter_top"));
-        ModelFile on = models().orientable("alloy_smelter_on",
-                modLoc("block/alloy_smelter_side"), modLoc("block/alloy_smelter_front_on"), modLoc("block/alloy_smelter_top"));
+        ModelFile off = alloySmelterModel("alloy_smelter", false);
+        ModelFile on = alloySmelterModel("alloy_smelter_on", true);
         horizontalBlock(block, state -> state.getValue(AlloySmelterBlock.LIT) ? on : off);
         simpleBlockItem(block, off);
+    }
+
+    /**
+     * Alloy Smelter, facing north: tier 1, before any power, so a small fuel-fired furnace as early
+     * blast furnaces were. A firebrick hearth on the family skid, bound with two steel bands, a fire
+     * door that glows while it burns with an orange latch above it, and a stepped gunmetal hood rising
+     * to a copper flue with a ring round it. The only brick machine, so it reads as the earliest.
+     * Its own textures: art/tools/alloy_smelter_textures.py.
+     */
+    private ModelFile alloySmelterModel(String name, boolean lit) {
+        BoxModel boxes = new BoxModel();
+        boxes.add("skid", 0, 0, 0, 16, 2, 16);
+        boxes.add("firebrick", 2, 2, 2, 14, 11, 14);
+        for (float y : new float[] {4, 8}) {
+            boxes.add("metal", 1.75F, y, 1.75F, 14.25F, y + 1, 14.25F);
+        }
+        BoxModel.Box door = boxes.add("metal", 4.5F, 3.5F, 1.5F, 11.5F, 7.5F, 2).decal(Direction.NORTH, lit ? "fire_door_on" : "fire_door");
+        if (lit) {
+            door.glow(Direction.NORTH);
+        }
+        boxes.add("accent", 7, 7.75F, 1.25F, 9, 8.25F, 1.75F);
+        boxes.add("metal", 2.5F, 11, 2.5F, 13.5F, 12, 13.5F);
+        boxes.add("metal", 4, 12, 4, 12, 13, 12);
+        boxes.add("copper", 6, 13, 6, 10, 16, 10);
+        boxes.add("metal", 5.5F, 14.5F, 5.5F, 10.5F, 15, 10.5F);
+        backConnector(boxes, 14.25F);
+        BlockModelBuilder model = boxModel(name);
+        boxes.build(model, "firebrick", machineParts("alloy_smelter"));
+        return model;
     }
 }

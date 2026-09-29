@@ -1,5 +1,9 @@
 package com.ryzer.ryzergen.registry;
 
+import com.ryzer.ryzergen.battery.container.ContainerMenu;
+import com.ryzer.ryzergen.battery.container.ContainerBuildMenu;
+import com.ryzer.ryzergen.machine.pool.PoolMenu;
+import com.ryzer.ryzergen.machine.pool.PoolBuildMenu;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.battery.HomeBatteryMenu;
 import com.ryzer.ryzergen.cable.CableKind;
@@ -52,6 +56,18 @@ public final class ModMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<StationControlMenu>> STATION_CONTROL =
             MENUS.register("station_control", () -> new MenuType<>(StationControlMenu::new, FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<PoolBuildMenu>> POOL_BUILD =
+            MENUS.register("pool_build", () -> new MenuType<>(PoolBuildMenu::new, FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<PoolMenu>> POOL =
+            MENUS.register("pool", () -> new MenuType<>(PoolMenu::new, FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<ContainerBuildMenu>> CONTAINER_BUILD =
+            MENUS.register("container_build", () -> new MenuType<>(ContainerBuildMenu::new, FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<ContainerMenu>> CONTAINER_BATTERY =
+            MENUS.register("container_battery", () -> new MenuType<>(ContainerMenu::new, FeatureFlags.DEFAULT_FLAGS));
 
     public static final DeferredHolder<MenuType<?>, MenuType<HomeBatteryMenu>> HOME_BATTERY =
             MENUS.register("home_battery", () -> new MenuType<>(HomeBatteryMenu::new, FeatureFlags.DEFAULT_FLAGS));

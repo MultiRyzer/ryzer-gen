@@ -1,7 +1,8 @@
-"""Draws the mod icon: the running microreactor on a graphite tile with a soft cyan glow.
+"""Draws the mod icon: the fission station, running, on a graphite tile with a soft cyan glow.
 
-The reactor is rendered from the generated models (model_preview), so the icon always matches the
-game. Run from the repo root after runData:
+The station is rendered from its design (fission_concept.py, the same quads the game draws), with
+its rods glowing and steam rising from the stack, so the icon always matches the game. Run from
+the repo root:
     python art/tools/mod_icon.py
 Writes art/icon/ryzergen_icon.png (512 px, for Modrinth and CurseForge) and the in-game logo
 shown in the NeoForge mods list.
@@ -15,8 +16,9 @@ from pixelart import PAL, ROOT, rgb, write_png
 
 SIZE = 512
 RADIUS = 72
-REACTOR = ['microreactor_lower_front_running', 'microreactor_upper_front_running@0,1,0',
-           'microreactor_lower_back_running@0,0,1', 'microreactor_upper_back_running@0,1,1']
+# How much of the tile the station fills (its larger side), and the camera's tilt.
+FILL = 0.84
+RISE = 0.42
 OUT = os.path.join(ROOT, 'art', 'icon', 'ryzergen_icon.png')
 LOGO = os.path.join(ROOT, 'mod', 'src', 'main', 'resources', 'ryzergen_logo.png')
 
@@ -57,8 +59,12 @@ def tile():
 
 
 def main():
-    faces = model_preview.collect_faces([spec_of(s) for s in REACTOR])
-    art = model_preview.render(faces, (1, 1), 8.5, background=(0, 0, 0, 0))
+    import fission_concept
+    station = fission_concept.d
+    # Size the picture from a small trial render, then draw it at the scale that fills the tile.
+    trial = station.render((1, 1), 0.5, RISE, background=None)
+    scale = 0.5 * SIZE * FILL / max(len(trial), len(trial[0]))
+    art = station.render((1, 1), scale, RISE, background=None)
     img = tile()
     h, w = len(art), len(art[0])
     ox, oy = (SIZE - w) // 2, (SIZE - h) // 2 - 4
@@ -71,12 +77,38 @@ def main():
                 img[y][x] = (*mix(img[y][x][:3], (0, 0, 0), (1 - d) * 0.45), 255)
     for y in range(h):
         for x in range(w):
-            if art[y][x][3] and 0 <= oy + y < SIZE and 0 <= ox + x < SIZE:
-                img[oy + y][ox + x] = art[y][x]
+            a = art[y][x][3]
+            if a and 0 <= oy + y < SIZE and 0 <= ox + x < SIZE:
+                under = img[oy + y][ox + x]
+                f = a / 255
+                img[oy + y][ox + x] = (*mix(under[:3], art[y][x][:3], f), max(under[3], a))
+    steam(img, ox + w / 2, oy + h * 0.13, w)
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     write_png(OUT, img)
     shutil.copyfile(OUT, LOGO)
-    print('wrote', OUT, 'reactor', w, 'x', h)
+    print('wrote', OUT, 'station', w, 'x', h)
+
+
+def steam(img, cx, cy, width):
+    """A soft plume of steam rising out of the stack's mouth at (cx, cy), drifting a little and
+    fading as it climbs, drawn over the picture and clipped to the tile."""
+    puffs = []
+    for i in range(9):
+        t = i / 8
+        puffs.append((cx + math.sin(t * 2.4) * width * 0.06 * t, cy - t * width * 0.34,
+                      width * (0.13 + 0.12 * t), 0.5 * (1 - t) ** 1.3))
+    white = (236, 242, 246)
+    for y in range(SIZE):
+        for x in range(SIZE):
+            if not inside(x, y, 2):
+                continue
+            a = 0.0
+            for px, py, r, strength in puffs:
+                d = math.hypot(x + 0.5 - px, (y + 0.5 - py) * 1.25) / r
+                if d < 1:
+                    a = max(a, strength * (1 - d * d))
+            if a > 0.01:
+                img[y][x] = (*mix(img[y][x][:3], white, a), 255)
 
 
 def spec_of(spec):

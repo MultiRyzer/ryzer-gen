@@ -1,0 +1,75 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#metal"
+        },
+        "east": {
+          "texture": "#rod_side",
+          "uv": [
+            0.0,
+            0.0,
+            4.0,
+            10.0
+          ]
+        },
+        "north": {
+          "texture": "#rod_side",
+          "uv": [
+            0.0,
+            0.0,
+            4.0,
+            10.0
+          ]
+        },
+        "south": {
+          "texture": "#rod_side",
+          "uv": [
+            0.0,
+            0.0,
+            4.0,
+            10.0
+          ]
+        },
+        "up": {
+          "texture": "#rod_top",
+          "uv": [
+            0.0,
+            0.0,
+            4.0,
+            4.0
+          ]
+        },
+        "west": {
+          "texture": "#rod_side",
+          "uv": [
+            0.0,
+            0.0,
+            4.0,
+            10.0
+          ]
+        }
+      },
+      "from": [
+        -2,
+        -12,
+        1
+      ],
+      "to": [
+        2,
+        -2,
+        5
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "metal": "ryzergen:block/machine/family/metal",
+    "particle": "ryzergen:block/pool/paint",
+    "rod_side": "ryzergen:block/pool/rod_side",
+    "rod_top": "ryzergen:block/pool/rod_top"
+  }
+}

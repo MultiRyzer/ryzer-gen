@@ -1,0 +1,119 @@
+{
+  "parent": "minecraft:block/block",
+  "children": {
+    "solid": {
+      "ambientocclusion": false,
+      "elements": [
+        {
+          "faces": {
+            "down": {
+              "cullface": "down",
+              "texture": "#skid"
+            },
+            "up": {
+              "texture": "#skid"
+            }
+          },
+          "from": [
+            0,
+            0,
+            0
+          ],
+          "to": [
+            16,
+            2,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#liner"
+            },
+            "up": {
+              "texture": "#liner"
+            }
+          },
+          "from": [
+            0,
+            2,
+            0
+          ],
+          "to": [
+            16,
+            4,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#rack"
+            },
+            "up": {
+              "texture": "#racktop_60x30",
+              "uv": [
+                9.5,
+                2.25,
+                13.5,
+                6.25
+              ]
+            }
+          },
+          "from": [
+            0,
+            4,
+            0
+          ],
+          "to": [
+            16,
+            14,
+            16
+          ]
+        }
+      ],
+      "render_type": "minecraft:cutout",
+      "textures": {
+        "liner": "ryzergen:block/pool/liner",
+        "rack": "ryzergen:block/pool/rack",
+        "racktop_60x30": "ryzergen:block/pool/racktop_60x30",
+        "skid": "ryzergen:block/machine/family/skid"
+      }
+    },
+    "translucent": {
+      "ambientocclusion": false,
+      "elements": [
+        {
+          "faces": {
+            "down": {
+              "texture": "#water",
+              "tintindex": 0
+            }
+          },
+          "from": [
+            0,
+            4,
+            0
+          ],
+          "to": [
+            16,
+            16,
+            16
+          ]
+        }
+      ],
+      "render_type": "minecraft:translucent",
+      "textures": {
+        "water": "minecraft:block/water_still"
+      }
+    }
+  },
+  "item_render_order": [
+    "solid",
+    "translucent"
+  ],
+  "loader": "neoforge:composite",
+  "textures": {
+    "particle": "ryzergen:block/pool/liner"
+  }
+}

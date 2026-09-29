@@ -1,9 +1,4 @@
 {
-  "neoforge:conditions": [
-    {
-      "type": "ryzergen:preview"
-    }
-  ],
   "type": "ryzergen:extracting",
   "fluid": {
     "amount": 500,
