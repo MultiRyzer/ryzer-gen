@@ -395,15 +395,21 @@ public class StationRunner {
         }
 
         // Coolant carries heat away as steam, as far as its channels, the core's temperature and the
-        // water allow. Heat no coolant can reach (see StationReactor) stays and warms the core. With
-        // the reaction stopped, every coolant channel works on cooling the core down.
+        // water allow. Coolant is local (see StationReactor): heat no channel can reach, from a rod
+        // with no coolant beside it or more than a channel carries, stays and warms the core, and
+        // while a core makes such heat its coolant carries only what the layout routes to it, so the
+        // core climbs until it SCRAMs, as the control screen warns. (Before, the spare channels also
+        // carried off that stored heat, so a core the screen called too hot ran fine.) Heat stored any
+        // other way, from warming up or with the reaction stopped, every coolant channel carries off.
         float stored = (temperature - AMBIENT) * HEAT_CAPACITY;
         float heatPerWater = heatPerWater(overdrive);
         float byWater = water.getFluidAmount() * heatPerWater;
         float carryable = generation > 0 ? Math.max(0, generation - analysis.stranded()) : 0;
+        boolean routed = analysis.stranded() <= 0.5F;
+        float reachable = generation > 0 && !routed ? carryable : carryable + stored;
         int working = generation > 0 && analysis.working() > 0 ? analysis.working() : analysis.coolants();
         float potential = working * analysis.capacity() * StationReactor.coolingRamp(temperature);
-        float removed = Math.max(0, Math.min(potential, Math.min(carryable + stored, byWater)));
+        float removed = Math.max(0, Math.min(potential, Math.min(reachable, byWater)));
         if (removed > 0) {
             water.drain((int) Math.ceil(removed / heatPerWater), IFluidHandler.FluidAction.EXECUTE);
         }
@@ -429,9 +435,14 @@ public class StationRunner {
             scrammed = true;
         }
 
+        // A SCRAM trips the turbine too: while the core cools, its steam goes round the turbine to the
+        // condenser (a steam dump), so it makes no power and the heat it had built up is lost. Real
+        // basis: a reactor trip trips the turbine, and the decay heat is dumped. (Before, the cooling
+        // core kept the turbine turning, so overloading a core and letting it SCRAM cost almost
+        // nothing.)
         float efficiency = StationReactor.efficiency(temperature, overdrive);
-        efficiencyPermille = removed > 0 ? Math.round(efficiency * 1000) : 0;
-        output = Math.round(removed * efficiency);
+        efficiencyPermille = removed > 0 && !scrammed ? Math.round(efficiency * 1000) : 0;
+        output = scrammed ? 0 : Math.round(removed * efficiency);
         if (output > 0) {
             energy.generate(output);
         }

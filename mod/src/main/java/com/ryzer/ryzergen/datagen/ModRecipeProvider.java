@@ -183,6 +183,87 @@ public class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_advanced_board", has(ModTags.CIRCUITS_ADVANCED))
                 .save(output);
 
+        // Spent Fuel Pool (design section 7), needed from the first depleted core, so it takes basic
+        // boards. The liner is cheap structure (rule 3): steel-lined concrete, many per craft. The
+        // cost is in the controller and the crane.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.POOL_LINER.get(), 16)
+                .pattern("SBS")
+                .pattern("B B")
+                .pattern("SBS")
+                .define('B', ItemTags.STONE_BRICKS)
+                .define('S', ModTags.INGOTS_STEEL)
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(output);
+        // Controller: a board to run it, glass for its readout and a cauldron for the tank.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.POOL_CONTROLLER.get())
+                .pattern("SBS")
+                .pattern("GCG")
+                .pattern("SBS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('B', ModTags.CIRCUITS_BASIC)
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .define('C', Items.CAULDRON)
+                .unlockedBy("has_basic_board", has(ModTags.CIRCUITS_BASIC))
+                .save(output);
+        // Crane: a steel bridge, painted crane yellow, a piston for the hoist and a chain for the cable.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.POOL_CRANE.get())
+                .pattern("SSS")
+                .pattern("DPD")
+                .pattern(" C ")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('D', Tags.Items.DYES_YELLOW)
+                .define('P', Items.PISTON)
+                .define('C', Items.CHAIN)
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(output);
+
+        // Container Battery (design section 12). The frame is cheap structure (rule 3), many per
+        // craft; the cost is in the controller (advanced boards: grid storage comes with fission),
+        // the thermal unit and above all the LFP racks, which need lithium.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CONTAINER_FRAME.get(), 16)
+                .pattern("ISI")
+                .pattern("S S")
+                .pattern("ISI")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('S', ModTags.INGOTS_STEEL)
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(output);
+        // Controller: advanced boards to manage the racks, glass for its screen, redstone for its busbar.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BATTERY_CONTROLLER.get())
+                .pattern("SAS")
+                .pattern("GRG")
+                .pattern("SAS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
+                .unlockedBy("has_advanced_board", has(ModTags.CIRCUITS_ADVANCED))
+                .save(output);
+        // Thermal unit: a fan behind a wire guard (iron bars), copper for the cooling coil, a board to run it.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.THERMAL_UNIT.get())
+                .pattern("SCS")
+                .pattern("CIC")
+                .pattern("SBS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('I', Items.IRON_BARS)
+                .define('B', ModTags.CIRCUITS_BASIC)
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(output);
+        // LFP rack: lithium iron phosphate cells (lithium, iron, and bone meal for the phosphate) in a
+        // steel case, with a copper busbar. Real basis: most grid batteries now use LFP cells.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LFP_BATTERY_RACK.get())
+                .pattern("LCL")
+                .pattern("IPI")
+                .pattern("LSL")
+                .define('L', ModTags.DUSTS_LITHIUM)
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('P', Items.BONE_MEAL)
+                .define('S', ModTags.INGOTS_STEEL)
+                .unlockedBy("has_lithium", has(ModTags.DUSTS_LITHIUM))
+                .save(output);
+
         // Graphite block: nine graphite, and back. The fission station's moderator.
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GRAPHITE_BLOCK.get())
                 .pattern("GGG")
@@ -521,7 +602,7 @@ public class ModRecipeProvider extends RecipeProvider {
                         SizedIngredient.of(ModTags.GEMS_SILICON_CARBIDE, 1)), null,
                 List.of(new ItemStack(ModItems.TRISO_PELLETS.get(), 3)), 200);
         // Lithium target rod: lithium in aluminium (real rods hold lithium aluminate pellets) in a steel tube.
-        // The lithium side of the next tier is unfinished, so its recipes load only with the preview on.
+        // Tritium breeding is unfinished, so its recipe loads only with the preview on.
         RecipeOutput preview = output.withConditions(Preview.CONDITION);
         machine(preview, "fabricating/lithium_target_rod", MachineRecipe.Process.FABRICATING,
                 List.of(SizedIngredient.of(ModTags.DUSTS_LITHIUM, 2), SizedIngredient.of(OreType.ALUMINIUM.ingotTag(), 1),
@@ -538,10 +619,10 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('C', Items.CAULDRON)
                 .define('A', ModTags.CIRCUITS_ADVANCED)
                 .unlockedBy("has_salt", has(OreType.SALT.dropTag()))
-                .save(preview);
+                .save(output);
         // Extracting: salt dissolved into brine, the lithium drawn out of it. Real basis: direct
         // lithium extraction from brine, where most of the world's lithium comes from.
-        machine(preview, "extracting/lithium", MachineRecipe.Process.EXTRACTING,
+        machine(output, "extracting/lithium", MachineRecipe.Process.EXTRACTING,
                 List.of(SizedIngredient.of(OreType.SALT.dropTag(), 2)), SizedFluidIngredient.of(Tags.Fluids.WATER, 500),
                 List.of(new ItemStack(ModItems.LITHIUM_DUST.get())), 200);
     }

@@ -497,6 +497,43 @@ def station_core():
     return t
 
 
+def spent_fuel_pool():
+    """Spent Fuel Pool controller: the 18 rack slots (6 x 3, each filled from below in code as its
+    item cools), the water gauge, the 6 output slots (2 x 3), and the player's inventory below."""
+    t = Tex(SIZE)
+    panel(t, PANEL_W, SMELTER_H)
+    bx0, by0, bx1, by1 = SMELTER_BAY
+    recess(t, bx0, by0, bx1 - bx0 + 1, by1 - by0 + 1, 'S', 'U', 'A')
+    for row in range(3):
+        for col in range(6):
+            slot(t, 7 + col * 18, 17 + row * 18)
+        for col in range(2):
+            slot(t, 133 + col * 18, 17 + row * 18)
+    well(t, 117, 17, 12, 54)
+    for row in range(3):
+        for col in range(9):
+            slot(t, 7 + col * 18, 83 + row * 18)
+    for col in range(9):
+        slot(t, 7 + col * 18, 141)
+    return t
+
+
+def container_battery():
+    """Container Battery readout (racks go in by hand on the container itself): the charge and
+    coolant gauges, the readout screen, and a well for the map of the 20 slots (cells drawn in
+    code, laid out as the container's front)."""
+    t = Tex(SIZE)
+    panel(t, PANEL_W, 112)
+    recess(t, 4, 16, 168, 92, 'S', 'U', 'A')
+    well(t, 10, 21, 14, 80)
+    well(t, 28, 21, 10, 80)
+    screen(t, 42, 21, 78, 80)
+    t.rect(45, 47, 116, 47, 'f')
+    t.rect(45, 73, 116, 73, 'f')
+    recess(t, 124, 21, 44, 33, 'U', 'U', 'b')
+    return t
+
+
 def station_control():
     """Fission station controls, 216 wide: the 5 x 5 core grid on the left with the plan tools
     under it (plan frames, bars and tool icons are drawn in code), the readout screen on the right
@@ -614,6 +651,8 @@ def main():
     publish('gui/intake_pump', intake_pump())
     publish('gui/station_core', station_core())
     publish('gui/station_control', station_control())
+    publish('gui/spent_fuel_pool', spent_fuel_pool())
+    publish('gui/container_battery', container_battery())
     for name, (inputs, outputs, water) in PROCESSING.items():
         publish('gui/' + name, processing(inputs, outputs, water))
 

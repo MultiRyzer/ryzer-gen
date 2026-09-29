@@ -261,9 +261,11 @@ class Design:
         total = sum(len(g) for g in groups.values())
         print(f'exported {total} quads ({", ".join(f"{g} {len(q)}" for g, q in groups.items())}) -> {path}')
 
-    def render(self, view, scale, rise):
+    def render(self, view, scale, rise, background=(40, 44, 52)):
         """Draws every quad from a camera looking along `view`, tilted down by `rise`: solid quads
-        with a depth buffer, then the glass blended over them."""
+        with a depth buffer, then the glass blended over them. background None leaves the picture
+        transparent where nothing is drawn (for the mod icon); see-through layers keep their own
+        opacity there."""
         vx, vz = view
         k = math.hypot(vx, vz)
         vx, vz = vx / k, vz / k
@@ -283,7 +285,8 @@ class Design:
         pad = 12
         w, h = int(maxx - minx) + 2 * pad, int(maxy - miny) + 2 * pad
         ox, oy = pad - minx, pad - miny
-        img = [[(40, 44, 52)] * w for _ in range(h)]
+        img = [[background or (0, 0, 0)] * w for _ in range(h)]
+        alpha = [[255 if background else 0] * w for _ in range(h)]
         zbuf = [[1e9] * w for _ in range(h)]
 
         def shade(n):
@@ -322,15 +325,22 @@ class Design:
                             base = img[py][px]
                             img[py][px] = tuple(min(255, round(base[i] + c * t * 0.5)) for i, (c, t) in
                                                 enumerate(zip((r, g, b), (0.85, 0.45, 1.0))))
+                            alpha[py][px] = max(alpha[py][px], min(255, (r + g + b) // 3))
                             continue
                         if blend:
                             f = a / 255
+                            if alpha[py][px] == 0:
+                                img[py][px] = tuple(round(c * light) for c in (r, g, b))
+                                alpha[py][px] = a
+                                continue
                             base = img[py][px]
                             img[py][px] = tuple(round(base[i] * (1 - f) + c * light * f) for i, c in enumerate((r, g, b)))
+                            alpha[py][px] = max(alpha[py][px], a)
                             continue
                         if a < 128:
                             continue
                         zbuf[py][px] = depth
+                        alpha[py][px] = 255
                         img[py][px] = (int(r * light), int(g * light), int(b * light))
 
         blended = ('steam', 'plumes', 'plasma', 'glass')
@@ -341,7 +351,7 @@ class Design:
             for q in (self.quads if group == 'plasma' else visible):
                 if q[3] == group:
                     raster(q, 'add' if group == 'plasma' else True)
-        return [[(*p, 255) for p in row] for row in img]
+        return [[(*p, alpha[y][x]) for x, p in enumerate(row)] for y, row in enumerate(img)]
 
     def save_png(self, out, views):
         """Renders each (view, scale, rise) side by side into one picture."""

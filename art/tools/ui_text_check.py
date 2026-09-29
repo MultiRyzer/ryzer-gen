@@ -61,6 +61,22 @@ CHECKS = [
     ('gui.ryzergen.station_core.blocked', ['340'], 96),
     ('gui.ryzergen.station_core.formed', [], 96),
     ('gui.ryzergen.station_core.count', ['212', '212'], 84),
+    # Spent Fuel Pool (machine/pool/PoolScreen): the title from x 8, the status right-aligned to
+    # x 169 on the same row. The title may take 90 and the status 70, with a gap between.
+    ('container.ryzergen.pool_controller', [], 90),
+    ('gui.ryzergen.pool.cooling', [], 70),
+    ('gui.ryzergen.pool.low_water', [], 70),
+    ('gui.ryzergen.pool.idle', [], 70),
+    # Container Battery (battery/container/ContainerScreen): screen x 42 to 120, text from x 46;
+    # the slot count under the map from x 126 to the panel's edge at 171.
+    ('gui.ryzergen.battery.stored', ['99.99M'], 72),
+    ('gui.ryzergen.battery.capacity', ['99.99M'], 72),
+    ('gui.ryzergen.battery.in', ['99.9k'], 72),
+    ('gui.ryzergen.battery.out', ['99.9k'], 72),
+    ('gui.ryzergen.container.cooled', [], 72),
+    ('gui.ryzergen.container.no_coolant', [], 72),
+    ('gui.ryzergen.container.racks', ['20', '20'], 44),
+    ('container.ryzergen.battery_controller', [], 160),
     # Station controls (machine/fission/StationControlScreen): screen x 100 to 210, text from x 104.
     ('gui.ryzergen.station.status.warming', [], 104),
     ('gui.ryzergen.station.status.no_water', [], 104),

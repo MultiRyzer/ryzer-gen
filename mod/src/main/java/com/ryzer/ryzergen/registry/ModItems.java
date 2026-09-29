@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.registry;
 
+import com.ryzer.ryzergen.battery.container.LfpRackItem;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.cable.CableUpgrade;
 import com.ryzer.ryzergen.cable.FittingItem;
@@ -44,6 +45,13 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> FUSION_PREVIEW = ITEMS.registerSimpleBlockItem(ModBlocks.FUSION_PREVIEW);
     public static final DeferredItem<BlockItem> SUN_GATE_PREVIEW = ITEMS.registerSimpleBlockItem(ModBlocks.SUN_GATE_PREVIEW);
     public static final DeferredItem<BlockItem> STATION_CASING = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_CASING);
+    public static final DeferredItem<BlockItem> POOL_CONTROLLER = ITEMS.registerSimpleBlockItem(ModBlocks.POOL_CONTROLLER);
+    public static final DeferredItem<BlockItem> POOL_LINER = ITEMS.registerSimpleBlockItem(ModBlocks.POOL_LINER);
+    public static final DeferredItem<BlockItem> POOL_CRANE = ITEMS.registerSimpleBlockItem(ModBlocks.POOL_CRANE);
+    public static final DeferredItem<BlockItem> BATTERY_CONTROLLER = ITEMS.registerSimpleBlockItem(ModBlocks.BATTERY_CONTROLLER);
+    public static final DeferredItem<BlockItem> CONTAINER_FRAME = ITEMS.registerSimpleBlockItem(ModBlocks.CONTAINER_FRAME);
+    public static final DeferredItem<BlockItem> THERMAL_UNIT = ITEMS.registerSimpleBlockItem(ModBlocks.THERMAL_UNIT);
+    public static final DeferredItem<LfpRackItem> LFP_BATTERY_RACK = ITEMS.registerItem("lfp_battery_rack", LfpRackItem::new);
     public static final DeferredItem<BlockItem> STATION_GLASS = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_GLASS);
     public static final DeferredItem<BlockItem> TURBINE_ROTOR = ITEMS.registerSimpleBlockItem(ModBlocks.TURBINE_ROTOR);
     public static final DeferredItem<WrenchItem> WRENCH = ITEMS.registerItem("wrench", WrenchItem::new);

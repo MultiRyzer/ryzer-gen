@@ -1,6 +1,7 @@
 package com.ryzer.ryzergen.client;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.machine.pool.HotFuel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -50,6 +51,10 @@ public final class ItemDetails {
         List<Component> tooltip = event.getToolTip();
         if (language.has(key) && !tooltip.isEmpty()) {
             tooltip.add(1, line(language.getOrDefault(key)));
+        }
+        // Spent fuel fresh from a reactor says so first: nothing will process it until it cools.
+        if (HotFuel.isHot(event.getItemStack()) && !tooltip.isEmpty()) {
+            tooltip.add(1, line(language.getOrDefault("tooltip.ryzergen.hot")));
         }
         if (!language.has(key + ".details.1")) {
             return;

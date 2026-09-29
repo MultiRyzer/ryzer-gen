@@ -9,8 +9,9 @@ import net.neoforged.neoforge.common.conditions.ICondition;
 import java.util.List;
 
 /**
- * Content from the next tier that is built but not finished yet (the lithium side of design
- * section 10). It stays registered so worlds keep their blocks and items, but while the preview
+ * Content from the next tier that is built but not finished yet (tritium breeding from design
+ * section 10, and the fusion and sun gate previews). The Lithium Extractor has left the preview: the
+ * Container Battery's racks need its lithium. It stays registered so worlds keep their blocks and items, but while the preview
  * config is off its recipes do not load and it is left out of the creative tab and recipe viewers.
  */
 public final class Preview {
@@ -24,8 +25,7 @@ public final class Preview {
     }
 
     public static List<ItemLike> items() {
-        return List.of(ModItems.LITHIUM_EXTRACTOR.get(), ModItems.LITHIUM_DUST.get(),
-                ModItems.LITHIUM_TARGET_ROD.get(), ModItems.IRRADIATED_TARGET_ROD.get(), ModItems.FUSION_PREVIEW.get(),
+        return List.of(ModItems.LITHIUM_TARGET_ROD.get(), ModItems.IRRADIATED_TARGET_ROD.get(), ModItems.FUSION_PREVIEW.get(),
                 ModItems.SUN_GATE_PREVIEW.get());
     }
 

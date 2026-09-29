@@ -1,0 +1,73 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#bright"
+        },
+        "east": {
+          "texture": "#bright"
+        },
+        "north": {
+          "texture": "#bright"
+        },
+        "south": {
+          "texture": "#bright"
+        },
+        "up": {
+          "texture": "#bright"
+        },
+        "west": {
+          "texture": "#bright"
+        }
+      },
+      "from": [
+        7,
+        10,
+        7
+      ],
+      "to": [
+        9,
+        13.5,
+        9
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#bright"
+        },
+        "east": {
+          "texture": "#bright"
+        },
+        "north": {
+          "texture": "#bright"
+        },
+        "south": {
+          "texture": "#bright"
+        },
+        "up": {
+          "texture": "#bright"
+        },
+        "west": {
+          "texture": "#bright"
+        }
+      },
+      "from": [
+        6.5,
+        9.5,
+        7
+      ],
+      "to": [
+        9.5,
+        10,
+        9
+      ]
+    }
+  ],
+  "textures": {
+    "bright": "ryzergen:block/machine/family/bright",
+    "particle": "ryzergen:block/machine/family/bright"
+  }
+}

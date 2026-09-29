@@ -199,8 +199,14 @@ def mat_steel_dark():
 
 
 def mat_lead():
-    """Vessel: smooth mid gunmetal, a step lighter than the graphite trim so the rings stand out."""
-    return panel('s', 'J', 'u')
+    """Vessel: mid gunmetal, a step lighter than the graphite trim so the flanges stand out, clad
+    in vertical staves (a welded seam every four pixels, lit on one side), as a pressure vessel's
+    plates are. Maps by position, so the staves run on round the column."""
+    t = panel('s', 'J', 'u')
+    for x in range(1, 16, 4):
+        t.rect(x, 1, x, 14, 'z')
+        t.rect(x + 1, 1, x + 1, 14, 'J')
+    return t
 
 
 def mat_copper():
@@ -262,7 +268,7 @@ def decal_screen():
 
 
 PORTHOLE = [
-    'bbbbbbbbbb',
+    'LbbbbbbbbL',
     'bTTTTTTTTU',
     'bTU1221UTU',
     'bT123321TU',
@@ -271,7 +277,7 @@ PORTHOLE = [
     'bT123321TU',
     'bTU1221UTU',
     'bTTTTTTTTU',
-    'UUUUUUUUUU',
+    'LUUUUUUUUL',
 ]
 
 
@@ -394,7 +400,8 @@ def decal_port_fuel():
 
 
 def decal_gauge():
-    """Pressure gauge: white face, graphite rim, orange needle."""
+    """Pressure gauge: white face, graphite rim, orange needle. Drawn on the reactor heart's own
+    side (the formed microreactor no longer carries gauges)."""
     return decal([
         'FTTTTTF',
         'TAAAAAT',
@@ -446,14 +453,18 @@ TEXTURES = {
     'block/microreactor/port_coolant': decal_port_coolant,
     'block/microreactor/port_steam': decal_port_steam,
     'block/microreactor/port_fuel': decal_port_fuel,
-    'block/microreactor/gauge': decal_gauge,
     'block/microreactor/grille': decal_grille,
 }
 
 
+# Lit, glass and port textures stay crisp; the materials get the surface finish (pixelart.finish).
+FINISHED = {'steel', 'steel_dark', 'lead', 'copper', 'accent'}
+
+
 def main():
     for name, fn in TEXTURES.items():
-        publish(name, fn())
+        (publish_finished if name.rsplit('/', 1)[-1] in FINISHED and name.startswith('block/microreactor/')
+         else publish)(name, fn())
 
 
 if __name__ == '__main__':

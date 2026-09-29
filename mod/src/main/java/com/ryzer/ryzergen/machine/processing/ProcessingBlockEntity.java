@@ -3,6 +3,7 @@ package com.ryzer.ryzergen.machine.processing;
 import com.ryzer.ryzergen.machine.MachineEnergyStorage;
 import com.ryzer.ryzergen.machine.MachineItemPort;
 import com.ryzer.ryzergen.machine.RedstoneMode;
+import com.ryzer.ryzergen.machine.pool.HotFuel;
 import com.ryzer.ryzergen.recipe.MachineRecipe;
 import com.ryzer.ryzergen.registry.ModItems;
 import net.minecraft.core.BlockPos;
@@ -200,7 +201,7 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
                 if (slot == machine.upgradeSlot()) {
                     return stack.is(ModItems.SPEED_MODULE.get());
                 }
-                if (slot >= machine.inputs() || !usable.test(stack)) {
+                if (slot >= machine.inputs() || !usable.test(stack) || HotFuel.isHot(stack)) {
                     return false;
                 }
                 for (int other = 0; other < machine.inputs(); other++) {
@@ -215,6 +216,42 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
 
     public ProcessingMachine machine() {
         return machine;
+    }
+
+    /** The client's view of moving parts (the Core Cracker's flywheels): their angle and speed. */
+    private float spin;
+    private float angle;
+    private float angleBefore;
+
+    /** A slow count that runs with the machine, for moving parts with a long cycle of their own. */
+    private float beat;
+    private float beatBefore;
+
+    /** Turns the moving parts a tick, easing up to speed while the machine works and down after. */
+    public void turn(boolean working) {
+        spin += ((working ? 1 : 0) - spin) * 0.05F;
+        beatBefore = beat;
+        beat += spin;
+        angleBefore = angle;
+        angle = (angle + spin * 14) % 360;
+        if (angle < angleBefore) {
+            angleBefore -= 360;
+        }
+    }
+
+    /** The moving parts' angle for this frame, in degrees. */
+    public float angle(float partialTick) {
+        return angleBefore + (angle - angleBefore) * partialTick;
+    }
+
+    /** The slow count for this frame: it rises by about one a tick while the machine works. */
+    public float beat(float partialTick) {
+        return beatBefore + (beat - beatBefore) * partialTick;
+    }
+
+    /** How fast the moving parts go, 0 (still) to 1 (working), easing between. */
+    public float spin() {
+        return spin;
     }
 
     /** Speed modules fitted, 0 to {@link ProcessingMachine#MAX_MODULES}. */

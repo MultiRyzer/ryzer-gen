@@ -26,7 +26,10 @@ NORMAL = {'up': (0, 1, 0), 'down': (0, -1, 0), 'north': (0, 0, -1), 'south': (0,
 
 
 def read_png(path):
-    data = open(path, 'rb').read()
+    return decode_png(open(path, 'rb').read())
+
+
+def decode_png(data):
     pos, idat, w = 8, b'', 0
     while pos < len(data):
         length, tag = struct.unpack('>I4s', data[pos:pos + 8])
@@ -67,10 +70,19 @@ _tex_cache = {}
 
 
 def texture(ref):
-    path = ref.split(':', 1)[-1]
-    if path not in _tex_cache:
-        _tex_cache[path] = read_png(os.path.join(TEXTURES, path + '.png'))
-    return _tex_cache[path]
+    """A texture by its resource name: the mod's from its assets, vanilla's (such as the pool's
+    water) from the Minecraft jar, as pixelart reads them. Animated strips show their first frame."""
+    if ref not in _tex_cache:
+        namespace, _, path = ref.rpartition(':')
+        if namespace == 'minecraft':
+            import zipfile
+            import pixelart
+            with zipfile.ZipFile(pixelart.VANILLA_JAR) as jar:
+                rows = pixelart.read_png(jar.read('assets/minecraft/textures/' + path + '.png'))
+            _tex_cache[ref] = rows[:len(rows[0])]
+        else:
+            _tex_cache[ref] = read_png(os.path.join(TEXTURES, path + '.png'))
+    return _tex_cache[ref]
 
 
 def auto_uv(face, f, t):
@@ -118,18 +130,28 @@ def collect_faces(models):
     faces = []
     for name, (dx, dy, dz), rot in models:
         model = json.load(open(os.path.join(MODELS, name + '.json')))
-        textures = model.get('textures', {})
-        for el in model.get('elements', []):
-            f, t = el['from'], el['to']
-            for face, spec in el['faces'].items():
-                ref = spec['texture']
-                while ref.startswith('#'):
-                    ref = textures[ref[1:]]
-                uv = spec.get('uv') or auto_uv(face, f, t)
-                origin, eu, ev = face_frame(face, f, t)
-                face, origin, eu, ev = turn(face, origin, eu, ev, rot // 90)
-                origin = (origin[0] + dx * 16, origin[1] + dy * 16, origin[2] + dz * 16)
-                faces.append((face, origin, eu, ev, uv, texture(ref), spec.get('rotation', 0)))
+        # A composite model (neoforge:composite) keeps its elements in its children.
+        parts = list(model['children'].values()) if 'children' in model else [model]
+        for part in parts:
+            faces += part_faces(part, dx, dy, dz, rot)
+    return faces
+
+
+def part_faces(model, dx, dy, dz, rot):
+    """The faces of one model (or one child of a composite), placed and turned."""
+    faces = []
+    textures = model.get('textures', {})
+    for el in model.get('elements', []):
+        f, t = el['from'], el['to']
+        for face, spec in el['faces'].items():
+            ref = spec['texture']
+            while ref.startswith('#'):
+                ref = textures[ref[1:]]
+            uv = spec.get('uv') or auto_uv(face, f, t)
+            origin, eu, ev = face_frame(face, f, t)
+            face, origin, eu, ev = turn(face, origin, eu, ev, rot // 90)
+            origin = (origin[0] + dx * 16, origin[1] + dy * 16, origin[2] + dz * 16)
+            faces.append((face, origin, eu, ev, uv, texture(ref), spec.get('rotation', 0)))
     return faces
 
 
@@ -158,7 +180,10 @@ def render(faces, view, scale, background=(40, 44, 52, 255)):
     ox, oy = pad - minx, pad - miny
     img = [[background] * w for _ in range(h)]
     zbuf = [[1e9] * w for _ in range(h)]
-    for face, origin, eu, ev, uv, tex, rotation in visible:
+    def draw(fc, translucent):
+        """Opaque texels write depth; translucent ones (0 < alpha < 255) blend over what is drawn,
+        in a second pass from far to near, as the game draws its translucent layer."""
+        face, origin, eu, ev, uv, tex, rotation = fc
         a = project(origin)
         pu = project(tuple(origin[i] + eu[i] for i in range(3)))
         pv = project(tuple(origin[i] + ev[i] for i in range(3)))
@@ -166,7 +191,7 @@ def render(faces, view, scale, background=(40, 44, 52, 255)):
         e2 = (pv[0] - a[0], pv[1] - a[1])
         det = e1[0] * e2[1] - e1[1] * e2[0]
         if abs(det) < 1e-9:
-            continue
+            return
         xs = [a[0], pu[0], pv[0], pu[0] + e2[0]]
         ys = [a[1], pu[1], pv[1], pu[1] + e2[1]]
         th, tw = len(tex), len(tex[0])
@@ -188,10 +213,29 @@ def render(faces, view, scale, background=(40, 44, 52, 255)):
                 u = uv[0] + su * (uv[2] - uv[0])
                 v = uv[1] + tv * (uv[3] - uv[1])
                 r, g, b, al = tex[min(th - 1, int(v / 16 * th))][min(tw - 1, int(u / 16 * tw))]
-                if al < 128:
+                if translucent:
+                    if al == 0 or al == 255:
+                        continue
+                    f = al / 255
+                    old = img[py][px]
+                    img[py][px] = (int(old[0] * (1 - f) + r * k * f), int(old[1] * (1 - f) + g * k * f),
+                                   int(old[2] * (1 - f) + b * k * f), 255)
+                    continue
+                if al < 255:
                     continue
                 zbuf[py][px] = depth
                 img[py][px] = (int(r * k), int(g * k), int(b * k), 255)
+
+    for fc in visible:
+        draw(fc, False)
+    see_through = [fc for fc in visible if any(0 < p[3] < 255 for row in fc[5] for p in row)]
+
+    def centre_depth(fc):
+        o, eu, ev = fc[1], fc[2], fc[3]
+        return project(tuple(o[i] + (eu[i] + ev[i]) / 2 for i in range(3)))[2]
+
+    for fc in sorted(see_through, key=centre_depth, reverse=True):
+        draw(fc, True)
     return img
 
 

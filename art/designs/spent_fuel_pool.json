@@ -1,0 +1,6365 @@
+{
+ "size": [
+  5,
+  3,
+  3
+ ],
+ "textures": {
+  "accent": {
+   "path": "ryzergen:block/machine/family/accent",
+   "canvas": 16,
+   "translucent": false
+  },
+  "band_11x2": {
+   "path": "ryzergen:block/pool/band_11x2",
+   "canvas": 16,
+   "translucent": false
+  },
+  "band_3x2": {
+   "path": "ryzergen:block/pool/band_3x2",
+   "canvas": 16,
+   "translucent": false
+  },
+  "bright": {
+   "path": "ryzergen:block/machine/family/bright",
+   "canvas": 16,
+   "translucent": false
+  },
+  "cable": {
+   "path": "ryzergen:block/machine/family/lid",
+   "canvas": 16,
+   "translucent": false
+  },
+  "console": {
+   "path": "ryzergen:block/pool/console",
+   "canvas": 16,
+   "translucent": false
+  },
+  "copper": {
+   "path": "ryzergen:block/machine/family/copper",
+   "canvas": 16,
+   "translucent": false
+  },
+  "deck_8x34": {
+   "path": "ryzergen:block/pool/deck_8x34",
+   "canvas": 48,
+   "translucent": false
+  },
+  "girder_34x3": {
+   "path": "ryzergen:block/pool/girder_34x3",
+   "canvas": 48,
+   "translucent": false
+  },
+  "glass_14x13": {
+   "path": "ryzergen:block/pool/glass_14x13",
+   "canvas": 16,
+   "translucent": true
+  },
+  "glass_14x14": {
+   "path": "ryzergen:block/pool/glass_14x14",
+   "canvas": 16,
+   "translucent": true
+  },
+  "glow": {
+   "path": "ryzergen:block/microreactor/glow",
+   "canvas": 16,
+   "translucent": false
+  },
+  "glow_off": {
+   "path": "ryzergen:block/microreactor/glow_off",
+   "canvas": 16,
+   "translucent": false
+  },
+  "hatch_9x8": {
+   "path": "ryzergen:block/pool/hatch_9x8",
+   "canvas": 16,
+   "translucent": false
+  },
+  "hazard": {
+   "path": "ryzergen:block/machine/family/hazard",
+   "canvas": 16,
+   "translucent": false
+  },
+  "hoist_10x8": {
+   "path": "ryzergen:block/pool/hoist_10x8",
+   "canvas": 16,
+   "translucent": false
+  },
+  "liner": {
+   "path": "ryzergen:block/pool/liner",
+   "canvas": 16,
+   "translucent": false
+  },
+  "metal": {
+   "path": "ryzergen:block/machine/family/metal",
+   "canvas": 16,
+   "translucent": false
+  },
+  "mitredown_4x4": {
+   "path": "ryzergen:block/pool/mitredown_4x4",
+   "canvas": 16,
+   "translucent": false
+  },
+  "mitreup_4x4": {
+   "path": "ryzergen:block/pool/mitreup_4x4",
+   "canvas": 16,
+   "translucent": false
+  },
+  "motor": {
+   "path": "ryzergen:block/machine/intake_pump/motor",
+   "canvas": 16,
+   "translucent": false
+  },
+  "paint": {
+   "path": "ryzergen:block/pool/paint",
+   "canvas": 16,
+   "translucent": false
+  },
+  "panel_12x13": {
+   "path": "ryzergen:block/pool/panel_12x13",
+   "canvas": 16,
+   "translucent": false
+  },
+  "panel_12x14": {
+   "path": "ryzergen:block/pool/panel_12x14",
+   "canvas": 16,
+   "translucent": false
+  },
+  "panel_14x13": {
+   "path": "ryzergen:block/pool/panel_14x13",
+   "canvas": 16,
+   "translucent": false
+  },
+  "panel_14x14": {
+   "path": "ryzergen:block/pool/panel_14x14",
+   "canvas": 16,
+   "translucent": false
+  },
+  "pipex_18x4": {
+   "path": "ryzergen:block/pool/pipex_18x4",
+   "canvas": 32,
+   "translucent": false
+  },
+  "pipex_24x4": {
+   "path": "ryzergen:block/pool/pipex_24x4",
+   "canvas": 32,
+   "translucent": false
+  },
+  "pipex_4x4": {
+   "path": "ryzergen:block/pool/pipex_4x4",
+   "canvas": 16,
+   "translucent": false
+  },
+  "pipex_5x4": {
+   "path": "ryzergen:block/pool/pipex_5x4",
+   "canvas": 16,
+   "translucent": false
+  },
+  "pipey_4x14": {
+   "path": "ryzergen:block/pool/pipey_4x14",
+   "canvas": 16,
+   "translucent": false
+  },
+  "pipey_4x4": {
+   "path": "ryzergen:block/pool/pipey_4x4",
+   "canvas": 16,
+   "translucent": false
+  },
+  "pipey_4x8": {
+   "path": "ryzergen:block/pool/pipey_4x8",
+   "canvas": 16,
+   "translucent": false
+  },
+  "port_coolant": {
+   "path": "ryzergen:block/microreactor/port_coolant",
+   "canvas": 16,
+   "translucent": false
+  },
+  "port_fuel": {
+   "path": "ryzergen:block/microreactor/port_fuel",
+   "canvas": 16,
+   "translucent": false
+  },
+  "rack": {
+   "path": "ryzergen:block/pool/rack",
+   "canvas": 16,
+   "translucent": false
+  },
+  "rackside_30x10": {
+   "path": "ryzergen:block/pool/rackside_30x10",
+   "canvas": 32,
+   "translucent": false
+  },
+  "rackside_60x10": {
+   "path": "ryzergen:block/pool/rackside_60x10",
+   "canvas": 64,
+   "translucent": false
+  },
+  "racktop_60x30": {
+   "path": "ryzergen:block/pool/racktop_60x30",
+   "canvas": 64,
+   "translucent": false
+  },
+  "rail_74x2": {
+   "path": "ryzergen:block/pool/rail_74x2",
+   "canvas": 80,
+   "translucent": false
+  },
+  "rod_side": {
+   "path": "ryzergen:block/pool/rod_side",
+   "canvas": 16,
+   "translucent": false
+  },
+  "rod_top": {
+   "path": "ryzergen:block/pool/rod_top",
+   "canvas": 16,
+   "translucent": false
+  },
+  "rope_2x1": {
+   "path": "ryzergen:block/pool/rope_2x1",
+   "canvas": 16,
+   "translucent": false
+  },
+  "shell_10x26": {
+   "path": "ryzergen:block/pool/shell_10x26",
+   "canvas": 32,
+   "translucent": false
+  },
+  "shell_3x26": {
+   "path": "ryzergen:block/pool/shell_3x26",
+   "canvas": 32,
+   "translucent": false
+  },
+  "skid": {
+   "path": "ryzergen:block/machine/family/skid",
+   "canvas": 16,
+   "translucent": false
+  },
+  "stripes_3x3": {
+   "path": "ryzergen:block/pool/stripes_3x3",
+   "canvas": 16,
+   "translucent": false
+  },
+  "stripes_6x3": {
+   "path": "ryzergen:block/pool/stripes_6x3",
+   "canvas": 16,
+   "translucent": false
+  },
+  "stripes_8x3": {
+   "path": "ryzergen:block/pool/stripes_8x3",
+   "canvas": 16,
+   "translucent": false
+  },
+  "trefoil": {
+   "path": "ryzergen:block/pool/trefoil",
+   "canvas": 16,
+   "translucent": false
+  },
+  "trim": {
+   "path": "ryzergen:block/microreactor/steel_dark",
+   "canvas": 16,
+   "translucent": false
+  },
+  "truck_12x3": {
+   "path": "ryzergen:block/pool/truck_12x3",
+   "canvas": 16,
+   "translucent": false
+  },
+  "water": {
+   "path": "minecraft:block/water_still",
+   "canvas": 16,
+   "translucent": true,
+   "tint": 0
+  },
+  "yellow_10x2": {
+   "path": "ryzergen:block/pool/yellow_10x2",
+   "canvas": 16,
+   "translucent": false
+  },
+  "yellow_12x3": {
+   "path": "ryzergen:block/pool/yellow_12x3",
+   "canvas": 16,
+   "translucent": false
+  },
+  "yellow_8x2": {
+   "path": "ryzergen:block/pool/yellow_8x2",
+   "canvas": 16,
+   "translucent": false
+  }
+ },
+ "states": {
+  "dry": [
+   {
+    "material": "skid",
+    "from": [
+     0,
+     0,
+     0
+    ],
+    "to": [
+     80,
+     2,
+     48
+    ],
+    "faces": {
+     "north": "hazard",
+     "south": "hazard",
+     "west": "hazard",
+     "east": "hazard"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     3,
+     2,
+     3
+    ],
+    "to": [
+     77,
+     4,
+     41
+    ]
+   },
+   {
+    "material": "liner",
+    "from": [
+     1,
+     2,
+     0.5
+    ],
+    "to": [
+     15,
+     15,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     1,
+     17,
+     0.5
+    ],
+    "to": [
+     15,
+     31,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     1,
+     33,
+     0.5
+    ],
+    "to": [
+     15,
+     47,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "glass_14x13",
+    "from": [
+     17,
+     2,
+     1.5
+    ],
+    "to": [
+     31,
+     15,
+     2
+    ],
+    "decals": {
+     "north": "glass_14x13"
+    }
+   },
+   {
+    "material": "glass_14x14",
+    "from": [
+     17,
+     17,
+     1.5
+    ],
+    "to": [
+     31,
+     31,
+     2
+    ],
+    "decals": {
+     "north": "glass_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     17,
+     33,
+     0.5
+    ],
+    "to": [
+     31,
+     47,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     2,
+     0.5
+    ],
+    "to": [
+     47,
+     15,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     17,
+     0.5
+    ],
+    "to": [
+     47,
+     31,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     33,
+     0.5
+    ],
+    "to": [
+     47,
+     47,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "glass_14x13",
+    "from": [
+     49,
+     2,
+     1.5
+    ],
+    "to": [
+     63,
+     15,
+     2
+    ],
+    "decals": {
+     "north": "glass_14x13"
+    }
+   },
+   {
+    "material": "glass_14x14",
+    "from": [
+     49,
+     17,
+     1.5
+    ],
+    "to": [
+     63,
+     31,
+     2
+    ],
+    "decals": {
+     "north": "glass_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     49,
+     33,
+     0.5
+    ],
+    "to": [
+     63,
+     47,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     2,
+     0.5
+    ],
+    "to": [
+     79,
+     15,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     17,
+     0.5
+    ],
+    "to": [
+     79,
+     31,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     33,
+     0.5
+    ],
+    "to": [
+     79,
+     47,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     3,
+     2,
+     41
+    ],
+    "to": [
+     15,
+     15,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     3,
+     17,
+     41
+    ],
+    "to": [
+     15,
+     31,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     3,
+     33,
+     41
+    ],
+    "to": [
+     15,
+     47,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     17,
+     2,
+     41
+    ],
+    "to": [
+     31,
+     15,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     17,
+     17,
+     41
+    ],
+    "to": [
+     31,
+     31,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     17,
+     33,
+     41
+    ],
+    "to": [
+     31,
+     47,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     2,
+     41
+    ],
+    "to": [
+     47,
+     15,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     17,
+     41
+    ],
+    "to": [
+     47,
+     31,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     33,
+     41
+    ],
+    "to": [
+     47,
+     47,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     49,
+     2,
+     41
+    ],
+    "to": [
+     63,
+     15,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     49,
+     17,
+     41
+    ],
+    "to": [
+     63,
+     31,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     49,
+     33,
+     41
+    ],
+    "to": [
+     63,
+     47,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     2,
+     41
+    ],
+    "to": [
+     77,
+     15,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     17,
+     41
+    ],
+    "to": [
+     77,
+     31,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     33,
+     41
+    ],
+    "to": [
+     77,
+     47,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     2,
+     1
+    ],
+    "to": [
+     3,
+     15,
+     15
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     17,
+     1
+    ],
+    "to": [
+     3,
+     31,
+     15
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     33,
+     1
+    ],
+    "to": [
+     3,
+     47,
+     15
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     2,
+     17
+    ],
+    "to": [
+     3,
+     15,
+     31
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     17,
+     17
+    ],
+    "to": [
+     3,
+     31,
+     31
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     33,
+     17
+    ],
+    "to": [
+     3,
+     47,
+     31
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     2,
+     33
+    ],
+    "to": [
+     3,
+     15,
+     47
+    ],
+    "faces": {
+     "east": "trim"
+    },
+    "decals": {
+     "west": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     17,
+     33
+    ],
+    "to": [
+     3,
+     31,
+     47
+    ],
+    "faces": {
+     "east": "trim"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     33,
+     33
+    ],
+    "to": [
+     3,
+     47,
+     47
+    ],
+    "faces": {
+     "east": "trim"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     2,
+     1
+    ],
+    "to": [
+     79.5,
+     15,
+     15
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     17,
+     1
+    ],
+    "to": [
+     79.5,
+     31,
+     15
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     33,
+     1
+    ],
+    "to": [
+     79.5,
+     47,
+     15
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     2,
+     17
+    ],
+    "to": [
+     79.5,
+     15,
+     31
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     17,
+     17
+    ],
+    "to": [
+     79.5,
+     31,
+     31
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     33,
+     17
+    ],
+    "to": [
+     79.5,
+     47,
+     31
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     2,
+     33
+    ],
+    "to": [
+     79.5,
+     15,
+     47
+    ],
+    "faces": {
+     "west": "trim"
+    },
+    "decals": {
+     "east": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     17,
+     33
+    ],
+    "to": [
+     79.5,
+     31,
+     47
+    ],
+    "faces": {
+     "west": "trim"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     33,
+     33
+    ],
+    "to": [
+     79.5,
+     47,
+     47
+    ],
+    "faces": {
+     "west": "trim"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     1,
+     2,
+     47
+    ],
+    "to": [
+     3,
+     47,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     2,
+     47
+    ],
+    "to": [
+     79,
+     47,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     0
+    ],
+    "to": [
+     1,
+     47,
+     1
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     47
+    ],
+    "to": [
+     1,
+     47,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     79,
+     2,
+     0
+    ],
+    "to": [
+     80,
+     47,
+     1
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     79,
+     2,
+     47
+    ],
+    "to": [
+     80,
+     47,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     15,
+     2,
+     0
+    ],
+    "to": [
+     17,
+     47,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     15,
+     2,
+     41
+    ],
+    "to": [
+     17,
+     47,
+     43
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     31,
+     2,
+     0
+    ],
+    "to": [
+     33,
+     47,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     31,
+     2,
+     41
+    ],
+    "to": [
+     33,
+     47,
+     43
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     47,
+     2,
+     0
+    ],
+    "to": [
+     49,
+     47,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     47,
+     2,
+     41
+    ],
+    "to": [
+     49,
+     47,
+     43
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     63,
+     2,
+     0
+    ],
+    "to": [
+     65,
+     47,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     63,
+     2,
+     41
+    ],
+    "to": [
+     65,
+     47,
+     43
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     15
+    ],
+    "to": [
+     3,
+     47,
+     17
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     2,
+     15
+    ],
+    "to": [
+     80,
+     47,
+     17
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     31
+    ],
+    "to": [
+     3,
+     47,
+     33
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     2,
+     31
+    ],
+    "to": [
+     80,
+     47,
+     33
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     1,
+     15,
+     0.25
+    ],
+    "to": [
+     79,
+     17,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3,
+     15,
+     41
+    ],
+    "to": [
+     77,
+     17,
+     42.75
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0.25,
+     15,
+     1
+    ],
+    "to": [
+     3,
+     17,
+     47
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     15,
+     1
+    ],
+    "to": [
+     79.75,
+     17,
+     47
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     1,
+     31,
+     0.25
+    ],
+    "to": [
+     79,
+     33,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3,
+     31,
+     41
+    ],
+    "to": [
+     77,
+     33,
+     42.75
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0.25,
+     31,
+     1
+    ],
+    "to": [
+     3,
+     33,
+     47
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     31,
+     1
+    ],
+    "to": [
+     79.75,
+     33,
+     47
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     47,
+     0
+    ],
+    "to": [
+     80,
+     48,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3,
+     47,
+     41
+    ],
+    "to": [
+     77,
+     48,
+     43
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     47,
+     3
+    ],
+    "to": [
+     3,
+     48,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     47,
+     3
+    ],
+    "to": [
+     80,
+     48,
+     48
+    ]
+   },
+   {
+    "material": "glow_off",
+    "from": [
+     1,
+     31.5,
+     -0.25
+    ],
+    "to": [
+     79,
+     32.5,
+     0.25
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     2,
+     18,
+     0.25
+    ],
+    "to": [
+     14,
+     30,
+     0.5
+    ],
+    "decals": {
+     "north": "trefoil"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     66,
+     18,
+     0.25
+    ],
+    "to": [
+     78,
+     30,
+     0.5
+    ],
+    "decals": {
+     "north": "trefoil"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     35,
+     19,
+     -0.5
+    ],
+    "to": [
+     45,
+     29,
+     0.5
+    ],
+    "decals": {
+     "north": "console"
+    },
+    "glow": [
+     "north"
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     79.5,
+     19,
+     3
+    ],
+    "to": [
+     80,
+     29,
+     13
+    ],
+    "decals": {
+     "east": "port_fuel"
+    }
+   },
+   {
+    "material": "metal",
+    "from": [
+     79.5,
+     19,
+     35
+    ],
+    "to": [
+     80,
+     29,
+     45
+    ],
+    "decals": {
+     "east": "port_coolant"
+    }
+   },
+   {
+    "material": "metal",
+    "from": [
+     0,
+     19,
+     19
+    ],
+    "to": [
+     0.5,
+     29,
+     29
+    ],
+    "decals": {
+     "west": "port_fuel"
+    }
+   },
+   {
+    "material": "rack",
+    "from": [
+     10,
+     4,
+     7
+    ],
+    "to": [
+     70,
+     14,
+     37
+    ],
+    "decals": {
+     "up": "racktop_60x30",
+     "north": "rackside_60x10",
+     "south": "rackside_60x10",
+     "west": "rackside_30x10",
+     "east": "rackside_30x10"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     3,
+     19,
+     19.5
+    ],
+    "to": [
+     3.5,
+     27.5,
+     28.5
+    ],
+    "decals": {
+     "east": "hatch_9x8"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     20,
+     20
+    ],
+    "to": [
+     6.5,
+     22.5,
+     20.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     22.5,
+     20
+    ],
+    "to": [
+     9.5,
+     25,
+     20.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     25,
+     20
+    ],
+    "to": [
+     12.5,
+     27.5,
+     20.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     20,
+     27.5
+    ],
+    "to": [
+     6.5,
+     22.5,
+     28.0
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     22.5,
+     27.5
+    ],
+    "to": [
+     9.5,
+     25,
+     28.0
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     25,
+     27.5
+    ],
+    "to": [
+     12.5,
+     27.5,
+     28.0
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     6.0,
+     20,
+     20.5
+    ],
+    "to": [
+     6.5,
+     22.5,
+     27.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     9.0,
+     22.5,
+     20.5
+    ],
+    "to": [
+     9.5,
+     25,
+     27.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     12.0,
+     25,
+     20.5
+    ],
+    "to": [
+     12.5,
+     27.5,
+     27.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     19.5,
+     20.5
+    ],
+    "to": [
+     6.5,
+     20,
+     27.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     6.5,
+     22,
+     20.5
+    ],
+    "to": [
+     9.5,
+     22.5,
+     27.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     9.5,
+     24.5,
+     20.5
+    ],
+    "to": [
+     12.5,
+     25,
+     27.5
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     12.5,
+     25.5,
+     22.5
+    ],
+    "to": [
+     13,
+     26,
+     25.5
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     3,
+     40,
+     3
+    ],
+    "to": [
+     77,
+     41,
+     5
+    ],
+    "decals": {
+     "up": "rail_74x2"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     3,
+     40,
+     39
+    ],
+    "to": [
+     77,
+     41,
+     41
+    ],
+    "decals": {
+     "up": "rail_74x2"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     6,
+     21,
+     43
+    ],
+    "to": [
+     12,
+     27,
+     44
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     68,
+     21,
+     43
+    ],
+    "to": [
+     74,
+     27,
+     44
+    ]
+   },
+   {
+    "material": "copper",
+    "from": [
+     69,
+     12,
+     44
+    ],
+    "to": [
+     73,
+     26,
+     47.5
+    ],
+    "decals": {
+     "north": "pipey_4x14",
+     "south": "pipey_4x14",
+     "west": "pipey_4x14",
+     "east": "pipey_4x14"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     45,
+     8,
+     44
+    ],
+    "to": [
+     69,
+     12,
+     47.5
+    ],
+    "decals": {
+     "north": "pipex_24x4",
+     "south": "pipex_24x4",
+     "up": "pipex_24x4",
+     "down": "pipex_24x4"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     34,
+     2,
+     43
+    ],
+    "to": [
+     46,
+     4,
+     48
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     35,
+     4,
+     44.5
+    ],
+    "to": [
+     45,
+     30,
+     47.5
+    ],
+    "decals": {
+     "south": "shell_10x26",
+     "west": "shell_3x26",
+     "east": "shell_3x26"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     34.5,
+     7,
+     44
+    ],
+    "to": [
+     45.5,
+     9,
+     48
+    ],
+    "decals": {
+     "south": "band_11x2",
+     "west": "band_3x2",
+     "east": "band_3x2"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     34.5,
+     13,
+     44
+    ],
+    "to": [
+     45.5,
+     15,
+     48
+    ],
+    "decals": {
+     "south": "band_11x2",
+     "west": "band_3x2",
+     "east": "band_3x2"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     34.5,
+     19,
+     44
+    ],
+    "to": [
+     45.5,
+     21,
+     48
+    ],
+    "decals": {
+     "south": "band_11x2",
+     "west": "band_3x2",
+     "east": "band_3x2"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     34.5,
+     25,
+     44
+    ],
+    "to": [
+     45.5,
+     27,
+     48
+    ],
+    "decals": {
+     "south": "band_11x2",
+     "west": "band_3x2",
+     "east": "band_3x2"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     38,
+     15.5,
+     44
+    ],
+    "to": [
+     42,
+     18.5,
+     44.5
+    ]
+   },
+   {
+    "material": "copper",
+    "from": [
+     30,
+     8,
+     44
+    ],
+    "to": [
+     35,
+     12,
+     47.5
+    ],
+    "decals": {
+     "north": "pipex_5x4",
+     "south": "pipex_5x4",
+     "up": "pipex_5x4",
+     "down": "pipex_5x4"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     18,
+     2,
+     43
+    ],
+    "to": [
+     30,
+     4,
+     48
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     25,
+     5,
+     44
+    ],
+    "to": [
+     30,
+     14,
+     47.5
+    ]
+   },
+   {
+    "material": "motor",
+    "from": [
+     18,
+     4,
+     44.5
+    ],
+    "to": [
+     25,
+     14,
+     47.5
+    ]
+   },
+   {
+    "material": "copper",
+    "from": [
+     25,
+     14,
+     44
+    ],
+    "to": [
+     29,
+     22,
+     47.5
+    ],
+    "decals": {
+     "north": "pipey_4x8",
+     "south": "pipey_4x8",
+     "west": "pipey_4x8",
+     "east": "pipey_4x8"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     7,
+     22,
+     44
+    ],
+    "to": [
+     25,
+     26,
+     47.5
+    ],
+    "decals": {
+     "north": "pipex_18x4",
+     "south": "pipex_18x4",
+     "up": "pipex_18x4",
+     "down": "pipex_18x4"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     25,
+     22,
+     44
+    ],
+    "to": [
+     29,
+     26,
+     47.5
+    ],
+    "decals": {
+     "south": "mitredown_4x4",
+     "north": "mitredown_4x4",
+     "east": "pipey_4x4",
+     "up": "pipex_4x4"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     69,
+     8,
+     44
+    ],
+    "to": [
+     73,
+     12,
+     47.5
+    ],
+    "decals": {
+     "south": "mitreup_4x4",
+     "north": "mitreup_4x4",
+     "east": "pipey_4x4",
+     "down": "pipex_4x4"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     15,
+     21,
+     43.5
+    ],
+    "to": [
+     17,
+     27,
+     48
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     47,
+     7,
+     43.5
+    ],
+    "to": [
+     49,
+     13,
+     48
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     63,
+     7,
+     43.5
+    ],
+    "to": [
+     65,
+     13,
+     48
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     68,
+     15,
+     43.5
+    ],
+    "to": [
+     74,
+     17,
+     48
+    ]
+   }
+  ],
+  "wet": [
+   {
+    "material": "skid",
+    "from": [
+     0,
+     0,
+     0
+    ],
+    "to": [
+     80,
+     2,
+     48
+    ],
+    "faces": {
+     "north": "hazard",
+     "south": "hazard",
+     "west": "hazard",
+     "east": "hazard"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     3,
+     2,
+     3
+    ],
+    "to": [
+     77,
+     4,
+     41
+    ]
+   },
+   {
+    "material": "liner",
+    "from": [
+     1,
+     2,
+     0.5
+    ],
+    "to": [
+     15,
+     15,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     1,
+     17,
+     0.5
+    ],
+    "to": [
+     15,
+     31,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     1,
+     33,
+     0.5
+    ],
+    "to": [
+     15,
+     47,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "glass_14x13",
+    "from": [
+     17,
+     2,
+     1.5
+    ],
+    "to": [
+     31,
+     15,
+     2
+    ],
+    "decals": {
+     "north": "glass_14x13"
+    }
+   },
+   {
+    "material": "glass_14x14",
+    "from": [
+     17,
+     17,
+     1.5
+    ],
+    "to": [
+     31,
+     31,
+     2
+    ],
+    "decals": {
+     "north": "glass_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     17,
+     33,
+     0.5
+    ],
+    "to": [
+     31,
+     47,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     2,
+     0.5
+    ],
+    "to": [
+     47,
+     15,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     17,
+     0.5
+    ],
+    "to": [
+     47,
+     31,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     33,
+     0.5
+    ],
+    "to": [
+     47,
+     47,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "glass_14x13",
+    "from": [
+     49,
+     2,
+     1.5
+    ],
+    "to": [
+     63,
+     15,
+     2
+    ],
+    "decals": {
+     "north": "glass_14x13"
+    }
+   },
+   {
+    "material": "glass_14x14",
+    "from": [
+     49,
+     17,
+     1.5
+    ],
+    "to": [
+     63,
+     31,
+     2
+    ],
+    "decals": {
+     "north": "glass_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     49,
+     33,
+     0.5
+    ],
+    "to": [
+     63,
+     47,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     2,
+     0.5
+    ],
+    "to": [
+     79,
+     15,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     17,
+     0.5
+    ],
+    "to": [
+     79,
+     31,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     33,
+     0.5
+    ],
+    "to": [
+     79,
+     47,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     3,
+     2,
+     41
+    ],
+    "to": [
+     15,
+     15,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     3,
+     17,
+     41
+    ],
+    "to": [
+     15,
+     31,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     3,
+     33,
+     41
+    ],
+    "to": [
+     15,
+     47,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     17,
+     2,
+     41
+    ],
+    "to": [
+     31,
+     15,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     17,
+     17,
+     41
+    ],
+    "to": [
+     31,
+     31,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     17,
+     33,
+     41
+    ],
+    "to": [
+     31,
+     47,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     2,
+     41
+    ],
+    "to": [
+     47,
+     15,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     17,
+     41
+    ],
+    "to": [
+     47,
+     31,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     33,
+     41
+    ],
+    "to": [
+     47,
+     47,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     49,
+     2,
+     41
+    ],
+    "to": [
+     63,
+     15,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     49,
+     17,
+     41
+    ],
+    "to": [
+     63,
+     31,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     49,
+     33,
+     41
+    ],
+    "to": [
+     63,
+     47,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     2,
+     41
+    ],
+    "to": [
+     77,
+     15,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     17,
+     41
+    ],
+    "to": [
+     77,
+     31,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     33,
+     41
+    ],
+    "to": [
+     77,
+     47,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     2,
+     1
+    ],
+    "to": [
+     3,
+     15,
+     15
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     17,
+     1
+    ],
+    "to": [
+     3,
+     31,
+     15
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     33,
+     1
+    ],
+    "to": [
+     3,
+     47,
+     15
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     2,
+     17
+    ],
+    "to": [
+     3,
+     15,
+     31
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     17,
+     17
+    ],
+    "to": [
+     3,
+     31,
+     31
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     33,
+     17
+    ],
+    "to": [
+     3,
+     47,
+     31
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     2,
+     33
+    ],
+    "to": [
+     3,
+     15,
+     47
+    ],
+    "faces": {
+     "east": "trim"
+    },
+    "decals": {
+     "west": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     17,
+     33
+    ],
+    "to": [
+     3,
+     31,
+     47
+    ],
+    "faces": {
+     "east": "trim"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     33,
+     33
+    ],
+    "to": [
+     3,
+     47,
+     47
+    ],
+    "faces": {
+     "east": "trim"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     2,
+     1
+    ],
+    "to": [
+     79.5,
+     15,
+     15
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     17,
+     1
+    ],
+    "to": [
+     79.5,
+     31,
+     15
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     33,
+     1
+    ],
+    "to": [
+     79.5,
+     47,
+     15
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     2,
+     17
+    ],
+    "to": [
+     79.5,
+     15,
+     31
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     17,
+     17
+    ],
+    "to": [
+     79.5,
+     31,
+     31
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     33,
+     17
+    ],
+    "to": [
+     79.5,
+     47,
+     31
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     2,
+     33
+    ],
+    "to": [
+     79.5,
+     15,
+     47
+    ],
+    "faces": {
+     "west": "trim"
+    },
+    "decals": {
+     "east": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     17,
+     33
+    ],
+    "to": [
+     79.5,
+     31,
+     47
+    ],
+    "faces": {
+     "west": "trim"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     33,
+     33
+    ],
+    "to": [
+     79.5,
+     47,
+     47
+    ],
+    "faces": {
+     "west": "trim"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     1,
+     2,
+     47
+    ],
+    "to": [
+     3,
+     47,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     2,
+     47
+    ],
+    "to": [
+     79,
+     47,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     0
+    ],
+    "to": [
+     1,
+     47,
+     1
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     47
+    ],
+    "to": [
+     1,
+     47,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     79,
+     2,
+     0
+    ],
+    "to": [
+     80,
+     47,
+     1
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     79,
+     2,
+     47
+    ],
+    "to": [
+     80,
+     47,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     15,
+     2,
+     0
+    ],
+    "to": [
+     17,
+     47,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     15,
+     2,
+     41
+    ],
+    "to": [
+     17,
+     47,
+     43
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     31,
+     2,
+     0
+    ],
+    "to": [
+     33,
+     47,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     31,
+     2,
+     41
+    ],
+    "to": [
+     33,
+     47,
+     43
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     47,
+     2,
+     0
+    ],
+    "to": [
+     49,
+     47,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     47,
+     2,
+     41
+    ],
+    "to": [
+     49,
+     47,
+     43
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     63,
+     2,
+     0
+    ],
+    "to": [
+     65,
+     47,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     63,
+     2,
+     41
+    ],
+    "to": [
+     65,
+     47,
+     43
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     15
+    ],
+    "to": [
+     3,
+     47,
+     17
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     2,
+     15
+    ],
+    "to": [
+     80,
+     47,
+     17
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     31
+    ],
+    "to": [
+     3,
+     47,
+     33
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     2,
+     31
+    ],
+    "to": [
+     80,
+     47,
+     33
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     1,
+     15,
+     0.25
+    ],
+    "to": [
+     79,
+     17,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3,
+     15,
+     41
+    ],
+    "to": [
+     77,
+     17,
+     42.75
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0.25,
+     15,
+     1
+    ],
+    "to": [
+     3,
+     17,
+     47
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     15,
+     1
+    ],
+    "to": [
+     79.75,
+     17,
+     47
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     1,
+     31,
+     0.25
+    ],
+    "to": [
+     79,
+     33,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3,
+     31,
+     41
+    ],
+    "to": [
+     77,
+     33,
+     42.75
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0.25,
+     31,
+     1
+    ],
+    "to": [
+     3,
+     33,
+     47
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     31,
+     1
+    ],
+    "to": [
+     79.75,
+     33,
+     47
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     47,
+     0
+    ],
+    "to": [
+     80,
+     48,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3,
+     47,
+     41
+    ],
+    "to": [
+     77,
+     48,
+     43
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     47,
+     3
+    ],
+    "to": [
+     3,
+     48,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     47,
+     3
+    ],
+    "to": [
+     80,
+     48,
+     48
+    ]
+   },
+   {
+    "material": "glow",
+    "from": [
+     1,
+     31.5,
+     -0.25
+    ],
+    "to": [
+     79,
+     32.5,
+     0.25
+    ],
+    "glow": [
+     "down",
+     "east",
+     "north",
+     "south",
+     "up",
+     "west"
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     2,
+     18,
+     0.25
+    ],
+    "to": [
+     14,
+     30,
+     0.5
+    ],
+    "decals": {
+     "north": "trefoil"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     66,
+     18,
+     0.25
+    ],
+    "to": [
+     78,
+     30,
+     0.5
+    ],
+    "decals": {
+     "north": "trefoil"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     35,
+     19,
+     -0.5
+    ],
+    "to": [
+     45,
+     29,
+     0.5
+    ],
+    "decals": {
+     "north": "console"
+    },
+    "glow": [
+     "north"
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     79.5,
+     19,
+     3
+    ],
+    "to": [
+     80,
+     29,
+     13
+    ],
+    "decals": {
+     "east": "port_fuel"
+    }
+   },
+   {
+    "material": "metal",
+    "from": [
+     79.5,
+     19,
+     35
+    ],
+    "to": [
+     80,
+     29,
+     45
+    ],
+    "decals": {
+     "east": "port_coolant"
+    }
+   },
+   {
+    "material": "metal",
+    "from": [
+     0,
+     19,
+     19
+    ],
+    "to": [
+     0.5,
+     29,
+     29
+    ],
+    "decals": {
+     "west": "port_fuel"
+    }
+   },
+   {
+    "material": "rack",
+    "from": [
+     10,
+     4,
+     7
+    ],
+    "to": [
+     70,
+     14,
+     37
+    ],
+    "decals": {
+     "up": "racktop_60x30",
+     "north": "rackside_60x10",
+     "south": "rackside_60x10",
+     "west": "rackside_30x10",
+     "east": "rackside_30x10"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     3,
+     19,
+     19.5
+    ],
+    "to": [
+     3.5,
+     27.5,
+     28.5
+    ],
+    "decals": {
+     "east": "hatch_9x8"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     20,
+     20
+    ],
+    "to": [
+     6.5,
+     22.5,
+     20.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     22.5,
+     20
+    ],
+    "to": [
+     9.5,
+     25,
+     20.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     25,
+     20
+    ],
+    "to": [
+     12.5,
+     27.5,
+     20.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     20,
+     27.5
+    ],
+    "to": [
+     6.5,
+     22.5,
+     28.0
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     22.5,
+     27.5
+    ],
+    "to": [
+     9.5,
+     25,
+     28.0
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     25,
+     27.5
+    ],
+    "to": [
+     12.5,
+     27.5,
+     28.0
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     6.0,
+     20,
+     20.5
+    ],
+    "to": [
+     6.5,
+     22.5,
+     27.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     9.0,
+     22.5,
+     20.5
+    ],
+    "to": [
+     9.5,
+     25,
+     27.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     12.0,
+     25,
+     20.5
+    ],
+    "to": [
+     12.5,
+     27.5,
+     27.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     19.5,
+     20.5
+    ],
+    "to": [
+     6.5,
+     20,
+     27.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     6.5,
+     22,
+     20.5
+    ],
+    "to": [
+     9.5,
+     22.5,
+     27.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     9.5,
+     24.5,
+     20.5
+    ],
+    "to": [
+     12.5,
+     25,
+     27.5
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     12.5,
+     25.5,
+     22.5
+    ],
+    "to": [
+     13,
+     26,
+     25.5
+    ]
+   },
+   {
+    "material": "water",
+    "from": [
+     3,
+     4,
+     3
+    ],
+    "to": [
+     77,
+     38,
+     41
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     3,
+     40,
+     3
+    ],
+    "to": [
+     77,
+     41,
+     5
+    ],
+    "decals": {
+     "up": "rail_74x2"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     3,
+     40,
+     39
+    ],
+    "to": [
+     77,
+     41,
+     41
+    ],
+    "decals": {
+     "up": "rail_74x2"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     6,
+     21,
+     43
+    ],
+    "to": [
+     12,
+     27,
+     44
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     68,
+     21,
+     43
+    ],
+    "to": [
+     74,
+     27,
+     44
+    ]
+   },
+   {
+    "material": "copper",
+    "from": [
+     69,
+     12,
+     44
+    ],
+    "to": [
+     73,
+     26,
+     47.5
+    ],
+    "decals": {
+     "north": "pipey_4x14",
+     "south": "pipey_4x14",
+     "west": "pipey_4x14",
+     "east": "pipey_4x14"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     45,
+     8,
+     44
+    ],
+    "to": [
+     69,
+     12,
+     47.5
+    ],
+    "decals": {
+     "north": "pipex_24x4",
+     "south": "pipex_24x4",
+     "up": "pipex_24x4",
+     "down": "pipex_24x4"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     34,
+     2,
+     43
+    ],
+    "to": [
+     46,
+     4,
+     48
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     35,
+     4,
+     44.5
+    ],
+    "to": [
+     45,
+     30,
+     47.5
+    ],
+    "decals": {
+     "south": "shell_10x26",
+     "west": "shell_3x26",
+     "east": "shell_3x26"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     34.5,
+     7,
+     44
+    ],
+    "to": [
+     45.5,
+     9,
+     48
+    ],
+    "decals": {
+     "south": "band_11x2",
+     "west": "band_3x2",
+     "east": "band_3x2"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     34.5,
+     13,
+     44
+    ],
+    "to": [
+     45.5,
+     15,
+     48
+    ],
+    "decals": {
+     "south": "band_11x2",
+     "west": "band_3x2",
+     "east": "band_3x2"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     34.5,
+     19,
+     44
+    ],
+    "to": [
+     45.5,
+     21,
+     48
+    ],
+    "decals": {
+     "south": "band_11x2",
+     "west": "band_3x2",
+     "east": "band_3x2"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     34.5,
+     25,
+     44
+    ],
+    "to": [
+     45.5,
+     27,
+     48
+    ],
+    "decals": {
+     "south": "band_11x2",
+     "west": "band_3x2",
+     "east": "band_3x2"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     38,
+     15.5,
+     44
+    ],
+    "to": [
+     42,
+     18.5,
+     44.5
+    ]
+   },
+   {
+    "material": "copper",
+    "from": [
+     30,
+     8,
+     44
+    ],
+    "to": [
+     35,
+     12,
+     47.5
+    ],
+    "decals": {
+     "north": "pipex_5x4",
+     "south": "pipex_5x4",
+     "up": "pipex_5x4",
+     "down": "pipex_5x4"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     18,
+     2,
+     43
+    ],
+    "to": [
+     30,
+     4,
+     48
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     25,
+     5,
+     44
+    ],
+    "to": [
+     30,
+     14,
+     47.5
+    ]
+   },
+   {
+    "material": "motor",
+    "from": [
+     18,
+     4,
+     44.5
+    ],
+    "to": [
+     25,
+     14,
+     47.5
+    ]
+   },
+   {
+    "material": "copper",
+    "from": [
+     25,
+     14,
+     44
+    ],
+    "to": [
+     29,
+     22,
+     47.5
+    ],
+    "decals": {
+     "north": "pipey_4x8",
+     "south": "pipey_4x8",
+     "west": "pipey_4x8",
+     "east": "pipey_4x8"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     7,
+     22,
+     44
+    ],
+    "to": [
+     25,
+     26,
+     47.5
+    ],
+    "decals": {
+     "north": "pipex_18x4",
+     "south": "pipex_18x4",
+     "up": "pipex_18x4",
+     "down": "pipex_18x4"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     25,
+     22,
+     44
+    ],
+    "to": [
+     29,
+     26,
+     47.5
+    ],
+    "decals": {
+     "south": "mitredown_4x4",
+     "north": "mitredown_4x4",
+     "east": "pipey_4x4",
+     "up": "pipex_4x4"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     69,
+     8,
+     44
+    ],
+    "to": [
+     73,
+     12,
+     47.5
+    ],
+    "decals": {
+     "south": "mitreup_4x4",
+     "north": "mitreup_4x4",
+     "east": "pipey_4x4",
+     "down": "pipex_4x4"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     15,
+     21,
+     43.5
+    ],
+    "to": [
+     17,
+     27,
+     48
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     47,
+     7,
+     43.5
+    ],
+    "to": [
+     49,
+     13,
+     48
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     63,
+     7,
+     43.5
+    ],
+    "to": [
+     65,
+     13,
+     48
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     68,
+     15,
+     43.5
+    ],
+    "to": [
+     74,
+     17,
+     48
+    ]
+   }
+  ],
+  "active": [
+   {
+    "material": "skid",
+    "from": [
+     0,
+     0,
+     0
+    ],
+    "to": [
+     80,
+     2,
+     48
+    ],
+    "faces": {
+     "north": "hazard",
+     "south": "hazard",
+     "west": "hazard",
+     "east": "hazard"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     3,
+     2,
+     3
+    ],
+    "to": [
+     77,
+     4,
+     41
+    ]
+   },
+   {
+    "material": "liner",
+    "from": [
+     1,
+     2,
+     0.5
+    ],
+    "to": [
+     15,
+     15,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     1,
+     17,
+     0.5
+    ],
+    "to": [
+     15,
+     31,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     1,
+     33,
+     0.5
+    ],
+    "to": [
+     15,
+     47,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "glass_14x13",
+    "from": [
+     17,
+     2,
+     1.5
+    ],
+    "to": [
+     31,
+     15,
+     2
+    ],
+    "decals": {
+     "north": "glass_14x13"
+    }
+   },
+   {
+    "material": "glass_14x14",
+    "from": [
+     17,
+     17,
+     1.5
+    ],
+    "to": [
+     31,
+     31,
+     2
+    ],
+    "decals": {
+     "north": "glass_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     17,
+     33,
+     0.5
+    ],
+    "to": [
+     31,
+     47,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     2,
+     0.5
+    ],
+    "to": [
+     47,
+     15,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     17,
+     0.5
+    ],
+    "to": [
+     47,
+     31,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     33,
+     0.5
+    ],
+    "to": [
+     47,
+     47,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "glass_14x13",
+    "from": [
+     49,
+     2,
+     1.5
+    ],
+    "to": [
+     63,
+     15,
+     2
+    ],
+    "decals": {
+     "north": "glass_14x13"
+    }
+   },
+   {
+    "material": "glass_14x14",
+    "from": [
+     49,
+     17,
+     1.5
+    ],
+    "to": [
+     63,
+     31,
+     2
+    ],
+    "decals": {
+     "north": "glass_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     49,
+     33,
+     0.5
+    ],
+    "to": [
+     63,
+     47,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     2,
+     0.5
+    ],
+    "to": [
+     79,
+     15,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     17,
+     0.5
+    ],
+    "to": [
+     79,
+     31,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     33,
+     0.5
+    ],
+    "to": [
+     79,
+     47,
+     3
+    ],
+    "decals": {
+     "north": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     3,
+     2,
+     41
+    ],
+    "to": [
+     15,
+     15,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     3,
+     17,
+     41
+    ],
+    "to": [
+     15,
+     31,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     3,
+     33,
+     41
+    ],
+    "to": [
+     15,
+     47,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     17,
+     2,
+     41
+    ],
+    "to": [
+     31,
+     15,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     17,
+     17,
+     41
+    ],
+    "to": [
+     31,
+     31,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     17,
+     33,
+     41
+    ],
+    "to": [
+     31,
+     47,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     2,
+     41
+    ],
+    "to": [
+     47,
+     15,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     17,
+     41
+    ],
+    "to": [
+     47,
+     31,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     33,
+     33,
+     41
+    ],
+    "to": [
+     47,
+     47,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     49,
+     2,
+     41
+    ],
+    "to": [
+     63,
+     15,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     49,
+     17,
+     41
+    ],
+    "to": [
+     63,
+     31,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     49,
+     33,
+     41
+    ],
+    "to": [
+     63,
+     47,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     2,
+     41
+    ],
+    "to": [
+     77,
+     15,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     17,
+     41
+    ],
+    "to": [
+     77,
+     31,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     65,
+     33,
+     41
+    ],
+    "to": [
+     77,
+     47,
+     42.5
+    ],
+    "decals": {
+     "south": "panel_12x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     2,
+     1
+    ],
+    "to": [
+     3,
+     15,
+     15
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     17,
+     1
+    ],
+    "to": [
+     3,
+     31,
+     15
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     33,
+     1
+    ],
+    "to": [
+     3,
+     47,
+     15
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     2,
+     17
+    ],
+    "to": [
+     3,
+     15,
+     31
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     17,
+     17
+    ],
+    "to": [
+     3,
+     31,
+     31
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     33,
+     17
+    ],
+    "to": [
+     3,
+     47,
+     31
+    ],
+    "faces": {
+     "east": "liner"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     2,
+     33
+    ],
+    "to": [
+     3,
+     15,
+     47
+    ],
+    "faces": {
+     "east": "trim"
+    },
+    "decals": {
+     "west": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     17,
+     33
+    ],
+    "to": [
+     3,
+     31,
+     47
+    ],
+    "faces": {
+     "east": "trim"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     0.5,
+     33,
+     33
+    ],
+    "to": [
+     3,
+     47,
+     47
+    ],
+    "faces": {
+     "east": "trim"
+    },
+    "decals": {
+     "west": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     2,
+     1
+    ],
+    "to": [
+     79.5,
+     15,
+     15
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     17,
+     1
+    ],
+    "to": [
+     79.5,
+     31,
+     15
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     33,
+     1
+    ],
+    "to": [
+     79.5,
+     47,
+     15
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     2,
+     17
+    ],
+    "to": [
+     79.5,
+     15,
+     31
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     17,
+     17
+    ],
+    "to": [
+     79.5,
+     31,
+     31
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     33,
+     17
+    ],
+    "to": [
+     79.5,
+     47,
+     31
+    ],
+    "faces": {
+     "west": "liner"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     2,
+     33
+    ],
+    "to": [
+     79.5,
+     15,
+     47
+    ],
+    "faces": {
+     "west": "trim"
+    },
+    "decals": {
+     "east": "panel_14x13"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     17,
+     33
+    ],
+    "to": [
+     79.5,
+     31,
+     47
+    ],
+    "faces": {
+     "west": "trim"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "liner",
+    "from": [
+     77,
+     33,
+     33
+    ],
+    "to": [
+     79.5,
+     47,
+     47
+    ],
+    "faces": {
+     "west": "trim"
+    },
+    "decals": {
+     "east": "panel_14x14"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     1,
+     2,
+     47
+    ],
+    "to": [
+     3,
+     47,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     2,
+     47
+    ],
+    "to": [
+     79,
+     47,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     0
+    ],
+    "to": [
+     1,
+     47,
+     1
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     47
+    ],
+    "to": [
+     1,
+     47,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     79,
+     2,
+     0
+    ],
+    "to": [
+     80,
+     47,
+     1
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     79,
+     2,
+     47
+    ],
+    "to": [
+     80,
+     47,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     15,
+     2,
+     0
+    ],
+    "to": [
+     17,
+     47,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     15,
+     2,
+     41
+    ],
+    "to": [
+     17,
+     47,
+     43
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     31,
+     2,
+     0
+    ],
+    "to": [
+     33,
+     47,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     31,
+     2,
+     41
+    ],
+    "to": [
+     33,
+     47,
+     43
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     47,
+     2,
+     0
+    ],
+    "to": [
+     49,
+     47,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     47,
+     2,
+     41
+    ],
+    "to": [
+     49,
+     47,
+     43
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     63,
+     2,
+     0
+    ],
+    "to": [
+     65,
+     47,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     63,
+     2,
+     41
+    ],
+    "to": [
+     65,
+     47,
+     43
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     15
+    ],
+    "to": [
+     3,
+     47,
+     17
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     2,
+     15
+    ],
+    "to": [
+     80,
+     47,
+     17
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     31
+    ],
+    "to": [
+     3,
+     47,
+     33
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     2,
+     31
+    ],
+    "to": [
+     80,
+     47,
+     33
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     1,
+     15,
+     0.25
+    ],
+    "to": [
+     79,
+     17,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3,
+     15,
+     41
+    ],
+    "to": [
+     77,
+     17,
+     42.75
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0.25,
+     15,
+     1
+    ],
+    "to": [
+     3,
+     17,
+     47
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     15,
+     1
+    ],
+    "to": [
+     79.75,
+     17,
+     47
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     1,
+     31,
+     0.25
+    ],
+    "to": [
+     79,
+     33,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3,
+     31,
+     41
+    ],
+    "to": [
+     77,
+     33,
+     42.75
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0.25,
+     31,
+     1
+    ],
+    "to": [
+     3,
+     33,
+     47
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     31,
+     1
+    ],
+    "to": [
+     79.75,
+     33,
+     47
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     47,
+     0
+    ],
+    "to": [
+     80,
+     48,
+     3
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3,
+     47,
+     41
+    ],
+    "to": [
+     77,
+     48,
+     43
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     47,
+     3
+    ],
+    "to": [
+     3,
+     48,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     77,
+     47,
+     3
+    ],
+    "to": [
+     80,
+     48,
+     48
+    ]
+   },
+   {
+    "material": "glow",
+    "from": [
+     1,
+     31.5,
+     -0.25
+    ],
+    "to": [
+     79,
+     32.5,
+     0.25
+    ],
+    "glow": [
+     "down",
+     "east",
+     "north",
+     "south",
+     "up",
+     "west"
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     2,
+     18,
+     0.25
+    ],
+    "to": [
+     14,
+     30,
+     0.5
+    ],
+    "decals": {
+     "north": "trefoil"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     66,
+     18,
+     0.25
+    ],
+    "to": [
+     78,
+     30,
+     0.5
+    ],
+    "decals": {
+     "north": "trefoil"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     35,
+     19,
+     -0.5
+    ],
+    "to": [
+     45,
+     29,
+     0.5
+    ],
+    "decals": {
+     "north": "console"
+    },
+    "glow": [
+     "north"
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     79.5,
+     19,
+     3
+    ],
+    "to": [
+     80,
+     29,
+     13
+    ],
+    "decals": {
+     "east": "port_fuel"
+    }
+   },
+   {
+    "material": "metal",
+    "from": [
+     79.5,
+     19,
+     35
+    ],
+    "to": [
+     80,
+     29,
+     45
+    ],
+    "decals": {
+     "east": "port_coolant"
+    }
+   },
+   {
+    "material": "metal",
+    "from": [
+     0,
+     19,
+     19
+    ],
+    "to": [
+     0.5,
+     29,
+     29
+    ],
+    "decals": {
+     "west": "port_fuel"
+    }
+   },
+   {
+    "material": "rack",
+    "from": [
+     10,
+     4,
+     7
+    ],
+    "to": [
+     70,
+     14,
+     37
+    ],
+    "decals": {
+     "up": "racktop_60x30",
+     "north": "rackside_60x10",
+     "south": "rackside_60x10",
+     "west": "rackside_30x10",
+     "east": "rackside_30x10"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     3,
+     19,
+     19.5
+    ],
+    "to": [
+     3.5,
+     27.5,
+     28.5
+    ],
+    "decals": {
+     "east": "hatch_9x8"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     20,
+     20
+    ],
+    "to": [
+     6.5,
+     22.5,
+     20.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     22.5,
+     20
+    ],
+    "to": [
+     9.5,
+     25,
+     20.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     25,
+     20
+    ],
+    "to": [
+     12.5,
+     27.5,
+     20.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     20,
+     27.5
+    ],
+    "to": [
+     6.5,
+     22.5,
+     28.0
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     22.5,
+     27.5
+    ],
+    "to": [
+     9.5,
+     25,
+     28.0
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     25,
+     27.5
+    ],
+    "to": [
+     12.5,
+     27.5,
+     28.0
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     6.0,
+     20,
+     20.5
+    ],
+    "to": [
+     6.5,
+     22.5,
+     27.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     9.0,
+     22.5,
+     20.5
+    ],
+    "to": [
+     9.5,
+     25,
+     27.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     12.0,
+     25,
+     20.5
+    ],
+    "to": [
+     12.5,
+     27.5,
+     27.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3.5,
+     19.5,
+     20.5
+    ],
+    "to": [
+     6.5,
+     20,
+     27.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     6.5,
+     22,
+     20.5
+    ],
+    "to": [
+     9.5,
+     22.5,
+     27.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     9.5,
+     24.5,
+     20.5
+    ],
+    "to": [
+     12.5,
+     25,
+     27.5
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     12.5,
+     25.5,
+     22.5
+    ],
+    "to": [
+     13,
+     26,
+     25.5
+    ]
+   },
+   {
+    "material": "water",
+    "from": [
+     3,
+     4,
+     3
+    ],
+    "to": [
+     77,
+     38,
+     41
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     3,
+     40,
+     3
+    ],
+    "to": [
+     77,
+     41,
+     5
+    ],
+    "decals": {
+     "up": "rail_74x2"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     3,
+     40,
+     39
+    ],
+    "to": [
+     77,
+     41,
+     41
+    ],
+    "decals": {
+     "up": "rail_74x2"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     6,
+     21,
+     43
+    ],
+    "to": [
+     12,
+     27,
+     44
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     68,
+     21,
+     43
+    ],
+    "to": [
+     74,
+     27,
+     44
+    ]
+   },
+   {
+    "material": "copper",
+    "from": [
+     69,
+     12,
+     44
+    ],
+    "to": [
+     73,
+     26,
+     47.5
+    ],
+    "decals": {
+     "north": "pipey_4x14",
+     "south": "pipey_4x14",
+     "west": "pipey_4x14",
+     "east": "pipey_4x14"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     45,
+     8,
+     44
+    ],
+    "to": [
+     69,
+     12,
+     47.5
+    ],
+    "decals": {
+     "north": "pipex_24x4",
+     "south": "pipex_24x4",
+     "up": "pipex_24x4",
+     "down": "pipex_24x4"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     34,
+     2,
+     43
+    ],
+    "to": [
+     46,
+     4,
+     48
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     35,
+     4,
+     44.5
+    ],
+    "to": [
+     45,
+     30,
+     47.5
+    ],
+    "decals": {
+     "south": "shell_10x26",
+     "west": "shell_3x26",
+     "east": "shell_3x26"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     34.5,
+     7,
+     44
+    ],
+    "to": [
+     45.5,
+     9,
+     48
+    ],
+    "decals": {
+     "south": "band_11x2",
+     "west": "band_3x2",
+     "east": "band_3x2"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     34.5,
+     13,
+     44
+    ],
+    "to": [
+     45.5,
+     15,
+     48
+    ],
+    "decals": {
+     "south": "band_11x2",
+     "west": "band_3x2",
+     "east": "band_3x2"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     34.5,
+     19,
+     44
+    ],
+    "to": [
+     45.5,
+     21,
+     48
+    ],
+    "decals": {
+     "south": "band_11x2",
+     "west": "band_3x2",
+     "east": "band_3x2"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     34.5,
+     25,
+     44
+    ],
+    "to": [
+     45.5,
+     27,
+     48
+    ],
+    "decals": {
+     "south": "band_11x2",
+     "west": "band_3x2",
+     "east": "band_3x2"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     38,
+     15.5,
+     44
+    ],
+    "to": [
+     42,
+     18.5,
+     44.5
+    ]
+   },
+   {
+    "material": "copper",
+    "from": [
+     30,
+     8,
+     44
+    ],
+    "to": [
+     35,
+     12,
+     47.5
+    ],
+    "decals": {
+     "north": "pipex_5x4",
+     "south": "pipex_5x4",
+     "up": "pipex_5x4",
+     "down": "pipex_5x4"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     18,
+     2,
+     43
+    ],
+    "to": [
+     30,
+     4,
+     48
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     25,
+     5,
+     44
+    ],
+    "to": [
+     30,
+     14,
+     47.5
+    ]
+   },
+   {
+    "material": "motor",
+    "from": [
+     18,
+     4,
+     44.5
+    ],
+    "to": [
+     25,
+     14,
+     47.5
+    ]
+   },
+   {
+    "material": "copper",
+    "from": [
+     25,
+     14,
+     44
+    ],
+    "to": [
+     29,
+     22,
+     47.5
+    ],
+    "decals": {
+     "north": "pipey_4x8",
+     "south": "pipey_4x8",
+     "west": "pipey_4x8",
+     "east": "pipey_4x8"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     7,
+     22,
+     44
+    ],
+    "to": [
+     25,
+     26,
+     47.5
+    ],
+    "decals": {
+     "north": "pipex_18x4",
+     "south": "pipex_18x4",
+     "up": "pipex_18x4",
+     "down": "pipex_18x4"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     25,
+     22,
+     44
+    ],
+    "to": [
+     29,
+     26,
+     47.5
+    ],
+    "decals": {
+     "south": "mitredown_4x4",
+     "north": "mitredown_4x4",
+     "east": "pipey_4x4",
+     "up": "pipex_4x4"
+    }
+   },
+   {
+    "material": "copper",
+    "from": [
+     69,
+     8,
+     44
+    ],
+    "to": [
+     73,
+     12,
+     47.5
+    ],
+    "decals": {
+     "south": "mitreup_4x4",
+     "north": "mitreup_4x4",
+     "east": "pipey_4x4",
+     "down": "pipex_4x4"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     15,
+     21,
+     43.5
+    ],
+    "to": [
+     17,
+     27,
+     48
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     47,
+     7,
+     43.5
+    ],
+    "to": [
+     49,
+     13,
+     48
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     63,
+     7,
+     43.5
+    ],
+    "to": [
+     65,
+     13,
+     48
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     68,
+     15,
+     43.5
+    ],
+    "to": [
+     74,
+     17,
+     48
+    ]
+   }
+  ],
+  "crane_bridge": [
+   {
+    "material": "paint",
+    "from": [
+     34,
+     41,
+     3
+    ],
+    "to": [
+     46,
+     44,
+     6
+    ],
+    "decals": {
+     "north": "truck_12x3",
+     "south": "truck_12x3",
+     "west": "stripes_3x3",
+     "east": "stripes_3x3",
+     "up": "yellow_12x3"
+    }
+   },
+   {
+    "material": "paint",
+    "from": [
+     34,
+     41,
+     38
+    ],
+    "to": [
+     46,
+     44,
+     41
+    ],
+    "decals": {
+     "north": "truck_12x3",
+     "south": "truck_12x3",
+     "west": "stripes_3x3",
+     "east": "stripes_3x3",
+     "up": "yellow_12x3"
+    }
+   },
+   {
+    "material": "paint",
+    "from": [
+     36,
+     42,
+     5
+    ],
+    "to": [
+     44,
+     45,
+     39
+    ],
+    "decals": {
+     "west": "girder_34x3",
+     "east": "girder_34x3",
+     "up": "deck_8x34",
+     "north": "stripes_8x3",
+     "south": "stripes_8x3"
+    }
+   }
+  ],
+  "crane_trolley": [
+   {
+    "material": "paint",
+    "from": [
+     35,
+     45,
+     18
+    ],
+    "to": [
+     45,
+     47,
+     26
+    ],
+    "decals": {
+     "up": "hoist_10x8",
+     "north": "yellow_10x2",
+     "south": "yellow_10x2",
+     "west": "yellow_8x2",
+     "east": "yellow_8x2"
+    }
+   }
+  ],
+  "crane_cable": [
+   {
+    "material": "cable",
+    "from": [
+     39,
+     40,
+     21
+    ],
+    "to": [
+     41,
+     41,
+     23
+    ],
+    "decals": {
+     "north": "rope_2x1",
+     "south": "rope_2x1",
+     "west": "rope_2x1",
+     "east": "rope_2x1"
+    }
+   }
+  ],
+  "crane_grab": [
+   {
+    "material": "accent",
+    "from": [
+     37,
+     38,
+     19
+    ],
+    "to": [
+     43,
+     41,
+     25
+    ],
+    "decals": {
+     "north": "stripes_6x3",
+     "south": "stripes_6x3",
+     "west": "stripes_6x3",
+     "east": "stripes_6x3"
+    }
+   }
+  ],
+  "crane_rod": [
+   {
+    "material": "metal",
+    "from": [
+     38,
+     28,
+     20
+    ],
+    "to": [
+     42,
+     38,
+     24
+    ],
+    "decals": {
+     "up": "rod_top",
+     "north": "rod_side",
+     "south": "rod_side",
+     "west": "rod_side",
+     "east": "rod_side"
+    }
+   }
+  ]
+ }
+}

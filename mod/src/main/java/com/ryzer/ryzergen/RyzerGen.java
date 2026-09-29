@@ -1,5 +1,8 @@
 package com.ryzer.ryzergen;
 
+import com.ryzer.ryzergen.registry.ModParticles;
+import com.ryzer.ryzergen.battery.container.BatteryControllerBlockEntity;
+import com.ryzer.ryzergen.machine.pool.PoolControllerBlockEntity;
 import com.mojang.logging.LogUtils;
 import com.ryzer.ryzergen.battery.HomeBatteryBlock;
 import com.ryzer.ryzergen.battery.HomeBatteryBlockEntity;
@@ -59,6 +62,7 @@ public class RyzerGen {
         ModFluids.FLUIDS.register(modEventBus);
         ModDataComponents.COMPONENTS.register(modEventBus);
         ModSounds.SOUNDS.register(modEventBus);
+        ModParticles.PARTICLES.register(modEventBus);
         ModAttachments.ATTACHMENTS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModMenus.MENUS.register(modEventBus);
@@ -120,6 +124,22 @@ public class RyzerGen {
             StationCoreBlockEntity core = StationStructure.coreForPort(level, pos, StationLayout.Port.ENERGY);
             return core == null ? null : core.runner().energy();
         }, ModBlocks.STATION_CASING.get());
+        // Container Battery ports: energy in and out on the back, coolant in at the fan's hub. The
+        // controller takes its parts by pipe while the container is still to be built.
+        event.registerBlock(Capabilities.EnergyStorage.BLOCK, (level, pos, state, be, side) ->
+                BatteryControllerBlockEntity.energyAt(level, pos, state, side), ModBlocks.CONTAINER_FRAME.get());
+        event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) ->
+                BatteryControllerBlockEntity.fluidAt(level, pos, state, side), ModBlocks.THERMAL_UNIT.get());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.BATTERY_CONTROLLER.get(),
+                BatteryControllerBlockEntity::partsFor);
+        // Spent Fuel Pool ports, on a formed pool's ends: hot fuel and water in, cooled fuel out.
+        // The controller takes its parts by pipe while the pool is still to be built.
+        event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) ->
+                PoolControllerBlockEntity.itemsAt(level, pos, state, side), ModBlocks.POOL_LINER.get());
+        event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) ->
+                PoolControllerBlockEntity.fluidAt(level, pos, state, side), ModBlocks.POOL_LINER.get());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.POOL_CONTROLLER.get(),
+                PoolControllerBlockEntity::partsFor);
         // The station core takes its parts by pipe while the station is still to be built.
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.STATION_CORE.get(),
                 StationCoreBlockEntity::itemsFor);
