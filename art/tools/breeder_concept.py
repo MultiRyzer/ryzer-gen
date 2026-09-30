@@ -101,6 +101,24 @@ def band(y, h, r, n=None):
     d.cylinder(f'breeder_band_{h}', y, y + h, r, n=n, v0=0)
 
 
+def flat_ring(mat, y, r1, r2, n, n_in):
+    """A flat ring of `n` panels facing up, from r1 to r2, its inner edge cut into n_in pieces (n,
+    or n / 2 where the ring inside has half as many panels). Where n_in is half, every other inner
+    corner sits at the middle of the inner ring's straight edge, so the rings join with no gap."""
+    step = 2 * math.pi / n
+    for k in range(n):
+        a0, a1 = k * step, (k + 1) * step
+
+        def inner(angle, index):
+            if n_in == n or index % 2 == 0 or r1 == 0:
+                return d.at(angle, r1, y)
+            before, after = d.at(angle - step, r1, y), d.at(angle + step, r1, y)
+            return tuple((before[i] + after[i]) / 2 for i in range(3))
+
+        pts = [inner(a0, k), d.at(a0, r2, y), d.at(a1, r2, y), inner(a1, k + 1)]
+        d.quad(mat, pts, [(0, 16), (0, 0), (16, 0), (16, 16)], (0, 1, 0))
+
+
 def plates(mat, y1, y2, r, n=LEGS, phase=PHASE, v0=None):
     """Like a cylinder, but with `n` panels starting at `phase`: the belt's panels meet at the
     legs."""
@@ -114,24 +132,29 @@ def plates(mat, y1, y2, r, n=LEGS, phase=PHASE, v0=None):
 
 
 # ---------------------------------------------------------------- plinth, with the console proud of its front
-d.annulus('breeder_plinth', 16, 0, PLINTH_R, step=PLINTH_R / 4)
-d.cylinder('hazard', 5, 16, PLINTH_R)
-band(0, 5, PLINTH_R + 2)
-d.annulus('breeder_fitting', 5, PLINTH_R, PLINTH_R + 2)
+# The floor in four rings of equal width. Their panel counts only double outward, and where they do
+# each wide panel's inner corners meet the middle of the narrow ring's straight edges, so no seam
+# opens; the bands round the rim share the outer ring's count.
+RIM = 24
+RINGS = [(6, 6), (12, 6), (24, 12), (24, 24)]      # (panels, pieces on the inner edge)
+for k, (n, n_in) in enumerate(RINGS):
+    flat_ring('breeder_plinth', 16, PLINTH_R * k / 4, PLINTH_R * (k + 1) / 4, n, n_in)
+d.cylinder('hazard', 5, 16, PLINTH_R, n=RIM)
+band(0, 5, PLINTH_R + 2, n=RIM)
+d.annulus('breeder_fitting', 5, PLINTH_R, PLINTH_R + 2, n=RIM)
 # The console (north), in front of the plinth's lip: five cells, two blocks deep, on the grid so
-# its textures show whole. Each port sits in the recessed bay its cell draws, flush with the face
-# as ports are; the control core's screen in the middle cell stands in a bezel. As you face it
-# (looking south), your left is east (larger x): inputs there, outputs to the west.
+# its panels show whole, a port centred on each and the control core's screen in the middle one.
+# As you face it (looking south), your left is east (larger x): inputs there, outputs to the west.
 d.box('breeder_console_side', 2 * B, 0, 0, 7 * B, 15, 2 * B, top='breeder_graphite', skip=('north', 'south', 'down'))
 d.box('breeder_console', 2 * B, 0, 0, 7 * B, 15, 2 * B, skip=('south', 'east', 'west', 'up', 'down'))
 PORTS = [('port_energy', 2), ('port_fuel', 3), ('core', 4), ('port_fuel', 5), ('port_coolant', 6)]
 for kind, cell in PORTS:
     x = cell * B
     if kind == 'core':
-        d.box('breeder_fitting', x + 1, 2, -0.5, x + 15, 14, 0, decals={'north': 'breeder_bezel'}, skip=('south',))
-        d.box('breeder_fitting', x + 3, 5, -1, x + 13, 11, -0.5, decals={'north': 'screen'}, skip=('south',))
+        d.box('breeder_fitting', x + 1, 2, -1, x + 15, 14, 0, decals={'north': 'breeder_bezel'}, skip=('south',))
+        d.box('breeder_fitting', x + 3, 5, -1.5, x + 13, 11, -1, decals={'north': 'screen'}, skip=('south',))
     else:
-        d.box('breeder_fitting', x + 3, 3, -0.05, x + 13, 13, 0, decals={'north': kind}, skip=('south',))
+        d.box('breeder_fitting', x + 3, 3, -1, x + 13, 13, 0, decals={'north': kind}, skip=('south',))
 
 # ---------------------------------------------------------------- the sphere, in latitude bands
 def lat_point(lat):
