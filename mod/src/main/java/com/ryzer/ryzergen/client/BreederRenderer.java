@@ -58,6 +58,13 @@ public class BreederRenderer implements BlockEntityRenderer<BreederCoreBlockEnti
         if (StationMesh.shadersInUse()) {
             StationRenderer.draw(buffer, pose, body, light);
         }
+        // The parts that will move, drawn where the design parks them for now: the pumps' fans, and
+        // in the lantern the rotating plugs and the polar crane.
+        for (String part : new String[] {"fan", "plug_large", "plug_small", "crane"}) {
+            StationRenderer.draw(buffer, pose, StationGeometry.group(DATA, part), light);
+        }
+        // The lantern's glass last, translucent, so it tints the hall behind it rather than hiding it.
+        StationRenderer.draw(buffers.getBuffer(Sheets.translucentCullBlockSheet()), pose, StationGeometry.group(DATA, "glass"), light);
         pose.translate(BEACON_X, 0, BEACON_Z);
         pose.mulPose(Axis.YP.rotationDegrees(core.beaconAngle(partialTick)));
         pose.translate(-BEACON_X, 0, -BEACON_Z);
