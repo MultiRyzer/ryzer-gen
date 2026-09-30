@@ -2,12 +2,12 @@
 
 Drawn to the house style, and even: every texture is drawn for the shape it goes on, so each
 surface shows it whole, never a plate cut at an edge or squeezed out of shape.
-- Big faces (the tank, the deck, the plinth) are one framed plate per panel: lit along the top
-  and left, shaded at the foot and right. The concept sizes those panels to match: the tank's
-  seams sit under its ribs, and every ring is cut into equal widths.
-- Narrow parts (the ribs) have textures that read the same however narrow the face.
-- Bands shorter than a block (the plinth's lip, the roof's rim) have a texture drawn at their
-  height, band_<h>.
+- Big faces (the sphere, the belt, the deck, the plinth) are one framed plate per panel: lit
+  along the top and left, shaded at the foot and right. The concept sizes those panels to match:
+  each of the sphere's latitude bands is one plate high, and every ring is cut into equal widths.
+- Narrow parts (the legs, the bracing, the handrail) have textures that read the same however
+  narrow the face.
+- Bands shorter than a block (the plinth's lip) have a texture drawn at their height, band_<h>.
 - Decals (the trefoil, the plaque, the bezel) are drawn at their exact size.
 Fills get the soft surface finish (pixelart.publish_finished); lit textures stay crisp.
 
@@ -38,17 +38,17 @@ def plate(fill, lit, lit2, shade, shade2, w=16, h=16):
 
 
 # ---------------------------------------------------------------- big faces: one plate per panel
-def vessel():
-    """The guard vessel's plates, one per rib gap: mid gunmetal, the reactor vessel colour of the
-    house style, with a bolt head in each corner."""
-    t = plate('s', 'h', 'L', 'u', 'z')
-    for x, y in ((3, 3), (12, 3), (3, 12), (12, 12)):
-        t.set(x, y, 'H')
+def shell():
+    """The sphere's plates: light casing, as spheres like it are painted, a framed plate per
+    panel with a shallow inset, lit along the top and left."""
+    t = plate('F', 'A', 'E', 'I', 'J')
+    t.rect(3, 3, 12, 3, 'I')
+    t.rect(3, 3, 3, 12, 'I')
     return t
 
 
 def deck():
-    """The roof slab's deck plates: graphite, with a row of grating slots across the middle."""
+    """The platform's deck plates: graphite, with a row of grating slots across the middle."""
     t = plate('S', 'M', 'b', 'T', 'U')
     for x in range(4, 12, 2):
         t.rect(x, 6, x, 9, 'U')
@@ -62,8 +62,8 @@ def plinth():
 
 # ---------------------------------------------------------------- narrow parts and bands
 def rib():
-    """An upright rib on the tank, a few pixels wide: lit edge, face, shadowed edge across it (so
-    each face of the rib reads the same), and a joint at each block of height."""
+    """A leg, a few pixels wide: lit edge, face, shadowed edge across it (so each face of the leg
+    reads the same), and a joint at each block of height."""
     t = Tex()
     for x in range(16):
         t.rect(x, 0, x, 15, 'M' if x < 5 else 'b' if x < 11 else 'T')
@@ -76,6 +76,13 @@ def fitting():
     size shows it evenly."""
     t = Tex()
     t.rect(0, 0, 15, 15, 'u')
+    return t
+
+
+def rail():
+    """The platform's handrail and posts: safety yellow, plain, so any length shows it evenly."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'Y')
     return t
 
 
@@ -120,14 +127,15 @@ def bezel():
     return plate('S', 'M', 'b', 'T', 'U', 14, 12)
 
 
-BANDS = (4, 5, 8)
+BANDS = (5,)
 
 TEXTURES = {
-    'vessel': vessel,
+    'shell': shell,
     'deck': deck,
     'plinth': plinth,
     'rib': rib,
     'fitting': fitting,
+    'rail': rail,
     'trefoil': trefoil,
     'plaque': plaque,
     'bezel': bezel,
