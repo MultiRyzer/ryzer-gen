@@ -142,19 +142,21 @@ for k, (n, n_in) in enumerate(RINGS):
 d.cylinder('hazard', 5, 16, PLINTH_R, n=RIM)
 band(0, 5, PLINTH_R + 2, n=RIM)
 d.annulus('breeder_fitting', 5, PLINTH_R, PLINTH_R + 2, n=RIM)
-# The console (north), in front of the plinth's lip: five cells, two blocks deep, on the grid so
-# its panels show whole, a port centred on each and the control core's screen in the middle one.
+# The console (north): five cells wide on the grid, so its panels show whole, a port centred on
+# each and the control core's screen in the middle one. Its front stands just ahead of the plinth's
+# lip (z 8 at the middle), no further; its top and ends are plain, so their depth cuts nothing.
 # As you face it (looking south), your left is east (larger x): inputs there, outputs to the west.
-d.box('breeder_console_side', 2 * B, 0, 0, 7 * B, 15, 2 * B, top='breeder_graphite', skip=('north', 'south', 'down'))
-d.box('breeder_console', 2 * B, 0, 0, 7 * B, 15, 2 * B, skip=('south', 'east', 'west', 'up', 'down'))
+FRONT_Z = 6
+d.box('breeder_console_side', 2 * B, 0, FRONT_Z, 7 * B, 15, 2 * B, top='breeder_graphite', skip=('north', 'south', 'down'))
+d.box('breeder_console', 2 * B, 0, FRONT_Z, 7 * B, 15, 2 * B, skip=('south', 'east', 'west', 'up', 'down'))
 PORTS = [('port_energy', 2), ('port_fuel', 3), ('core', 4), ('port_fuel', 5), ('port_coolant', 6)]
 for kind, cell in PORTS:
     x = cell * B
     if kind == 'core':
-        d.box('breeder_fitting', x + 1, 2, -0.5, x + 15, 14, 0, decals={'north': 'breeder_bezel'}, skip=('south',))
-        d.box('breeder_fitting', x + 3, 5, -0.75, x + 13, 11, -0.5, decals={'north': 'screen'}, skip=('south',))
+        d.box('breeder_fitting', x + 1, 2, FRONT_Z - 1, x + 15, 14, FRONT_Z, decals={'north': 'breeder_bezel'}, skip=('south',))
+        d.box('breeder_fitting', x + 3, 5, FRONT_Z - 1.5, x + 13, 11, FRONT_Z - 1, decals={'north': 'screen'}, skip=('south',))
     else:
-        d.box('breeder_fitting', x + 3, 3, -0.5, x + 13, 13, 0, decals={'north': kind}, skip=('south',))
+        d.box('breeder_fitting', x + 3, 3, FRONT_Z - 1, x + 13, 13, FRONT_Z, decals={'north': kind}, skip=('south',))
 
 # ---------------------------------------------------------------- the sphere, in latitude bands
 def lat_point(lat):
