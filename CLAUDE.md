@@ -10,6 +10,7 @@ NeoForge mod for Minecraft 1.21.1 (the version ATM10 runs on). Mod ID `ryzergen`
 - `mod/`: the Gradle project (NeoForge MDK). Run Gradle commands from here.
 - `art/textures/`: finished 16x16 textures, copied into `mod/src/main/resources/assets/ryzergen/textures/`.
 - `art/concepts/`, `reference/`: sketches and research, not shipped.
+- `art/modpage/banners.html`: the mod page's banners in the design system's web style (Chakra Petch, graphite, cyan). `python art/tools/mod_page_banners.py` renders them to `art/gallery/page/` with Edge (run it from PowerShell). `docs/MOD-PAGE.md` links them from GitHub's `main`, so push before pasting the page.
 
 ## Build and run
 
