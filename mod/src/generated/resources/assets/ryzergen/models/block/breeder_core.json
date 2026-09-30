@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "ryzergen:block/station_core_front",
+    "side": "ryzergen:block/breeder/girder",
+    "top": "ryzergen:block/breeder/plinth"
+  }
+}

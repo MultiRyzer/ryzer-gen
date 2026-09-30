@@ -10,6 +10,7 @@ import com.ryzer.ryzergen.cable.EnergyCableBlockEntity;
 import com.ryzer.ryzergen.cable.FluidPipeBlockEntity;
 import com.ryzer.ryzergen.creative.CreativeSourceBlockEntity;
 import com.ryzer.ryzergen.machine.fission.StationCoreBlockEntity;
+import com.ryzer.ryzergen.machine.breeder.BreederCoreBlockEntity;
 import com.ryzer.ryzergen.machine.processing.ProcessingBlockEntity;
 import com.ryzer.ryzergen.machine.processing.ProcessingMachine;
 import com.ryzer.ryzergen.machine.pump.IntakePumpBlockEntity;
@@ -56,6 +57,10 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StationCoreBlockEntity>> STATION_CORE =
             BLOCK_ENTITIES.register("station_core",
                     () -> BlockEntityType.Builder.of(StationCoreBlockEntity::new, ModBlocks.STATION_CORE.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BreederCoreBlockEntity>> BREEDER_CORE =
+            BLOCK_ENTITIES.register("breeder_core",
+                    () -> BlockEntityType.Builder.of(BreederCoreBlockEntity::new, ModBlocks.BREEDER_CORE.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FusionPreviewBlockEntity>> FUSION_PREVIEW =
             BLOCK_ENTITIES.register("fusion_preview",

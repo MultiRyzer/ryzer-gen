@@ -27,6 +27,7 @@ import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterScreen;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorScreen;
 import com.ryzer.ryzergen.machine.fission.StationControlScreen;
 import com.ryzer.ryzergen.machine.fission.StationCoreScreen;
+import com.ryzer.ryzergen.machine.breeder.BreederCoreScreen;
 import com.ryzer.ryzergen.machine.pump.IntakePumpScreen;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
 import com.ryzer.ryzergen.registry.ModFluids;
@@ -55,6 +56,7 @@ public final class ClientSetup {
         event.register(ModMenus.HOME_BATTERY.get(), HomeBatteryScreen::new);
         event.register(ModMenus.INTAKE_PUMP.get(), IntakePumpScreen::new);
         event.register(ModMenus.STATION_CORE.get(), StationCoreScreen::new);
+        event.register(ModMenus.BREEDER_CORE.get(), BreederCoreScreen::new);
         event.register(ModMenus.STATION_CONTROL.get(), StationControlScreen::new);
         event.register(ModMenus.POOL_BUILD.get(), PoolBuildScreen::new);
         event.register(ModMenus.POOL.get(), PoolScreen::new);
@@ -88,6 +90,7 @@ public final class ClientSetup {
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.PRESSURE_TANK.get(), PressureTankRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.STATION_CORE.get(), StationRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.BREEDER_CORE.get(), BreederRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.POOL_CONTROLLER.get(), PoolRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.CORE_CRACKER.get(), CoreCrackerRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.FUEL_FABRICATOR.get(), FuelFabricatorRenderer::new);

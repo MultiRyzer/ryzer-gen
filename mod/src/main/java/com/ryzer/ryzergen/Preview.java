@@ -27,7 +27,8 @@ public final class Preview {
     public static List<ItemLike> items() {
         return List.of(ModItems.LITHIUM_TARGET_ROD.get(), ModItems.IRRADIATED_TARGET_ROD.get(), ModItems.FUSION_PREVIEW.get(),
                 ModItems.SUN_GATE_PREVIEW.get(), ModItems.ELECTROREFINER.get(), ModItems.SODIUM_INGOT.get(),
-                ModItems.TRANSURANIC_METAL.get());
+                ModItems.TRANSURANIC_METAL.get(), ModItems.BREEDER_CORE.get(), ModItems.BREEDER_FRAME.get(),
+                ModItems.BREEDER_SHELL.get());
     }
 
     /** True for preview items while the preview is off, so they can be hidden. */

@@ -49,7 +49,8 @@ public final class ModCreativeTabs {
                         ModItems.CORE_CRACKER, ModItems.REPROCESSOR, ModItems.FUEL_FABRICATOR, ModItems.LITHIUM_EXTRACTOR, ModItems.ELECTROREFINER,
                         ModItems.POOL_CONTROLLER, ModItems.POOL_LINER, ModItems.POOL_CRANE,
                         ModItems.BATTERY_CONTROLLER, ModItems.CONTAINER_FRAME, ModItems.THERMAL_UNIT,
-                        ModItems.STATION_CORE, ModItems.STATION_CASING, ModItems.STATION_GLASS, ModItems.TURBINE_ROTOR),
+                        ModItems.STATION_CORE, ModItems.STATION_CASING, ModItems.STATION_GLASS, ModItems.TURBINE_ROTOR,
+                        ModItems.BREEDER_CORE, ModItems.BREEDER_FRAME, ModItems.BREEDER_SHELL),
                 // Pipes and cables
                 List.of(ModItems.ENERGY_CABLE, ModItems.ITEM_PIPE, ModItems.FLUID_PIPE, ModItems.GAS_PIPE),
                 // Storage

@@ -367,10 +367,15 @@ with group('beacon'):
                (math.cos(pm), 0, math.sin(pm)))
 
 # ---------------------------------------------------------------- picture
+GAME_DATA = os.path.join(mp.ROOT, 'mod', 'src', 'main', 'resources', 'assets', 'ryzergen', 'breeder', 'breeder.json')
+
+
 def main():
     out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(mp.ROOT, 'art', 'concepts', 'breeder.png')
     big_machine_textures.publish_all()
     breeder_textures.main()
+    # For the game: the static body and the beacon, drawn by the control core (BreederRenderer).
+    d.export(GAME_DATA)
     d.save_png(out, [((1, 1), 3, 0.5), ((-1, 0.4), 3, 0.35)])
 
 

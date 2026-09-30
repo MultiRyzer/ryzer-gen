@@ -23,7 +23,8 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.ALLOY_SMELTER.get(), ModBlocks.ELECTRIC_ALLOY_SMELTER.get(), ModBlocks.ENERGY_CABLE.get(), ModBlocks.ITEM_PIPE.get(), ModBlocks.FLUID_PIPE.get(), ModBlocks.GAS_PIPE.get(), ModBlocks.INTAKE_PUMP.get(), ModBlocks.PRESSURE_TANK.get(), ModBlocks.FLUID_TANK.get(), ModBlocks.STATION_CORE.get(), ModBlocks.GRAPHITE_BLOCK.get(), ModBlocks.CREATIVE_BATTERY.get(), ModBlocks.CREATIVE_WATER_TANK.get(), ModBlocks.FUSION_PREVIEW.get(), ModBlocks.SUN_GATE_PREVIEW.get(), ModBlocks.STATION_CASING.get(), ModBlocks.STATION_GLASS.get(), ModBlocks.POOL_LINER.get(), ModBlocks.POOL_CRANE.get(), ModBlocks.POOL_CONTROLLER.get(), ModBlocks.CONTAINER_FRAME.get(), ModBlocks.THERMAL_UNIT.get(), ModBlocks.BATTERY_CONTROLLER.get(), ModBlocks.TURBINE_ROTOR.get(), ModBlocks.HOME_BATTERY.get(),
                 ModBlocks.REACTOR_HEART.get(), ModBlocks.REACTOR_MACHINE_UNIT.get(), ModBlocks.COOLANT_JACKET.get(),
                 ModBlocks.CORE_CRACKER.get(), ModBlocks.REPROCESSOR.get(), ModBlocks.FUEL_FABRICATOR.get(), ModBlocks.WASTE_CASK.get(),
-                ModBlocks.LITHIUM_EXTRACTOR.get(), ModBlocks.ELECTROREFINER.get());
+                ModBlocks.LITHIUM_EXTRACTOR.get(), ModBlocks.ELECTROREFINER.get(), ModBlocks.BREEDER_CORE.get(),
+                ModBlocks.BREEDER_FRAME.get(), ModBlocks.BREEDER_SHELL.get());
 
         for (OreType ore : OreType.values()) {
             Block stone = ModBlocks.STONE_ORES.get(ore).get();

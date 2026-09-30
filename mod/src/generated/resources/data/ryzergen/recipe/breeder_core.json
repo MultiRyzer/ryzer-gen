@@ -1,0 +1,32 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "ryzergen:preview"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:circuits/advanced"
+    },
+    "L": {
+      "tag": "c:ingots/lead"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    },
+    "T": {
+      "item": "ryzergen:transuranic_metal"
+    }
+  },
+  "pattern": [
+    "LAL",
+    "TST",
+    "LAL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:breeder_core"
+  }
+}

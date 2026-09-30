@@ -646,6 +646,36 @@ public class ModRecipeProvider extends RecipeProvider {
                 List.of(SizedIngredient.of(ModItems.SPENT_MOX_ROD.get(), 1), SizedIngredient.of(OreType.SALT.dropTag(), 1)), null,
                 List.of(new ItemStack(ModItems.TRANSURANIC_METAL.get()), new ItemStack(ModItems.INGOTS.get(OreType.URANIUM).get()),
                         new ItemStack(ModItems.FISSION_WASTE.get())), 600);
+        // Breeder reactor (design section 9), behind the preview while it is built. The frame and
+        // shell are cheap structure (rule 3), many per craft: steel girders and welded steel plate.
+        // The cost is in the core: lead shielding round advanced boards, and transuranic metal, so
+        // the Electrorefiner (and a MOX station feeding it) comes first.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BREEDER_FRAME.get(), 16)
+                .pattern("SGS")
+                .pattern("GSG")
+                .pattern("SGS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('G', ModTags.INGOTS_GRAPHITE)
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(preview);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BREEDER_SHELL.get(), 16)
+                .pattern("SSS")
+                .pattern("SLS")
+                .pattern("SSS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('L', OreType.LEAD.ingotTag())
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(preview);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BREEDER_CORE.get())
+                .pattern("LAL")
+                .pattern("TST")
+                .pattern("LAL")
+                .define('L', OreType.LEAD.ingotTag())
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .define('T', ModItems.TRANSURANIC_METAL.get())
+                .define('S', ModTags.INGOTS_STEEL)
+                .unlockedBy("has_transuranic_metal", has(ModItems.TRANSURANIC_METAL.get()))
+                .save(preview);
         // Salt alone splits into sodium (the chlorine is vented). Real basis: molten salt
         // electrolysis is how sodium is made.
         machine(preview, "electrorefining/sodium", MachineRecipe.Process.ELECTROREFINING,

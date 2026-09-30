@@ -1,0 +1,93 @@
+package com.ryzer.ryzergen.client;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.machine.breeder.BreederCoreBlockEntity;
+import com.ryzer.ryzergen.machine.breeder.BreederLayout;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.AABB;
+
+/**
+ * Draws a formed breeder reactor from its concept design (art/tools/breeder_concept.py, exported to
+ * assets/ryzergen/breeder/breeder.json): the static body from a GPU mesh, as the fission station's
+ * is (or the plain draw while a shader pack is on), and the beacon on the platform, turned about
+ * its mast every frame. The design is drawn facing north from its north-west corner, then turned
+ * about the footprint's centre to the core's facing.
+ */
+public class BreederRenderer implements BlockEntityRenderer<BreederCoreBlockEntity> {
+    private static final ResourceLocation DATA = ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "breeder/breeder.json");
+    private static final float HALF = BreederLayout.SIZE / 2F;
+    /** The beacon mast's axis in the design, in blocks: 10 pixels in front of the centre. */
+    private static final float BEACON_X = HALF;
+    private static final float BEACON_Z = HALF - 10 / 16F;
+
+    public BreederRenderer(BlockEntityRendererProvider.Context context) {
+    }
+
+    @Override
+    public void render(BreederCoreBlockEntity core, float partialTick, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
+        if (!core.isFormed()) {
+            return;
+        }
+        Direction facing = core.facing();
+        var body = StationGeometry.group(DATA, "static");
+        if (!StationMesh.shadersInUse()) {
+            StationMesh mesh = core.clientMesh instanceof StationMesh cached && cached.matches(light, facing) ? cached : null;
+            if (mesh == null) {
+                if (core.clientMesh instanceof StationMesh old) {
+                    old.close();
+                }
+                PoseStack local = new PoseStack();
+                place(local, facing);
+                mesh = StationMesh.build(body, local, light, facing);
+                core.clientMesh = mesh;
+            }
+            mesh.draw(pose.last().pose());
+        }
+        VertexConsumer buffer = buffers.getBuffer(Sheets.cutoutBlockSheet());
+        pose.pushPose();
+        place(pose, facing);
+        if (StationMesh.shadersInUse()) {
+            StationRenderer.draw(buffer, pose, body, light);
+        }
+        pose.translate(BEACON_X, 0, BEACON_Z);
+        pose.mulPose(Axis.YP.rotationDegrees(core.beaconAngle(partialTick)));
+        pose.translate(-BEACON_X, 0, -BEACON_Z);
+        StationRenderer.draw(buffer, pose, StationGeometry.group(DATA, "beacon"), light);
+        pose.popPose();
+    }
+
+    /** From the core's corner to the design's north-west corner, then turned about the centre to the facing. */
+    private static void place(PoseStack pose, Direction facing) {
+        BlockPos coreCell = BreederLayout.turn(BreederLayout.CORE, facing);
+        pose.translate(-coreCell.getX() + HALF, 0, -coreCell.getZ() + HALF);
+        pose.mulPose(Axis.YP.rotationDegrees(BreederLayout.yRotation(facing)));
+        pose.translate(-HALF, 0, -HALF);
+    }
+
+    @Override
+    public AABB getRenderBoundingBox(BreederCoreBlockEntity core) {
+        BlockPos a = BreederLayout.toWorld(core.getBlockPos(), core.facing(), BlockPos.ZERO);
+        BlockPos b = BreederLayout.toWorld(core.getBlockPos(), core.facing(),
+                new BlockPos(BreederLayout.SIZE - 1, BreederLayout.HEIGHT, BreederLayout.SIZE - 1));
+        return new AABB(a.getX(), a.getY(), a.getZ(), b.getX(), b.getY(), b.getZ()).inflate(1);
+    }
+
+    @Override
+    public boolean shouldRenderOffScreen(BreederCoreBlockEntity core) {
+        return true;
+    }
+
+    @Override
+    public int getViewDistance() {
+        return 128;
+    }
+}

@@ -143,6 +143,8 @@ public class RyzerGen {
         // The station core takes its parts by pipe while the station is still to be built.
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.STATION_CORE.get(),
                 StationCoreBlockEntity::itemsFor);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.BREEDER_CORE.get(),
+                com.ryzer.ryzergen.machine.breeder.BreederCoreBlockEntity::itemsFor);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.PRESSURE_TANK.get(),
                 PressureTankBlockEntity::fluidFor);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.FLUID_PIPE.get(),
