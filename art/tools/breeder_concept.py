@@ -151,10 +151,10 @@ PORTS = [('port_energy', 2), ('port_fuel', 3), ('core', 4), ('port_fuel', 5), ('
 for kind, cell in PORTS:
     x = cell * B
     if kind == 'core':
-        d.box('breeder_fitting', x + 1, 2, -1, x + 15, 14, 0, decals={'north': 'breeder_bezel'}, skip=('south',))
-        d.box('breeder_fitting', x + 3, 5, -1.5, x + 13, 11, -1, decals={'north': 'screen'}, skip=('south',))
+        d.box('breeder_fitting', x + 1, 2, -0.5, x + 15, 14, 0, decals={'north': 'breeder_bezel'}, skip=('south',))
+        d.box('breeder_fitting', x + 3, 5, -0.75, x + 13, 11, -0.5, decals={'north': 'screen'}, skip=('south',))
     else:
-        d.box('breeder_fitting', x + 3, 3, -1, x + 13, 13, 0, decals={'north': kind}, skip=('south',))
+        d.box('breeder_fitting', x + 3, 3, -0.5, x + 13, 13, 0, decals={'north': kind}, skip=('south',))
 
 # ---------------------------------------------------------------- the sphere, in latitude bands
 def lat_point(lat):
