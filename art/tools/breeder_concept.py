@@ -131,6 +131,67 @@ def on_circle(phi, rad):
     return C + rad * math.cos(phi), C + rad * math.sin(phi)
 
 
+PAD_H = 4
+
+
+def pad(x, z, y, r_in, r, bolts=8, n=16):
+    """A raised pad seating a machine in the roof (or a pipe in the plinth), as real roof
+    penetrations are: graphite in the deck's colour, a band round its edge, and a ring of bolts,
+    so the machine rises out of the roof rather than standing on it."""
+    with centred(x, z):
+        band(y, PAD_H, r, n=n)
+        d.annulus('breeder_graphite', y + PAD_H, r_in, r, n=n)
+    for k in range(bolts):
+        bx, bz = x + (r - 1.6) * math.cos(2 * math.pi * (k + 0.5) / bolts), z + (r - 1.6) * math.sin(2 * math.pi * (k + 0.5) / bolts)
+        d.box('breeder_fitting', bx - 0.5, y + PAD_H, bz - 0.5, bx + 0.5, y + PAD_H + 0.5, bz + 0.5, skip=('down',))
+
+
+def norm3(v):
+    length = math.sqrt(sum(c * c for c in v))
+    return tuple(c / length for c in v)
+
+
+def tube(mat, path, r, across, sides=8, caps=False):
+    """A round pipe along `path` (points), turning in the plane square to `across`: rings of
+    `sides` round each point, the texture wrapped once round the pipe and laid along it a pixel
+    per pixel, split so no piece is longer than a block."""
+    pts = [path[0]]
+    for a, b in zip(path, path[1:]):
+        length = math.dist(a, b)
+        pieces = max(1, math.ceil(length / B))
+        pts += [tuple(a[i] + (b[i] - a[i]) * (k + 1) / pieces for i in range(3)) for k in range(pieces)]
+    tangents = []
+    for i in range(len(pts)):
+        a, b = pts[max(0, i - 1)], pts[min(len(pts) - 1, i + 1)]
+        tangents.append(norm3(tuple(b[k] - a[k] for k in range(3))))
+
+    def ring(i):
+        t = tangents[i]
+        up = norm3((across[1] * t[2] - across[2] * t[1], across[2] * t[0] - across[0] * t[2], across[0] * t[1] - across[1] * t[0]))
+        out = []
+        for k in range(sides + 1):
+            th = 2 * math.pi * k / sides
+            dirv = tuple(math.cos(th) * across[j] + math.sin(th) * up[j] for j in range(3))
+            out.append((tuple(pts[i][j] + r * dirv[j] for j in range(3)), dirv))
+        return out
+
+    rings = [ring(i) for i in range(len(pts))]
+    for i in range(len(pts) - 1):
+        v = min(16, math.dist(pts[i], pts[i + 1]))
+        for k in range(sides):
+            (p0, n0), (p1, n1) = rings[i][k], rings[i][k + 1]
+            (q0, _), (q1, _) = rings[i + 1][k], rings[i + 1][k + 1]
+            u0, u1 = 16 * k / sides, 16 * (k + 1) / sides
+            d.quad(mat, [p0, q0, q1, p1], [(u0, 0), (u0, v), (u1, v), (u1, 0)], norm3(tuple(n0[j] + n1[j] for j in range(3))))
+    if caps:
+        for i, sign in ((0, -1), (len(pts) - 1, 1)):
+            t = tangents[i]
+            c = pts[i]
+            for k in range(sides):
+                (p0, _), (p1, _) = rings[i][k], rings[i][k + 1]
+                d.quad(mat, [c, c, p1, p0], [(8, 8), (8, 8), (16, 16), (16, 0)], tuple(sign * t[j] for j in range(3)))
+
+
 # ---------------------------------------------------------------- plinth, with the console proud of its front
 d.annulus('breeder_plinth', 16, 0, PLINTH_R, step=PLINTH_R / 4)
 d.cylinder('hazard', 5, 16, PLINTH_R)
@@ -185,10 +246,11 @@ with group('plug_large'):
     # The fuel handling machine, front left of the large plug: a cask a block high over a port,
     # and an orange lifting frame.
     FX, FZ = on_circle(math.radians(215), 22)
+    pad(FX, FZ, PLUG_TOP, 4.5, 7, bolts=6, n=12)
     with centred(FX, FZ):
-        d.cylinder('breeder_exchanger', PLUG_TOP, PLUG_TOP + B, 4.5, n=12)
-        d.annulus('breeder_fitting', PLUG_TOP + B, 0, 4.5, n=12)
-    d.box('breeder_lug', FX - 5.5, PLUG_TOP + B, FZ - 1, FX + 5.5, PLUG_TOP + B + 1, FZ + 1)
+        d.cylinder('breeder_exchanger', PLUG_TOP + PAD_H, PLUG_TOP + PAD_H + B, 4.5, n=12)
+        d.annulus('breeder_fitting', PLUG_TOP + PAD_H + B, 0, 4.5, n=12)
+    d.box('breeder_lug', FX - 5.5, PLUG_TOP + PAD_H + B, FZ - 1, FX + 5.5, PLUG_TOP + PAD_H + B + 1, FZ + 1)
 with group('plug_small'):
     with centred(SX, SZ):
         band(PLUG_TOP, 4, SMALL_R)
@@ -197,6 +259,8 @@ with group('plug_small'):
     DRIVES = [(0, 0)] + [(9 * math.cos(math.radians(a)), 9 * math.sin(math.radians(a))) for a in range(30, 390, 60)]
     for dx, dz in DRIVES:
         with centred(SX + dx, SZ + dz):
+            band(SMALL_TOP, 2, 3.6, n=8)
+            d.annulus('breeder_fitting', SMALL_TOP + 2, 2.5, 3.6, n=8)
             blocks('breeder_drive', SMALL_TOP, DRIVE_TOP, 2.5, n=8)
             d.cylinder('glow', SMALL_TOP + 8, SMALL_TOP + 9, 2.7, n=8)
             d.disc('breeder_fitting', DRIVE_TOP, DRIVE_TOP + 3, 3.2, n=8)
@@ -206,59 +270,69 @@ with group('shafts'):
         with centred(SX + dx, SZ + dz):
             d.disc('breeder_shaft', DRIVE_TOP + 3, DRIVE_TOP + 8, 1, n=6, bottom=False)
 
-# ---------------------------------------------------------------- pumps and heat exchangers through the deck
+# ---------------------------------------------------------------- pumps and heat exchangers, seated in the roof
 PR = TANK_R - 10       # their circle, clear of the large plug and inside the roof's edge
-# Primary pumps (front left and back right as you face it): a neck, a flange, a finned motor a
-# block high with one fin per panel, and the fan across its top.
+SEAT = ROOF_TOP + PAD_H
+# Primary pumps (front left and back right as you face it): a finned motor a block high with one
+# fin per panel, rising out of its pad, and the fan across its top.
 PUMPS = [math.radians(a) for a in (225, 45)]
-MOTOR = ROOF_TOP + 6
 for phi in PUMPS:
     x, z = on_circle(phi, PR)
+    pad(x, z, ROOF_TOP, 8.5, 12)
     with centred(x, z):
-        d.cylinder('breeder_fitting', ROOF_TOP, ROOF_TOP + 4, 6)
-        band(ROOF_TOP + 4, 2, 9.5)
-        d.annulus('breeder_fitting', ROOF_TOP + 6, 8.5, 9.5)
-        d.annulus('breeder_fitting', ROOF_TOP + 4, 6, 9.5, up=False)
-        blocks('breeder_pump', MOTOR, MOTOR + B, 8.5, n=12)
-        d.cylinder('glow', MOTOR + 12, MOTOR + 13, 8.7, n=12)
-        d.annulus('breeder_fitting', MOTOR + B, 6, 8.5, n=12)
+        blocks('breeder_pump', SEAT, SEAT + B, 8.5, n=12)
+        d.cylinder('glow', SEAT + 12, SEAT + 13, 8.7, n=12)
+        d.annulus('breeder_fitting', SEAT + B, 6, 8.5, n=12)
     with group('fan'):
-        decal_disc('breeder_fan', x, z, MOTOR + B - 0.5, 6, 12)
-# Intermediate heat exchangers (front right and back left): light columns two blocks high with
-# two flanges and a domed head; the secondary loop leaves from their heads.
+        decal_disc('breeder_fan', x, z, SEAT + B - 0.5, 6, 12)
+# Intermediate heat exchangers (front right and back left): light columns two blocks high, rising
+# out of their pads, with two flanges and a domed head; the secondary loop leaves from a nozzle
+# near the head.
 EXCHANGERS = [math.radians(a) for a in (315, 135)]
-EX_TOP = ROOF_TOP + 2 * B
+EX_R = 7
+EX_TOP = SEAT + 2 * B
 for phi in EXCHANGERS:
     x, z = on_circle(phi, PR)
+    pad(x, z, ROOF_TOP, EX_R, 11)
     with centred(x, z):
-        blocks('breeder_exchanger', ROOF_TOP, EX_TOP, 7, n=12)
-        for y in (ROOF_TOP + 10, ROOF_TOP + 22):
-            band(y, 2, 8.5, n=12)
-            d.annulus('breeder_fitting', y + 2, 7, 8.5, n=12)
-            d.annulus('breeder_fitting', y, 7, 8.5, up=False, n=12)
-        d.lathe('breeder_fitting', [(EX_TOP, 7), (EX_TOP + 3, 6), (EX_TOP + 5, 3.5), (EX_TOP + 6, 0)], n=12)
+        blocks('breeder_exchanger', SEAT, EX_TOP, EX_R, n=12)
+        for y in (SEAT + 10, SEAT + 22):
+            band(y, 2, EX_R + 1.5, n=12)
+            d.annulus('breeder_fitting', y + 2, EX_R, EX_R + 1.5, n=12)
+            d.annulus('breeder_fitting', y, EX_R, EX_R + 1.5, up=False, n=12)
+        d.lathe('breeder_fitting', [(EX_TOP, EX_R), (EX_TOP + 3, 6), (EX_TOP + 5, 3.5), (EX_TOP + 6, 0)], n=12)
 
-# ---------------------------------------------------------------- the secondary loops: from each exchanger's head, over the edge, down the tank
-# Hot and cold legs side by side, leaving the head sideways, over the roof's edge and down the
-# rib gap to a flanged penetration on the plinth.
+# ---------------------------------------------------------------- the secondary loops: round pipes from each exchanger, over the edge, down the tank
+# Hot and cold legs side by side. Each leaves the exchanger through a flanged nozzle, runs out over
+# the roof's edge, turns down on a smooth bend, runs down the rib gap and enters the plinth through
+# a collar in a pad.
 PIPE = 2.5
-R_DOWN = ROOF_R + 2
+BEND = 6
+R_DOWN = ROOF_R + 3
+FOOT = 16 + PAD_H
 for phi in EXCHANGERS:
     out = (math.cos(phi), 0, math.sin(phi))
     across = (-math.sin(phi), 0, math.cos(phi))
+
+    def at(rad, y, off):
+        return (C + rad * out[0] + off * across[0], y, C + rad * out[2] + off * across[2])
+
     for side in (-1, 1):
-        off = side * 4
-        y = EX_TOP - 4 - (side + 1) * 3
-        pts = [(C + (PR + 7) * out[0] + off * across[0], y, C + (PR + 7) * out[2] + off * across[2]),
-               (C + R_DOWN * out[0] + off * across[0], y, C + R_DOWN * out[2] + off * across[2]),
-               (C + R_DOWN * out[0] + off * across[0], 20, C + R_DOWN * out[2] + off * across[2])]
-        d.sweep('breeder_pipe', pts, PIPE, PIPE, lambda i: across, closed=False, caps=True, along_v=True)
-        # Flanges at the head and the bend, and the penetration on the plinth.
-        for p in pts[:2]:
-            h = PIPE + 1
-            d.box('breeder_fitting', p[0] - h, p[1] - h, p[2] - h, p[0] + h, p[1] + h, p[2] + h)
-        f = pts[2]
-        d.box('breeder_fitting', f[0] - 4, 16, f[2] - 4, f[0] + 4, 20, f[2] + 4)
+        off = side * 3.5
+        y = EX_TOP - 5 if side < 0 else EX_TOP - 13
+        start = PR + EX_R - 0.5
+        path = [at(start, y, off), at(R_DOWN - BEND, y, off)]
+        for k in range(1, 7):
+            a = math.radians(90 * k / 6)
+            path.append(at(R_DOWN - BEND + BEND * math.sin(a), y - BEND + BEND * math.cos(a), off))
+        path.append(at(R_DOWN, FOOT, off))
+        tube('breeder_pipe', path, PIPE, across)
+        # The nozzle's flange on the exchanger, a collar where the pipe enters the plinth, and
+        # that collar's pad.
+        tube('breeder_fitting', [at(start + 1, y, off), at(start + 2.5, y, off)], PIPE + 1, across, caps=True)
+        tube('breeder_fitting', [at(R_DOWN, FOOT, off), at(R_DOWN, FOOT + 2, off)], PIPE + 1, across, caps=True)
+    fx, _, fz = at(R_DOWN, 0, 0)
+    pad(fx, fz, 16, 0, 8, bolts=6, n=12)
 
 
 # ---------------------------------------------------------------- the moving parts, posed

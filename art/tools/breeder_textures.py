@@ -133,12 +133,18 @@ def fitting():
 
 
 def pipe():
-    """The secondary sodium loops: clean copper, lit down one side and shaded down the other,
-    the same all along, so a run of any length ends evenly."""
+    """The secondary sodium loops: clean copper, plain, so a round pipe of any length and any bend
+    shows it evenly; its roundness comes from the shading."""
     t = Tex()
     t.rect(0, 0, 15, 15, 'R')
-    t.rect(0, 0, 3, 15, 'e')
-    t.rect(12, 0, 15, 15, 'r')
+    return t
+
+
+def graphite():
+    """The pads that seat the roof's machinery, and the plinth's pipe pads: plain graphite, the
+    deck's colour, so they read as part of the roof however small a wedge they are cut into."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'S')
     return t
 
 
@@ -224,6 +230,7 @@ TEXTURES = {
     'exchanger': exchanger,
     'fitting': fitting,
     'pipe': pipe,
+    'graphite': graphite,
     'lug': lug,
     'fan': fan,
     'trefoil': trefoil,
