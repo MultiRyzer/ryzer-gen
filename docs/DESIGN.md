@@ -382,11 +382,14 @@ Real basis: every pass through a thermal reactor builds up heavier plutonium iso
 6. **Spent breeder fuel closes the loop:** it goes back through the pyroprocessor into transuranic metal and fission waste, so a breeder can keep itself fuelled once started. Real basis: fast reactor fuel cycles are designed to close this way (settled 30 Sep 2026).
 
 ### Shape (concept, 30 Sep 2026)
-Concept in `art/tools/breeder_concept.py` (textures `breeder_textures.py`, render `art/concepts/breeder.png`). A pool-type sodium fast reactor, as most real ones are built: 9 blocks across. The base unit is drawn (5.5 blocks high); what stands on its roof is designed next, building up from it. A first pass at the roof (rotating plugs, control rod drives, pumps, heat exchangers and pipes, with moving parts) was set aside on 30 Sep 2026 to start again from the base; it is in git history if any of it comes back.
-- **Sealed, not seen through.** The core sits deep in a round tank of liquid sodium, which is opaque, so there is no glass: the station is the reactor you watch, the breeder the one you run. A gunmetal guard vessel of 16 plates with a rib on every seam, a graphite band, a cyan light strip and a radiation trefoil on the front (multiblocks may carry one).
-- **The roof slab:** a graphite rim and a deck of plates, ready for the machinery that works the reactor, which real pool-type plants carry on the roof.
+Concept in `art/tools/breeder_concept.py` (textures `breeder_textures.py`, render `art/concepts/breeder.png`). 9 blocks across and about 8 high.
+- **A steel sphere on legs.** Real basis: the Dounreay Fast Reactor, a sodium-cooled fast breeder, was housed in a great steel sphere, and the shape is the refinery's Horton sphere: welded plates standing on a ring of legs with cross bracing. The core sits in a pool of liquid sodium inside, sealed from the air.
+- **Sealed, not seen through.** Sodium is opaque, so there is no glass: the station is the reactor you watch, the breeder the one you run. Light casing plates in ten latitude bands, their seams staggered band to band as a welded sphere's are.
+- **The girder belt** at the equator, where the 12 legs meet the sphere: graphite, with a cyan light strip and the radiation trefoil on the front (multiblocks may carry one). The legs are braced in every bay but the front, which stays open so the console and trefoil read.
+- **A railed platform on top** (a yellow handrail), and a drain line from the sphere's foot to the plinth.
 - **The console** on the front, proud of the plinth: as you face it, fuel in and liquid sodium in on the left, the output port (spent fuel and what the blanket bred) and energy out on the right, the control core's screen in the middle.
-- **Even textures:** every panel sized to its texture, heights in whole blocks or on band textures drawn at their height, decals at their exact size.
+- **Even textures:** the sphere's radius makes each latitude band exactly one plate high, each band has as many plates as keep them near 16 pixels wide, the belt's panels meet at the legs, and decals are drawn at their exact size.
+- Earlier passes (a round tank with its machinery on the roof, then the tank alone) were set aside on 30 Sep 2026; they are in git history.
 
 ### How the tiers tie together
 - Uranium station: uranium rods become spent rods, which reprocess into plutonium for MOX.
