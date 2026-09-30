@@ -81,11 +81,13 @@ public class ModAdvancementProvider extends AdvancementProvider {
         AdvancementHolder kernels = has(saver, depleted, "spent_kernels", ModItems.SPENT_KERNELS.get(), AdvancementType.TASK);
         AdvancementHolder plutonium = has(saver, kernels, "plutonium", ModItems.PLUTONIUM_NUGGET.get(), AdvancementType.GOAL);
         has(saver, plutonium, "mox_fuel_rod", ModItems.MOX_FUEL_ROD.get(), AdvancementType.GOAL);
+        milestone(saver, depleted, "spent_fuel_pool", ModItems.POOL_CRANE.get(), Milestone.POOL_FORMED, AdvancementType.TASK, false);
 
         // Using the power.
         has(saver, formed, "electric_alloy_smelter", ModItems.ELECTRIC_ALLOY_SMELTER.get(), AdvancementType.TASK);
         AdvancementHolder battery = has(saver, formed, "home_battery", ModItems.HOME_BATTERY.get(), AdvancementType.TASK);
         milestone(saver, battery, "battery_full", ModItems.LEAD_ACID_MODULE.get(), Milestone.BATTERY_FULL, AdvancementType.GOAL, false);
+        milestone(saver, battery, "container_battery", ModItems.LFP_BATTERY_RACK.get(), Milestone.CONTAINER_FORMED, AdvancementType.GOAL, false);
     }
 
     /** Earned by having the item. */

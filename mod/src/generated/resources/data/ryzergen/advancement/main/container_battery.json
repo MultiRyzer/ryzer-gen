@@ -1,0 +1,30 @@
+{
+  "parent": "ryzergen:main/home_battery",
+  "criteria": {
+    "container_formed": {
+      "conditions": {
+        "milestone": "container_formed"
+      },
+      "trigger": "ryzergen:milestone"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.container_battery.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:lfp_battery_rack"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.container_battery.title"
+    }
+  },
+  "requirements": [
+    [
+      "container_formed"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

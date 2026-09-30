@@ -3,10 +3,12 @@ package com.ryzer.ryzergen.compat;
 import com.ryzer.ryzergen.Config;
 import com.ryzer.ryzergen.Preview;
 import com.ryzer.ryzergen.machine.fission.StationReactor;
+import com.ryzer.ryzergen.registry.ModFluids;
 import com.ryzer.ryzergen.registry.ModItems;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.material.Fluid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,7 @@ import java.util.List;
 /**
  * What the JEI and EMI plugins show besides recipes, kept here so both show the same thing: the
  * Reactor Fuel page (each fuel, what it burns down to, the reactor that burns it, its power and
- * life, from the config) and the info pages on the multiblock parts. Plain game classes only, so
+ * life, from the config) and the info pages on the multiblock parts and on steam. Plain game classes only, so
  * nothing here needs either viewer.
  */
 public final class RecipeViewerPages {
@@ -45,11 +47,30 @@ public final class RecipeViewerPages {
         return fuels;
     }
 
-    /** An info page: the items it is shown on, and its text. */
-    public record Info(String id, List<ItemStack> items, Component text) {}
+    /** An info page: the items and fluids it is shown on, and its text. */
+    public record Info(String id, List<ItemStack> items, List<Fluid> fluids, Component text) {
+        Info(String id, List<ItemStack> items, Component text) {
+            this(id, items, List.of(), text);
+        }
+    }
 
     public static List<Info> info() {
+        int water = Config.get(Config.MICROREACTOR_COOLANT_USE);
+        int steam = water * Config.get(Config.STEAM_PER_WATER);
+        int capacity = Config.get(Config.LFP_RACK_CAPACITY);
+        int rate = Config.get(Config.LFP_RACK_RATE);
         return List.of(
+                new Info("spent_fuel_pool", List.of(stack(ModItems.POOL_CONTROLLER.get()), stack(ModItems.POOL_LINER.get()),
+                        stack(ModItems.POOL_CRANE.get())), Component.translatable(Config.get(Config.REQUIRE_COOLING)
+                                ? "jei.ryzergen.info.spent_fuel_pool" : "jei.ryzergen.info.spent_fuel_pool_optional",
+                        minutes(Config.get(Config.CORE_COOLING_SECONDS)), minutes(Config.get(Config.ROD_COOLING_SECONDS)))),
+                new Info("container_battery", List.of(stack(ModItems.BATTERY_CONTROLLER.get()), stack(ModItems.CONTAINER_FRAME.get()),
+                        stack(ModItems.THERMAL_UNIT.get()), stack(ModItems.LFP_BATTERY_RACK.get())),
+                        Component.translatable("jei.ryzergen.info.container_battery", String.format("%,d", capacity),
+                                String.format("%,d", rate), String.format("%,d", capacity * 20L), String.format("%,d", rate * 20))),
+                new Info("steam", List.of(stack(ModItems.REACTOR_HEART.get()), stack(ModItems.STATION_CORE.get())),
+                        List.of(ModFluids.STEAM.get()), Component.translatable("jei.ryzergen.info.steam",
+                        water, String.format("%,d", steam), water * 2, String.format("%,d", steam * 2))),
                 new Info("microreactor", List.of(stack(ModItems.REACTOR_HEART.get()), stack(ModItems.REACTOR_MACHINE_UNIT.get()),
                         stack(ModItems.COOLANT_JACKET.get())), Component.translatable("jei.ryzergen.info.microreactor")),
                 new Info("fission_station", List.of(stack(ModItems.STATION_CORE.get()), stack(ModItems.STATION_CASING.get()),
@@ -58,6 +79,11 @@ public final class RecipeViewerPages {
                         Component.translatable("jei.ryzergen.info.station_core")),
                 new Info("fittings", List.of(stack(ModItems.SILVER_FITTINGS.get()), stack(ModItems.BUSBAR_FITTINGS.get()),
                         stack(ModItems.CRYOGENIC_FITTINGS.get())), Component.translatable("jei.ryzergen.info.fittings")));
+    }
+
+    /** A time in seconds as whole minutes, or minutes and seconds ("7:30") when it is not a whole number. */
+    private static String minutes(int seconds) {
+        return seconds % 60 == 0 ? Integer.toString(seconds / 60) : String.format("%d:%02d", seconds / 60, seconds % 60);
     }
 
     private static ItemStack stack(ItemLike item) {

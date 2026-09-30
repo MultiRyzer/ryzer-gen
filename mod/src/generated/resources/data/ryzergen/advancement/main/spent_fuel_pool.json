@@ -1,0 +1,29 @@
+{
+  "parent": "ryzergen:main/depleted_fuel_core",
+  "criteria": {
+    "pool_formed": {
+      "conditions": {
+        "milestone": "pool_formed"
+      },
+      "trigger": "ryzergen:milestone"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.spent_fuel_pool.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:pool_crane"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.spent_fuel_pool.title"
+    }
+  },
+  "requirements": [
+    [
+      "pool_formed"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

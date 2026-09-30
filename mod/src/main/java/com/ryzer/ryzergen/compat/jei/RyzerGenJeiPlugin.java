@@ -16,6 +16,7 @@ import com.ryzer.ryzergen.registry.ModRecipes;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.runtime.IJeiRuntime;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
@@ -26,6 +27,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -81,6 +83,10 @@ public class RyzerGenJeiPlugin implements IModPlugin {
         registration.addRecipes(FUEL, RecipeViewerPages.fuels());
         for (RecipeViewerPages.Info info : RecipeViewerPages.info()) {
             registration.addItemStackInfo(info.items(), info.text());
+            if (!info.fluids().isEmpty()) {
+                registration.addIngredientInfo(info.fluids().stream().map(fluid -> new FluidStack(fluid, 1000)).toList(),
+                        NeoForgeTypes.FLUID_STACK, info.text());
+            }
         }
         MACHINES.forEach((machine, type) -> {
             if (machine.shown()) {

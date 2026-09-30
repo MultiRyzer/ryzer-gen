@@ -13,7 +13,9 @@ public enum Milestone implements StringRepresentable {
     STATION_OVERDRIVE("station_overdrive"),
     /** A station running a layout rated 100% against the best known. */
     STATION_PERFECT("station_perfect"),
-    STATION_MELTDOWN("station_meltdown");
+    STATION_MELTDOWN("station_meltdown"),
+    POOL_FORMED("pool_formed"),
+    CONTAINER_FORMED("container_formed");
 
     public static final Codec<Milestone> CODEC = StringRepresentable.fromEnum(Milestone::values);
 

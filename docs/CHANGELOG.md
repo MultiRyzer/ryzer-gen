@@ -2,6 +2,15 @@
 
 Player-facing changes, newest first. Paste each release's section into the Modrinth and CurseForge changelog and the GitHub release notes.
 
+## Unreleased
+
+### New
+- **JEI and EMI pages** for the Spent Fuel Pool, the Container Battery and steam. The pool's page gives its cooling times and the battery's its capacity and rate, from your config. Look up steam to see where it comes from: the microreactor boils its coolant into steam you can pipe out, while the fission station boils its water into its own turbine.
+- **Two advancements:** Cooling Off (build a Spent Fuel Pool) and Grid Scale (build a Container Battery).
+
+### Fixed
+- **The wormhole no longer prints the outline of builds in front of it** into the bent sky, and the dark band of bent ground round it fills in solid.
+
 ## 0.1.2-alpha (29 September 2026)
 
 ### New

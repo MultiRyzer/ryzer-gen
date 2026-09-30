@@ -241,6 +241,11 @@ public final class Config {
         return SPEC.isLoaded() ? value.get() : value.getDefault();
     }
 
+    /** A config switch, or its default before the config has loaded. */
+    public static boolean get(ModConfigSpec.BooleanValue value) {
+        return SPEC.isLoaded() ? value.get() : value.getDefault();
+    }
+
     /** A processing machine's draw, as a percent of normal. */
     public static int drawPercent(ProcessingMachine machine) {
         return get(MACHINE_DRAW.get(machine));
