@@ -44,6 +44,21 @@ public class BreederPartBlock extends Block {
         return state.getValue(FORMED) ? RenderShape.INVISIBLE : RenderShape.MODEL;
     }
 
+    /**
+     * Formed, a part is only a place in the structure (the core draws what is seen), so it lets
+     * light straight through: the ground under the reactor keeps its daylight, and the light the
+     * renderer reads at the core is the open sky's, which shader packs use to light and shadow it.
+     */
+    @Override
+    protected boolean propagatesSkylightDown(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos) {
+        return state.getValue(FORMED) || super.propagatesSkylightDown(state, level, pos);
+    }
+
+    @Override
+    protected int getLightBlock(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos) {
+        return state.getValue(FORMED) ? 0 : super.getLightBlock(state, level, pos);
+    }
+
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
