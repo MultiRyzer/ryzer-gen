@@ -1,0 +1,195 @@
+<!doctype html>
+<!--
+  The mod page's banners, drawn in the design system's web style (Chakra Petch, graphite, cyan).
+  CurseForge and Modrinth take Markdown with images but no fonts or styles, so the look travels as
+  pictures. art/tools/mod_page_banners.py renders each banner (?b=<id>) to a PNG with Edge.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Pixelify+Sans:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  :root {
+    --page: #1b1e24; --graphite-b: #4d545d; --graphite-s: #3a4047; --graphite-t: #2b3036; --graphite-u: #1d2126;
+    --casing-a: #e1e6eb; --casing-e: #c3cad2; --casing-f: #b5bdc6; --casing-i: #939ba5; --casing-j: #868f9a;
+    --cyan: #35c8f5; --cyan-bright: #a6eeff; --cyan-dim: #1b5a73;
+    --orange: #ff8a1e; --green: #44d65e; --amber: #f0a030; --red: #d13c3c;
+    --sun-core: #fff4c8; --sun-glow: #ffc861; --sun-flare: #f5892a;
+    --text-strong: #f4f6f8;
+    --display: "Chakra Petch", system-ui, sans-serif;
+    --pixel: "Pixelify Sans", monospace;
+    --mono: "JetBrains Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--page); }
+  .banner { position: relative; overflow: hidden; background: var(--page); width: 840px; }
+  .banner:not(.show) { display: none; }
+  .pixelated { image-rendering: pixelated; }
+
+  /* Hero: the station at sunset, the tagline over a dark fade. */
+  #hero { height: 440px; background: url(../gallery/01_hero_station_sunset.jpg) center 42% / cover; }
+  #hero .fade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(27,30,36,.55) 0%, rgba(27,30,36,0) 22%, rgba(27,30,36,0) 38%, rgba(27,30,36,.88) 74%, #1b1e24 100%); }
+  #hero .brand { position: absolute; top: 22px; left: 28px; display: flex; align-items: center; gap: 12px; }
+  #hero .brand img { width: 64px; height: 64px; }
+  #hero .brand span { font: 700 28px/1 var(--display); color: var(--text-strong); letter-spacing: .02em; text-shadow: 0 1px 6px rgba(0,0,0,.6); }
+  #hero .body { position: absolute; left: 28px; right: 28px; bottom: 28px; }
+  #hero h1 { font: 700 44px/1.04 var(--display); color: var(--text-strong); margin: 0; letter-spacing: -.01em; }
+  #hero h1 em { font-style: normal; color: var(--cyan); white-space: nowrap; }
+  #hero p { font: 400 17px/1.5 var(--display); color: var(--casing-e); margin: 12px 0 0; max-width: 690px; }
+  .badges { display: flex; gap: 6px; margin-bottom: 16px; }
+  .badge { display: inline-flex; font: 700 11px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: #fff; }
+  .badge span { padding: 0 10px; height: 26px; display: flex; align-items: center; }
+  .badge span:first-child { background: #555; }
+
+  /* Section header: eyebrow, headline, and a cyan light line. */
+  .section { height: 124px; padding: 30px 28px 0; background: linear-gradient(180deg, #1b1e24, #22262d); }
+  .section::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: linear-gradient(90deg, var(--cyan), rgba(53,200,245,.15) 70%, rgba(53,200,245,0)); box-shadow: 0 0 10px rgba(53,200,245,.45); }
+  .eyebrow { font: 600 13px/1 var(--display); letter-spacing: .16em; text-transform: uppercase; color: var(--cyan); display: flex; align-items: center; gap: 10px; }
+  .eyebrow::before { content: ""; width: 8px; height: 8px; background: currentColor; box-shadow: 0 0 8px currentColor; }
+  .eyebrow.hot { color: var(--orange); }
+  .eyebrow.sun { color: var(--sun-glow); }
+  .section h2 { font: 700 34px/1.1 var(--display); color: var(--text-strong); margin: 14px 0 0; }
+  .section.hazard::after { height: 6px; box-shadow: none; background: repeating-linear-gradient(135deg, #f2c230 0 10px, #1d2126 10px 20px); }
+  .section.sun { background: linear-gradient(90deg, #1b1e24 30%, #3a2a2a 80%, #5a3620); }
+  .section.sun::after { background: linear-gradient(90deg, var(--sun-glow), rgba(255,200,97,.15) 70%, rgba(255,200,97,0)); box-shadow: 0 0 10px rgba(255,200,97,.45); }
+
+  /* Tier header: item icon on a graphite tile, tier number, name. */
+  .tier { height: 84px; padding: 0 28px; display: flex; align-items: center; gap: 18px; background: var(--graphite-t); border-top: 1px solid var(--graphite-b); border-bottom: 2px solid var(--graphite-u); }
+  .tier .tile { width: 56px; height: 56px; background: var(--graphite-u); display: grid; place-items: center; box-shadow: inset 2px 2px 0 #15171b, inset -2px -2px 0 var(--graphite-b); }
+  .tier .tile img { width: 48px; height: 48px; }
+  .tier .n { font: 400 22px/1 var(--pixel); color: var(--cyan); }
+  .tier h3 { font: 700 26px/1.1 var(--display); color: var(--text-strong); margin: 4px 0 0; }
+  .tier .status { margin-left: auto; }
+
+  .status { display: flex; align-items: center; gap: 8px; font: 600 12px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+  .status::before { content: ""; width: 8px; height: 8px; background: currentColor; }
+  .status.alpha { color: var(--green); }
+  .status.alpha::before { box-shadow: 0 0 8px var(--green); }
+  .status.progress { color: var(--amber); }
+  .status.planned { color: var(--casing-i); }
+
+  /* Roadmap rows. */
+  #roadmap { padding: 0 0 2px; }
+  .row { display: grid; grid-template-columns: 84px minmax(0,1fr) 130px; gap: 18px; align-items: start; padding: 16px 28px; background: var(--graphite-t); border-top: 1px solid var(--graphite-b); }
+  .row .n { font: 400 22px/1.15 var(--pixel); color: var(--cyan); }
+  .row .t { font: 700 18px/1.2 var(--display); color: var(--text-strong); }
+  .row .d { font: 400 14px/1.45 var(--display); color: var(--casing-i); margin-top: 4px; }
+  .row .status { justify-content: flex-start; padding-top: 4px; }
+  .row.sun { background: linear-gradient(90deg, rgba(255,200,97,.16), rgba(255,200,97,0) 70%), var(--graphite-t); }
+  .row.sun .n { color: var(--sun-glow); }
+
+  /* Link keys: the web button in the keycap idiom. */
+  .key { width: 270px; height: 56px; display: flex; align-items: center; justify-content: center; gap: 10px;
+         border: 2px solid var(--graphite-u); font: 700 17px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; }
+  .key.primary { background: var(--cyan); color: var(--graphite-u); box-shadow: inset 2px 2px 0 var(--cyan-bright), inset -2px -4px 0 var(--cyan-dim); }
+  .key.graphite { background: var(--graphite-s); color: var(--casing-a); box-shadow: inset 2px 2px 0 var(--graphite-b), inset -2px -4px 0 var(--graphite-u); }
+  .key.casing { background: var(--casing-f); color: var(--graphite-t); box-shadow: inset 2px 2px 0 var(--casing-a), inset -2px -4px 0 var(--casing-j); }
+  .key svg { width: 20px; height: 20px; fill: currentColor; }
+</style>
+</head>
+<body>
+
+<div class="banner" id="hero">
+  <div class="fade"></div>
+  <div class="brand"><img class="pixelated" src="../icon/ryzergen_swarm_64.png" alt=""><span>Ryzer Gen</span></div>
+  <div class="body">
+    <div class="badges">
+      <span class="badge"><span>NeoForge</span><span style="background:#d9731f">1.21.1</span></span>
+      <span class="badge"><span>Status</span><span style="background:#c62828">Alpha</span></span>
+      <span class="badge"><span>Licence</span><span style="background:#2e7d32">MIT</span></span>
+    </div>
+    <h1>Power from understanding, <em>not volume.</em></h1>
+    <p>Nuclear power grounded in real physics: a portable microreactor, a real fuel cycle and a fission station you design channel by channel. Then fusion, and a Dyson swarm round a sun you can walk on.</p>
+  </div>
+</div>
+
+<div class="banner section" id="section_alpha">
+  <div class="eyebrow">What's in the alpha</div>
+  <h2>Tiers 1 to 3 are playable.</h2>
+</div>
+
+<div class="banner section hazard" id="section_radiation">
+  <div class="eyebrow hot">Radiation</div>
+  <h2>Only running reactors and meltdown sites.</h2>
+</div>
+
+<div class="banner section sun" id="section_endgame">
+  <div class="eyebrow sun">The endgame</div>
+  <h2>Harness the sun.</h2>
+</div>
+
+<div class="banner section" id="section_roadmap">
+  <div class="eyebrow">Roadmap</div>
+  <h2>From a portable reactor to a star.</h2>
+</div>
+
+<div class="banner section" id="section_packs">
+  <div class="eyebrow">For pack makers</div>
+  <h2>Built to earn a place in big packs.</h2>
+</div>
+
+<div class="banner section" id="section_faq">
+  <div class="eyebrow">FAQ</div>
+  <h2>Questions people ask.</h2>
+</div>
+
+<div class="banner tier" id="tier_1">
+  <div class="tile"><img class="pixelated" src="../textures/item/sealed_fuel_core.png" alt=""></div>
+  <div><div class="n">TIER 1</div><h3>The microreactor</h3></div>
+  <div class="status alpha">In the alpha</div>
+</div>
+
+<div class="banner tier" id="tier_2">
+  <div class="tile"><img class="pixelated" src="../textures/item/mox_fuel_rod.png" alt=""></div>
+  <div><div class="n">TIER 2</div><h3>The fuel cycle</h3></div>
+  <div class="status alpha">In the alpha</div>
+</div>
+
+<div class="banner tier" id="tier_3">
+  <div class="tile"><img class="pixelated" src="../textures/item/uranium_fuel_rod.png" alt=""></div>
+  <div><div class="n">TIER 3</div><h3>The fission power station</h3></div>
+  <div class="status alpha">In the alpha</div>
+</div>
+
+<div class="banner" id="roadmap">
+  <div class="row"><div class="n">1</div><div><div class="t">Microreactor, battery, pipes and steam</div></div><div class="status alpha">In the alpha</div></div>
+  <div class="row"><div class="n">2</div><div><div class="t">Fuel cycle: reprocessing and MOX</div></div><div class="status alpha">In the alpha</div></div>
+  <div class="row"><div class="n">3</div><div><div class="t">Fission power station</div></div><div class="status alpha">In the alpha</div></div>
+  <div class="row"><div class="n">Bridge</div><div><div class="t">Fission to fusion</div><div class="d">Lithium target rods (tritium), heavy water, palladium from waste, superconducting magnets, liquid nitrogen, tungsten.</div></div><div class="status progress">In progress</div></div>
+  <div class="row"><div class="n">4</div><div><div class="t">Breeder reactor</div><div class="d">Spent MOX is pyroprocessed into fuel for a sodium-cooled fast reactor, with a uranium or thorium blanket.</div></div><div class="status planned">Planned</div></div>
+  <div class="row"><div class="n">5</div><div><div class="t">Fusion</div><div class="d">A deuterium-tritium tokamak built and fuelled by fission.</div></div><div class="status planned">Planned</div></div>
+  <div class="row sun"><div class="n">6</div><div><div class="t">Dyson swarm</div><div class="d">Launch sails round a walkable sun in its own dimension, then beam the power home.</div></div><div class="status planned">Planned</div></div>
+</div>
+
+<div class="banner" id="key_github" style="width:270px">
+  <div class="key casing"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Source on GitHub</div>
+</div>
+
+<div class="banner" id="key_discord" style="width:270px">
+  <div class="key primary"><svg viewBox="0 0 24 24"><path d="M20.3 4.4A19.8 19.8 0 0015.4 3l-.6 1.3a18.3 18.3 0 00-5.6 0L8.6 3a19.7 19.7 0 00-4.9 1.4C.6 9 -.3 13.6.1 18.1a19.9 19.9 0 006 3l1.3-2.1a12.9 12.9 0 01-2-1l.5-.4a14.2 14.2 0 0012.2 0l.5.4c-.6.4-1.3.7-2 1l1.3 2.1a19.8 19.8 0 006-3c.5-5.2-.8-9.7-3.6-13.7zM8 15.3c-1.2 0-2.2-1.1-2.2-2.4S6.8 10.4 8 10.4s2.2 1.1 2.2 2.5-1 2.4-2.2 2.4zm8 0c-1.2 0-2.2-1.1-2.2-2.4s1-2.5 2.2-2.5 2.2 1.1 2.2 2.5-1 2.4-2.2 2.4z"/></svg>Join the Discord</div>
+</div>
+
+<div class="banner" id="key_issues" style="width:270px">
+  <div class="key graphite"><svg viewBox="0 0 16 16"><path d="M8 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/><path d="M8 0a8 8 0 110 16A8 8 0 018 0zM1.5 8a6.5 6.5 0 1013 0 6.5 6.5 0 00-13 0z"/></svg>Report a bug</div>
+</div>
+
+<script>
+  const id = new URLSearchParams(location.search).get('b');
+  const el = id ? document.getElementById(id) : null;
+  if (el) {
+    el.classList.add('show');
+  } else {
+    // No banner named: show them all, for a look over the set, and list their sizes for the
+    // render script (which reads them from the page once its fonts have loaded).
+    document.querySelectorAll('.banner').forEach(b => { b.classList.add('show'); b.style.marginBottom = '24px'; });
+    document.fonts.ready.then(() => {
+      const sizes = document.createElement('pre');
+      sizes.id = 'sizes';
+      sizes.hidden = true;
+      sizes.textContent = [...document.querySelectorAll('.banner')].map(b => `${b.id} ${b.offsetWidth} ${b.offsetHeight}`).join('\n');
+      document.body.append(sizes);
+    });
+  }
+</script>
+</body>
+</html>
