@@ -12,8 +12,8 @@ its own textures (breeder_textures.py). Run:
 Sizes in blocks: 9 across (centred on the middle of block 4, 4), about 8 high.
 
 Even textures: every surface shows its texture whole. The sphere's radius makes each latitude band
-exactly one plate high, and each band has as many plates as keep them near 16 pixels wide, so the
-seams stagger band to band as a welded sphere's do. The belt's panels meet at the legs, heights
+exactly one plate high; the bands have 16 plates, halving to 8 nearest the poles, so every plate is
+near 16 pixels wide and every corner meets its neighbours'. The belt's panels meet at the legs, heights
 are whole blocks, and decals (the trefoil, its plaque, the bezel) are drawn at their exact size.
 
 What it shows, bottom to top:
@@ -26,7 +26,6 @@ What it shows, bottom to top:
 - The sphere: light casing plates in ten latitude bands, and at its equator a graphite belt with a
   cyan light strip and the radiation trefoil on the front.
 - A grated walkway round the belt with a yellow handrail, reached by a caged ladder up the back.
-- A stair from the walkway up the sphere to the platform on top, as Horton spheres have.
 - The platform: a yellow handrail, a cyan light strip round its edge, the fuel hatch, and on a mast
   at its front an amber beacon.
 
@@ -143,16 +142,49 @@ def lat_point(lat):
 
 
 STEP = math.pi / BANDS
+# Plates per band, pole to pole (the caps apart): 16 round the middle bands and 8 in the band
+# nearest each pole, so every plate is within about a fifth of 16 pixels wide. The counts only ever
+# halve, so where they do each wide plate is drawn as two halves meeting the narrow plates' corners
+# exactly, and no edge is left open.
+PLATES = [8, 16, 16, 16, 16, 16, 16, 8]
+EDGES = [8] + [max(a, b) for a, b in zip(PLATES, PLATES[1:])] + [8]
+
+
+def sphere_band(lo, hi, n, n_lo, n_hi):
+    """One latitude band of `n` plates between latitudes lo and hi, its lower edge cut into n_lo
+    pieces and its upper into n_hi (each n or 2n), so it meets its neighbours corner to corner."""
+    (y1, r1), (y2, r2) = lat_point(lo), lat_point(hi)
+    for k in range(n):
+        a0, a1 = 2 * math.pi * k / n, 2 * math.pi * (k + 1) / n
+        split = 2 if max(n_lo, n_hi) > n else 1
+        for part in range(split):
+            b0, b1 = a0 + (a1 - a0) * part / split, a0 + (a1 - a0) * (part + 1) / split
+
+            def corner(angle, y, r, pieces):
+                # On an edge cut into as many pieces as plates, the half-way point lies on the
+                # straight edge between the plate's corners, not out on the circle.
+                if pieces == n and split == 2 and part == 0 and angle == b1:
+                    return tuple((d.at(a0, r, y)[i] + d.at(a1, r, y)[i]) / 2 for i in range(3))
+                if pieces == n and split == 2 and part == 1 and angle == b0:
+                    return tuple((d.at(a0, r, y)[i] + d.at(a1, r, y)[i]) / 2 for i in range(3))
+                return d.at(angle, r, y)
+
+            pts = [corner(b0, y2, r2, n_hi), corner(b0, y1, r1, n_lo), corner(b1, y1, r1, n_lo), corner(b1, y2, r2, n_hi)]
+            u0, u1 = 16 * part / split, 16 * (part + 1) / split
+            pm = (b0 + b1) / 2
+            dy, dr = y2 - y1, r2 - r1
+            outward = (dy * math.cos(pm), -dr, dy * math.sin(pm))
+            d.quad('breeder_shell', pts, [(u0, 0), (u0, 16), (u1, 16), (u1, 0)], outward)
+
+
 for k in range(1, BANDS - 1):          # the two polar caps are drawn apart
     lo, hi = -math.pi / 2 + k * STEP, -math.pi / 2 + (k + 1) * STEP
-    (y1, r1), (y2, r2) = lat_point(lo), lat_point(hi)
-    n = max(6, round(2 * math.pi * (r1 + r2) / 2 / B))
-    d.lathe('breeder_shell', [(y1, r1), (y2, r2)], n=n)
-# The caps: under the platform on top, and round the drain at the foot.
+    sphere_band(lo, hi, PLATES[k - 1], EDGES[k - 1], EDGES[k])
+# The caps, cut to meet the polar bands: under the platform on top, and round the drain at the foot.
 TOP_Y, TOP_R = lat_point(math.pi / 2 - STEP)
 FOOT_Y, FOOT_R = lat_point(-math.pi / 2 + STEP)
-d.lathe('breeder_fitting', [(TOP_Y, TOP_R), (EQUATOR + R, 0)], n=12)
-d.lathe('breeder_fitting', [(EQUATOR - R, 0), (FOOT_Y, FOOT_R)], n=12)
+d.lathe('breeder_fitting', [(TOP_Y, TOP_R), (EQUATOR + R, 0)], n=8)
+d.lathe('breeder_fitting', [(EQUATOR - R, 0), (FOOT_Y, FOOT_R)], n=8)
 
 # ---------------------------------------------------------------- the girder belt round the equator
 belt_r = BELT_R
@@ -205,16 +237,14 @@ WALK_R = LEG_R + 3
 d.annulus('breeder_grate', WALK_Y, surface_r(WALK_Y), WALK_R, n=48, step=WALK_R)
 d.annulus('breeder_fitting', BELT[1], BELT_R, WALK_R, up=False, n=48)
 d.cylinder('breeder_fitting', BELT[1], WALK_Y, WALK_R, n=48)
-# The ladder arrives at the back (south, 90 degrees); the stair leaves the walkway just past it.
+# The ladder arrives at the back (south, 90 degrees), through a gap in the handrail.
 LADDER = math.radians(90)
-STAIR_FROM, STAIR_TO = math.radians(112), math.radians(312)
 GAP = math.radians(7)
 for k in range(LEGS):
     phi = PHASE + 2 * math.pi * k / LEGS
     d.post('breeder_rail', phi, WALK_R - 1, WALK_Y, WALK_Y + 7, 0.5, 0.5)
 for y in (WALK_Y + 3.5, WALK_Y + 7):
-    rail(arc(WALK_R - 1, y, LADDER + GAP, STAIR_FROM - GAP, 4))
-    rail(arc(WALK_R - 1, y, STAIR_FROM + GAP, LADDER - GAP + 2 * math.pi, 60))
+    rail(arc(WALK_R - 1, y, LADDER + GAP, LADDER - GAP + 2 * math.pi, 64))
 # The caged ladder, outside the legs: two stiles, rungs, and hoops of the cage from head height.
 out = (math.cos(LADDER), 0, math.sin(LADDER))
 across = (-math.sin(LADDER), 0, math.cos(LADDER))
@@ -244,11 +274,9 @@ PLAT_Y = EQUATOR + R
 d.disc('breeder_deck', PLAT_Y - 2, PLAT_Y, PLAT_R, sides='breeder_fitting', n=8)
 d.cylinder('glow', PLAT_Y - 1.5, PLAT_Y - 1, PLAT_R + 0.1, n=8)
 for k in range(8):
-    phi = 2 * math.pi * (k + 0.5) / 8
-    if abs(math.atan2(math.sin(phi - STAIR_TO), math.cos(phi - STAIR_TO))) > math.radians(25):
-        d.post('breeder_rail', phi, PLAT_R - 1, PLAT_Y, PLAT_Y + 7, 0.5, 0.5)
+    d.post('breeder_rail', 2 * math.pi * (k + 0.5) / 8, PLAT_R - 1, PLAT_Y, PLAT_Y + 7, 0.5, 0.5)
 for y in (PLAT_Y + 3.5, PLAT_Y + 7):
-    rail(arc(PLAT_R - 1, y, STAIR_TO + math.radians(20), STAIR_TO - math.radians(20) + 2 * math.pi, 16))
+    rail(arc(PLAT_R - 1, y, 0, 2 * math.pi, 16)[:-1], closed=True)
 # The fuel hatch, over the core: a 10 x 10 lid.
 d.box('breeder_fitting', C - 5, PLAT_Y, C - 1, C + 5, PLAT_Y + 1, C + 9, decals={'up': 'breeder_hatch'})
 # The beacon's mast at the platform's front, and its housing.
@@ -266,30 +294,6 @@ with group('beacon'):
             pts = [d.at(p0, 2.2, PLAT_Y + 15), d.at(p0, 2.2, PLAT_Y + 11), d.at(p1, 2.2, PLAT_Y + 11), d.at(p1, 2.2, PLAT_Y + 15)]
         d.quad('breeder_amber' if k < 4 else 'breeder_fitting', pts, [(0, 0), (0, 4), (16, 4), (16, 0)],
                (math.cos(pm), 0, math.sin(pm)))
-
-# ---------------------------------------------------------------- the stair up the sphere, from the walkway to the platform
-STEPS = 44
-stair = []
-for k in range(STEPS + 1):
-    t = k / STEPS
-    y = WALK_Y + (PLAT_Y - WALK_Y) * t
-    phi = STAIR_FROM + (STAIR_TO - STAIR_FROM) * t
-    r = max(surface_r(y) + 4, PLAT_R + 1.5)
-    stair.append((phi, r, y))
-inner = [d.at(phi, r - 2.5, y) for phi, r, y in stair]
-outer = [d.at(phi, r + 2.5, y) for phi, r, y in stair]
-for side in (inner, outer):
-    d.sweep('breeder_fitting', side, 0.5, 0.5, lambda i: (0, 1, 0), closed=False, caps=True)
-for k in range(1, STEPS):
-    phi, r, y = stair[k]
-    along = (-math.sin(phi), 0, math.cos(phi))
-    d.sweep('breeder_fitting', [d.at(phi, r - 2.5, y + 0.5), d.at(phi, r + 2.5, y + 0.5)], 0.4, 1.2,
-            lambda i, v=along: v, closed=False, caps=True)
-rail([d.at(phi, r + 2.5, y + 7) for phi, r, y in stair])
-for k in range(0, STEPS + 1, 4):
-    phi, r, y = stair[k]
-    d.post('breeder_rail', phi, r + 2.5, y, y + 7, 0.5, 0.5)
-
 
 # ---------------------------------------------------------------- picture
 def main():
