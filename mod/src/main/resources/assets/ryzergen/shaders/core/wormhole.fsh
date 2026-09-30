@@ -1,8 +1,8 @@
 #version 150
 
 // The wormhole where the sun was (client/WormholeRenderer). A full-screen pass over a copy of the
-// finished frame: only sky pixels near the wormhole change, so anything in front of it (terrain,
-// clouds, the player) draws as it was.
+// finished frame: only sky pixels near the wormhole change, and only what lies behind it is bent
+// into them, so anything in front of it (terrain, builds, clouds, the player) draws as it was.
 //
 // Units: r is the distance from the wormhole's middle in throats (the throat's edge is r = 1).
 //   Outside, gravitational lensing: each pixel shows the sky from where a point mass would bend
@@ -85,17 +85,56 @@ vec3 farSide(vec2 p) {
     return col * mix(0.35, 1.0, 1.0 - smoothstep(0.75, 1.0, l));
 }
 
-// Outside the throat: the sky, lensed. Only what lies behind the wormhole can be bent round it: the
-// sky, and terrain far enough off to be at the horizon. Anything nearer (a build, a hill) is in
-// front of it, so where the bent light would come from one of those, this pixel keeps its own sky.
-// Depth here is the frame's raw depth, about 1 - 0.05 / distance: 0.999 is some 50 blocks off,
-// 0.9997 some 170.
+// Whether a point on screen shows open sky (nothing drawn there).
+bool isSky(vec2 p) {
+    return texture(SceneDepth, p).r >= 0.99999;
+}
+
+// Finds the nearest open sky along one direction from p, up to a reach; returns how many steps
+// away it is (99 if none) and its colour.
+int search(vec2 p, vec2 dir, float step, int steps, inout vec3 col) {
+    for (int i = 1; i <= steps; i++) {
+        vec2 q = p + dir * float(i) * step;
+        if (q.x < 0.0 || q.x > 1.0 || q.y < 0.0 || q.y > 1.0) {
+            return 99;
+        }
+        if (isSky(q)) {
+            col = texture(Scene, q).rgb;
+            return i;
+        }
+    }
+    return 99;
+}
+
+// What lies behind the wormhole at a point on screen, for its light to be bent round it: the sky,
+// and ground far enough off to sit at the horizon (which the lensing bends into a dark band round
+// the mouth). Anything nearer (a build, a hill) is in front of it. Where one of those covers the
+// sky, the nearest open sky beside it stands in (at the same height, so the same colour), so its
+// outline is not printed into the ring; failing that (nearer ground), the dark of the far ground. Depth is the
+// frame's raw depth, about 1 - 0.05 / distance: 0.999 is some 50 blocks off, 0.9997 some 170.
+vec3 behindAt(vec2 p, vec3 own) {
+    float behind = smoothstep(0.999, 0.9997, texture(SceneDepth, p).r);
+    if (behind >= 1.0) {
+        return texture(Scene, p).rgb;
+    }
+    // Nearer ground with no sky beside it: stand in the dark of the ground far off, so the band
+    // round the mouth fills in solid rather than showing the sky through it.
+    vec3 stand = mix(vec3(0.03, 0.035, 0.025), own, 0.12), right = own, left = own;
+    int r = search(p, vec2(1.0 / Aspect, 0.0), 0.006, 60, right);
+    int l = search(p, vec2(-1.0 / Aspect, 0.0), 0.006, 60, left);
+    if (r < 99 || l < 99) {
+        stand = r <= l ? right : left;
+    }
+    return mix(stand, texture(Scene, p).rgb, behind);
+}
+
+// Outside the throat: the sky, lensed. Each pixel shows what lies behind from where a point mass
+// would bend its light from.
 vec3 lensed(vec2 d, float r, vec3 own) {
     float fade = 1.0 - smoothstep(REACH * 0.55, REACH, r);
     float beta = r - EINSTEIN * EINSTEIN / r * fade;
     vec2 from = clamp(Centre + normalize(d) * beta * Radius / vec2(Aspect, 1.0), vec2(0.001), vec2(0.999));
-    float behind = smoothstep(0.999, 0.9997, texture(SceneDepth, from).r);
-    vec3 col = mix(own, texture(Scene, from).rgb, behind);
+    vec3 col = behindAt(from, own);
     // A little of the new star's light spills out round the mouth.
     col += vec3(1.0, 0.85, 0.62) * 0.22 * exp(-(r - 1.0) * 2.5) * fade;
     return col;
@@ -105,7 +144,7 @@ void main() {
     vec3 scene = texture(Scene, texCoord).rgb;
     vec2 d = (texCoord - Centre) * vec2(Aspect, 1.0);
     float r = length(d) / max(Radius, 1e-5);
-    bool sky = texture(SceneDepth, texCoord).r >= 0.99999;
+    bool sky = isSky(texCoord);
     if (!sky || Radius < 1e-4 || r > REACH) {
         fragColor = vec4(scene, 1.0);
         return;
