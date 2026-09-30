@@ -17,9 +17,10 @@ near 16 pixels wide and every corner meets its neighbours'. The belt's panels me
 are whole blocks, and decals (the trefoil, its plaque, the bezel) are drawn at their exact size.
 
 What it shows, bottom to top:
-- A graphite plinth with a hazard band, and the console on the front (north), proud of it: as you
-  face it, inputs on your left (fuel in, liquid sodium in), outputs on your right (the output port
-  for spent fuel and what the blanket bred, energy out), the control core's screen in the middle.
+- A graphite plinth with a hazard band, and three consoles proud of it: the control core's screen
+  on the front (north); as you face it, the inputs on your left side (fuel in, liquid sodium in)
+  and the outputs on your right (the output port for spent fuel and what the blanket bred, energy
+  out).
 - Twelve legs from the plinth to the equator on footings, braced in every bay but the front; a
   drain line from the sphere's foot, and two copper sodium lines from its underside, into the
   plinth.
@@ -142,21 +143,52 @@ for k, (n, n_in) in enumerate(RINGS):
 d.cylinder('hazard', 5, 16, PLINTH_R, n=RIM)
 band(0, 5, PLINTH_R + 2, n=RIM)
 d.annulus('breeder_fitting', 5, PLINTH_R, PLINTH_R + 2, n=RIM)
-# The console (north): five cells wide on the grid, so its panels show whole, a port centred on
-# each and the control core's screen in the middle one. Its front stands just ahead of the plinth's
-# lip (z 8 at the middle), no further; its top and ends are plain, so their depth cuts nothing.
-# As you face it (looking south), your left is east (larger x): inputs there, outputs to the west.
-FRONT_Z = 6
-d.box('breeder_console_side', 2 * B, 0, FRONT_Z, 7 * B, 15, 2 * B, top='breeder_graphite', skip=('north', 'south', 'down'))
-d.box('breeder_console', 2 * B, 0, FRONT_Z, 7 * B, 15, 2 * B, skip=('south', 'east', 'west', 'up', 'down'))
-PORTS = [('port_energy', 2), ('port_fuel', 3), ('core', 4), ('port_fuel', 5), ('port_coolant', 6)]
-for kind, cell in PORTS:
-    x = cell * B
-    if kind == 'core':
-        d.box('breeder_fitting', x + 1, 2, FRONT_Z - 1, x + 15, 14, FRONT_Z, decals={'north': 'breeder_bezel'}, skip=('south',))
-        d.box('breeder_fitting', x + 3, 5, FRONT_Z - 1.5, x + 13, 11, FRONT_Z - 1, decals={'north': 'screen'}, skip=('south',))
+# Three consoles, as the station has its ports: the front (north) keeps the control core's screen
+# alone, and the ports go on the two flat sides. As you face the front (looking south), your left
+# is east (larger x): the inputs go there (fuel in, liquid sodium in), and the outputs on the west
+# (the output port for spent fuel and what the blanket bred, energy out), never on one shared port.
+# Each console is three cells on the grid, so its panels show whole, its face just ahead of the
+# plinth's lip (2 pixels, no further); its top and ends are plain, so their depth cuts nothing.
+LIP = PLINTH_R + 2
+FACE = C - LIP - 2              # how far each console's face stands from the footprint's edge
+DEPTH = 2 * B - FACE            # back into the plinth, out of sight
+CELLS = (3 * B, 6 * B)          # the middle three cells along each side
+
+
+def console(side, ports):
+    """A console on `side` ('north', 'east' or 'west'), three cells long; `ports` gives what sits
+    in each cell (a port decal, 'core' for the screen, or None for a plain panel)."""
+    a1, a2 = CELLS
+    if side == 'north':
+        box = (a1, 0, FACE, a2, 15, FACE + DEPTH)
+    elif side == 'west':
+        box = (FACE, 0, a1, FACE + DEPTH, 15, a2)
     else:
-        d.box('breeder_fitting', x + 3, 3, FRONT_Z - 1, x + 13, 13, FRONT_Z, decals={'north': kind}, skip=('south',))
+        box = (2 * C - FACE - DEPTH, 0, a1, 2 * C - FACE, 15, a2)
+    ends = {'north': ('east', 'west'), 'east': ('north', 'south'), 'west': ('north', 'south')}[side]
+    back = {'north': 'south', 'east': 'west', 'west': 'east'}[side]
+    d.box('breeder_console_side', *box, top='breeder_graphite', skip=(side, back, 'down'))
+    d.box('breeder_console', *box, skip=tuple(f for f in ('north', 'south', 'east', 'west', 'up', 'down') if f != side))
+    for cell, kind in enumerate(ports):
+        if kind is None:
+            continue
+        a = a1 + cell * B
+        # Each part stands proud of the face by `out` pixels: its box runs from the face to there.
+        for (u1, v1, u2, v2, out0, out1, decal) in (
+                [(a + 1, 2, a + 15, 14, 0, 1, 'breeder_bezel'), (a + 3, 5, a + 13, 11, 1, 1.5, 'screen')] if kind == 'core'
+                else [(a + 3, 3, a + 13, 13, 0, 1, kind)]):
+            if side == 'north':
+                part = (u1, v1, FACE - out1, u2, v2, FACE - out0)
+            elif side == 'west':
+                part = (FACE - out1, v1, u1, FACE - out0, v2, u2)
+            else:
+                part = (2 * C - FACE + out0, v1, u1, 2 * C - FACE + out1, v2, u2)
+            d.box('breeder_fitting', *part, decals={side: decal}, skip=(back,))
+
+
+console('north', [None, 'core', None])
+console('east', ['port_fuel', None, 'port_coolant'])
+console('west', ['port_fuel', None, 'port_energy'])
 
 # ---------------------------------------------------------------- the sphere, in latitude bands
 def lat_point(lat):
