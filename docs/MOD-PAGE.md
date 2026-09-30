@@ -101,7 +101,7 @@ Full roadmap and issue tracker on [GitHub](https://github.com/MultiRyzer/ryzer-g
 - **Found a bug?** Please open an issue on GitHub with your log and the steps to reproduce it. For questions, ask in `#help` on the [Discord](https://discord.gg/cmUZcRtqfg).
 
 ## How it was made
-Ryzer Gen is designed by Ryzer. The code was written with help from Claude, an AI assistant. The textures are drawn in code by the mod's own scripts; material textures build on vanilla shapes. Sounds are credited below.
+Ryzer Gen is designed by Ryzer. The code was written with help from Opus 5.5. The textures are drawn in code by the mod's own scripts; voices are created by me and other sounds are credited below.
 
 ## Credits
 The reactor announcer's voice is Ryzer's own, recorded for the mod.
