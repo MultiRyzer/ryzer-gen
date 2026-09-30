@@ -1,5 +1,7 @@
 package com.ryzer.ryzergen.machine.pool;
 
+import com.ryzer.ryzergen.advancement.Milestone;
+import com.ryzer.ryzergen.registry.ModTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -96,6 +98,7 @@ public final class PoolStructure {
         level.playSound(null, centre.x, centre.y, centre.z, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.6F, 1.0F);
         level.playSound(null, centre.x, centre.y, centre.z, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 0.8F);
         level.sendParticles(ParticleTypes.ELECTRIC_SPARK, centre.x, centre.y, centre.z, 40, 1.8, 1.0, 1.0, 0.05);
+        ModTriggers.MILESTONE.get().triggerNearby(level, centre, Milestone.POOL_FORMED);
     }
 
     /** Called when a part of a formed pool is removed; {@code was} is the part's state before. */

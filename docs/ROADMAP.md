@@ -89,10 +89,11 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 ## Milestone 2b: First multiblocks after the station
 - [x] Spent Fuel Pool concept (`art/tools/pool_concept.py`): the framed-plate grid, windows, trefoils, crane inside the rim, cooling loop with mitred pipes on the back
 - [x] Spent Fuel Pool build (design section 7): liner, controller and crane parts; auto-build with a ghost outline; formed model cut by datagen from the exported design (`art/designs/spent_fuel_pool.json`, three looks: dry, full, cooling); hot mark on spent fuel from reactors, refused by the cracker and reprocessor; 18 cooling slots, water tank and boil-off; GUI; config `fuel_cycle.require_cooling` and cooling times; recipes, tooltips; changelog note
-- [ ] Spent Fuel Pool, still to do: test in game; JEI and EMI info page; an advancement; the crane on a block entity renderer so it moves
+- [x] Spent Fuel Pool finished (0.1.2): tested in game; the crane on a block entity renderer, running to the racks when fuel has cooled; bubbles over hot fuel; JEI and EMI info page; an advancement (Cooling Off)
 - [x] Container Battery concept (`art/tools/container_concept.py`): white container, 20 hatch slots on the front, gunmetal fan unit on the east end, power on the back
 - [x] Container Battery build (design section 12): frame, controller and thermal unit parts; auto-build from the ground with the controller swapping up to its console; LFP racks installed per slot (model and light per block); fan on a block entity renderer; quarter rate without coolant; readout with a slot map; the Lithium Extractor out of preview for the racks' lithium
-- [ ] Container Battery, still to do: test in game; JEI and EMI info page; an advancement; sodium-ion racks later
+- [x] Container Battery finished (0.1.2): tested in game; energy pulled from a battery goes only to machines, so batteries no longer drain into each other; JEI and EMI info page; an advancement (Grid Scale)
+- [ ] Sodium-ion racks for the Container Battery: a second chemistry (design rule 11)
 - [ ] Heavy Water Plant and Cryo Plant are designed as multiblocks too (milestone 4). No cooling tower for now
 
 ## Milestone 3: Fission power station
@@ -123,13 +124,13 @@ The first public build: the microreactor, home battery, pipes and steam, the fue
 - [x] Test checklist for the run below (`docs/ALPHA-TEST.md`)
 - [x] Dosimeter ring in the Accessories slot checked: it protects, and nothing shows on the hand (fine, see Polish)
 - [x] Playtest fixes (26 Sep 2026): pipes pull only results from every machine, never ingredients; JEI text placed properly on the fuel, alloying and machine pages, with tidy result columns; moderator plan colour (amber); microreactor fuel in and out on separate ports; station ports moved to the sides (inputs left, outputs right, as you face the front); louvre ribs under the station's stack aligned; station casing 16 per craft
-- [ ] Steam in JEI and EMI: a page showing the microreactor and the station turning water into steam (mB per mB)
+- [x] Steam in JEI and EMI: an info page on steam and the reactors, with the microreactor's water to steam rate from the config (the station boils its water into its own turbine and gives out no steam)
 - [ ] Visual audit of the multiblocks (microreactor, station, tanks, battery) before screenshots
 - [x] Commit and push the current work
 - [ ] Survival run on a fresh world with only the release jar (no dev mods), then again with JEI, and once inside ATM10
-- [ ] Screenshots and a short clip: the microreactor snapping together, the station building itself and running
-- [ ] Make the GitHub repo public; turn on issues
-- [ ] Create the Modrinth and CurseForge projects, upload the jar, credit the sounds
+- [x] Screenshots and a short clip: the microreactor snapping together, the station building itself and running
+- [x] Make the GitHub repo public; turn on issues
+- [x] Create the Modrinth and CurseForge projects, upload the jar, credit the sounds (Modrinth still in review)
 
 ## Milestone 4: Fission to fusion (design section 10)
 - [x] Lithium Extractor (salt and water to lithium)

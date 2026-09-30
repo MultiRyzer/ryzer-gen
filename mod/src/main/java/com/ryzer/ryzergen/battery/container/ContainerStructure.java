@@ -1,5 +1,7 @@
 package com.ryzer.ryzergen.battery.container;
 
+import com.ryzer.ryzergen.advancement.Milestone;
+import com.ryzer.ryzergen.registry.ModTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -92,6 +94,7 @@ public final class ContainerStructure {
         level.playSound(null, centre.x, centre.y, centre.z, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.6F, 1.1F);
         level.playSound(null, centre.x, centre.y, centre.z, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 0.8F, 1.4F);
         level.sendParticles(ParticleTypes.ELECTRIC_SPARK, centre.x, centre.y, centre.z, 50, 3.0, 1.0, 1.0, 0.05);
+        ModTriggers.MILESTONE.get().triggerNearby(level, centre, Milestone.CONTAINER_FORMED);
     }
 
     static void breakApart(ServerLevel level, BlockPos removed, BlockState was) {
