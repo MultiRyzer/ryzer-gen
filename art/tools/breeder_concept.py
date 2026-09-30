@@ -21,14 +21,15 @@ What it shows, bottom to top:
   the legs, is the sodium plant: two finned pumps at the front and two heat exchangers at the back
   (their hot bands glowing amber), on concrete pads, joined by a copper ring main and each piped up
   into the sphere's underside. Real sodium plants are a maze of loops like this.
-- Three consoles on the ground: the station's front panel with the control core's screen; as you
+- Three consoles on the ground, a block deep, six of the legs standing on their tops: the
+  station's front panel with the control core's screen, between hazard-striped cheeks; as you
   face it, the inputs on your left side (fuel in, liquid sodium in) and the outputs on your right
   (the output port for spent fuel and what the blanket bred, energy out), each side under a
   sloping hood with a lit tag above each port and hazard-striped cheeks, as the station's are.
 - The sphere: light casing plates in latitude bands, a graphite belt at the equator with a cyan
   light strip and the radiation trefoil, a grated walkway round it reached by a caged ladder.
 - The lantern: a ring of glass round the upper sphere, framed by mullions, showing the machine hall
-  inside, as real sodium reactors keep their refuelling machinery under a dome: a deck, a yellow
+  inside, as real sodium reactors keep their refuelling machinery under a dome: a floor, a yellow
   polar crane on a rail round the dome, the rotating plugs (a large one and a small one set off its middle), the control rod drives with lit
   bands on the small plug, and the fuel handling cask on the large one, under a dark lined dome.
 - The platform on top: a yellow handrail, a cyan light strip, the fuel hatch, and an amber beacon.
@@ -65,7 +66,7 @@ TEXTURES.update({name: 'ryzergen:block/microreactor/' + name for name in (
     'hazard', 'glow', 'screen', 'port_energy', 'port_fuel', 'port_coolant')})
 TEXTURES.update({name: 'ryzergen:block/station/' + name for name in (
     'housing_slope', 'housing_cheek', 'hazard_upright', 'tag_coolant', 'tag_fuel', 'tag_energy')})
-TEXTURES['glass'] = 'ryzergen:block/machine/smooth_glass'
+TEXTURES['glass'] = 'ryzergen:block/breeder/glass'
 TEXTURES['front_panel'] = 'ryzergen:block/station/front_panel'
 d = Design(C, TEXTURES, {'glow', 'screen', 'breeder_amber', 'tag_coolant', 'tag_fuel', 'tag_energy'})
 
@@ -159,10 +160,11 @@ def plates(mat, y1, y2, r, n=LEGS, phase=PHASE, v0=None):
 # spent fuel and what the blanket bred, energy out), never on one shared port. Each side console is
 # three cells on the grid, so its panels show whole.
 FACE = 6                        # how far each console's face stands from the footprint's edge
-DEPTH = 2 * B - FACE            # back to the second block
+DEPTH = B                       # a block deep: six of the legs stand on the consoles' tops
 CELLS = (3 * B, 6 * B)          # the middle three cells along each side
 TAGS = {'port_coolant': 'tag_coolant', 'port_fuel': 'tag_fuel', 'port_energy': 'tag_energy'}
-HOOD_BACK, HOOD_TOP = FACE + 8, 22     # the hood slopes from the face's top edge back to here
+HOOD_BACK, HOOD_TOP = FACE + 5, 20     # the hood slopes from the face's top edge back to here,
+                                       # clear of the legs that stand behind it
 
 
 def console(side, ports):
@@ -216,6 +218,11 @@ d.quad('front_panel', [(C + B, 15, FACE), (C - B, 15, FACE), (C - B, 0, FACE), (
        [(0, 1), (16, 1), (16, 16), (0, 16)], (0, 0, -1))
 d.box('breeder_fitting', C - 5, 5, FACE - 1, C + 5, 11, FACE - 0.5, decals={'north': 'screen'}, skip=('south',))
 d.box('breeder_fitting', C - 6, 4, FACE - 0.5, C + 6, 12, FACE, skip=('south',))
+# Cheeks either end of the front panel, as flush as its top so the front legs stand on them, hazard
+# striped on the front like the side consoles' cheeks.
+for x1, x2 in ((C - B - 4, C - B), (C + B, C + B + 4)):
+    d.box('housing_cheek', x1, 0, FACE - 1, x2, 15, FACE + DEPTH, skip=('down', 'south'))
+    d.box('hazard_upright', x1, 0, FACE - 1.5, x2, 15, FACE - 1, skip=('down', 'south'))
 console('east', ['port_fuel', None, 'port_coolant'])
 console('west', ['port_fuel', None, 'port_energy'])
 
@@ -321,9 +328,23 @@ for k in range(LEGS):
     for (ya, yb) in ((BRACE[0], BRACE[1]), (BRACE[1], BRACE[0])):
         path = [d.at(a, LEG_R, ya), d.at(b, LEG_R, yb)]
         d.sweep('breeder_fitting', path, 0.5, 0.5, lambda i, v=across: v, closed=False, caps=True)
-# Concrete piers under the legs, a block high, straight on the ground.
+# Where the legs meet the ground. Six stand on the consoles (two on each), on a steel base plate
+# on the console's top, the way plant legs stand on a building's roof; the rest stand on concrete
+# piers a block high, straight on the ground.
+CONSOLE_TOPS = [(C - B - 4, C + B + 4, FACE, FACE + DEPTH),                    # the front, with its cheeks
+                (2 * C - FACE - DEPTH, 2 * C - FACE, CELLS[0], CELLS[1]),      # east
+                (FACE, FACE + DEPTH, CELLS[0], CELLS[1])]                      # west
+
+
+def on_console(x, z):
+    return any(x1 <= x <= x2 and z1 <= z <= z2 for x1, x2, z1, z2 in CONSOLE_TOPS)
+
+
 for k in range(LEGS):
     fx, _, fz = d.at(PHASE + 2 * math.pi * k / LEGS, LEG_R, 0)
+    if on_console(fx, fz):
+        d.box('breeder_fitting', fx - 3, 15, fz - 3, fx + 3, 16, fz + 3, skip=('down',))
+        continue
     with centred(fx, fz):
         d.cylinder('breeder_concrete', 0, B, 4.5, n=8)
         d.annulus('breeder_concrete', B, 2.5, 4.5, n=8)
@@ -416,8 +437,13 @@ for k in range(panes):
     d.sweep('breeder_fitting', path, 0.6, 0.6, lambda i, v=(-math.sin(phi), 0, math.cos(phi)): v, closed=False, caps=True)
 for y, r in ((LAN_Y1, LAN_R1), LAN_MID, (LAN_Y2, LAN_R2)):
     d.sweep('breeder_fitting', [d.at(2 * math.pi * k / 48, r + 0.8, y) for k in range(48)], 0.8, 0.8, lambda i: (0, 1, 0))
-# The hall's deck, level with the glass's sill, and a light line round its edge.
-d.annulus('breeder_grate', LAN_Y1, 0, LAN_R1 - 0.2, n=16, step=LAN_R1 / 3)
+# The hall's floor, level with the glass's sill: dark plates in two rings round the large plug,
+# 16 then 32, the outer ring's corners meeting the inner's edges, with a painted yellow ring round
+# the plug (keep clear while it turns) and a light line round the floor's edge.
+FLOOR_IN, FLOOR_MID, FLOOR_OUT = 20, 34, LAN_R1 - 0.2
+flat_ring('breeder_hall_floor', LAN_Y1, FLOOR_IN, FLOOR_MID, 16, 16)
+flat_ring('breeder_hall_floor', LAN_Y1, FLOOR_MID, FLOOR_OUT, 32, 16)
+d.annulus('breeder_rail', LAN_Y1 + 0.02, FLOOR_IN + 1.5, FLOOR_IN + 2.5, n=32)
 d.annulus('glow', LAN_Y1 + 0.02, LAN_R1 - 2.5, LAN_R1 - 1.5, n=32)
 # The rotating plugs over the core: a large one on the deck, and a small one set off its middle
 # (towards the back), turned together to bring the handling machine over any core position.
