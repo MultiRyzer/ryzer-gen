@@ -39,11 +39,18 @@ def plate(fill, lit, lit2, shade, shade2, w=16, h=16):
 
 # ---------------------------------------------------------------- big faces: one plate per panel
 def shell():
-    """The sphere's plates: light casing, as spheres like it are painted, a framed plate per
-    panel with a shallow inset, lit along the top and left."""
-    t = plate('F', 'A', 'E', 'I', 'J')
-    t.rect(3, 3, 12, 3, 'I')
-    t.rect(3, 3, 3, 12, 'I')
+    """The sphere's plates: smooth painted steel, off-white as such spheres are painted, not the
+    framed panel the machines use, so the sphere reads as one welded vessel. Each plate draws only
+    its top and left seam, so every joint shows as one line: a weld bead (a ripple of darker
+    pixels) with a highlight beside it where the bead catches the light."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'E')
+    for i in range(16):
+        bead = 'J' if i % 2 else 'I'
+        t.set(i, 0, bead)
+        t.set(0, i, bead)
+    t.rect(1, 1, 15, 1, 'A')
+    t.rect(1, 1, 1, 15, 'A')
     return t
 
 
