@@ -26,8 +26,8 @@ What it shows, bottom to top:
   (the output port for spent fuel and what the blanket bred, energy out), each side under a
   sloping hood with a lit tag above each port and hazard-striped cheeks, as the station's are.
 - The sphere: light casing plates in latitude bands, a graphite belt at the equator with a cyan
-  light strip and the radiation trefoil, a grated walkway round it reached by a caged ladder that
-  climbs beside a leg, bracketed to it.
+  light strip and the radiation trefoil, a grated walkway round it reached by a ladder that climbs
+  beside a leg, bracketed to it.
 - The lantern: a ring of glass round the upper sphere, framed by mullions, showing the machine hall
   inside, as real sodium reactors keep their refuelling machinery under a dome: a floor, the
   rotating plugs with the control rod drives standing in the middle of the hall, lit bands round
@@ -396,8 +396,7 @@ for k in range(LEGS):
         d.post('breeder_rail', phi, WALK_R - 1, WALK_Y, WALK_Y + 7, 0.5, 0.5)
 for y in (WALK_Y + 3.5, WALK_Y + 7):
     rail(arc(WALK_R - 1, y, LADDER + GAP, LADDER - GAP + 2 * math.pi, 64))
-# The caged ladder, just outside its leg's pier: two stiles on the ground, rungs, and hoops of the
-# cage from head height.
+# The ladder, just outside its leg's pier: two stiles on the ground and rungs.
 out = (math.cos(LADDER), 0, math.sin(LADDER))
 across = (-math.sin(LADDER), 0, math.cos(LADDER))
 LAD_R = LEG_R + 6
@@ -411,10 +410,6 @@ for off in (-2.5, 2.5):
     d.sweep('breeder_fitting', [lad(off, 0), lad(off, WALK_Y + 7)], 0.5, 0.5, lambda i: across, closed=False, caps=True)
 for y in range(4, int(WALK_Y), 4):
     d.sweep('breeder_fitting', [lad(-2.5, y), lad(2.5, y)], 0.3, 0.3, lambda i: out, closed=False, caps=True)
-CAGE = 4.5
-for y in range(44, int(WALK_Y) + 1, 9):
-    hoop = [lad(-CAGE * math.cos(t), y, 2 + CAGE * math.sin(t)) for t in [math.pi * k / 8 for k in range(9)]]
-    rail(hoop)
 # Brackets from the stiles back to the leg, a block apart, and a step plate at the top across the
 # gap to the walkway's edge.
 for y in range(24, int(WALK_Y), B):
@@ -424,10 +419,6 @@ for y in range(24, int(WALK_Y), B):
                 0.4, 0.4, lambda i: (0, 1, 0), closed=False, caps=True)
 d.sweep('breeder_fitting', [d.at(LADDER, WALK_R - 1, WALK_Y - 0.5), d.at(LADDER, LAD_R + 0.5, WALK_Y - 0.5)], 0.5, 3,
         lambda i: across, closed=False, caps=True)
-for t in (math.pi / 4, math.pi / 2, 3 * math.pi / 4):
-    d.sweep('breeder_rail', [lad(-CAGE * math.cos(t), 44, 2 + CAGE * math.sin(t)),
-                             lad(-CAGE * math.cos(t), WALK_Y, 2 + CAGE * math.sin(t))], 0.4, 0.4,
-            lambda i: across, closed=False, caps=True)
 
 # ---------------------------------------------------------------- the lantern: its frame, and the hall inside
 LAN_LO, LAN_HI = -math.pi / 2 + LANTERN[0] * STEP, -math.pi / 2 + (LANTERN[-1] + 1) * STEP
