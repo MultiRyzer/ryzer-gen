@@ -1,41 +1,47 @@
 """The breeder reactor's own textures (block/breeder/), for its concept (breeder_concept.py).
 
-Drawn to the house style: every panel is one framed plate per 16-pixel cell, lit along the top and
-left and shaded at the foot and right, features centred on whole pixels, and fills given the soft
-surface finish (pixelart.publish_finished) so no big face is flat colour. Lit textures stay crisp.
-The breeder is the sealed, industrial twin of the station: a gunmetal reactor vessel, graphite
-trim and decks, clean copper for the sodium loops, orange for small hardware.
+Drawn to the house style, and even: every texture is drawn for the shape it goes on, so each
+surface shows it whole, never a plate cut at an edge or squeezed out of shape.
+- Big faces (the tank, the deck, the plugs, the plinth) are one framed plate per panel: lit along
+  the top and left, shaded at the foot and right. The concept sizes those panels to match: the
+  tank's seams sit under its ribs, and every ring is cut into equal widths.
+- Small round parts (drives, pumps, exchangers) have panels only a few pixels wide, so their
+  textures change only down their height (rings and seams), or repeat once per panel (a pump's
+  fins), and read the same however narrow the panel.
+- Bands shorter than a block (rims, flanges) have a texture drawn at their height, band_<h>.
+- Decals (the fan, the trefoil, the plaque, the bezel) are drawn at their exact size.
+Fills get the soft surface finish (pixelart.publish_finished); lit textures stay crisp.
 
 Run from the repo root:
     python art/tools/breeder_textures.py
 """
+import math
+
 from pixelart import *  # noqa: F401,F403
 
 FOLDER = 'block/breeder/'
 
 
-def plate(fill, lit, lit2, shade, shade2, inset=None):
-    """One framed plate: a two-step bevel (lit top and left, shaded foot and right) round a fill,
-    with a shallow inset line two pixels in if `inset` is given."""
+def plate(fill, lit, lit2, shade, shade2, w=16, h=16):
+    """One framed plate, w x h: a two-step bevel (lit top and left, shaded foot and right) round a
+    fill."""
     t = Tex()
-    t.rect(0, 0, 15, 15, fill)
-    t.rect(0, 0, 15, 0, lit)
-    t.rect(0, 0, 0, 15, lit)
-    t.rect(1, 1, 14, 1, lit2)
-    t.rect(1, 1, 1, 14, lit2)
-    t.rect(0, 15, 15, 15, shade2)
-    t.rect(15, 0, 15, 15, shade2)
-    t.rect(1, 14, 14, 14, shade)
-    t.rect(14, 1, 14, 14, shade)
-    if inset:
-        t.rect(3, 3, 12, 3, inset)
-        t.rect(3, 3, 3, 12, inset)
+    t.rect(0, 0, w - 1, h - 1, fill)
+    t.rect(0, 0, w - 1, 0, lit)
+    t.rect(0, 0, 0, h - 1, lit)
+    t.rect(1, 1, w - 2, 1, lit2)
+    t.rect(1, 1, 1, h - 2, lit2)
+    t.rect(0, h - 1, w - 1, h - 1, shade2)
+    t.rect(w - 1, 0, w - 1, h - 1, shade2)
+    t.rect(1, h - 2, w - 2, h - 2, shade)
+    t.rect(w - 2, 1, w - 2, h - 2, shade)
     return t
 
 
+# ---------------------------------------------------------------- big faces: one plate per panel
 def vessel():
-    """The guard vessel's plates: mid gunmetal, the reactor vessel colour of the house style,
-    with a bolt head in each corner."""
+    """The guard vessel's plates, one per rib gap: mid gunmetal, the reactor vessel colour of the
+    house style, with a bolt head in each corner."""
     t = plate('s', 'h', 'L', 'u', 'z')
     for x, y in ((3, 3), (12, 3), (3, 12), (12, 12)):
         t.set(x, y, 'H')
@@ -51,116 +57,127 @@ def deck():
 
 
 def plug():
-    """The rotating plugs' top plates: lead grey, plain, so the lifting lugs and drives on them
-    read."""
+    """The rotating plugs' top plates: lead grey, plain, so the lugs and drives on them read."""
     return plate('p', 'Q', 'q', 'P', 'D')
 
 
-def plug_side():
-    """The plugs' edges: a thin graphite rim with a seam every panel, lit on top."""
+def plinth():
+    """The plinth's top plates: graphite floor, framed."""
+    return plate('S', 'M', 'b', 'T', 'U')
+
+
+# ---------------------------------------------------------------- small round parts: even however narrow the panel
+def rib():
+    """An upright rib on the tank, a few pixels wide: lit edge, face, shadowed edge across it (so
+    each face of the rib reads the same), and a joint at each block of height."""
     t = Tex()
-    t.rect(0, 0, 15, 15, 'b')
-    t.rect(0, 0, 15, 0, 'M')
-    t.rect(15, 0, 15, 15, 'T')
-    t.rect(0, 15, 15, 15, 'U')
+    for x in range(16):
+        t.rect(x, 0, x, 15, 'M' if x < 5 else 'b' if x < 11 else 'T')
+    t.rect(0, 0, 15, 0, 'U')
     return t
 
 
 def drive():
-    """A control rod drive housing: bright steel, lit on its left, a seam per block of height."""
+    """A control rod drive housing: bright steel, a seam ring at its top and foot, and a
+    maker's band a third of the way up."""
     t = Tex()
     t.rect(0, 0, 15, 15, 'E')
-    t.rect(0, 0, 3, 15, 'A')
-    t.rect(12, 0, 15, 15, 'I')
-    t.rect(0, 0, 15, 0, 'J')
+    t.rect(0, 0, 15, 0, 'A')
+    t.rect(0, 1, 15, 1, 'J')
+    t.rect(0, 10, 15, 10, 'I')
+    t.rect(0, 11, 15, 11, 'A')
+    t.rect(0, 15, 15, 15, 'J')
     return t
 
 
 def shaft():
-    """The drive shaft that rises out of a drive as its rod is withdrawn: polished, with a mark
-    every four pixels, so its movement reads."""
+    """The drive shaft that rises as its rod is withdrawn: polished, with a mark every two
+    pixels of height, so its movement reads."""
     t = Tex()
     t.rect(0, 0, 15, 15, 'H')
-    t.rect(0, 0, 5, 15, 'A')
-    for y in range(0, 16, 4):
+    for y in range(0, 16, 2):
         t.rect(0, y, 15, y, 'L')
     return t
 
 
 def pump():
-    """A primary pump's motor casing: graphite, with upright cooling fins (lit and shaded edges
-    every four pixels), as a big motor has."""
+    """A primary pump's motor casing: graphite with one cooling fin per panel (a lit edge, the
+    fin's face and its shadow), a lit rim at the top and a dark foot."""
     t = Tex()
-    t.rect(0, 0, 15, 15, 'S')
-    for x in range(0, 16, 4):
-        t.rect(x, 0, x, 15, 'M')
-        t.rect(x + 1, 0, x + 1, 15, 'b')
-        t.rect(x + 3, 0, x + 3, 15, 'U')
+    cols = ['U', 'U', 'M', 'M', 'M', 'b', 'b', 'b', 'b', 'b', 'b', 'S', 'S', 'S', 'U', 'U']
+    for x, k in enumerate(cols):
+        t.rect(x, 0, x, 15, k)
     t.rect(0, 0, 15, 0, 'M')
     t.rect(0, 15, 15, 15, 'U')
-    return t
-
-
-def fan():
-    """The pump motor's fan grille, seen from above (drawn whole on its top): a dark well behind
-    four blades and a hub, turned by the renderer while sodium flows."""
-    t = Tex()
-    t.rect(0, 0, 15, 15, 'U')
-    t.rect(1, 1, 14, 14, 'K')
-    for i in range(1, 7):
-        t.set(8 + i, 8 - i // 2, 'b')
-        t.set(7 - i, 7 + i // 2, 'b')
-        t.set(8 + i // 2, 8 + i, 'b')
-        t.set(7 - i // 2, 7 - i, 'b')
-    t.rect(6, 6, 9, 9, 'S')
-    t.rect(7, 7, 8, 8, 'X')
     return t
 
 
 def exchanger():
-    """An intermediate heat exchanger's shell: light casing plates, the lighter colour marking
-    it apart from the pumps, with a flange band at the foot."""
-    t = plate('F', 'A', 'E', 'I', 'J', inset='I')
-    t.rect(1, 12, 14, 12, 'b')
-    t.rect(1, 13, 14, 13, 'S')
+    """An intermediate heat exchanger's shell, a block high per band: light casing (lighter than
+    the pumps, to tell them apart), lit at its top seam and shaded at its foot."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'F')
+    t.rect(0, 0, 15, 0, 'A')
+    t.rect(0, 1, 15, 1, 'E')
+    t.rect(0, 14, 15, 14, 'I')
+    t.rect(0, 15, 15, 15, 'J')
     return t
 
 
-def cap():
-    """Tops of the drives, pumps and exchangers: gunmetal, lit on top."""
-    t = plate('u', 's', 's', 'z', 'T')
+def fitting():
+    """Flanges, collars, caps and the lugs' bases: plain gunmetal, the finish its only pattern,
+    so any size of box or disc shows it evenly."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'u')
     return t
 
 
 def pipe():
-    """The secondary sodium loops: clean copper, lit along one side, with a flange mark every
-    block of length."""
+    """The secondary sodium loops: clean copper, lit down one side and shaded down the other,
+    the same all along, so a run of any length ends evenly."""
     t = Tex()
     t.rect(0, 0, 15, 15, 'R')
     t.rect(0, 0, 3, 15, 'e')
     t.rect(12, 0, 15, 15, 'r')
-    t.rect(0, 0, 15, 1, 'O')
-    return t
-
-
-def plinth():
-    """The plinth's band: graphite, lit along its lip, a groove, a seam per panel."""
-    t = Tex()
-    t.rect(0, 0, 15, 15, 'S')
-    t.rect(0, 0, 15, 0, 'M')
-    t.rect(0, 1, 15, 1, 'b')
-    t.rect(0, 8, 15, 8, 'U')
-    t.rect(15, 0, 15, 15, 'T')
-    t.rect(0, 15, 15, 15, 'U')
     return t
 
 
 def lug():
-    """Small orange hardware (lifting lugs): lit on top, a darker foot."""
+    """Small orange hardware (lifting lugs, the handling machine's frame): plain orange."""
     t = Tex()
     t.rect(0, 0, 15, 15, 'X')
-    t.rect(0, 0, 15, 0, 'e')
-    t.rect(0, 15, 15, 15, 'Z')
+    return t
+
+
+def band(h):
+    """A graphite band `h` pixels high (a rim, a plug's edge, a flange): lit along the top,
+    shaded at the foot, the same all round. Drawn in rows 0 to h - 1."""
+    t = Tex()
+    t.rect(0, 0, 15, h - 1, 'b')
+    t.rect(0, 0, 15, 0, 'M')
+    if h > 2:
+        t.rect(0, h - 1, 15, h - 1, 'T')
+    return t
+
+
+# ---------------------------------------------------------------- decals, at their exact size
+def fan():
+    """A pump motor's fan, 12 x 12, drawn once across the motor's top: a dark well, four swept
+    blades and an orange hub. Turned by the renderer while sodium flows."""
+    t = Tex()
+    for y in range(12):
+        for x in range(12):
+            dx, dy = x + 0.5 - 6, y + 0.5 - 6
+            r = math.hypot(dx, dy)
+            if r > 6:
+                continue
+            ang = math.degrees(math.atan2(dy, dx)) + r * 9       # blades sweep back as they go out
+            k = 'K' if r > 5.2 else 'U'
+            if 1.5 < r <= 5.2 and ang % 90 < 28:
+                k = 'b' if ang % 90 < 20 else 'S'
+            if r <= 1.8:
+                k = 'X'
+            t.set(x, y, k)
     return t
 
 
@@ -168,7 +185,6 @@ def trefoil():
     """The radiation trefoil, 14 x 14 on a yellow plaque with a black rim: three blades round a
     disc, drawn by the standard's proportions (a centre disc of radius R, blades from 1.5R to 5R,
     60 degrees wide, one pointing down). Multiblocks have room for an authentic one."""
-    import math
     t = Tex()
     t.rect(0, 0, 13, 13, 'B')
     t.rect(1, 1, 12, 12, 'Y')
@@ -184,22 +200,37 @@ def trefoil():
     return t
 
 
+def plaque():
+    """The trefoil's graphite backing, 16 x 16: a framed plate."""
+    return plate('S', 'M', 'b', 'T', 'U')
+
+
+def bezel():
+    """The graphite bezel round the control core's screen on the console, 14 x 12."""
+    return plate('S', 'M', 'b', 'T', 'U', 14, 12)
+
+
+BANDS = (2, 4, 5, 8)
+
 TEXTURES = {
     'vessel': vessel,
     'deck': deck,
     'plug': plug,
-    'plug_side': plug_side,
+    'plinth': plinth,
+    'rib': rib,
     'drive': drive,
     'shaft': shaft,
     'pump': pump,
-    'fan': fan,
     'exchanger': exchanger,
-    'cap': cap,
+    'fitting': fitting,
     'pipe': pipe,
-    'plinth': plinth,
     'lug': lug,
+    'fan': fan,
     'trefoil': trefoil,
+    'plaque': plaque,
+    'bezel': bezel,
 }
+TEXTURES.update({f'band_{h}': (lambda h=h: band(h)) for h in BANDS})
 
 
 def main():
