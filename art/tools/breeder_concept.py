@@ -20,12 +20,20 @@ What it shows, bottom to top:
 - A graphite plinth with a hazard band, and the console on the front (north), proud of it: as you
   face it, inputs on your left (fuel in, liquid sodium in), outputs on your right (the output port
   for spent fuel and what the blanket bred, energy out), the control core's screen in the middle.
-- Twelve legs from the plinth to the equator, braced in every bay but the front, and a drain line
-  from the sphere's foot to the plinth.
+- Twelve legs from the plinth to the equator on footings, braced in every bay but the front; a
+  drain line from the sphere's foot, and two copper sodium lines from its underside, into the
+  plinth.
 - The sphere: light casing plates in ten latitude bands, and at its equator a graphite belt with a
   cyan light strip and the radiation trefoil on the front.
-- A platform on top with a yellow handrail.
+- A grated walkway round the belt with a yellow handrail, reached by a caged ladder up the back.
+- A stair from the walkway up the sphere to the platform on top, as Horton spheres have.
+- The platform: a yellow handrail, a cyan light strip round its edge, the fuel hatch, and on a mast
+  at its front an amber beacon.
+
+The one moving part, drawn in its own group so a renderer can move it (design section 9): the
+beacon, turning while the reactor runs, so a running breeder shows from across a base.
 """
+import contextlib
 import math
 import os
 import sys
@@ -54,7 +62,43 @@ TEXTURES.update({
     'console': 'ryzergen:block/machine/console',
     'console_top': 'ryzergen:block/machine/console_top',
 })
-d = Design(C, TEXTURES, {'glow', 'screen'})
+d = Design(C, TEXTURES, {'glow', 'screen', 'breeder_amber'})
+
+
+@contextlib.contextmanager
+def centred(x, z):
+    """Draws round a centre other than the machine's (for the pipes and the beacon)."""
+    whole = d.at
+    d.at = lambda phi, rad, y: (x + rad * math.cos(phi), y, z + rad * math.sin(phi))
+    try:
+        yield
+    finally:
+        d.at = whole
+
+
+@contextlib.contextmanager
+def group(name):
+    d.group = name
+    try:
+        yield
+    finally:
+        d.group = 'static'
+
+
+def surface_r(y):
+    """The sphere's radius from the axis at height y (0 above or below it)."""
+    dy = y - EQUATOR
+    return math.sqrt(max(0.0, R * R - dy * dy))
+
+
+def rail(points, closed=False):
+    """A yellow handrail along `points`, a pixel thick."""
+    d.sweep('breeder_rail', points, 0.5, 0.5, lambda i: (0, 1, 0), closed=closed, caps=not closed)
+
+
+def arc(rad, y, a0, a1, steps):
+    """Points round the machine's axis at radius `rad` and height `y`, from angle a0 to a1."""
+    return [d.at(a0 + (a1 - a0) * k / steps, rad, y) for k in range(steps + 1)]
 
 
 def band(y, h, r, n=None):
@@ -139,18 +183,112 @@ for k in range(LEGS):
     for (ya, yb) in ((BRACE[0], BRACE[1]), (BRACE[1], BRACE[0])):
         path = [d.at(a, LEG_R, ya), d.at(b, LEG_R, yb)]
         d.sweep('breeder_fitting', path, 0.5, 0.5, lambda i, v=across: v, closed=False, caps=True)
+# Footings under the legs.
+for k in range(LEGS):
+    fx, _, fz = d.at(PHASE + 2 * math.pi * k / LEGS, LEG_R, 0)
+    d.box('breeder_fitting', fx - 3, 16, fz - 3, fx + 3, 17, fz + 3, skip=('down',))
 # The drain line from the sphere's foot to the plinth.
 d.cylinder('breeder_fitting', 16, EQUATOR - R + 1, 3, n=8)
+# Two sodium lines from the sphere's underside into the plinth, east and west, each with a collar
+# where it leaves the sphere and a pad where it meets the plinth.
+for phi in (0, math.pi):
+    px, _, pz = d.at(phi, 30, 0)
+    top = EQUATOR - surface_r(30)
+    with centred(px, pz):
+        d.cylinder('breeder_pipe', 18, top + 1, 3, n=8)
+        d.disc('breeder_fitting', top - 2, top, 4, n=8)
+    d.box('breeder_fitting', px - 5, 16, pz - 5, px + 5, 18, pz + 5, skip=('down',))
 
-# ---------------------------------------------------------------- the platform on top, with a handrail
+# ---------------------------------------------------------------- the walkway round the belt, and the ladder up to it
+WALK_Y = BELT[1] + 1
+WALK_R = LEG_R + 3
+d.annulus('breeder_grate', WALK_Y, surface_r(WALK_Y), WALK_R, n=48, step=WALK_R)
+d.annulus('breeder_fitting', BELT[1], BELT_R, WALK_R, up=False, n=48)
+d.cylinder('breeder_fitting', BELT[1], WALK_Y, WALK_R, n=48)
+# The ladder arrives at the back (south, 90 degrees); the stair leaves the walkway just past it.
+LADDER = math.radians(90)
+STAIR_FROM, STAIR_TO = math.radians(112), math.radians(312)
+GAP = math.radians(7)
+for k in range(LEGS):
+    phi = PHASE + 2 * math.pi * k / LEGS
+    d.post('breeder_rail', phi, WALK_R - 1, WALK_Y, WALK_Y + 7, 0.5, 0.5)
+for y in (WALK_Y + 3.5, WALK_Y + 7):
+    rail(arc(WALK_R - 1, y, LADDER + GAP, STAIR_FROM - GAP, 4))
+    rail(arc(WALK_R - 1, y, STAIR_FROM + GAP, LADDER - GAP + 2 * math.pi, 60))
+# The caged ladder, outside the legs: two stiles, rungs, and hoops of the cage from head height.
+out = (math.cos(LADDER), 0, math.sin(LADDER))
+across = (-math.sin(LADDER), 0, math.cos(LADDER))
+LAD_R = WALK_R + 1.5
+
+
+def lad(off, y, outward=0.0):
+    return (C + (LAD_R + outward) * out[0] + off * across[0], y, C + (LAD_R + outward) * out[2] + off * across[2])
+
+
+for off in (-2.5, 2.5):
+    d.sweep('breeder_fitting', [lad(off, 16), lad(off, WALK_Y + 7)], 0.5, 0.5, lambda i: across, closed=False, caps=True)
+for y in range(20, int(WALK_Y), 4):
+    d.sweep('breeder_fitting', [lad(-2.5, y), lad(2.5, y)], 0.3, 0.3, lambda i: out, closed=False, caps=True)
+CAGE = 4.5
+for y in range(44, int(WALK_Y) + 1, 9):
+    hoop = [lad(-CAGE * math.cos(t), y, 2 + CAGE * math.sin(t)) for t in [math.pi * k / 8 for k in range(9)]]
+    rail(hoop)
+for t in (math.pi / 4, math.pi / 2, 3 * math.pi / 4):
+    d.sweep('breeder_rail', [lad(-CAGE * math.cos(t), 44, 2 + CAGE * math.sin(t)),
+                             lad(-CAGE * math.cos(t), WALK_Y, 2 + CAGE * math.sin(t))], 0.4, 0.4,
+            lambda i: across, closed=False, caps=True)
+
+# ---------------------------------------------------------------- the platform on top
 PLAT_R = 16
 PLAT_Y = EQUATOR + R
 d.disc('breeder_deck', PLAT_Y - 2, PLAT_Y, PLAT_R, sides='breeder_fitting', n=8)
+d.cylinder('glow', PLAT_Y - 1.5, PLAT_Y - 1, PLAT_R + 0.1, n=8)
 for k in range(8):
     phi = 2 * math.pi * (k + 0.5) / 8
-    d.post('breeder_rail', phi, PLAT_R - 1, PLAT_Y, PLAT_Y + 7, 0.5, 0.5)
-ring = [d.at(2 * math.pi * k / 16, PLAT_R - 1, PLAT_Y + 7) for k in range(16)]
-d.sweep('breeder_rail', ring, 0.5, 0.5, lambda i: (0, 1, 0))
+    if abs(math.atan2(math.sin(phi - STAIR_TO), math.cos(phi - STAIR_TO))) > math.radians(25):
+        d.post('breeder_rail', phi, PLAT_R - 1, PLAT_Y, PLAT_Y + 7, 0.5, 0.5)
+for y in (PLAT_Y + 3.5, PLAT_Y + 7):
+    rail(arc(PLAT_R - 1, y, STAIR_TO + math.radians(20), STAIR_TO - math.radians(20) + 2 * math.pi, 16))
+# The fuel hatch, over the core: a 10 x 10 lid.
+d.box('breeder_fitting', C - 5, PLAT_Y, C - 1, C + 5, PLAT_Y + 1, C + 9, decals={'up': 'breeder_hatch'})
+# The beacon's mast at the platform's front, and its housing.
+BX, _, BZ = d.at(math.radians(270), 10, 0)
+d.box('breeder_fitting', BX - 1, PLAT_Y, BZ - 1, BX + 1, PLAT_Y + 10, BZ + 1)
+with centred(BX, BZ):
+    d.disc('breeder_fitting', PLAT_Y + 10, PLAT_Y + 11, 3, n=8)
+    d.disc('breeder_fitting', PLAT_Y + 15, PLAT_Y + 16, 3, n=8, bottom=True)
+with group('beacon'):
+    # The lamp: half lit amber, half its dark reflector, so turning it sweeps the light round.
+    for k in range(8):
+        p0, p1 = 2 * math.pi * k / 8, 2 * math.pi * (k + 1) / 8
+        pm = (p0 + p1) / 2
+        with centred(BX, BZ):
+            pts = [d.at(p0, 2.2, PLAT_Y + 15), d.at(p0, 2.2, PLAT_Y + 11), d.at(p1, 2.2, PLAT_Y + 11), d.at(p1, 2.2, PLAT_Y + 15)]
+        d.quad('breeder_amber' if k < 4 else 'breeder_fitting', pts, [(0, 0), (0, 4), (16, 4), (16, 0)],
+               (math.cos(pm), 0, math.sin(pm)))
+
+# ---------------------------------------------------------------- the stair up the sphere, from the walkway to the platform
+STEPS = 44
+stair = []
+for k in range(STEPS + 1):
+    t = k / STEPS
+    y = WALK_Y + (PLAT_Y - WALK_Y) * t
+    phi = STAIR_FROM + (STAIR_TO - STAIR_FROM) * t
+    r = max(surface_r(y) + 4, PLAT_R + 1.5)
+    stair.append((phi, r, y))
+inner = [d.at(phi, r - 2.5, y) for phi, r, y in stair]
+outer = [d.at(phi, r + 2.5, y) for phi, r, y in stair]
+for side in (inner, outer):
+    d.sweep('breeder_fitting', side, 0.5, 0.5, lambda i: (0, 1, 0), closed=False, caps=True)
+for k in range(1, STEPS):
+    phi, r, y = stair[k]
+    along = (-math.sin(phi), 0, math.cos(phi))
+    d.sweep('breeder_fitting', [d.at(phi, r - 2.5, y + 0.5), d.at(phi, r + 2.5, y + 0.5)], 0.4, 1.2,
+            lambda i, v=along: v, closed=False, caps=True)
+rail([d.at(phi, r + 2.5, y + 7) for phi, r, y in stair])
+for k in range(0, STEPS + 1, 4):
+    phi, r, y = stair[k]
+    d.post('breeder_rail', phi, r + 2.5, y, y + 7, 0.5, 0.5)
 
 
 # ---------------------------------------------------------------- picture
