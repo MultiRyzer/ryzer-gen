@@ -527,6 +527,14 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 modLoc("block/station_core_front"), modLoc("block/station_casing"));
         horizontalBlock(ModBlocks.STATION_CORE.get(), core);
         simpleBlockItem(ModBlocks.STATION_CORE.get(), core);
+        // Breeder parts: the sphere's welded plate and the girder, as they look before the reactor
+        // forms; the core wears the station's control face, as the formed reactor does.
+        simpleBlockWithItem(ModBlocks.BREEDER_SHELL.get(), models().cubeAll("breeder_shell", modLoc("block/breeder/shell")));
+        simpleBlockWithItem(ModBlocks.BREEDER_FRAME.get(), models().cubeAll("breeder_frame", modLoc("block/breeder/girder")));
+        ModelFile breederCore = models().orientable("breeder_core", modLoc("block/breeder/girder"),
+                modLoc("block/station_core_front"), modLoc("block/breeder/plinth"));
+        horizontalBlock(ModBlocks.BREEDER_CORE.get(), breederCore);
+        simpleBlockItem(ModBlocks.BREEDER_CORE.get(), breederCore);
         // The fusion preview: a station core face on a creative top, so it reads as a test block.
         ModelFile fusionPreview = models().orientableWithBottom("fusion_preview", modLoc("block/station_casing"),
                 modLoc("block/station_core_front"), modLoc("block/station_casing"), modLoc("block/creative_top"));

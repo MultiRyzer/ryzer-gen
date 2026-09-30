@@ -14,6 +14,8 @@ import com.ryzer.ryzergen.creative.CreativeSourceBlock;
 import com.ryzer.ryzergen.creative.CreativeWaterTankBlock;
 import com.ryzer.ryzergen.cable.FluidPipeBlock;
 import com.ryzer.ryzergen.machine.fission.StationCoreBlock;
+import com.ryzer.ryzergen.machine.breeder.BreederCoreBlock;
+import com.ryzer.ryzergen.machine.breeder.BreederPartBlock;
 import com.ryzer.ryzergen.machine.fission.StationPartBlock;
 import com.ryzer.ryzergen.machine.processing.ProcessingBlock;
 import com.ryzer.ryzergen.machine.processing.ProcessingMachine;
@@ -94,6 +96,14 @@ public final class ModBlocks {
             () -> new StationPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
     public static final DeferredBlock<StationCoreBlock> STATION_CORE = BLOCKS.register("station_core",
             () -> new StationCoreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+    // Breeder reactor parts (design section 9), as the station's: noOcclusion, since once formed they
+    // stop drawing themselves and the core draws the reactor.
+    public static final DeferredBlock<BreederPartBlock> BREEDER_FRAME = BLOCKS.register("breeder_frame",
+            () -> new BreederPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+    public static final DeferredBlock<BreederPartBlock> BREEDER_SHELL = BLOCKS.register("breeder_shell",
+            () -> new BreederPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+    public static final DeferredBlock<BreederCoreBlock> BREEDER_CORE = BLOCKS.register("breeder_core",
+            () -> new BreederCoreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
     // Spent Fuel Pool parts (design section 7). Formed, they draw the pool's combined model; with
     // fuel cooling in it, the water glows and lights the room a little.
     public static final DeferredBlock<PoolPartBlock> POOL_LINER = BLOCKS.register("pool_liner",
