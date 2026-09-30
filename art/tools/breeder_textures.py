@@ -17,6 +17,7 @@ Run from the repo root:
 import math
 
 from pixelart import *  # noqa: F401,F403
+from quad_design import write_texture
 
 FOLDER = 'block/breeder/'
 
@@ -172,6 +173,25 @@ def lining():
     return plate('T', 'b', 'S', 'U', 'K')
 
 
+def hall_floor():
+    """The lantern hall's floor, one plate per panel of its rings: dark graphite, plain, with a seam
+    down one side and across the outer edge, so the rings read as clean radial plates rather than
+    a busy grating squeezed into wedges."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'T')
+    t.rect(0, 0, 0, 15, 'U')
+    t.rect(1, 0, 1, 15, 'S')
+    t.rect(0, 0, 15, 0, 'U')
+    t.rect(0, 1, 15, 1, 'S')
+    return t
+
+
+def glass():
+    """The lantern's glass: a faint, even cool tint with no sheen, so nothing draws streaks across
+    the hall behind it. Written straight as colour and alpha (it is translucent)."""
+    return [[(170, 215, 235, 56)] * 16 for _ in range(16)]
+
+
 def rail():
     """The platform's handrail and posts: safety yellow, plain, so any length shows it evenly."""
     t = Tex()
@@ -322,6 +342,7 @@ TEXTURES = {
     'fan': fan,
     'plug': plug,
     'lining': lining,
+    'hall_floor': hall_floor,
     'grate': grate,
     'pipe': pipe,
     'leg': leg,
@@ -340,6 +361,7 @@ TEXTURES.update({f'band_{h}': (lambda h=h: band(h)) for h in BANDS})
 def main():
     for name, fn in TEXTURES.items():
         publish_finished(FOLDER + name, fn())
+    write_texture(FOLDER + 'glass', glass())
 
 
 if __name__ == '__main__':
