@@ -135,8 +135,8 @@ The first public build: the microreactor, home battery, pipes and steam, the fue
 ## Milestone 3b: Breeder reactor (tier 4, design section 9)
 The utility reactor: fuel for the stations and the tritium that starts fusion. Fusion needs it.
 - [x] Settle the breeder's open questions (30 Sep 2026): the blanket is a ring in the planning grid; spent breeder fuel closes the loop; sodium is an ingot and a liquid coolant; tritium is a gas; the pyroprocessor is the Electrorefiner; americium and curium stay in transuranic metal
-- [x] Concept design (`art/tools/breeder_concept.py`, textures `breeder_textures.py`): a sealed pool-type tank, 9 across and 7 high; rotating plugs, control rod drives and the handling machine on the roof, pumps, heat exchangers and the secondary loops; the console proud of the plinth; moving parts drawn in their own groups, with a posed render to check they clear
-- [ ] Animation: pump fans turning, drive shafts raised while running and dropping on a SCRAM, the plugs turning while fuel moves (a block entity renderer, like the pool's crane)
+- [x] Concept, base unit (`art/tools/breeder_concept.py`, textures `breeder_textures.py`): a sealed pool-type tank 9 across, the console proud of the plinth, even textures
+- [ ] Concept, the roof: the machinery that works the reactor, built up from the base, and an animation somewhere on it
 - [x] Electrorefiner (behind `preview.next_tier`): one molten salt cell, gated at 1,500 FE/t. Spent MOX and salt into transuranic metal, a uranium ingot and fission waste (30 s); salt alone into a sodium ingot (10 s). Sodium ingot and transuranic metal items
 - [ ] Liquid sodium, melted from the ingot, for the breeder's loop
 - [ ] Electrorefiner sound: an electrical hum from a recording (it borrows the turbine's drone for now)

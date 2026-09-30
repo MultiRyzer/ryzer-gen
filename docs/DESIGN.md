@@ -382,14 +382,11 @@ Real basis: every pass through a thermal reactor builds up heavier plutonium iso
 6. **Spent breeder fuel closes the loop:** it goes back through the pyroprocessor into transuranic metal and fission waste, so a breeder can keep itself fuelled once started. Real basis: fast reactor fuel cycles are designed to close this way (settled 30 Sep 2026).
 
 ### Shape (concept, 30 Sep 2026)
-Concept in `art/tools/breeder_concept.py` (textures `breeder_textures.py`, renders `art/concepts/breeder.png` and `breeder_moving.png`). A pool-type sodium fast reactor, as most real ones are built: 9 blocks across and 7 high, a little smaller than the station.
-- **Sealed, not seen through.** The core sits deep in a round tank of liquid sodium, which is opaque, so there is no glass: the station is the reactor you watch, the breeder the one you run. A gunmetal guard vessel with ribs, a graphite band, a cyan light strip and a radiation trefoil on the front (multiblocks may carry one).
-- **The roof carries everything**, as on real pool-type plants: a thick slab with two rotating plugs (a large one and a small one set off its middle), the control rod drives and the fuel handling machine on the small plug, two primary pumps (finned motors with fans) and two intermediate heat exchangers (tall, light casing) through the deck, and the secondary sodium loops in round copper pipe, leaving the exchangers through flanged nozzles, turning down over the roof's edge and entering the plinth through collars. Everything through the roof rises out of a bolted pad in the deck's graphite, as real roof penetrations are seated, so it reads as built in, not set on top.
+Concept in `art/tools/breeder_concept.py` (textures `breeder_textures.py`, render `art/concepts/breeder.png`). A pool-type sodium fast reactor, as most real ones are built: 9 blocks across. The base unit is drawn (5.5 blocks high); what stands on its roof is designed next, building up from it. A first pass at the roof (rotating plugs, control rod drives, pumps, heat exchangers and pipes, with moving parts) was set aside on 30 Sep 2026 to start again from the base; it is in git history if any of it comes back.
+- **Sealed, not seen through.** The core sits deep in a round tank of liquid sodium, which is opaque, so there is no glass: the station is the reactor you watch, the breeder the one you run. A gunmetal guard vessel of 16 plates with a rib on every seam, a graphite band, a cyan light strip and a radiation trefoil on the front (multiblocks may carry one).
+- **The roof slab:** a graphite rim and a deck of plates, ready for the machinery that works the reactor, which real pool-type plants carry on the roof.
 - **The console** on the front, proud of the plinth: as you face it, fuel in and liquid sodium in on the left, the output port (spent fuel and what the blanket bred) and energy out on the right, the control core's screen in the middle.
-- **Moving parts** (each its own group in the design, for a block entity renderer):
-  - the pump fans turn while sodium flows;
-  - the control rod drive shafts stand raised while the reactor runs and drop back all at once on a SCRAM, which reads at a glance;
-  - the rotating plugs turn while fuel goes in or out, bringing the handling machine over a core position, then settle. Real basis: rotating plugs are how pool-type fast reactors are refuelled through a sealed roof.
+- **Even textures:** every panel sized to its texture, heights in whole blocks or on band textures drawn at their height, decals at their exact size.
 
 ### How the tiers tie together
 - Uranium station: uranium rods become spent rods, which reprocess into plutonium for MOX.
