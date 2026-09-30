@@ -161,14 +161,18 @@ def fireproofing():
 
 
 def console():
-    """The console's front, one cell of it (16 wide, the 15 pixels of the face): graphite, a lit
-    lip along the top, and a recessed bay in the middle that a port's 10 x 10 flange sits in."""
+    """The console's front, one panel per cell (16 wide, the 15 pixels of the face), behind the
+    ports: graphite, a lit lip along the top, a seam between panels (lit on the left, shaded on the
+    right), and a darker kick plate along the foot with a row of vent slots."""
     t = Tex()
     t.rect(0, 0, 15, 15, 'S')
     t.rect(0, 1, 15, 1, 'M')
     t.rect(0, 2, 15, 2, 'b')
-    t.rect(2, 3, 13, 14, 'U')
-    t.rect(3, 4, 12, 13, 'T')
+    t.rect(0, 1, 0, 15, 'b')
+    t.rect(15, 1, 15, 15, 'T')
+    t.rect(1, 14, 14, 15, 'T')
+    for x in range(3, 13, 2):
+        t.set(x, 14, 'U')
     t.rect(0, 15, 15, 15, 'U')
     return t
 
