@@ -109,6 +109,69 @@ def fitting():
     return t
 
 
+def concrete():
+    """The footings and pads the reactor stands on: pale concrete, plain, so a pier or pad of any
+    size shows it evenly (its lighting comes from the shading)."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'F')
+    return t
+
+
+def pump():
+    """A sodium pump's motor casing: graphite with one cooling fin per panel (a lit edge, the fin's
+    face and its shadow), a lit rim at the top and a dark foot."""
+    t = Tex()
+    cols = ['U', 'U', 'M', 'M', 'M', 'b', 'b', 'b', 'b', 'b', 'b', 'S', 'S', 'S', 'U', 'U']
+    for x, k in enumerate(cols):
+        t.rect(x, 0, x, 15, k)
+    t.rect(0, 0, 15, 0, 'M')
+    t.rect(0, 15, 15, 15, 'U')
+    return t
+
+
+def exchanger():
+    """A heat exchanger's shell, a block high: light casing (lighter than the pumps, to tell them
+    apart), lit at its top seam and shaded at its foot, the same all round."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'F')
+    t.rect(0, 0, 15, 0, 'A')
+    t.rect(0, 1, 15, 1, 'E')
+    t.rect(0, 14, 15, 14, 'I')
+    t.rect(0, 15, 15, 15, 'J')
+    return t
+
+
+def fan():
+    """A pump motor's fan, 12 x 12, drawn once across the motor's top: a dark well, four swept
+    blades and an orange hub."""
+    t = Tex()
+    for y in range(12):
+        for x in range(12):
+            dx, dy = x + 0.5 - 6, y + 0.5 - 6
+            r = math.hypot(dx, dy)
+            if r > 6:
+                continue
+            ang = math.degrees(math.atan2(dy, dx)) + r * 9
+            k = 'K' if r > 5.2 else 'U'
+            if 1.5 < r <= 5.2 and ang % 90 < 28:
+                k = 'b' if ang % 90 < 20 else 'S'
+            if r <= 1.8:
+                k = 'X'
+            t.set(x, y, k)
+    return t
+
+
+def plug():
+    """The rotating plugs' top plates, seen through the lantern: lead grey, framed."""
+    return plate('p', 'Q', 'q', 'P', 'D')
+
+
+def lining():
+    """The inside of the dome above the lantern: dark graphite plates, framed, so the room inside
+    reads as a lit machine hall rather than a hollow shell."""
+    return plate('T', 'b', 'S', 'U', 'K')
+
+
 def rail():
     """The platform's handrail and posts: safety yellow, plain, so any length shows it evenly."""
     t = Tex()
@@ -253,6 +316,12 @@ TEXTURES = {
     'fitting': fitting,
     'graphite': graphite,
     'rail': rail,
+    'concrete': concrete,
+    'pump': pump,
+    'exchanger': exchanger,
+    'fan': fan,
+    'plug': plug,
+    'lining': lining,
     'grate': grate,
     'pipe': pipe,
     'leg': leg,
