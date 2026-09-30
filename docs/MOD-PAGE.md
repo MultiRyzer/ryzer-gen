@@ -1,6 +1,6 @@
 # Mod page (Modrinth and CurseForge)
 
-The text below is the project description. Paste it into both sites (both take Markdown; on CurseForge pick the Markdown editor first).
+The text below is the project description. Paste it into Modrinth as it is. CurseForge's normal editor does not read Markdown: either switch its description to the Markdown editor before pasting, or paste `docs/MOD-PAGE.html` (the same page as HTML, written by `python art/tools/mod_page_html.py`; rerun it after editing this file) into the editor's source view.
 
 The page's look comes from pictures, since neither site allows fonts or styles: banners in the design system's web style (Chakra Petch headings, graphite, cyan), drawn in `art/modpage/banners.html` and rendered to `art/gallery/page/` by `python art/tools/mod_page_banners.py` (needs Edge or Chrome, run from PowerShell). Every image links straight to its file on GitHub's `main` branch, so nothing needs uploading by hand: push first, then paste. After changing a banner, render it, push, and the page picks it up. Pictures are at most 840 px wide, under CurseForge's limit.
 
