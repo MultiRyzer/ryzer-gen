@@ -2,7 +2,7 @@
 
 The text below is the project description. Paste it into Modrinth as it is. CurseForge's normal editor does not read Markdown: either switch its description to the Markdown editor before pasting, or paste `docs/MOD-PAGE.html` (the same page as HTML, written by `python art/tools/mod_page_html.py`; rerun it after editing this file) into the editor's source view.
 
-The page's look comes from pictures, since neither site allows fonts or styles: banners in the design system's web style (Chakra Petch headings, graphite, cyan), drawn in `art/modpage/banners.html` and rendered to `art/gallery/page/` by `python art/tools/mod_page_banners.py` (needs Edge or Chrome, run from PowerShell). Every image links straight to its file on GitHub's `main` branch, so nothing needs uploading by hand: push first, then paste. After changing a banner, render it, push, and the page picks it up. Pictures are at most 840 px wide, under CurseForge's limit.
+The page's look comes from pictures, since neither site allows fonts or styles: banners in the design system's web style (Chakra Petch headings, graphite, cyan), drawn in `art/modpage/banners.html` and rendered to `art/gallery/page/` by `python art/tools/mod_page_banners.py` (needs Edge or Chrome, run from PowerShell). Every image links straight to its file on GitHub's `main` branch, so nothing needs uploading by hand: push first, then paste. CurseForge caches each picture by its address, so a changed picture needs a new file name (a new number for a photo, or a suffix like `hero_2.png` for a banner) and the page updated to match. Pictures are at most 840 px wide, under CurseForge's limit.
 
 Summary line for the short description field:
 
@@ -58,7 +58,7 @@ NeoForge 1.21.1 (21.1.249 or newer, so it runs in ATM10). Standalone: it ships e
 - Coolant is your friend: a strong core boils a lot of water, so it needs a real water supply of several intake pumps.
 - MOX fuel makes double the power of uranium. SCRAM at 900°C, or turn the safeties off and risk a flux tilt and a meltdown that leaves a crater.
 
-![A fuel cycle production line with its batteries and water supply, feeding the fission station](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/curseforge/03_production_line.jpg)
+![A fuel cycle production line with its batteries and water supply, feeding the fission station](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/curseforge/14_production_line.jpg)
 
 ![The core planner rating a layout at 100%](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/02_core_planner.png)
 
