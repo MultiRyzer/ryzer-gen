@@ -2,9 +2,9 @@
 
 Drawn to the house style, and even: every texture is drawn for the shape it goes on, so each
 surface shows it whole, never a plate cut at an edge or squeezed out of shape.
-- Big faces (the sphere, the belt, the deck, the plinth) are one framed plate per panel: lit
-  along the top and left, shaded at the foot and right. The concept sizes those panels to match:
-  each of the sphere's latitude bands is one plate high, and every ring is cut into equal widths.
+- Big faces are drawn for their panels: the sphere's welded plates (one latitude band high),
+  the belt's girder (one panel between two legs), and the plinth's tread plate, a small repeating
+  pattern that reads the same on every piece of its round floor.
 - Narrow parts (the legs, the bracing, the handrail) have textures that read the same however
   narrow the face.
 - Bands shorter than a block (the plinth's lip) have a texture drawn at their height, band_<h>.
@@ -54,17 +54,43 @@ def shell():
     return t
 
 
-def deck():
-    """The platform's deck plates: graphite, with a row of grating slots across the middle."""
-    t = plate('S', 'M', 'b', 'T', 'U')
-    for x in range(4, 12, 2):
-        t.rect(x, 6, x, 9, 'U')
+def plinth():
+    """The plinth's floor: steel tread plate, gunmetal with short raised bars in the alternating
+    pattern industrial floors use, each lit on its upper edge and shadowed below. The pattern
+    repeats every 8 pixels, so every piece of the round floor shows it evenly."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'u')
+    for cy in range(4):
+        for cx in range(4):
+            x0, y0 = cx * 4, cy * 4
+            if (cx + cy) % 2 == 0:
+                t.set(x0 + 1, y0 + 2, 's')
+                t.set(x0 + 2, y0 + 1, 's')
+                t.set(x0 + 2, y0 + 2, 'z')
+            else:
+                t.set(x0 + 1, y0 + 1, 's')
+                t.set(x0 + 2, y0 + 2, 's')
+                t.set(x0 + 1, y0 + 2, 'z')
     return t
 
 
-def plinth():
-    """The plinth's top plates: graphite floor, framed."""
-    return plate('S', 'M', 'b', 'T', 'U')
+def girder():
+    """The equator belt, a girder the legs hang from, drawn for one panel between two legs: a lit
+    top flange and a shaded bottom one, each with a row of bolts, a darker web between, and a
+    stiffener down the middle."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'S')
+    t.rect(0, 0, 15, 2, 'b')
+    t.rect(0, 0, 15, 0, 'M')
+    t.rect(0, 13, 15, 15, 'b')
+    t.rect(0, 15, 15, 15, 'U')
+    t.rect(0, 3, 15, 3, 'T')
+    t.rect(7, 3, 8, 12, 'b')
+    t.rect(7, 3, 7, 12, 'M')
+    for x in range(2, 16, 4):
+        t.set(x, 1, 'L')
+        t.set(x, 14, 'M')
+    return t
 
 
 # ---------------------------------------------------------------- narrow parts and bands
@@ -174,8 +200,8 @@ BANDS = (5,)
 
 TEXTURES = {
     'shell': shell,
-    'deck': deck,
     'plinth': plinth,
+    'girder': girder,
     'rib': rib,
     'fitting': fitting,
     'rail': rail,
