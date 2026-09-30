@@ -188,7 +188,7 @@ d.lathe('breeder_fitting', [(EQUATOR - R, 0), (FOOT_Y, FOOT_R)], n=8)
 
 # ---------------------------------------------------------------- the girder belt round the equator
 belt_r = BELT_R
-plates('breeder_plinth', BELT[0], BELT[1], belt_r, n=LEGS)
+plates('breeder_girder', BELT[0], BELT[1], belt_r, n=LEGS)
 for y, up in ((BELT[1], True), (BELT[0], False)):
     inner = lat_point(math.asin((y - EQUATOR) / R))[1]
     d.annulus('breeder_fitting', y, inner, belt_r, up=up, n=LEGS * 2)
@@ -271,7 +271,7 @@ for t in (math.pi / 4, math.pi / 2, 3 * math.pi / 4):
 # ---------------------------------------------------------------- the platform on top
 PLAT_R = 16
 PLAT_Y = EQUATOR + R
-d.disc('breeder_deck', PLAT_Y - 2, PLAT_Y, PLAT_R, sides='breeder_fitting', n=8)
+d.disc('breeder_grate', PLAT_Y - 2, PLAT_Y, PLAT_R, sides='breeder_fitting', n=8)
 d.cylinder('glow', PLAT_Y - 1.5, PLAT_Y - 1, PLAT_R + 0.1, n=8)
 for k in range(8):
     d.post('breeder_rail', 2 * math.pi * (k + 0.5) / 8, PLAT_R - 1, PLAT_Y, PLAT_Y + 7, 0.5, 0.5)
