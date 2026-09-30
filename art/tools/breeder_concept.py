@@ -57,10 +57,6 @@ PHASE = math.radians(360 / LEGS / 2)   # legs sit on the belt's seams, so the fr
 TEXTURES = {'breeder_' + name: 'ryzergen:block/breeder/' + name for name in breeder_textures.TEXTURES}
 TEXTURES.update({name: 'ryzergen:block/microreactor/' + name for name in (
     'hazard', 'glow', 'screen', 'port_energy', 'port_fuel', 'port_coolant')})
-TEXTURES.update({
-    'console': 'ryzergen:block/machine/console',
-    'console_top': 'ryzergen:block/machine/console_top',
-})
 d = Design(C, TEXTURES, {'glow', 'screen', 'breeder_amber'})
 
 
@@ -122,18 +118,20 @@ d.annulus('breeder_plinth', 16, 0, PLINTH_R, step=PLINTH_R / 4)
 d.cylinder('hazard', 5, 16, PLINTH_R)
 band(0, 5, PLINTH_R + 2)
 d.annulus('breeder_fitting', 5, PLINTH_R, PLINTH_R + 2)
-# The console (north), in front of the plinth's lip (z 8): five cells centred on the middle one.
-# As you face it (looking south), your left is east (larger x): inputs there, outputs to the west.
-FRONT_Z = 4
-d.box('console', 2 * B - 4, 0, FRONT_Z, 7 * B + 4, 15, 2 * B, top='console_top', skip=('south', 'down'))
+# The console (north), in front of the plinth's lip: five cells, two blocks deep, on the grid so
+# its textures show whole. Each port sits in the recessed bay its cell draws, flush with the face
+# as ports are; the control core's screen in the middle cell stands in a bezel. As you face it
+# (looking south), your left is east (larger x): inputs there, outputs to the west.
+d.box('breeder_console_side', 2 * B, 0, 0, 7 * B, 15, 2 * B, top='breeder_graphite', skip=('north', 'south', 'down'))
+d.box('breeder_console', 2 * B, 0, 0, 7 * B, 15, 2 * B, skip=('south', 'east', 'west', 'up', 'down'))
 PORTS = [('port_energy', 2), ('port_fuel', 3), ('core', 4), ('port_fuel', 5), ('port_coolant', 6)]
 for kind, cell in PORTS:
     x = cell * B
     if kind == 'core':
-        d.box('breeder_fitting', x + 1, 2, FRONT_Z - 1, x + 15, 14, FRONT_Z, decals={'north': 'breeder_bezel'}, skip=('south',))
-        d.box('breeder_fitting', x + 3, 5, FRONT_Z - 1.5, x + 13, 11, FRONT_Z - 1, decals={'north': 'screen'}, skip=('south',))
+        d.box('breeder_fitting', x + 1, 2, -0.5, x + 15, 14, 0, decals={'north': 'breeder_bezel'}, skip=('south',))
+        d.box('breeder_fitting', x + 3, 5, -1, x + 13, 11, -0.5, decals={'north': 'screen'}, skip=('south',))
     else:
-        d.box('breeder_fitting', x + 3, 3, FRONT_Z - 1, x + 13, 13, FRONT_Z, decals={'north': kind}, skip=('south',))
+        d.box('breeder_fitting', x + 3, 3, -0.05, x + 13, 13, 0, decals={'north': kind}, skip=('south',))
 
 # ---------------------------------------------------------------- the sphere, in latitude bands
 def lat_point(lat):
@@ -202,7 +200,14 @@ d.box('breeder_fitting', C - 7, BELT[0] + 1, PZ - 0.5, C + 7, BELT[1] - 1, PZ, d
 LEG_TOP = BELT[1]
 for k in range(LEGS):
     phi = PHASE + 2 * math.pi * k / LEGS
-    d.post('breeder_rib', phi, LEG_R, 16, LEG_TOP, 2, 2)
+    # Round legs, as a sphere's are: fireproofing up to the bracing's middle, painted steel above.
+    lx, _, lz = d.at(phi, LEG_R, 0)
+    with centred(lx, lz):
+        for y in range(16, 48, B):
+            d.cylinder('breeder_fireproofing', y, y + B, 2.5, n=8)
+        for y in range(48, LEG_TOP, B):
+            d.cylinder('breeder_leg', y, y + B, 2.2, n=8)
+        d.annulus('breeder_fitting', 48, 2.2, 2.5, n=8)
 # Cross bracing in each bay below the belt, thin rods corner to corner; the front bay (north, 270
 # degrees) is left open, so the console and the trefoil stay clear.
 BRACE = (20, BELT[0] - 4)

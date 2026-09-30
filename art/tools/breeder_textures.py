@@ -5,8 +5,8 @@ surface shows it whole, never a plate cut at an edge or squeezed out of shape.
 - Big faces are drawn for their panels: the sphere's welded plates (one latitude band high),
   the belt's girder (one panel between two legs), and the plinth's tread plate, a small repeating
   pattern that reads the same on every piece of its round floor.
-- Narrow parts (the legs, the bracing, the handrail) have textures that read the same however
-  narrow the face.
+- Narrow and round parts (the legs, the bracing, the handrail, the pipes) have textures that
+  change only down their length, so they read the same however narrow the face.
 - Bands shorter than a block (the plinth's lip) have a texture drawn at their height, band_<h>.
 - Decals (the trefoil, the plaque, the bezel) are drawn at their exact size.
 Fills get the soft surface finish (pixelart.publish_finished); lit textures stay crisp.
@@ -94,13 +94,10 @@ def girder():
 
 
 # ---------------------------------------------------------------- narrow parts and bands
-def rib():
-    """A leg, a few pixels wide: lit edge, face, shadowed edge across it (so each face of the leg
-    reads the same), and a joint at each block of height."""
+def graphite():
+    """The console's top: plain graphite, the finish its only pattern."""
     t = Tex()
-    for x in range(16):
-        t.rect(x, 0, x, 15, 'M' if x < 5 else 'b' if x < 11 else 'T')
-    t.rect(0, 0, 15, 0, 'U')
+    t.rect(0, 0, 15, 15, 'S')
     return t
 
 
@@ -131,10 +128,57 @@ def grate():
 
 
 def pipe():
-    """The sodium lines: clean copper, plain, so a round pipe of any length shows it evenly; its
-    roundness comes from the shading."""
+    """The sodium lines: clean copper, clamped every four pixels (a dark ring with a bright edge
+    above it), the same all round, so a round pipe shows it evenly; its roundness comes from the
+    shading."""
     t = Tex()
     t.rect(0, 0, 15, 15, 'R')
+    for y in range(0, 16, 4):
+        t.rect(0, y, 15, y, 'r')
+        t.rect(0, (y + 3) % 16, 15, (y + 3) % 16, 'e')
+    return t
+
+
+def leg():
+    """A leg's upper part, a block high: painted steel, off-white to match the sphere, with a weld
+    ring at the block's foot, the same all round."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'E')
+    t.rect(0, 14, 15, 14, 'A')
+    for x in range(16):
+        t.set(x, 15, 'J' if x % 2 else 'I')
+    return t
+
+
+def fireproofing():
+    """A leg's lower part, a block high: the grey fireproofing jacket real sphere legs carry near
+    the ground (a concrete casing), lit at a chamfered joint at its top."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'L')
+    t.rect(0, 0, 15, 0, 'h')
+    t.rect(0, 1, 15, 1, 'M')
+    return t
+
+
+def console():
+    """The console's front, one cell of it (16 wide, the 15 pixels of the face): graphite, a lit
+    lip along the top, and a recessed bay in the middle that a port's 10 x 10 flange sits in."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'S')
+    t.rect(0, 1, 15, 1, 'M')
+    t.rect(0, 2, 15, 2, 'b')
+    t.rect(2, 3, 13, 14, 'U')
+    t.rect(3, 4, 12, 13, 'T')
+    t.rect(0, 15, 15, 15, 'U')
+    return t
+
+
+def console_side():
+    """The console's ends: graphite, a lit lip along the top and a shadow at the foot."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'S')
+    t.rect(0, 1, 15, 1, 'M')
+    t.rect(0, 15, 15, 15, 'U')
     return t
 
 
@@ -202,11 +246,15 @@ TEXTURES = {
     'shell': shell,
     'plinth': plinth,
     'girder': girder,
-    'rib': rib,
     'fitting': fitting,
+    'graphite': graphite,
     'rail': rail,
     'grate': grate,
     'pipe': pipe,
+    'leg': leg,
+    'fireproofing': fireproofing,
+    'console': console,
+    'console_side': console_side,
     'amber': amber,
     'hatch': hatch,
     'trefoil': trefoil,
