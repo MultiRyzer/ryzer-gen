@@ -46,6 +46,8 @@ NeoForge 1.21.1 (21.1.249 or newer, so it runs in ATM10). Standalone: it ships e
 
 ![The machine family: the alloy smelters, the Core Cracker, the Intake Pump, the Reprocessor, the Fuel Fabricator and the Lithium Extractor](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/curseforge/11_machines.jpg)
 
+![The Spent Fuel Pool, its crane over the racks and hot fuel bubbling in the water, beside a fuel cycle line and a meltdown crater](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/curseforge/13_spent_fuel_pool.jpg)
+
 ![The Container Battery, its racks lit, with coolant piped into the fan and the fission station behind](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/curseforge/12_container_battery.jpg)
 
 ![Tier 3: the fission power station](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/tier_3.png)
