@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "active=false,facing=east": {
+      "model": "ryzergen:block/electrorefiner",
+      "y": 90
+    },
+    "active=false,facing=north": {
+      "model": "ryzergen:block/electrorefiner"
+    },
+    "active=false,facing=south": {
+      "model": "ryzergen:block/electrorefiner",
+      "y": 180
+    },
+    "active=false,facing=west": {
+      "model": "ryzergen:block/electrorefiner",
+      "y": 270
+    },
+    "active=true,facing=east": {
+      "model": "ryzergen:block/electrorefiner_on",
+      "y": 90
+    },
+    "active=true,facing=north": {
+      "model": "ryzergen:block/electrorefiner_on"
+    },
+    "active=true,facing=south": {
+      "model": "ryzergen:block/electrorefiner_on",
+      "y": 180
+    },
+    "active=true,facing=west": {
+      "model": "ryzergen:block/electrorefiner_on",
+      "y": 270
+    }
+  }
+}

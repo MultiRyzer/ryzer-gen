@@ -40,7 +40,7 @@ public record MachineRecipe(Process process, List<SizedIngredient> inputs, Optio
 
     /** Which machine a recipe belongs to. */
     public enum Process {
-        CRACKING, REPROCESSING, FABRICATING, EXTRACTING;
+        CRACKING, REPROCESSING, FABRICATING, EXTRACTING, ELECTROREFINING;
 
         public RecipeType<MachineRecipe> type() {
             return switch (this) {
@@ -48,6 +48,7 @@ public record MachineRecipe(Process process, List<SizedIngredient> inputs, Optio
                 case REPROCESSING -> ModRecipes.REPROCESSING_TYPE.get();
                 case FABRICATING -> ModRecipes.FABRICATING_TYPE.get();
                 case EXTRACTING -> ModRecipes.EXTRACTING_TYPE.get();
+                case ELECTROREFINING -> ModRecipes.ELECTROREFINING_TYPE.get();
             };
         }
 
@@ -57,6 +58,7 @@ public record MachineRecipe(Process process, List<SizedIngredient> inputs, Optio
                 case REPROCESSING -> ModRecipes.REPROCESSING_SERIALIZER.get();
                 case FABRICATING -> ModRecipes.FABRICATING_SERIALIZER.get();
                 case EXTRACTING -> ModRecipes.EXTRACTING_SERIALIZER.get();
+                case ELECTROREFINING -> ModRecipes.ELECTROREFINING_SERIALIZER.get();
             };
         }
     }

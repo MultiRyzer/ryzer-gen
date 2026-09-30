@@ -72,6 +72,8 @@ public final class ModBlocks {
             () -> new ProcessingBlock(ProcessingMachine.FUEL_FABRICATOR, machineProperties()));
     public static final DeferredBlock<ProcessingBlock> LITHIUM_EXTRACTOR = BLOCKS.register("lithium_extractor",
             () -> new ProcessingBlock(ProcessingMachine.LITHIUM_EXTRACTOR, machineProperties()));
+    public static final DeferredBlock<ProcessingBlock> ELECTROREFINER = BLOCKS.register("electrorefiner",
+            () -> new ProcessingBlock(ProcessingMachine.ELECTROREFINER, machineProperties()));
     public static final DeferredBlock<WasteCaskBlock> WASTE_CASK = BLOCKS.register("waste_cask",
             () -> new WasteCaskBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
     public static final DeferredBlock<PressureTankBlock> PRESSURE_TANK = BLOCKS.register("pressure_tank",

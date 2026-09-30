@@ -625,6 +625,32 @@ public class ModRecipeProvider extends RecipeProvider {
         machine(output, "extracting/lithium", MachineRecipe.Process.EXTRACTING,
                 List.of(SizedIngredient.of(OreType.SALT.dropTag(), 2)), SizedFluidIngredient.of(Tags.Fluids.WATER, 500),
                 List.of(new ItemStack(ModItems.LITHIUM_DUST.get())), 200);
+
+        // Electrorefiner (design section 9): a molten salt cell for pyroprocessing, the breeder's way in.
+        // Unfinished until the breeder lands, so it loads only with the preview on.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ELECTROREFINER.get())
+                .pattern("SCS")
+                .pattern("PKP")
+                .pattern("SAS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('C', Items.CAULDRON)
+                .define('P', OreType.LEAD.ingotTag())
+                .define('K', ModTags.INGOTS_GRAPHITE)
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .unlockedBy("has_spent_mox_rod", has(ModItems.SPENT_MOX_ROD.get()))
+                .save(preview);
+        // Spent MOX, dissolved in the salt bath: the transuranics and uranium plate out on the
+        // cathodes, the fission products stay in the salt and leave as waste. A little salt tops up
+        // the bath. Real basis: the electrorefiner at the heart of pyroprocessing.
+        machine(preview, "electrorefining/spent_mox_rod", MachineRecipe.Process.ELECTROREFINING,
+                List.of(SizedIngredient.of(ModItems.SPENT_MOX_ROD.get(), 1), SizedIngredient.of(OreType.SALT.dropTag(), 1)), null,
+                List.of(new ItemStack(ModItems.TRANSURANIC_METAL.get()), new ItemStack(ModItems.INGOTS.get(OreType.URANIUM).get()),
+                        new ItemStack(ModItems.FISSION_WASTE.get())), 600);
+        // Salt alone splits into sodium (the chlorine is vented). Real basis: molten salt
+        // electrolysis is how sodium is made.
+        machine(preview, "electrorefining/sodium", MachineRecipe.Process.ELECTROREFINING,
+                List.of(SizedIngredient.of(OreType.SALT.dropTag(), 2)), null,
+                List.of(new ItemStack(ModItems.SODIUM_INGOT.get())), 200);
     }
 
     private static void machine(RecipeOutput output, String name, MachineRecipe.Process process, List<SizedIngredient> inputs,

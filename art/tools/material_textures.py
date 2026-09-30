@@ -201,6 +201,11 @@ INGOT_RAMPS = {
     # Plutonium: a steel-blue metal with a violet cast, bright at the edges, special among the
     # ingots. Real basis: plutonium in solution is famously blue-violet.
     'plutonium_ingot': ['0d1026', '1a1f45', '2a3370', '3d4f9e', '5a73c8', '8aa4ec', 'c8d8ff'],
+    # Sodium: a soft, silvery white metal, faintly warm where it has begun to tarnish.
+    'sodium_ingot': ['38362f', '5a5850', '807d73', 'a5a297', 'c5c2b7', 'dedbd1', 'f6f4ec'],
+    # Transuranic metal: plutonium, americium and curium together, as the Electrorefiner plates them
+    # out. A dark metal warming to amber at its edges, from the decay heat of the americium and curium.
+    'transuranic_metal': ['120d10', '241a20', '3a2a32', '56404a', '7a5c62', 'a88478', 'e0b894'],
 }
 NUGGET_RAMPS = {
     'plutonium_nugget': INGOT_RAMPS['plutonium_ingot'],

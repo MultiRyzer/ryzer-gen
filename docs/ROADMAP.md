@@ -132,9 +132,23 @@ The first public build: the microreactor, home battery, pipes and steam, the fue
 - [x] Make the GitHub repo public; turn on issues
 - [x] Create the Modrinth and CurseForge projects, upload the jar, credit the sounds (Modrinth still in review)
 
+## Milestone 3b: Breeder reactor (tier 4, design section 9)
+The utility reactor: fuel for the stations and the tritium that starts fusion. Fusion needs it.
+- [x] Settle the breeder's open questions (30 Sep 2026): the blanket is a ring in the planning grid; spent breeder fuel closes the loop; sodium is an ingot and a liquid coolant; tritium is a gas; the pyroprocessor is the Electrorefiner; americium and curium stay in transuranic metal
+- [ ] Concept design (`art/tools/breeder_concept.py`): the reactor and its sodium loop, in the house style
+- [x] Electrorefiner (behind `preview.next_tier`): one molten salt cell, gated at 1,500 FE/t. Spent MOX and salt into transuranic metal, a uranium ingot and fission waste (30 s); salt alone into a sodium ingot (10 s). Sodium ingot and transuranic metal items
+- [ ] Liquid sodium, melted from the ingot, for the breeder's loop
+- [ ] Electrorefiner sound: an electrical hum from a recording (it borrows the turbine's drone for now)
+- [ ] Breeder fuel from transuranic metal (the Fuel Fabricator)
+- [ ] Breeder multiblock: parts, ghost outline, auto-build, formed look, ports
+- [ ] Core and blanket: fast fuel, sodium flow and temperatures; the blanket's three choices (uranium to plutonium, thorium to U-233, lithium to tritium); spent fuel and bred products out by port
+- [ ] Control screen, safety and failure (sodium fire, not a steam explosion), steady state, sounds, advancements, JEI and EMI pages
+- [ ] Retire the station's target channel; target rods go in the breeder's blanket
+- [ ] Monazite processing brought forward from milestone 4 for thorium (yttrium can wait)
+
 ## Milestone 4: Fission to fusion (design section 10)
 - [x] Lithium Extractor (salt and water to lithium)
-- [x] Lithium target rods (Fuel Fabricator) and a target channel in the station core: breeds tritium from neighbouring fuel, costs 20% of their heat, irradiated rods leave by the output port
+- [x] Lithium target rods (Fuel Fabricator) and a target channel in the station core: breeds tritium from neighbouring fuel, costs 20% of their heat, irradiated rods leave by the output port. Moving to the breeder's blanket (design section 9), so the station's target channel is retired when the breeder lands
 - [x] Power is the price (design section 5): gated machines in `machine/processing` (two-tick buffer, full draw every tick or no progress, UNDERPOWERED status), draw and time scaled per machine in the common config (`machines.<id>`), time left and energy to finish on the arrow's tooltip
 - [ ] Waste Refinery: palladium from fission waste, the rest vitrified
 - [ ] Tritium extraction from irradiated target rods (palladium membranes)
@@ -143,7 +157,7 @@ The first public build: the microreactor, home battery, pipes and steam, the fue
 - [ ] Cryo Plant (a multiblock: compressors and a cold box; liquid nitrogen)
 - [ ] Superconducting tape and magnet coils; tungsten tiles
 - [ ] Uranium glass (decorative light block)
-- [ ] A better coolant for the fission station (open question 21): a coolant channel filled with it carries more heat, so a MOX core can be pushed harder and target rods breed tritium faster. Made by a later process, and used again by later tiers
+- [ ] A better coolant for the fission station (open question 21): a coolant channel filled with it carries more heat, so a MOX core can be pushed harder. Made by a later process, and used again by later tiers
 
 ## Milestone 5: Fusion reactor
 - [x] Design draft: shape, parts, running it, blanket, wear, H-mode, safety (design section 10b)
@@ -164,7 +178,6 @@ The first public build: the microreactor, home battery, pipes and steam, the fue
 - [ ] Sky renderer showing swarm coverage
 
 ## Later
-- Tier 4: pyroprocessor (spent MOX to transuranic metal), sodium from salt, breeder reactor with a uranium or thorium blanket (design section 9)
 - Fusion
 - Sail launcher automation and receiver dish
 - Overworld sky ring, flare events, multiplayer shared swarm

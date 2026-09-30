@@ -68,6 +68,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         reprocessor();
         fuelFabricator();
         lithiumExtractor();
+        electrorefiner();
         wasteCask();
         stationParts();
         spentFuelPool();
@@ -823,6 +824,54 @@ public class ModBlockStateProvider extends BlockStateProvider {
         Block block = ModBlocks.LITHIUM_EXTRACTOR.get();
         ModelFile off = lithiumExtractorModel("lithium_extractor", false);
         ModelFile on = lithiumExtractorModel("lithium_extractor_on", true);
+        horizontalBlock(block, state -> state.getValue(ProcessingBlock.ACTIVE) ? on : off);
+        simpleBlockItem(block, off);
+    }
+
+    /**
+     * Electrorefiner, facing north: pyroprocessing, a sealed molten salt cell as fast reactor fuel
+     * plants plan it. The family cabinet with the lit screen and a light strip and a gunmetal
+     * worktop, and on it the cell: a gunmetal vessel (two boxes of different heights, so it reads
+     * as rounded), a hazard band round it, since it handles spent fuel, and at the front a small
+     * sight window onto the salt, glowing orange while the current runs. Its lid carries four
+     * electrodes in orange clamps at the corners and the top connector in the middle; the back
+     * connector sits on the cabinet. Its own textures: art/tools/electrorefiner_textures.py.
+     */
+    private ModelFile electrorefinerModel(String name, boolean active) {
+        BoxModel boxes = new BoxModel();
+        boxes.add("skid", 0, 0, 0, 16, 2, 16);
+        boxes.add("cabinet", 1.5F, 2, 1.5F, 14.5F, 8, 15.5F).decal(Direction.NORTH, "lpanel_13x6")
+                .decal(Direction.SOUTH, "lpanel_13x6").decal(Direction.WEST, "lpanel_14x6").decal(Direction.EAST, "lpanel_14x6");
+        boxes.add("cabinet", 3.5F, 4.5F, 1.25F, 12.5F, 6.5F, 1.5F).decal(Direction.NORTH, "screen").glow(Direction.NORTH);
+        lampStrip(boxes, active, 2, 7, 1.25F, 14, 7.5F, 1.5F);
+        boxes.add("metal", 1, 8, 1, 15, 9, 15);
+        // The cell.
+        boxes.add("cell", 3.5F, 9, 3.5F, 12.5F, 14.5F, 12.5F);
+        boxes.add("cell", 3, 9, 4, 13, 14.25F, 12);
+        boxes.add("hazard", 2.9F, 12.5F, 3.4F, 13.1F, 13.5F, 12.6F);
+        BoxModel.Box window = boxes.add("cell", 5, 10, 3.35F, 11, 12, 3.5F).decal(Direction.NORTH, active ? "window_on" : "window");
+        if (active) {
+            window.glow(Direction.NORTH);
+        }
+        boxes.add("lid", 3, 14.5F, 3, 13, 15.25F, 13);
+        // Electrodes down through the lid, clamped at the corners, clear of the connector's flange.
+        for (float x : new float[] {3.25F, 12}) {
+            for (float z : new float[] {3.25F, 12}) {
+                boxes.add("bright", x, 15.25F, z, x + 0.75F, 16, z + 0.75F);
+                boxes.add("accent", x - 0.1F, 15.25F, z - 0.1F, x + 0.85F, 15.6F, z + 0.85F);
+            }
+        }
+        topConnector(boxes, 15.25F, 16);
+        backConnector(boxes, 15.5F, 6);
+        BlockModelBuilder model = boxModel(name);
+        boxes.build(model, "cell", machineParts("electrorefiner"));
+        return model;
+    }
+
+    private void electrorefiner() {
+        Block block = ModBlocks.ELECTROREFINER.get();
+        ModelFile off = electrorefinerModel("electrorefiner", false);
+        ModelFile on = electrorefinerModel("electrorefiner_on", true);
         horizontalBlock(block, state -> state.getValue(ProcessingBlock.ACTIVE) ? on : off);
         simpleBlockItem(block, off);
     }

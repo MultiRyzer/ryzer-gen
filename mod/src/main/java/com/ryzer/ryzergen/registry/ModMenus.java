@@ -79,6 +79,7 @@ public final class ModMenus {
     public static final DeferredHolder<MenuType<?>, MenuType<ProcessingMenu>> REPROCESSOR = processing(ProcessingMachine.REPROCESSOR);
     public static final DeferredHolder<MenuType<?>, MenuType<ProcessingMenu>> FUEL_FABRICATOR = processing(ProcessingMachine.FUEL_FABRICATOR);
     public static final DeferredHolder<MenuType<?>, MenuType<ProcessingMenu>> LITHIUM_EXTRACTOR = processing(ProcessingMachine.LITHIUM_EXTRACTOR);
+    public static final DeferredHolder<MenuType<?>, MenuType<ProcessingMenu>> ELECTROREFINER = processing(ProcessingMachine.ELECTROREFINER);
 
     private static DeferredHolder<MenuType<?>, MenuType<ProcessingMenu>> processing(ProcessingMachine machine) {
         return MENUS.register(machine.id(), () -> new MenuType<>(
