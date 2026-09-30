@@ -58,6 +58,8 @@ NeoForge 1.21.1 (21.1.249 or newer, so it runs in ATM10). Standalone: it ships e
 - Coolant is your friend: a strong core boils a lot of water, so it needs a real water supply of several intake pumps.
 - MOX fuel makes double the power of uranium. SCRAM at 900°C, or turn the safeties off and risk a flux tilt and a meltdown that leaves a crater.
 
+![A fuel cycle production line with its batteries and water supply, feeding the fission station](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/curseforge/03_production_line.jpg)
+
 ![The core planner rating a layout at 100%](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/02_core_planner.png)
 
 ![Radiation: only running reactors and meltdown sites](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/section_radiation.png)
