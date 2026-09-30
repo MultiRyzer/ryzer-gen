@@ -58,6 +58,7 @@ PHASE = math.radians(360 / LEGS / 2)   # legs sit on the belt's seams, so the fr
 TEXTURES = {'breeder_' + name: 'ryzergen:block/breeder/' + name for name in breeder_textures.TEXTURES}
 TEXTURES.update({name: 'ryzergen:block/microreactor/' + name for name in (
     'hazard', 'glow', 'screen', 'port_energy', 'port_fuel', 'port_coolant')})
+TEXTURES['front_panel'] = 'ryzergen:block/station/front_panel'
 d = Design(C, TEXTURES, {'glow', 'screen', 'breeder_amber'})
 
 
@@ -143,11 +144,11 @@ for k, (n, n_in) in enumerate(RINGS):
 d.cylinder('hazard', 5, 16, PLINTH_R, n=RIM)
 band(0, 5, PLINTH_R + 2, n=RIM)
 d.annulus('breeder_fitting', 5, PLINTH_R, PLINTH_R + 2, n=RIM)
-# Three consoles, as the station has its ports: the front (north) keeps the control core's screen
-# alone, and the ports go on the two flat sides. As you face the front (looking south), your left
+# As the station has them: the front (north) carries the control core's screen alone, and the ports
+# go on consoles on the two flat sides. As you face the front (looking south), your left
 # is east (larger x): the inputs go there (fuel in, liquid sodium in), and the outputs on the west
 # (the output port for spent fuel and what the blanket bred, energy out), never on one shared port.
-# Each console is three cells on the grid, so its panels show whole, its face just ahead of the
+# Each side console is three cells on the grid, so its panels show whole, its face just ahead of the
 # plinth's lip (2 pixels, no further); its top and ends are plain, so their depth cuts nothing.
 LIP = PLINTH_R + 2
 FACE = C - LIP - 2              # how far each console's face stands from the footprint's edge
@@ -186,7 +187,15 @@ def console(side, ports):
             d.box('breeder_fitting', *part, decals={side: decal}, skip=(back,))
 
 
-console('north', [None, 'core', None])
+# The front: the station's front panel, so the two reactors share a face. Two blocks wide, centred,
+# its face one texture drawn once across both (station/front_panel, 32 x 16, rows 1 to 15), with the
+# control core's screen standing proud of it in the bezel the panel draws.
+d.box('breeder_console_side', C - B, 0, FACE, C + B, 15, FACE + DEPTH, top='breeder_graphite', skip=('north', 'south', 'down'))
+# Seen from the front the viewer's left is the east (+x) end, so u runs from x = C + 16 to C - 16.
+d.quad('front_panel', [(C + B, 15, FACE), (C - B, 15, FACE), (C - B, 0, FACE), (C + B, 0, FACE)],
+       [(0, 1), (16, 1), (16, 16), (0, 16)], (0, 0, -1))
+d.box('breeder_fitting', C - 5, 5, FACE - 1, C + 5, 11, FACE - 0.5, decals={'north': 'screen'}, skip=('south',))
+d.box('breeder_fitting', C - 6, 4, FACE - 0.5, C + 6, 12, FACE, skip=('south',))
 console('east', ['port_fuel', None, 'port_coolant'])
 console('west', ['port_fuel', None, 'port_energy'])
 
