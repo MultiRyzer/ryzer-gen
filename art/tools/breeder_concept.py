@@ -19,25 +19,24 @@ their exact size.
 What it shows, bottom to top:
 - No plinth: the legs stand on concrete piers on the ground, and under the sphere, seen between
   the legs, is the sodium plant: two finned pumps at the front and two heat exchangers at the back
-  (their hot bands glowing amber), on concrete pads, joined by a copper ring main and each piped up
-  into the sphere's underside. Real sodium plants are a maze of loops like this.
+  (their hot bands glowing amber), on concrete pads, joined by a copper ring main. Real sodium plants are a maze of loops like this.
 - Three consoles on the ground, a block deep, six of the legs standing on their tops: the
   station's front panel with the control core's screen, between hazard-striped cheeks; as you
   face it, the inputs on your left side (fuel in, liquid sodium in) and the outputs on your right
   (the output port for spent fuel and what the blanket bred, energy out), each side under a
   sloping hood with a lit tag above each port and hazard-striped cheeks, as the station's are.
 - The sphere: light casing plates in latitude bands, a graphite belt at the equator with a cyan
-  light strip and the radiation trefoil, a grated walkway round it reached by a caged ladder.
+  light strip and the radiation trefoil, a grated walkway round it reached by a caged ladder that
+  climbs beside a leg, bracketed to it.
 - The lantern: a ring of glass round the upper sphere, framed by mullions, showing the machine hall
-  inside, as real sodium reactors keep their refuelling machinery under a dome: a floor, a yellow
-  polar crane on a rail round the dome, the rotating plugs (a large one and a small one set off its middle), the control rod drives with lit
-  bands on the small plug, and the fuel handling cask on the large one, under a dark lined dome.
+  inside, as real sodium reactors keep their refuelling machinery under a dome: a floor, the
+  rotating plugs with the control rod drives standing in the middle of the hall, lit bands round
+  them, and the fuel handling cask on the large plug, under a dark lined dome.
 - The platform on top: a yellow handrail, a cyan light strip, the fuel hatch, and an amber beacon.
 
 Moving parts, each drawn in its own group so a renderer can move it (design section 9): the beacon,
-turning while the reactor runs; and inside the lantern the polar crane (crane), travelling round
-the hall, and the rotating plugs (plug_large, and plug_small with the drives), which will turn
-while fuel goes in or out.
+turning while the reactor runs; and inside the lantern the rotating plugs (plug_large, and
+plug_small with the drives), which will turn while fuel goes in or out.
 """
 import contextlib
 import math
@@ -180,7 +179,7 @@ def console(side, ports):
         return 2 * C - v if east else v
 
     x1, x2 = sorted((x(FACE), x(FACE + DEPTH)))
-    d.box('breeder_console_side', x1, 0, a1, x2, 15, a2, top='breeder_graphite', skip=(side, back, 'down'))
+    d.box('breeder_console_side', x1, 0, a1, x2, 15, a2, top='breeder_graphite', skip=(side, 'down'))
     d.box('breeder_console', x1, 0, a1, x2, 15, a2, skip=tuple(f for f in ('north', 'south', 'east', 'west', 'up', 'down') if f != side))
     sx = 1 if east else -1
     d.quad('housing_slope', [(x(HOOD_BACK), HOOD_TOP, a2), (x(FACE), 15, a2), (x(FACE), 15, a1), (x(HOOD_BACK), HOOD_TOP, a1)],
@@ -190,7 +189,7 @@ def console(side, ports):
     # Cheeks either end, standing proud and a little taller, hazard striped on the front.
     cx1, cx2 = sorted((x(FACE - 1), x(HOOD_BACK + 4)))
     for z1, z2 in ((a1 - 3, a1), (a2, a2 + 3)):
-        d.box('housing_cheek', cx1, 0, z1, cx2, HOOD_TOP + 2, z2, skip=('down', back))
+        d.box('housing_cheek', cx1, 0, z1, cx2, HOOD_TOP + 2, z2, skip=('down',))
         sx1, sx2 = sorted((x(FACE - 1), x(FACE - 1.5)))
         d.box('hazard_upright', sx1, 0, z1, sx2, HOOD_TOP + 2, z2, skip=('down', back))
     for cell, kind in enumerate(ports):
@@ -212,7 +211,7 @@ def console(side, ports):
 # The front: the station's front panel, so the two reactors share a face. Two blocks wide, centred,
 # its face one texture drawn once across both (station/front_panel, 32 x 16, rows 1 to 15), with the
 # control core's screen standing proud of it in the bezel the panel draws.
-d.box('breeder_console_side', C - B, 0, FACE, C + B, 15, FACE + DEPTH, top='breeder_graphite', skip=('north', 'south', 'down'))
+d.box('breeder_console_side', C - B, 0, FACE, C + B, 15, FACE + DEPTH, top='breeder_graphite', skip=('north', 'down'))
 # Seen from the front the viewer's left is the east (+x) end, so u runs from x = C + 16 to C - 16.
 d.quad('front_panel', [(C + B, 15, FACE), (C - B, 15, FACE), (C - B, 0, FACE), (C + B, 0, FACE)],
        [(0, 1), (16, 1), (16, 16), (0, 16)], (0, 0, -1))
@@ -221,7 +220,7 @@ d.box('breeder_fitting', C - 6, 4, FACE - 0.5, C + 6, 12, FACE, skip=('south',))
 # Cheeks either end of the front panel, as flush as its top so the front legs stand on them, hazard
 # striped on the front like the side consoles' cheeks.
 for x1, x2 in ((C - B - 4, C - B), (C + B, C + B + 4)):
-    d.box('housing_cheek', x1, 0, FACE - 1, x2, 15, FACE + DEPTH, skip=('down', 'south'))
+    d.box('housing_cheek', x1, 0, FACE - 1, x2, 15, FACE + DEPTH, skip=('down',))
     d.box('hazard_upright', x1, 0, FACE - 1.5, x2, 15, FACE - 1, skip=('down', 'south'))
 console('east', ['port_fuel', None, 'port_coolant'])
 console('west', ['port_fuel', None, 'port_energy'])
@@ -353,8 +352,7 @@ d.cylinder('breeder_fitting', 0, EQUATOR - R + 1, 3, n=8)
 
 # ---------------------------------------------------------------- the sodium plant under the sphere
 # Two pumps at the front and two heat exchangers at the back, in the bays between the legs and clear
-# of the consoles, each on a concrete pad, piped up into the sphere's underside and joined low down
-# by a copper ring main. Seen between the legs they give the base depth, as the station's rods do
+# of the consoles, each on a concrete pad, joined low down by a copper ring main. Seen between the legs they give the base depth, as the station's rods do
 # behind its glass. Real basis: a sodium reactor's pumps and intermediate heat exchangers.
 PLANT_R = 42
 PUMPS = [math.radians(a) for a in (240, 300)]
@@ -377,12 +375,6 @@ for phi in PUMPS + EXCHANGERS:
     if pump:
         with group('fan'):
             decal_disc('breeder_fan', x, z, BODY + B - 0.5, 5, 12)
-    # Up into the sphere, from the body's inner side: a copper riser with a flange where it meets it.
-    rx, _, rz = d.at(phi, PLANT_R - 3, 0)
-    top = EQUATOR - surface_r(PLANT_R - 3)
-    with centred(rx, rz):
-        d.cylinder('breeder_pipe', BODY + B, top + 1, 2.5, n=8)
-        d.disc('breeder_fitting', top - 2, top, 3.5, n=8)
 # The ring main, low down, through each body's foot.
 MAIN_Y = BODY + 4
 main = [d.at(2 * math.pi * k / 48, PLANT_R, MAIN_Y) for k in range(48)]
@@ -394,18 +386,21 @@ WALK_R = LEG_R + 3
 d.annulus('breeder_grate', WALK_Y, surface_r(WALK_Y), WALK_R, n=48, step=WALK_R)
 d.annulus('breeder_fitting', BELT[1], BELT_R, WALK_R, up=False, n=48)
 d.cylinder('breeder_fitting', BELT[1], WALK_Y, WALK_R, n=48)
-# The ladder arrives at the back (south, 90 degrees), through a gap in the handrail.
-LADDER = math.radians(90)
+# The ladder climbs beside the leg at the back left (105 degrees), bracketed to it, and arrives
+# through a gap in the handrail.
+LADDER = PHASE + 2 * math.pi * 3 / LEGS
 GAP = math.radians(7)
 for k in range(LEGS):
     phi = PHASE + 2 * math.pi * k / LEGS
-    d.post('breeder_rail', phi, WALK_R - 1, WALK_Y, WALK_Y + 7, 0.5, 0.5)
+    if abs(phi - LADDER) > 1e-6:
+        d.post('breeder_rail', phi, WALK_R - 1, WALK_Y, WALK_Y + 7, 0.5, 0.5)
 for y in (WALK_Y + 3.5, WALK_Y + 7):
     rail(arc(WALK_R - 1, y, LADDER + GAP, LADDER - GAP + 2 * math.pi, 64))
-# The caged ladder, outside the legs: two stiles, rungs, and hoops of the cage from head height.
+# The caged ladder, just outside its leg's pier: two stiles on the ground, rungs, and hoops of the
+# cage from head height.
 out = (math.cos(LADDER), 0, math.sin(LADDER))
 across = (-math.sin(LADDER), 0, math.cos(LADDER))
-LAD_R = WALK_R + 1.5
+LAD_R = LEG_R + 6
 
 
 def lad(off, y, outward=0.0):
@@ -420,6 +415,15 @@ CAGE = 4.5
 for y in range(44, int(WALK_Y) + 1, 9):
     hoop = [lad(-CAGE * math.cos(t), y, 2 + CAGE * math.sin(t)) for t in [math.pi * k / 8 for k in range(9)]]
     rail(hoop)
+# Brackets from the stiles back to the leg, a block apart, and a step plate at the top across the
+# gap to the walkway's edge.
+for y in range(24, int(WALK_Y), B):
+    for off in (-2.5, 2.5):
+        d.sweep('breeder_fitting', [lad(off, y), (C + (LEG_R + 1.5) * out[0] + off * 0.4 * across[0], y,
+                                                  C + (LEG_R + 1.5) * out[2] + off * 0.4 * across[2])],
+                0.4, 0.4, lambda i: (0, 1, 0), closed=False, caps=True)
+d.sweep('breeder_fitting', [d.at(LADDER, WALK_R - 1, WALK_Y - 0.5), d.at(LADDER, LAD_R + 0.5, WALK_Y - 0.5)], 0.5, 3,
+        lambda i: across, closed=False, caps=True)
 for t in (math.pi / 4, math.pi / 2, 3 * math.pi / 4):
     d.sweep('breeder_rail', [lad(-CAGE * math.cos(t), 44, 2 + CAGE * math.sin(t)),
                              lad(-CAGE * math.cos(t), WALK_Y, 2 + CAGE * math.sin(t))], 0.4, 0.4,
@@ -445,16 +449,16 @@ flat_ring('breeder_hall_floor', LAN_Y1, FLOOR_IN, FLOOR_MID, 16, 16)
 flat_ring('breeder_hall_floor', LAN_Y1, FLOOR_MID, FLOOR_OUT, 32, 16)
 d.annulus('breeder_rail', LAN_Y1 + 0.02, FLOOR_IN + 1.5, FLOOR_IN + 2.5, n=32)
 d.annulus('glow', LAN_Y1 + 0.02, LAN_R1 - 2.5, LAN_R1 - 1.5, n=32)
-# The rotating plugs over the core: a large one on the deck, and a small one set off its middle
-# (towards the back), turned together to bring the handling machine over any core position.
+# The rotating plugs over the core: a large one on the deck, and a small one in its middle carrying
+# the control rod drives, centre stage in the hall.
 HALL = LAN_Y1
-PLUG_R, SMALL_R, SMALL_OFF = 20, 10, 8
+PLUG_R, SMALL_R, SMALL_OFF = 20, 10, 0
 SX, SZ = C, C + SMALL_OFF
 with group('plug_large'):
     d.cylinder('breeder_fitting', HALL, HALL + 3, PLUG_R, n=16)
     d.annulus('breeder_plug', HALL + 3, 0, PLUG_R, n=16, step=PLUG_R / 2)
     # The fuel handling cask, front left of the large plug, and its orange lifting frame.
-    fx, _, fz = d.at(math.radians(215), 13, 0)
+    fx, _, fz = d.at(math.radians(215), 15, 0)
     with centred(fx, fz):
         d.cylinder('breeder_exchanger', HALL + 3, HALL + 3 + B, 3.5, n=8)
         d.annulus('breeder_fitting', HALL + 3 + B, 0, 3.5, n=8)
@@ -468,21 +472,6 @@ with group('plug_small'):
             d.cylinder('breeder_exchanger', HALL + 6, HALL + 6 + B, 1.6, n=6)
             d.cylinder('glow', HALL + 14, HALL + 15, 1.8, n=6)
             d.disc('breeder_fitting', HALL + 6 + B, HALL + 8 + B, 2.2, n=6)
-
-# The polar crane, as real reactor halls have: a yellow bridge across the hall on a rail round the
-# inside of the dome, with a trolley and its hook block. It travels round the hall over the plugs.
-CRANE_Y = LAN_MID[0] + 4
-rail_r = surface_r(CRANE_Y) - 1.5
-d.sweep('breeder_fitting', [d.at(2 * math.pi * k / 48, rail_r, CRANE_Y - 1) for k in range(48)], 1, 1, lambda i: (0, 1, 0))
-with group('crane'):
-    span = rail_r - 1
-    d.box('breeder_rail', C - span, CRANE_Y, C - 2, C + span, CRANE_Y + 3, C + 2)
-    for end in (-1, 1):
-        d.box('breeder_fitting', C + end * span - 3, CRANE_Y - 1, C - 3.5, C + end * span + 3, CRANE_Y + 1, C + 3.5)
-    TX = C + 12
-    d.box('breeder_fitting', TX - 3, CRANE_Y + 3, C - 3, TX + 3, CRANE_Y + 5, C + 3)
-    d.box('breeder_fitting', TX - 0.3, CRANE_Y - 10, C - 0.3, TX + 0.3, CRANE_Y, C + 0.3)
-    d.box('breeder_rail', TX - 1.5, CRANE_Y - 13, C - 1.5, TX + 1.5, CRANE_Y - 10, C + 1.5)
 
 # ---------------------------------------------------------------- the platform on top
 PLAT_R = 16
