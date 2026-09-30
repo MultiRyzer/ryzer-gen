@@ -46,7 +46,7 @@ public final class ModCreativeTabs {
                 // Machines and multiblock parts
                 List.of(ModItems.REACTOR_HEART, ModItems.REACTOR_MACHINE_UNIT, ModItems.COOLANT_JACKET,
                         ModItems.ALLOY_SMELTER, ModItems.ELECTRIC_ALLOY_SMELTER, ModItems.INTAKE_PUMP,
-                        ModItems.CORE_CRACKER, ModItems.REPROCESSOR, ModItems.FUEL_FABRICATOR, ModItems.LITHIUM_EXTRACTOR,
+                        ModItems.CORE_CRACKER, ModItems.REPROCESSOR, ModItems.FUEL_FABRICATOR, ModItems.LITHIUM_EXTRACTOR, ModItems.ELECTROREFINER,
                         ModItems.POOL_CONTROLLER, ModItems.POOL_LINER, ModItems.POOL_CRANE,
                         ModItems.BATTERY_CONTROLLER, ModItems.CONTAINER_FRAME, ModItems.THERMAL_UNIT,
                         ModItems.STATION_CORE, ModItems.STATION_CASING, ModItems.STATION_GLASS, ModItems.TURBINE_ROTOR),
@@ -75,7 +75,7 @@ public final class ModCreativeTabs {
         for (OreType ore : OreType.values()) {
             add(items, ModItems.INGOTS.get(ore));
         }
-        List.of(ModItems.STEEL_INGOT, ModItems.PLUTONIUM_INGOT, ModItems.PLUTONIUM_NUGGET,
+        List.of(ModItems.STEEL_INGOT, ModItems.PLUTONIUM_INGOT, ModItems.PLUTONIUM_NUGGET, ModItems.SODIUM_INGOT, ModItems.TRANSURANIC_METAL,
                 // Other materials, then blocks made of them, then circuit boards
                 ModItems.GRAPHITE, ModItems.SILICON, ModItems.SILICON_CARBIDE, ModItems.LITHIUM_DUST,
                 ModItems.SPENT_KERNELS, ModItems.FISSION_WASTE, ModItems.GRAPHITE_BLOCK,

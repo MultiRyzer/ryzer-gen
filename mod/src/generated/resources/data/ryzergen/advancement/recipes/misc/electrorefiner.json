@@ -1,0 +1,37 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "ryzergen:preview"
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_spent_mox_rod": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ryzergen:spent_mox_rod"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ryzergen:electrorefiner"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_spent_mox_rod"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ryzergen:electrorefiner"
+    ]
+  }
+}

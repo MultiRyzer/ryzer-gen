@@ -1,0 +1,35 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "ryzergen:preview"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:circuits/advanced"
+    },
+    "C": {
+      "item": "minecraft:cauldron"
+    },
+    "K": {
+      "tag": "c:ingots/graphite"
+    },
+    "P": {
+      "tag": "c:ingots/lead"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "SCS",
+    "PKP",
+    "SAS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:electrorefiner"
+  }
+}

@@ -27,6 +27,7 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> REPROCESSOR = register("reprocessor");
     public static final DeferredHolder<SoundEvent, SoundEvent> FUEL_FABRICATOR = register("fuel_fabricator");
     public static final DeferredHolder<SoundEvent, SoundEvent> LITHIUM_EXTRACTOR = register("lithium_extractor");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ELECTROREFINER = register("electrorefiner");
     /** One Geiger counter click from the dosimeter ring. */
     public static final DeferredHolder<SoundEvent, SoundEvent> DOSIMETER_CLICK = register("dosimeter_click");
 

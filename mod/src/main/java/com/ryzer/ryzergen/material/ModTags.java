@@ -9,6 +9,7 @@ import net.minecraft.world.item.Item;
 public final class ModTags {
     public static final TagKey<Item> INGOTS_STEEL = common("ingots/steel");
     public static final TagKey<Item> DUSTS_LITHIUM = common("dusts/lithium");
+    public static final TagKey<Item> INGOTS_SODIUM = common("ingots/sodium");
     /** Graphite as reactor mods tag it. */
     public static final TagKey<Item> INGOTS_GRAPHITE = common("ingots/graphite");
     public static final TagKey<Item> GEMS_SILICON_CARBIDE = common("gems/silicon_carbide");

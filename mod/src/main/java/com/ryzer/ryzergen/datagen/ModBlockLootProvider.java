@@ -61,6 +61,7 @@ public class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.CORE_CRACKER.get());
         dropSelf(ModBlocks.FUEL_FABRICATOR.get());
         dropSelf(ModBlocks.LITHIUM_EXTRACTOR.get());
+        dropSelf(ModBlocks.ELECTROREFINER.get());
         add(ModBlocks.REPROCESSOR.get(), createSinglePropConditionTable(ModBlocks.REPROCESSOR.get(),
                 TallProcessingBlock.HALF, DoubleBlockHalf.LOWER));
         // The cask keeps its waste, like a shulker box keeps its contents.

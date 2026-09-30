@@ -27,8 +27,8 @@ Most reactor mods have one answer to "how do I get more power": build it bigger.
 | 1 | Microreactor (4-block) | Transportable "nuclear battery" microreactors, TRISO fuel | Heat, fuel life, basic output |
 | 2 | Fuel cycle | Reprocessing, MOX fuel (as done in France) | Spent fuel is the next fuel |
 | 3 | Modular fission reactor | Conventional fission, moderators and coolant | Layout design |
-| 4 | Breeder and thorium | Fast breeder reactors, thorium to U-233 | Making more fuel than you burn |
-| 5 | Fusion | Deuterium-tritium tokamaks (ITER), fed by fission (see section 10) | Plasma stability, breeding tritium from lithium |
+| 4 | Breeder and thorium | Fast breeder reactors, thorium to U-233 | Making more fuel than you burn, and the tritium that starts fusion |
+| 5 | Fusion | Deuterium-tritium tokamaks (ITER), fed by fission and the breeder (see section 10) | Plasma stability, breeding tritium from lithium |
 | 6 | Dyson swarm | Dyson swarm concepts, beamed power | Building in the sun dimension |
 
 Later ideas kept on file (not in scope yet): aneutronic fusion, antimatter storage, Kugelblitz black hole power.
@@ -68,7 +68,7 @@ Iron, copper, gold, redstone, coal and sand come from vanilla.
 | Silicon carbide | TRISO fuel layer, hardened circuits | Sand and graphite in the alloy smelter |
 | Silicon | Circuits and solar cells | Sand in a powered furnace |
 | Lithium | Breeds tritium for fusion | Extracted from salt and water in the Lithium Extractor (real lithium mostly comes from brine) |
-| Tritium | Fusion fuel | Bred from lithium target rods in the fission station's core |
+| Tritium | Fusion fuel | Bred from lithium target rods in the breeder's blanket |
 | Heavy water | Fusion fuel (deuterium), better moderator | Separated from water in the Heavy Water Plant |
 | Palladium | Hydrogen isotope membranes | Recovered from fission waste in the Waste Refinery |
 | Liquid nitrogen | Cools the superconducting magnets | Separated from air in the Cryo Plant |
@@ -110,7 +110,7 @@ Rule 2: **power is the price.** The machines that make the next tier's key mater
 | 2 | Fuel cycle machines (run on microreactor power) | Advanced board, MOX fuel | Silicon from sand and coal in the electric alloy smelter; fluorite for reprocessing | Advanced board: steel, gold, silicon |
 | 3 | Fission reactor | Control rod assembly | Silver alloy control rods (real rods use silver, indium and cadmium); MOX fuel from tier 2 | Hardened board: silicon carbide and lead (radiation-hard electronics) |
 | 4 | Breeder reactor | Sodium coolant loop, breeder fuel | Spent MOX pyroprocessed in molten salt into transuranic metal, on fission power; sodium split from salt using fission power (real fast breeders are sodium cooled); thorium from monazite | Hardened board |
-| 5 | Fusion reactor | Superconducting magnet coil, plasma-facing wall | Tritium bred from lithium target rods in the fission station; heavy water for deuterium; palladium from fission waste; yttrium from monazite and liquid nitrogen for the magnets; tungsten for the plasma wall (section 10) | Cryogenic board: superconducting wiring |
+| 5 | Fusion reactor | Superconducting magnet coil, plasma-facing wall | Tritium bred from lithium in the breeder's blanket; heavy water for deuterium; palladium from fission waste; yttrium from monazite and liquid nitrogen for the magnets; tungsten for the plasma wall (section 10) | Cryogenic board: superconducting wiring |
 | 6 | Dyson swarm | Solar sail, receiver dish | Aluminium film sails; silicon solar cells | Photonic board |
 
 Circuits follow their own logic: basic, advanced, radiation-hardened, cryogenic, photonic. Each tier's circuit needs something only the previous tier made possible.
@@ -364,47 +364,56 @@ Size is fixed, so the lever is the core layout (rule 1: knowledge, not volume). 
 
 Spent MOX is the way in. The lesson of the tier: what one reactor cannot burn, another can.
 
+**Two reactors, two jobs.** The fission station runs the base; the breeder is the utility reactor. It makes fuel for the stations and the tritium that starts fusion, so fusion cannot be reached without it (settled 30 Sep 2026). Its power is a bonus, not its point.
+
 Real basis: every pass through a thermal reactor builds up heavier plutonium isotopes (Pu-240 and up) plus americium and curium. They soak up slow neutrons, so spent MOX cannot be recycled again in a moderated reactor like the fission station. France stores its spent MOX for this reason, waiting for fast reactors, whose unmoderated fast neutrons split those heavy isotopes. So spent MOX is a dead end for the station and the starting fuel for a breeder.
 
 ### The chain
 1. **Spent MOX rods** come out of the fission station like spent uranium rods, but the tier 2 Reprocessor cannot take them.
-2. **Pyroprocessor** (working name): spent MOX rods, salt and power become transuranic metal (plutonium, americium and curium together, never separated), a uranium ingot and fission waste. Real basis: pyroprocessing, where spent fuel is dissolved in molten salt and the metals are plated out by electrolysis. It was designed for fast reactor fuel, keeps the transuranics together (harder to misuse), and uses the salt we ship. It runs on fission power and draws a lot of it (power gating).
+2. **Electrorefiner** (the pyroprocessor, named 30 Sep 2026): spent MOX rods, salt and power become transuranic metal (plutonium, americium and curium together, never separated, and kept that way unless a use appears), a uranium ingot and fission waste. Real basis: pyroprocessing, where spent fuel is dissolved in molten salt and the metals are plated out by electrolysis in an electrorefiner. It was designed for fast reactor fuel, keeps the transuranics together (harder to misuse), and uses the salt we ship. It runs on fission power and draws a lot of it (power gating). The same molten salt cell has a second job: salt alone splits into sodium (the chlorine is vented), which is how real sodium is made. One machine for both keeps the road to fusion short. Numbers (first pass): a minimum draw of 1,500 FE/t, beyond any microreactor; a spent MOX rod and 1 salt take 30 s (900,000 FE), 2 salt into a sodium ingot 10 s (300,000 FE). With a rod in it the cell refines the rod; with salt alone it makes sodium.
 3. **Breeder fuel:** transuranic metal made into fast reactor fuel. It is the only fuel that starts a breeder core, so running MOX is the gate into tier 4.
-4. **Breeder reactor:** a sodium-cooled fast reactor. No moderator: fast neutrons burn the transuranic fuel, and a blanket round the core catches the spare ones. A uranium blanket breeds plutonium, which goes back into MOX rods, so once a breeder runs, MOX no longer needs a uranium station burning rods to feed it (rule 3: no grind). It makes more fissile fuel than it burns. Needs more active management than the station (sodium flow, temperatures), with optional redstone or computer control.
-5. **Thorium path:** swap the blanket to thorium (from monazite) and it breeds uranium-233 instead. Thorium is not a fuel itself; U-233 is an alternative fuel with its own trade-offs.
+4. **Breeder reactor:** a sodium-cooled fast reactor. No moderator: fast neutrons burn the transuranic fuel, and a blanket round the core catches the spare ones. It makes more neutrons than the chain reaction needs, and the blanket decides what the spare ones make. Needs more active management than the station (sodium flow, temperatures), with optional redstone or computer control.
+5. **The blanket, three choices** (the tier's layout decision, as the station's core is tier 3's):
+   - **Uranium:** breeds plutonium, which goes back into MOX rods, so once a breeder runs, MOX no longer needs a uranium station burning rods to feed it (rule 3: no grind). It makes more fissile fuel than it burns.
+   - **Thorium** (from monazite): breeds uranium-233 instead. Thorium is not a fuel itself; U-233 is an alternative fuel with its own trade-offs.
+   - **Lithium:** lithium target rods breed tritium, the fuel that starts fusion (section 10). The only source of tritium until a fusion reactor's own blanket breeds enough.
+   Every blanket slot given to one is a slot not given to the others, so the breeder's layout is a choice between fuel for fission and fuel for fusion.
+   The blanket is a ring of slots round the fuel in the breeder's own planning grid, planned on its control screen like the station's channels (settled 30 Sep 2026).
+6. **Spent breeder fuel closes the loop:** it goes back through the pyroprocessor into transuranic metal and fission waste, so a breeder can keep itself fuelled once started. Real basis: fast reactor fuel cycles are designed to close this way (settled 30 Sep 2026).
 
 ### How the tiers tie together
 - Uranium station: uranium rods become spent rods, which reprocess into plutonium for MOX.
 - MOX station: MOX rods become spent MOX, which the pyroprocessor turns into breeder fuel.
-- Breeder: burns that fuel and breeds plutonium (back to MOX) or U-233 from thorium.
+- Breeder: burns that fuel and breeds plutonium (back to MOX), U-233 from thorium, or tritium from lithium.
 - Every tier stays useful (rule 4): the breeder needs a MOX station to start and keep its fuel coming, and the stations burn what it breeds.
-- Sodium coolant is split from salt on fission power, and tritium for fusion is bred from lithium in the fission reactors, so tier 4 also feeds tier 5.
+- Fusion needs the breeder: its first tritium comes from the breeder's lithium blanket, and so does any top-up while a fusion blanket breeds less than it burns. Sodium coolant is split from salt on fission power.
 - Output target: 20,000 to 100,000 FE/t (section 8's scaling targets).
 
 ### New materials
-- **Spent MOX rod**, **transuranic metal** (no other mod makes it, so it has no common tag), **breeder fuel**, **sodium** (`c:dusts/sodium` or an ingot, decided with the machine), **uranium-233**.
+- **Spent MOX rod**, **transuranic metal** (no other mod makes it, so it has no common tag), **breeder fuel**, **uranium-233**.
+- **Sodium:** an ingot (`c:ingots/sodium`) split from salt, for recipes, and liquid sodium (`c:sodium`), the breeder's coolant, melted from the ingot. Its danger is a sodium fire if it meets water, never a steam explosion (settled 30 Sep 2026).
+- **Tritium:** a gas, like steam, carried in gas pipes and kept in pressure tanks (settled 30 Sep 2026).
 
 ## 10. From fission to fusion
 
-A deuterium-tritium tokamak cannot be built or fuelled without fission. Its fuel, its magnets and its fuel handling all come from a running fission station and what it leaves behind, each made by a new process on fission power (rule 7). None of it is a pile of the tier below (rule 6).
+A deuterium-tritium tokamak cannot be built or fuelled without fission. Its fuel, its magnets and its fuel handling all come from the fission station, the breeder and what they leave behind, each made by a new process on fission power (rule 7). None of it is a pile of the tier below (rule 6).
 
 | Fusion needs | What it is | Where it comes from |
 |---|---|---|
-| Tritium (fuel) | Radioactive hydrogen; almost none exists in nature | Lithium target rods in the fission station's core |
+| Tritium (fuel) | Radioactive hydrogen; almost none exists in nature | Lithium target rods in the breeder's blanket |
 | Deuterium (fuel) | Heavy hydrogen, in ordinary water | Heavy water, separated from water |
 | Magnets | Superconducting coils that hold the plasma | Yttrium tape from monazite, cooled by liquid nitrogen |
 | Fuel handling | Separating hydrogen isotopes | Palladium membranes, the palladium recovered from fission waste |
 | First wall | Armour facing the plasma | Tungsten tiles |
 
-### Tritium: lithium target rods
+### Tritium: lithium in the breeder's blanket
 - **Lithium Extractor:** salt and water become lithium (`c:dusts/lithium`). A simple machine on microreactor or fission power. Real basis: direct lithium extraction from brine, where most real lithium comes from.
-- **Lithium target rod:** made in the Fuel Fabricator from lithium, aluminium and steel. Real basis: lithium aluminate pellets in a steel tube.
-- **Numbers (first pass):** the Lithium Extractor (40 FE/t, 10 s) turns 2 salt and 500 mB of water into 1 lithium; a target rod takes 2 lithium, 1 aluminium and 1 steel. A rod is bred after 60 million heat-ticks from the fuel beside it: about 20 minutes beside two uranium rods, 5 beside four MOX rods. The station's panel shows how long each target channel will take.
-- **In the core:** target rods go in their own channel type in the station's grid. Neutrons from the fuel beside a target rod slowly turn its lithium into tritium; the more fuel heat beside it, the faster. A finished rod becomes an irradiated target rod and leaves by the output port, like a spent fuel rod.
-- **The trade-off:** a target rod soaks up neutrons, so the fuel beside it makes 20% less heat and burns 20% slower (a control rod takes 35%). Every target rod costs power, so breeding fusion fuel is a layout decision, not a grind.
+- **Lithium target rod:** made in the Fuel Fabricator from lithium, aluminium and steel. Real basis: lithium aluminate pellets in a steel tube. The Lithium Extractor makes 2 salt and 500 mB of water into 1 lithium (40 FE/t, 10 s); a target rod takes 2 lithium, 1 aluminium and 1 steel.
+- **In the breeder:** target rods go in the breeder's blanket (section 9). The spare fast neutrons slowly turn their lithium into tritium; a finished rod becomes an irradiated target rod and leaves by the output port. Every blanket slot holding lithium is one not breeding plutonium or U-233, so tritium costs fuel, not just time. Numbers are set with the breeder.
+- **Not in the station.** The fission station first bred tritium in a target channel of its own (built behind `preview.next_tier`, never released). It moves to the breeder so that fusion needs the breeder; the station's target channel is retired when the breeder lands.
 - **Tritium extraction:** irradiated target rods are processed into tritium, which needs palladium membranes (below).
-- Real basis: the United States makes its tritium this way, in a commercial power reactor, with lithium rods that absorb neutrons (they double as burnable absorbers).
-- Once the fusion reactor runs, its lithium blanket breeds its own tritium: fission starts fusion, and fusion then sustains itself, as planned for real reactors.
+- Real basis: tritium is made by neutrons on lithium-6; the United States makes it in a commercial power reactor with lithium rods. A breeder's whole point is spare neutrons, and using a fast reactor for tritium was studied in the 1990s (the Fast Flux Test Facility was proposed for it). The honest fudge: lithium-6 catches slow neutrons far better than fast ones, so a real moderated reactor is the more efficient tritium maker. We put it in the breeder because the breeder is where the spare neutrons are.
+- Once the fusion reactor runs, its lithium blanket breeds its own tritium: the breeder starts fusion, and fusion then sustains itself, as planned for real reactors. The breeder stays useful for topping up while a fusion blanket breeds less than it burns (rule 4).
 
 ### Deuterium: heavy water
 - **Heavy Water Plant:** water becomes a little heavy water, on fission power. Real basis: heavy water is separated from ordinary water in large plants.
@@ -425,7 +434,7 @@ A deuterium-tritium tokamak cannot be built or fuelled without fission. Its fuel
 - Tungsten tiles line the inside of the reactor. Real basis: tungsten survives the heat and is what ITER uses.
 
 ### Energy costs (first pass, being play-tested)
-Power is the price (section 5). The budget is about 1 billion FE to build the reactor and its first fuel: roughly 1.5 hours of 10,000 FE/t, two or three good fission stations. Every minimum draw is above any microreactor (460 FE/t overdriven), so fission has to be running.
+Power is the price (section 5). The budget is about 1 billion FE to build the reactor and its first fuel: roughly 1.5 hours of 10,000 FE/t, two or three good fission stations or one breeder. Every minimum draw is above any microreactor (460 FE/t overdriven), so fission has to be running.
 
 | Machine | Minimum draw | Energy per operation | Per reactor build | Real basis |
 |---|---|---|---|---|

@@ -38,6 +38,8 @@ public class ModItemTagsProvider extends ItemTagsProvider {
         tag(ModTags.INGOTS_PLUTONIUM).add(ModItems.PLUTONIUM_INGOT.get());
         tag(ModTags.NUGGETS_PLUTONIUM).add(ModItems.PLUTONIUM_NUGGET.get());
         tag(Tags.Items.INGOTS).addTag(ModTags.INGOTS_PLUTONIUM);
+        tag(ModTags.INGOTS_SODIUM).add(ModItems.SODIUM_INGOT.get());
+        tag(Tags.Items.INGOTS).addTag(ModTags.INGOTS_SODIUM);
         tag(Tags.Items.NUGGETS).addTag(ModTags.NUGGETS_PLUTONIUM);
         // Wearable in Accessories' ring slot (and Curios', for packs that use it). Harmless if neither is installed.
         tag(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("accessories", "ring"))).add(ModItems.DOSIMETER_RING.get());

@@ -18,6 +18,16 @@
     ],
     "subtitle": "subtitles.ryzergen.dosimeter_click"
   },
+  "electrorefiner": {
+    "sounds": [
+      {
+        "name": "ryzergen:station_hum",
+        "pitch": 1.6,
+        "volume": 0.325
+      }
+    ],
+    "subtitle": "subtitles.ryzergen.electrorefiner"
+  },
   "fuel_fabricator": {
     "sounds": [
       {

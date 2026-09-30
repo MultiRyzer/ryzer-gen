@@ -102,6 +102,10 @@ public final class ModBlockEntities {
             BLOCK_ENTITIES.register("lithium_extractor", () -> BlockEntityType.Builder.of(
                     (pos, state) -> new ProcessingBlockEntity(ProcessingMachine.LITHIUM_EXTRACTOR, pos, state), ModBlocks.LITHIUM_EXTRACTOR.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ProcessingBlockEntity>> ELECTROREFINER =
+            BLOCK_ENTITIES.register("electrorefiner", () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new ProcessingBlockEntity(ProcessingMachine.ELECTROREFINER, pos, state), ModBlocks.ELECTROREFINER.get()).build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BatteryControllerBlockEntity>> BATTERY_CONTROLLER =
             BLOCK_ENTITIES.register("battery_controller",
                     () -> BlockEntityType.Builder.of(BatteryControllerBlockEntity::new, ModBlocks.BATTERY_CONTROLLER.get()).build(null));

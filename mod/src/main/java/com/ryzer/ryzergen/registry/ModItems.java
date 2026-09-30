@@ -37,6 +37,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> REPROCESSOR = ITEMS.registerSimpleBlockItem(ModBlocks.REPROCESSOR);
     public static final DeferredItem<BlockItem> FUEL_FABRICATOR = ITEMS.registerSimpleBlockItem(ModBlocks.FUEL_FABRICATOR);
     public static final DeferredItem<BlockItem> LITHIUM_EXTRACTOR = ITEMS.registerSimpleBlockItem(ModBlocks.LITHIUM_EXTRACTOR);
+    public static final DeferredItem<BlockItem> ELECTROREFINER = ITEMS.registerSimpleBlockItem(ModBlocks.ELECTROREFINER);
     public static final DeferredItem<BlockItem> WASTE_CASK = ITEMS.registerSimpleBlockItem(ModBlocks.WASTE_CASK);
     public static final DeferredItem<BlockItem> FLUID_TANK = ITEMS.registerSimpleBlockItem(ModBlocks.FLUID_TANK);
     public static final DeferredItem<BlockItem> STATION_CORE = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_CORE);
@@ -112,6 +113,10 @@ public final class ModItems {
             new Item.Properties().stacksTo(16));
     /** Lithium for tritium (design section 10), from salt and water in the Lithium Extractor. */
     public static final DeferredItem<Item> LITHIUM_DUST = ITEMS.registerSimpleItem("lithium_dust");
+    /** Sodium (design section 9), split from salt in the Electrorefiner: the breeder's coolant, once melted. */
+    public static final DeferredItem<Item> SODIUM_INGOT = ITEMS.registerSimpleItem("sodium_ingot");
+    /** Plutonium, americium and curium together, plated out of spent MOX: the breeder's fuel. Safe to carry (rule 10). */
+    public static final DeferredItem<Item> TRANSURANIC_METAL = ITEMS.registerSimpleItem("transuranic_metal");
     /** Lithium in an aluminium and steel rod, bred into tritium in a target channel of the station's core. */
     public static final DeferredItem<TargetRodItem> LITHIUM_TARGET_ROD = ITEMS.registerItem("lithium_target_rod", TargetRodItem::new,
             new Item.Properties().stacksTo(16));

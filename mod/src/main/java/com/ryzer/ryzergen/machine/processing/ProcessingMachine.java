@@ -13,7 +13,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 /**
  * The fuel cycle machines (design section 7). They share one block entity, menu and screen, and
  * differ only in what is set here: their recipe type, how many input and output slots they have,
- * the power they draw, and whether they hold water. All run on microreactor power (rule 7).
+ * the power they draw, and whether they hold water. The fuel cycle's run on microreactor power; the
+ * Electrorefiner, tier 4's, needs fission power (rule 7).
  *
  * <p>A gated machine (power is the price, design section 5) makes a key material for the next tier.
  * Its draw is also its minimum: its buffer holds only {@link #GATED_BUFFER_TICKS} ticks of it, and a
@@ -30,13 +31,19 @@ public enum ProcessingMachine {
     /** Makes fuel: uranium and MOX rods for the station, TRISO pellets for the microreactor. */
     FUEL_FABRICATOR("fuel_fabricator", Process.FABRICATING, 3, 1, 40, 0, false, false),
     /** Draws lithium out of salt and water, for tritium (design section 10). */
-    LITHIUM_EXTRACTOR("lithium_extractor", Process.EXTRACTING, 1, 1, 40, 4_000, false, false);
+    LITHIUM_EXTRACTOR("lithium_extractor", Process.EXTRACTING, 1, 1, 40, 4_000, false, false),
+    /**
+     * Pyroprocessing (design section 9): a molten salt cell that plates spent MOX out into
+     * transuranic metal, uranium and waste, and splits salt alone into sodium. Tier 4, so it runs
+     * on fission power: gated, with a draw no microreactor can meet.
+     */
+    ELECTROREFINER("electrorefiner", Process.ELECTROREFINING, 2, 3, 1_500, 0, false, true);
 
     public static final int ENERGY_CAPACITY = 40_000;
 
     /** False for unfinished machines while the preview is off, so recipe viewers leave them out. */
     public boolean shown() {
-        return this != LITHIUM_EXTRACTOR || Preview.enabled();
+        return this != ELECTROREFINER || Preview.enabled();
     }
     /** Enough for a fully upgraded reprocessor (80 FE/t at five times the speed, squared). */
     public static final int MAX_INPUT = 5_000;
@@ -142,6 +149,7 @@ public enum ProcessingMachine {
             case REPROCESSOR -> ModBlocks.REPROCESSOR.get();
             case FUEL_FABRICATOR -> ModBlocks.FUEL_FABRICATOR.get();
             case LITHIUM_EXTRACTOR -> ModBlocks.LITHIUM_EXTRACTOR.get();
+            case ELECTROREFINER -> ModBlocks.ELECTROREFINER.get();
         };
     }
 
@@ -151,6 +159,7 @@ public enum ProcessingMachine {
             case REPROCESSOR -> ModBlockEntities.REPROCESSOR.get();
             case FUEL_FABRICATOR -> ModBlockEntities.FUEL_FABRICATOR.get();
             case LITHIUM_EXTRACTOR -> ModBlockEntities.LITHIUM_EXTRACTOR.get();
+            case ELECTROREFINER -> ModBlockEntities.ELECTROREFINER.get();
         };
     }
 
@@ -160,6 +169,7 @@ public enum ProcessingMachine {
             case REPROCESSOR -> ModMenus.REPROCESSOR.get();
             case FUEL_FABRICATOR -> ModMenus.FUEL_FABRICATOR.get();
             case LITHIUM_EXTRACTOR -> ModMenus.LITHIUM_EXTRACTOR.get();
+            case ELECTROREFINER -> ModMenus.ELECTROREFINER.get();
         };
     }
 }

@@ -11,13 +11,13 @@ Decisions still to make. Move them into DESIGN.md once settled.
 7. **Coolant block name.** Registered as "Coolant Jacket" (`coolant_jacket`) as a working name. Confirm or rename before release.
 8. **Middle battery tier.** A fridge-sized commercial cabinet between the home stack and the container, or go straight from house to container?
 9. **Power-spending machines.** Add things like an automated miner or powered tools and armour, or keep the mod to power and processing? Leaning towards our own quarry: a microreactor runs it slowly, and more power runs it faster. It gives bigger reactors a job, supplies uranium and fluorite for the fuel cycle in standalone play, and feeds later builds. To settle: its speed per FE, whether it upgrades by modules (rule 11) rather than a new block per tier, and a config toggle so packs that already have quarries can turn it off.
-10. **Pyroprocessor name.** A working name for the machine that turns spent MOX into transuranic metal. Pick an original name before it is built.
-11. **Breeder blanket.** Is breeding part of the breeder's core layout (blanket channels round the fuel, like the station's grid), or a separate blanket block or machine?
-12. **Spent breeder fuel.** What comes out of spent breeder fuel: more transuranic metal (a closed loop), waste only, or a feed for fusion?
-13. **Sodium form.** Sodium as a dust, an ingot, or only a liquid coolant fluid. Real sodium is a soft metal kept away from water, which could be a hazard mechanic.
-14. **Americium and curium.** Keep them folded into transuranic metal, or split them out later (americium-241 for a radioisotope battery, say)?
-15. **Where the breeder sits.** With the fission station breeding tritium, fusion no longer needs the breeder. Keep fission, breeder, fusion in line, or make the breeder an optional branch (fuel supply and thorium) with fusion straight after fission? Leaning towards the branch.
-16. **How tritium is stored.** A gas in pressure tanks and gas pipes (we have both), or canisters (real tritium is often stored bound in metal, as a hydride)?
+10. Settled 30 Sep 2026: the Electrorefiner, one molten salt cell that also splits salt into sodium. See DESIGN.md section 9.
+11. Settled 30 Sep 2026: a ring of blanket slots in the breeder's planning grid. See DESIGN.md section 9.
+12. Settled 30 Sep 2026: a closed loop, back through the pyroprocessor. See DESIGN.md section 9.
+13. Settled 30 Sep 2026: an ingot for recipes and liquid sodium for the coolant; a sodium fire if it meets water. See DESIGN.md section 9.
+14. Settled 30 Sep 2026: kept folded into transuranic metal; split out only if a use appears. See DESIGN.md section 9.
+15. Settled 30 Sep 2026: the breeder sits in line, and fusion needs it (its lithium blanket is the only source of tritium). See DESIGN.md section 9.
+16. Settled 30 Sep 2026: a gas in gas pipes and pressure tanks. See DESIGN.md section 9.
 17. **Uranium glass.** Decoration only, or also the fusion reactor's viewing windows (a fudge)?
 18. **Fusion helium.** What is the helium from the divertor for: vented, a coolant for a later tier, or decoration?
 19. **Fusion heat out.** FE straight out of the base (as the station does), or steam out to a turbine hall the player builds?

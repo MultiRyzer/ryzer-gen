@@ -65,6 +65,7 @@ public final class ClientSetup {
         event.register(ModMenus.REPROCESSOR.get(), ProcessingScreen::new);
         event.register(ModMenus.FUEL_FABRICATOR.get(), ProcessingScreen::new);
         event.register(ModMenus.LITHIUM_EXTRACTOR.get(), ProcessingScreen::new);
+        event.register(ModMenus.ELECTROREFINER.get(), ProcessingScreen::new);
     }
 
     /**

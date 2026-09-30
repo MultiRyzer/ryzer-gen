@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "ryzergen:preview"
+    }
+  ],
+  "type": "ryzergen:electrorefining",
+  "inputs": [
+    {
+      "count": 1,
+      "item": "ryzergen:spent_mox_rod"
+    },
+    {
+      "count": 1,
+      "tag": "c:dusts/salt"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "ryzergen:transuranic_metal"
+    },
+    {
+      "count": 1,
+      "id": "ryzergen:uranium_ingot"
+    },
+    {
+      "count": 1,
+      "id": "ryzergen:fission_waste"
+    }
+  ],
+  "time": 600
+}

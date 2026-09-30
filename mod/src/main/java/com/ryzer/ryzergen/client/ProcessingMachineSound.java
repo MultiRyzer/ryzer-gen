@@ -39,6 +39,7 @@ public class ProcessingMachineSound extends AbstractTickableSoundInstance {
             case REPROCESSOR -> ModSounds.REPROCESSOR.get();
             case FUEL_FABRICATOR -> ModSounds.FUEL_FABRICATOR.get();
             case LITHIUM_EXTRACTOR -> ModSounds.LITHIUM_EXTRACTOR.get();
+            case ELECTROREFINER -> ModSounds.ELECTROREFINER.get();
         };
     }
 

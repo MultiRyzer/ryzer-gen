@@ -54,6 +54,11 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         add(ModSounds.LITHIUM_EXTRACTOR, definition()
                 .subtitle("subtitles.ryzergen.lithium_extractor")
                 .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "reprocessor")).volume(RECORDING_VOLUME * 0.8F).pitch(1.15F)));
+        // The cell's current: the turbine's drone, higher and quieter, as an electrical hum until the
+        // Electrorefiner has a recording of its own.
+        add(ModSounds.ELECTROREFINER, definition()
+                .subtitle("subtitles.ryzergen.electrorefiner")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "station_hum")).volume(RECORDING_VOLUME * 0.5F).pitch(1.6F)));
             // The reactor announcer: Ryzer's voice, cut by art/tools/voice_lines.py.
         add(ModSounds.VOICE_REACTOR_ONLINE, definition()
                 .subtitle("subtitles.ryzergen.voice_reactor_online")

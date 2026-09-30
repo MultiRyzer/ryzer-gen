@@ -25,6 +25,7 @@ public final class ModRecipes {
     public static final DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> REPROCESSING_TYPE = type("reprocessing");
     public static final DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> FABRICATING_TYPE = type("fabricating");
     public static final DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> EXTRACTING_TYPE = type("extracting");
+    public static final DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> ELECTROREFINING_TYPE = type("electrorefining");
     public static final DeferredHolder<RecipeSerializer<?>, MachineRecipe.Serializer> CRACKING_SERIALIZER =
             SERIALIZERS.register("cracking", () -> new MachineRecipe.Serializer(MachineRecipe.Process.CRACKING));
     public static final DeferredHolder<RecipeSerializer<?>, MachineRecipe.Serializer> REPROCESSING_SERIALIZER =
@@ -33,6 +34,8 @@ public final class ModRecipes {
             SERIALIZERS.register("fabricating", () -> new MachineRecipe.Serializer(MachineRecipe.Process.FABRICATING));
     public static final DeferredHolder<RecipeSerializer<?>, MachineRecipe.Serializer> EXTRACTING_SERIALIZER =
             SERIALIZERS.register("extracting", () -> new MachineRecipe.Serializer(MachineRecipe.Process.EXTRACTING));
+    public static final DeferredHolder<RecipeSerializer<?>, MachineRecipe.Serializer> ELECTROREFINING_SERIALIZER =
+            SERIALIZERS.register("electrorefining", () -> new MachineRecipe.Serializer(MachineRecipe.Process.ELECTROREFINING));
 
     private static DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> type(String name) {
         return TYPES.register(name, () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, name)));
