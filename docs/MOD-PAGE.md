@@ -44,7 +44,7 @@ NeoForge 1.21.1 (21.1.249 or newer, so it runs in ATM10). Standalone: it ships e
 - Fission waste goes into a Waste Cask that keeps its contents when broken.
 - Speed Modules, and cable fittings (silver, busbar, cryogenic) to raise throughput. The processing machines can push their results straight into a chest, a pipe or the next machine.
 
-![A fuel cycle production line feeding the fission station](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/curseforge/03_production_line.jpg)
+![The machine family: the alloy smelters, the Core Cracker, the Intake Pump, the Reprocessor, the Fuel Fabricator and the Lithium Extractor](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/curseforge/11_machines.jpg)
 
 ![Tier 3: the fission power station](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/tier_3.png)
 
