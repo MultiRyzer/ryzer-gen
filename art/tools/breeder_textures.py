@@ -86,6 +86,42 @@ def rail():
     return t
 
 
+def grate():
+    """The walkway's grating: dark graphite bars with light gaps between, the same on any piece
+    however it is cut, so the ring of the walkway shows it evenly."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'S')
+    for i in range(0, 16, 3):
+        t.rect(i, 0, i, 15, 'U')
+        t.rect(0, i, 15, i, 'U')
+    return t
+
+
+def pipe():
+    """The sodium lines: clean copper, plain, so a round pipe of any length shows it evenly; its
+    roundness comes from the shading."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'R')
+    return t
+
+
+def amber():
+    """The beacon's lamp, lit: warm amber, bright in the middle of each panel."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'X')
+    t.rect(5, 0, 10, 15, 'e')
+    return t
+
+
+def hatch():
+    """The fuel hatch on the platform, 10 x 10: a gunmetal lid with a lit rim, a seam across it and
+    an orange handle."""
+    t = plate('s', 'h', 'L', 'u', 'z', 10, 10)
+    t.rect(1, 5, 8, 5, 'z')
+    t.rect(4, 2, 5, 2, 'X')
+    return t
+
+
 def band(h):
     """A graphite band `h` pixels high (a lip, a rim): lit along the top,
     shaded at the foot, the same all round. Drawn in rows 0 to h - 1."""
@@ -136,6 +172,10 @@ TEXTURES = {
     'rib': rib,
     'fitting': fitting,
     'rail': rail,
+    'grate': grate,
+    'pipe': pipe,
+    'amber': amber,
+    'hatch': hatch,
     'trefoil': trefoil,
     'plaque': plaque,
     'bezel': bezel,

@@ -136,7 +136,8 @@ The first public build: the microreactor, home battery, pipes and steam, the fue
 The utility reactor: fuel for the stations and the tritium that starts fusion. Fusion needs it.
 - [x] Settle the breeder's open questions (30 Sep 2026): the blanket is a ring in the planning grid; spent breeder fuel closes the loop; sodium is an ingot and a liquid coolant; tritium is a gas; the pyroprocessor is the Electrorefiner; americium and curium stay in transuranic metal
 - [x] Concept (`art/tools/breeder_concept.py`, textures `breeder_textures.py`): a steel sphere on 12 braced legs, as Dounreay's fast reactor was housed, with a girder belt at the equator, a railed platform on top, the console proud of the plinth; even textures
-- [ ] Concept, still to do: an animation somewhere on it, and anything more it needs (a stair up to the platform, the sodium loops)
+- [x] Concept, fleshed out: a walkway round the belt, a caged ladder, a stair up the sphere, the platform's hatch and light strip, footings, sodium lines, and the beacon (its moving part)
+- [ ] The beacon on a block entity renderer: turning while the reactor runs
 - [x] Electrorefiner (behind `preview.next_tier`): one molten salt cell, gated at 1,500 FE/t. Spent MOX and salt into transuranic metal, a uranium ingot and fission waste (30 s); salt alone into a sodium ingot (10 s). Sodium ingot and transuranic metal items
 - [ ] Liquid sodium, melted from the ingot, for the breeder's loop
 - [ ] Electrorefiner sound: an electrical hum from a recording (it borrows the turbine's drone for now)
