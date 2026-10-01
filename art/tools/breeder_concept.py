@@ -35,8 +35,7 @@ What it shows, bottom to top:
 - The platform on top: a yellow handrail, a cyan light strip and an amber beacon.
 
 Moving parts, each drawn in its own group so a renderer can move it (design section 9): the beacon,
-turning while the reactor runs; a haze drifting up through the lantern's hall (haze, the station's
-animated steam); and inside the lantern the rotating plugs (plug_large, and
+turning while the reactor runs; and inside the lantern the rotating plugs (plug_large, and
 plug_small with the drives), which will turn while fuel goes in or out.
 """
 import contextlib
@@ -65,9 +64,8 @@ TEXTURES = {'breeder_' + name: 'ryzergen:block/breeder/' + name for name in bree
 TEXTURES.update({name: 'ryzergen:block/microreactor/' + name for name in (
     'hazard', 'glow', 'screen', 'port_energy', 'port_fuel', 'port_coolant')})
 TEXTURES.update({name: 'ryzergen:block/station/' + name for name in (
-    'housing_slope', 'housing_cheek', 'hazard_upright', 'tag_coolant', 'tag_fuel', 'tag_energy')})
+    'housing', 'housing_slope', 'housing_cheek', 'hazard_upright', 'tag_coolant', 'tag_fuel', 'tag_energy')})
 TEXTURES['glass'] = 'ryzergen:block/breeder/glass'
-TEXTURES['steam'] = 'ryzergen:block/station/steam'
 TEXTURES['front_panel'] = 'ryzergen:block/station/front_panel'
 d = Design(C, TEXTURES, {'glow', 'screen', 'breeder_amber', 'tag_coolant', 'tag_fuel', 'tag_energy'})
 
@@ -160,8 +158,9 @@ def plates(mat, y1, y2, r, n=LEGS, phase=PHASE, v0=None):
 # the inputs go there (fuel in, liquid sodium in), and the outputs on the west (the output port for
 # spent fuel and what the blanket bred, energy out), never on one shared port. Each side console is
 # three cells on the grid, so its panels show whole.
-FACE = 6                        # how far each console's face stands from the footprint's edge
-DEPTH = B                       # a block deep: six of the legs stand on the consoles' tops
+FACE = 1.5                      # each console's face, as the station's: just inside the block's edge,
+                                # its port flanges flush with the edge, where a pipe meets them
+DEPTH = 24                      # deep enough that six of the legs stand on the consoles' tops
 CELLS = (3 * B, 6 * B)          # the middle three cells along each side
 TAGS = {'port_coolant': 'tag_coolant', 'port_fuel': 'tag_fuel', 'port_energy': 'tag_energy'}
 HOOD_BACK, HOOD_TOP = FACE + 5, 20     # the hood slopes from the face's top edge back to here,
@@ -182,7 +181,8 @@ def console(side, ports):
 
     x1, x2 = sorted((x(FACE), x(FACE + DEPTH)))
     d.box('breeder_console_side', x1, 0, a1, x2, 15, a2, top='breeder_graphite', skip=(side, 'down'))
-    d.box('breeder_console', x1, 0, a1, x2, 15, a2, skip=tuple(f for f in ('north', 'south', 'east', 'west', 'up', 'down') if f != side))
+    # The face holding the ports is the station's light port housing, so the ports read the same.
+    d.box('housing', x1, 0, a1, x2, 15, a2, skip=tuple(f for f in ('north', 'south', 'east', 'west', 'up', 'down') if f != side))
     sx = 1 if east else -1
     d.quad('housing_slope', [(x(HOOD_BACK), HOOD_TOP, a2), (x(FACE), 15, a2), (x(FACE), 15, a1), (x(HOOD_BACK), HOOD_TOP, a1)],
            [(0, 0), (0, 16), (16, 16), (16, 0)], (sx * (HOOD_TOP - 15), HOOD_BACK - FACE, 0))
@@ -198,7 +198,7 @@ def console(side, ports):
         if kind is None:
             continue
         a = a1 + cell * B
-        px1, px2 = sorted((x(FACE), x(FACE - 1)))
+        px1, px2 = sorted((x(FACE), x(0)))
         d.box('breeder_fitting', px1, 3, a + 3, px2, 13, a + 13, decals={side: kind}, skip=(back,))
         # A slim light bar on the hood above the port, in its ring colour.
         t0, t1 = 0.25, 0.45
@@ -409,7 +409,7 @@ def lad(off, y, outward=0.0):
 
 
 for off in (-2.5, 2.5):
-    d.sweep('breeder_fitting', [lad(off, 0), lad(off, WALK_Y + 7)], 0.5, 0.5, lambda i: across, closed=False, caps=True)
+    d.sweep('breeder_fitting', [lad(off, 0), lad(off, WALK_Y - 1)], 0.5, 0.5, lambda i: across, closed=False, caps=True)
 for y in range(4, int(WALK_Y), 4):
     d.sweep('breeder_fitting', [lad(-2.5, y), lad(2.5, y)], 0.3, 0.3, lambda i: out, closed=False, caps=True)
 # Brackets from the stiles back to the leg, a block apart, and a step plate at the top across the
@@ -465,14 +465,6 @@ with group('plug_small'):
             d.cylinder('breeder_exchanger', HALL + 6, HALL + 6 + B, 1.6, n=6)
             d.cylinder('glow', HALL + 14, HALL + 15, 1.8, n=6)
             d.disc('breeder_fitting', HALL + 6 + B, HALL + 8 + B, 2.2, n=6)
-
-# A haze drifting up through the hall (the station's animated steam, drawn faint and translucent):
-# a sheet round the drives and one inside the glass, outside and in. Real basis: the argon cover gas
-# over a sodium pool carries a faint haze of sodium vapour.
-with group('haze'):
-    for rad in (13, LAN_R1 - 6):
-        d.cylinder('steam', HALL + 1, HALL + 1 + B, rad, n=24)
-        d.cylinder('steam', HALL + 1, HALL + 1 + B, rad - 0.1, n=24, inward=True)
 
 # ---------------------------------------------------------------- the platform on top
 PLAT_R = 16
