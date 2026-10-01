@@ -68,9 +68,11 @@ TEXTURES.update({name: 'ryzergen:block/station/' + name for name in (
     'housing', 'housing_slope', 'housing_cheek', 'hazard_upright', 'tag_coolant', 'tag_fuel', 'tag_energy')})
 TEXTURES['glass'] = 'ryzergen:block/breeder/glass'
 TEXTURES['glow_off'] = 'ryzergen:block/microreactor/glow_off'
+TEXTURES['lamp'] = 'ryzergen:block/station/lamp'
+TEXTURES['lamp_off'] = 'ryzergen:block/station/lamp_off'
 TEXTURES['breeder_hazard'] = 'ryzergen:block/microreactor/hazard'
 TEXTURES['front_panel'] = 'ryzergen:block/breeder/front_panel'
-d = Design(C, TEXTURES, {'glow', 'screen', 'breeder_amber', 'tag_coolant', 'tag_fuel', 'tag_energy'})
+d = Design(C, TEXTURES, {'glow', 'screen', 'breeder_amber', 'tag_coolant', 'tag_fuel', 'tag_energy', 'lamp'})
 
 
 @contextlib.contextmanager
@@ -443,6 +445,42 @@ wall(E0, E1 - WALL_T, E1, E1)
 for x1, x2 in ((E0, E0 + WALL_T), (E1 - WALL_T, E1)):
     wall(x1, E0 + WALL_T, x2, SIDE_ENDS[0])
     wall(x1, SIDE_ENDS[1], x2, E1 - WALL_T)
+# Floodlights on the wall's inner face, the station's own, lighting the compound: two by each
+# corner and one in the middle of the back. A graphite housing with its lens on the end, lit while
+# the reactor runs. The consoles' and legs' blocks give off the light (lightLantern).
+LAMP_W, LAMP_Y = 5, (2, 6)
+IN0, IN1 = E0 + WALL_T, E1 - WALL_T      # the wall's inner faces
+FAR = 20                                 # how far along from a corner each lamp sits
+OPPOSITE = {'north': 'south', 'south': 'north', 'east': 'west', 'west': 'east'}
+ALL = ('north', 'south', 'east', 'west', 'up', 'down')
+
+
+def lamp(x, z, facing):
+    """A floodlight on the wall's inner face at (x, z), its lens looking `facing` into the compound."""
+    h = LAMP_W / 2
+    y1, y2 = LAMP_Y
+    step = {'north': (0, -2), 'south': (0, 2), 'east': (2, 0), 'west': (-2, 0)}[facing]
+    if step[0] == 0:
+        a, b = sorted((z, z + step[1]))
+        d.box('breeder_graphite', x - h, y1, a, x + h, y2, b, skip=(OPPOSITE[facing],))
+        end = z + step[1] + (0.02 if step[1] > 0 else -0.02)
+        lens = (x - h + 0.5, y1 + 0.5, end, x + h - 0.5, y2 - 0.5, end)
+    else:
+        a, b = sorted((x, x + step[0]))
+        d.box('breeder_graphite', a, y1, z - h, b, y2, z + h, skip=(OPPOSITE[facing],))
+        end = x + step[0] + (0.02 if step[0] > 0 else -0.02)
+        lens = (end, y1 + 0.5, z - h + 0.5, end, y2 - 0.5, z + h - 0.5)
+    d.box('lamp', *lens, skip=tuple(f for f in ALL if f != facing))
+
+
+for x in (E0 + FAR, E1 - FAR):
+    lamp(x, IN0, 'south')
+    lamp(x, IN1, 'north')
+lamp(C, IN1, 'north')
+for z in (E0 + FAR, E1 - FAR):
+    lamp(IN0, z, 'east')
+    lamp(IN1, z, 'west')
+
 # Three fences, each from one console's cheek round the corners to the next.
 fence([(FRONT_ENDS[0], M0), (M0, M0), (M0, SIDE_ENDS[0])])
 fence([(FRONT_ENDS[1], M0), (M1, M0), (M1, SIDE_ENDS[0])])
@@ -633,7 +671,7 @@ with group('beacon'):
 # ---------------------------------------------------------------- picture
 # The lights that run with the reactor, and what each shows while it is off. (Screens and the
 # ports' tags stay lit, as the station's do.)
-LIGHTS = {'glow': 'glow_off', 'breeder_amber': 'breeder_amber_off'}
+LIGHTS = {'glow': 'glow_off', 'breeder_amber': 'breeder_amber_off', 'lamp': 'lamp_off'}
 GAME_DATA = os.path.join(mp.ROOT, 'mod', 'src', 'main', 'resources', 'assets', 'ryzergen', 'breeder', 'breeder.json')
 
 

@@ -100,7 +100,8 @@ public final class ModBlocks {
     // Breeder reactor parts (design section 9), as the station's: noOcclusion, since once formed they
     // stop drawing themselves and the core draws the reactor.
     public static final DeferredBlock<BreederPartBlock> BREEDER_FRAME = BLOCKS.register("breeder_frame",
-            () -> new BreederPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+            () -> new BreederPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
+                    .lightLevel(state -> state.getValue(BreederPartBlock.LIT) ? 15 : 0)));
     public static final DeferredBlock<BreederPartBlock> BREEDER_SHELL = BLOCKS.register("breeder_shell",
             () -> new BreederPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
                     .lightLevel(state -> state.getValue(BreederPartBlock.LIT) ? 15 : 0)));
