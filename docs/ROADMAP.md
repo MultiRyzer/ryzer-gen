@@ -137,12 +137,13 @@ The utility reactor: fuel for the stations and the tritium that starts fusion. F
 - [x] Settle the breeder's open questions (30 Sep 2026): the blanket is a ring in the planning grid; spent breeder fuel closes the loop; sodium is an ingot and a liquid coolant; tritium is a gas; the pyroprocessor is the Electrorefiner; americium and curium stay in transuranic metal
 - [x] Concept (`art/tools/breeder_concept.py`, textures `breeder_textures.py`): a steel sphere on 12 braced legs, as Dounreay's fast reactor was housed, with a girder belt at the equator, a railed platform on top, the console proud of the plinth; even textures
 - [x] Concept, fleshed out: a walkway round the belt, a caged ladder, the platform's hatch and light strip, footings, sodium lines, and the beacon (its moving part)
-- [ ] The beacon on a block entity renderer: turning while the reactor runs
+- [x] The beacon on a block entity renderer: turning while the reactor runs (a redstone signal on the core stands in for running until the core logic)
 - [x] Electrorefiner (behind `preview.next_tier`): one molten salt cell, gated at 1,500 FE/t. Spent MOX and salt into transuranic metal, a uranium ingot and fission waste (30 s); salt alone into a sodium ingot (10 s). Sodium ingot and transuranic metal items
 - [ ] Liquid sodium, melted from the ingot, for the breeder's loop
 - [ ] Electrorefiner sound: an electrical hum from a recording (it borrows the turbine's drone for now)
 - [ ] Breeder fuel from transuranic metal (the Fuel Fabricator)
-- [ ] Breeder multiblock: parts, ghost outline, auto-build, formed look, ports
+- [x] Breeder multiblock: parts, ghost outline, auto-build, formed look (a GPU mesh lit from the open sky for shader packs); the base reworked into a compound (bund wall, shallow consoles, one shared pipe a side to a hub), white to match the station, lights and floodlights that run with it
+- [ ] Working breeder ports (fuel and sodium in on the east, fuel and energy out on the west)
 - [ ] Core and blanket: fast fuel, sodium flow and temperatures; the blanket's three choices (uranium to plutonium, thorium to U-233, lithium to tritium); spent fuel and bred products out by port
 - [ ] Control screen, safety and failure (sodium fire, not a steam explosion), steady state, sounds, advancements, JEI and EMI pages
 - [ ] Retire the station's target channel; target rods go in the breeder's blanket
