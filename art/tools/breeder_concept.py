@@ -17,7 +17,7 @@ heights are whole blocks, and decals (the trefoil, its plaque, the bezel, the fa
 their exact size.
 
 What it shows, bottom to top:
-- No plinth: the legs stand on concrete piers and on the consoles, inside a compound: a slab-high
+- No plinth: the legs stand straight on the ground, inside a compound: a slab-high
   bund wall with hazard stripes and a short fence joins the three consoles, and under the sphere
   a pipe runs from the back of each port to a square hub, from which a thick flanged pipe rises
   into the sphere. Real sodium plants are a maze of loops like this.
@@ -154,7 +154,7 @@ def plates(mat, y1, y2, r, n=LEGS, phase=PHASE, v0=None):
 
 
 # ---------------------------------------------------------------- consoles, standing on the ground
-# No plinth: the legs stand on piers and the sodium plant sits under the sphere (below). As the
+# No plinth: the legs reach the ground, between and behind the consoles. As the
 # station has them, the front (north) carries the control core's screen, and the ports go on
 # consoles on the two sides. As you face the front (looking south), your left is east (larger x):
 # the inputs go there (fuel in, liquid sodium in), and the outputs on the west (the output port for
@@ -162,17 +162,66 @@ def plates(mat, y1, y2, r, n=LEGS, phase=PHASE, v0=None):
 # three cells on the grid, so its panels show whole.
 FACE = 1.5                      # each console's face, as the station's: just inside the block's edge,
                                 # its port flanges flush with the edge, where a pipe meets them
-DEPTH = 24                      # deep enough that six of the legs stand on the consoles' tops
+DEPTH = 14                      # shallow, so the legs behind them reach the ground
+FRONT_DEPTH = 13
 CELLS = (3 * B, 6 * B)          # the middle three cells along each side
 TAGS = {'port_coolant': 'tag_coolant', 'port_fuel': 'tag_fuel', 'port_energy': 'tag_energy'}
 HOOD_BACK, HOOD_TOP = FACE + 5, 20     # the hood slopes from the face's top edge back to here,
                                        # clear of the legs that stand behind it
 
 
+# Each console is a profile (depth in from its face, height) drawn along its length: the face, a
+# short top, then its back sloping down to a low back wall, so it reads as a desk, not a block. The
+# slope is a louvred vent; the back wall a framed plate per block. The cheeks either end follow the
+# profile, standing proud of it, each side one plate drawn at its shape (breeder/cheek_*).
+SIDE_PROFILE = [(0, 0), (0, 15), (HOOD_BACK - FACE, HOOD_TOP), (DEPTH, 12), (DEPTH, 0)]
+SIDE_CHEEK = [(-1, 0), (-1, HOOD_TOP + 2), (HOOD_BACK - FACE + 1, HOOD_TOP + 2), (DEPTH, 14), (DEPTH, 0)]
+FRONT_PROFILE = [(0, 0), (0, 15), (4, 15), (FRONT_DEPTH, 9), (FRONT_DEPTH, 0)]
+FRONT_CHEEK = [(-1, 0), (-1, 15), (4, 15), (FRONT_DEPTH, 9), (FRONT_DEPTH, 0)]
+
+
+def prism(poly, a1, a2, place, faces, cap=None, cap_h=16):
+    """A profile `poly` (points (depth, y)) drawn from a1 to a2 along a console. `place(d, y, a)`
+    gives the 3D point. `faces[i]` is the texture of the edge from point i to i + 1 and how it is
+    mapped ('rows' for a wall standing on the ground, v = 16 - y; 'len' for v down the edge), or
+    None to leave it out. Faces are cut a block apart from a1, so a panel shows whole on each
+    block. `cap` is a decal drawn at the profile's shape on both ends, `cap_h` pixels high."""
+    cd = sum(q[0] for q in poly) / len(poly)
+    cy = sum(q[1] for q in poly) / len(poly)
+    cuts = [a1 + 16 * k for k in range(int((a2 - a1 - 0.01) // 16) + 1)] + [a2]
+    for i, spec in enumerate(faces):
+        if spec is None:
+            continue
+        tex, mode = spec
+        (d1, y1), (d2, y2) = poly[i], poly[(i + 1) % len(poly)]
+        length = math.dist((d1, y1), (d2, y2))
+        for u1, u2 in zip(cuts, cuts[1:]):
+            am = (u1 + u2) / 2
+            mid = place((d1 + d2) / 2, (y1 + y2) / 2, am)
+            inner = place(cd, cy, am)
+            out = tuple(m - c for m, c in zip(mid, inner))
+            if mode == 'rows':
+                va, vb = 16 - y1, 16 - y2
+            else:
+                va, vb = 0, min(16, length)
+            d.quad(tex, [place(d1, y1, u1), place(d2, y2, u1), place(d2, y2, u2), place(d1, y1, u2)],
+                   [(0, va), (0, vb), (u2 - u1, vb), (u2 - u1, va)], out)
+    if cap:
+        k = 16 / cap_h
+        for at, sign in ((a1, -1), (a2, 1)):
+            pts = [place(dd, y, at) for dd, y in poly]
+            uvs = [(dd + 1, (cap_h - y) * k) for dd, y in poly]
+            out = tuple(sign * (q - r) for q, r in zip(place(0, 0, a2), place(0, 0, a1)))
+            for i in range(1, len(poly) - 1, 2):
+                idx = [0, i, i + 1, min(i + 2, len(poly) - 1)]
+                d.quad(cap, [pts[j] for j in idx], [uvs[j] for j in idx], out)
+
+
 def console(side, ports):
     """A console on `side` ('east' or 'west'), three cells long; `ports` gives what sits in each
     cell (a port decal, or None for a plain panel). Over it, as over the station's ports, a hood
-    slopes back with a lit tag above each port, between hazard-striped cheeks."""
+    slopes back with a lit tag above each port, between cheeks hazard striped on the front; behind
+    the hood its back slopes down to a low wall."""
     a1, a2 = CELLS
     east = side == 'east'
     back = 'west' if east else 'east'
@@ -181,21 +230,21 @@ def console(side, ports):
         """A distance in from the footprint's edge on this side, as world x."""
         return 2 * C - v if east else v
 
-    x1, x2 = sorted((x(FACE), x(FACE + DEPTH)))
-    d.box('breeder_cheek', x1, 0, a1, x2, 15, a2, top='breeder_graphite', skip=(side, back, 'down'))
-    bx = x(FACE + DEPTH)
-    d.box('breeder_console_back', bx - 0.01, 0, a1, bx + 0.01, 15, a2, skip=tuple(f for f in ('north', 'south', 'east', 'west', 'up', 'down') if f != back))
+    def place(dd, y, a):
+        return (x(FACE + dd), y, a)
+
+    prism(SIDE_PROFILE, a1, a2, place,
+          [None, None, ('breeder_louvre', 'len'), ('breeder_back_12', 'rows'), None])
     # The face holding the ports is the station's light port housing, so the ports read the same.
+    x1, x2 = sorted((x(FACE), x(FACE + DEPTH)))
     d.box('housing', x1, 0, a1, x2, 15, a2, skip=tuple(f for f in ('north', 'south', 'east', 'west', 'up', 'down') if f != side))
     sx = 1 if east else -1
     d.quad('housing_slope', [(x(HOOD_BACK), HOOD_TOP, a2), (x(FACE), 15, a2), (x(FACE), 15, a1), (x(HOOD_BACK), HOOD_TOP, a1)],
            [(0, 0), (0, 16), (16, 16), (16, 0)], (sx * (HOOD_TOP - 15), HOOD_BACK - FACE, 0))
-    hx1, hx2 = sorted((x(HOOD_BACK + 4), x(HOOD_BACK)))
-    d.box('breeder_cheek', hx1, 15, a1, hx2, HOOD_TOP, a2, top='breeder_graphite', skip=('down',))
     # Cheeks either end, standing proud and a little taller, hazard striped on the front.
-    cx1, cx2 = sorted((x(FACE - 1), x(HOOD_BACK + 4)))
     for z1, z2 in ((a1 - 3, a1), (a2, a2 + 3)):
-        d.box('breeder_cheek', cx1, 0, z1, cx2, HOOD_TOP + 2, z2, top='breeder_graphite', skip=('down',))
+        prism(SIDE_CHEEK, z1, z2, place, [None, ('breeder_graphite', 'len'), ('breeder_graphite', 'len'),
+                                          ('breeder_graphite', 'rows'), None], cap='breeder_cheek_side', cap_h=24)
         sx1, sx2 = sorted((x(FACE - 1), x(FACE - 1.5)))
         d.box('hazard_upright', sx1, 0, z1, sx2, HOOD_TOP + 2, z2, skip=('down', back))
     for cell, kind in enumerate(ports):
@@ -216,21 +265,25 @@ def console(side, ports):
 
 # The front: the station's front panel, so the two reactors share a face. Two blocks wide, centred,
 # its face one texture drawn once across both (breeder/front_panel, the station's without the hazard
-# band at its foot, which the compound wall carries; 32 x 16, rows 1 to 15), with the
-# control core's screen standing proud of it in the bezel the panel draws.
-d.box('breeder_console_side', C - B, 0, FACE, C + B, 15, FACE + DEPTH, top='breeder_graphite', skip=('north', 'south', 'down'))
-for x0 in (C - B, C):
-    d.quad('breeder_console_back', [(x0, 15, FACE + DEPTH), (x0 + B, 15, FACE + DEPTH), (x0 + B, 0, FACE + DEPTH), (x0, 0, FACE + DEPTH)],
-           [(0, 1), (16, 1), (16, 16), (0, 16)], (0, 0, 1))
+# band at its foot, which the compound wall carries; 32 x 16, rows 1 to 15), with the control
+# core's screen standing proud of it in the bezel the panel draws. Behind a short top its back
+# slopes down like the side consoles'.
+def front_place(dd, y, a):
+    return (a, y, FACE + dd)
+
+
+prism(FRONT_PROFILE, C - B, C + B, front_place,
+      [None, ('breeder_graphite', 'len'), ('breeder_louvre', 'len'), ('breeder_back_9', 'rows'), None])
 # Seen from the front the viewer's left is the east (+x) end, so u runs from x = C + 16 to C - 16.
 d.quad('front_panel', [(C + B, 15, FACE), (C - B, 15, FACE), (C - B, 0, FACE), (C + B, 0, FACE)],
        [(0, 1), (16, 1), (16, 16), (0, 16)], (0, 0, -1))
 d.box('breeder_fitting', C - 5, 5, FACE - 1, C + 5, 11, FACE - 0.5, decals={'north': 'screen'}, skip=('south',))
 d.box('breeder_fitting', C - 6, 4, FACE - 0.5, C + 6, 12, FACE, skip=('south',))
-# Cheeks either end of the front panel, as flush as its top so the front legs stand on them, hazard
-# striped on the front like the side consoles' cheeks.
+# Cheeks either end of the front panel, following its profile, hazard striped on the front like the
+# side consoles' cheeks.
 for x1, x2 in ((C - B - 4, C - B), (C + B, C + B + 4)):
-    d.box('breeder_cheek', x1, 0, FACE - 1, x2, 15, FACE + DEPTH, top='breeder_graphite', skip=('down',))
+    prism(FRONT_CHEEK, x1, x2, front_place, [None, ('breeder_graphite', 'len'), ('breeder_graphite', 'len'),
+                                            ('breeder_graphite', 'rows'), None], cap='breeder_cheek_front')
     d.box('hazard_upright', x1, 0, FACE - 1.5, x2, 15, FACE - 1, skip=('down', 'south'))
 console('east', ['port_fuel', None, 'port_coolant'])
 console('west', ['port_fuel', None, 'port_energy'])
@@ -320,7 +373,7 @@ for k in range(LEGS):
     # Round legs, as a sphere's are: fireproofing up to the bracing's middle, painted steel above.
     lx, _, lz = d.at(phi, LEG_R, 0)
     with centred(lx, lz):
-        for y in range(16, 48, B):
+        for y in range(0, 48, B):
             d.cylinder('breeder_fireproofing', y, y + B, 2.5, n=8)
         for y in range(48, LEG_TOP, B):
             d.cylinder('breeder_leg', y, y + B, 2.2, n=8)
@@ -337,26 +390,6 @@ for k in range(LEGS):
     for (ya, yb) in ((BRACE[0], BRACE[1]), (BRACE[1], BRACE[0])):
         path = [d.at(a, LEG_R, ya), d.at(b, LEG_R, yb)]
         d.sweep('breeder_fitting', path, 0.5, 0.5, lambda i, v=across: v, closed=False, caps=True)
-# Where the legs meet the ground. Six stand on the consoles (two on each), on a steel base plate
-# on the console's top, the way plant legs stand on a building's roof; the rest stand on concrete
-# piers a block high, straight on the ground.
-CONSOLE_TOPS = [(C - B - 4, C + B + 4, FACE, FACE + DEPTH),                    # the front, with its cheeks
-                (2 * C - FACE - DEPTH, 2 * C - FACE, CELLS[0], CELLS[1]),      # east
-                (FACE, FACE + DEPTH, CELLS[0], CELLS[1])]                      # west
-
-
-def on_console(x, z):
-    return any(x1 <= x <= x2 and z1 <= z <= z2 for x1, x2, z1, z2 in CONSOLE_TOPS)
-
-
-for k in range(LEGS):
-    fx, _, fz = d.at(PHASE + 2 * math.pi * k / LEGS, LEG_R, 0)
-    if on_console(fx, fz):
-        d.box('breeder_fitting', fx - 3, 15, fz - 3, fx + 3, 16, fz + 3, skip=('down',))
-        continue
-    with centred(fx, fz):
-        d.cylinder('breeder_concrete', 0, B, 4.5, n=8)
-        d.annulus('breeder_concrete', B, 2.5, 4.5, n=8)
 # ---------------------------------------------------------------- the compound: a bund wall, ducts and the central riser
 # A slab-high wall round the footprint's edge joins the three consoles into one compound, as sodium
 # plants bund their equipment (spilled sodium burns, so it is caught). Graphite with hazard stripes
@@ -463,12 +496,13 @@ def ring(mat, a1, a2, y, c, r, along_x, n=8):
             d.quad(mat, quad, [(0, 0), (0, 2 * r), (2 * r, 2 * r), (2 * r, 0)], out)
 
 
-# The process lines: from the back of each side console's ports straight in to the hub, a pipe
-# behind each port at its height (the port's socket is 8 across, so is the pipe), flanged where it
-# leaves the console and where it meets the hub, with a band in the port's ring colour. Inputs come
-# in from the east, outputs leave to the west, as the ports do. From the front console two thin
-# conduits carry the control core's power and signals.
-PIPE_Y, PIPE_R = 8, 4
+# The process lines: from the back of each side console, behind its port, straight in to the hub,
+# flanged where it leaves the console and where it meets the hub, with a band in the port's ring
+# colour. Each leaves a little outward of its port, low under the sloping back, so it clears the leg
+# that stands just behind the port. Inputs come in from the east, outputs leave to the west, as
+# the ports do. From the front console two thin conduits carry the control core's power and signals.
+PIPE_Y, PIPE_R = 6, 3
+PIPE_OFF = 5
 PAINT = {'port_fuel': 'breeder_paint_fuel', 'port_coolant': 'breeder_paint_coolant', 'port_energy': 'breeder_paint_energy'}
 for side, ports in (('east', ['port_fuel', None, 'port_coolant']), ('west', ['port_fuel', None, 'port_energy'])):
     start = 2 * C - FACE - DEPTH if side == 'east' else FACE + DEPTH
@@ -477,16 +511,16 @@ for side, ports in (('east', ['port_fuel', None, 'port_coolant']), ('west', ['po
     for cell, kind in enumerate(ports):
         if kind is None:
             continue
-        z = CELLS[0] + cell * B + B / 2
+        z = CELLS[0] + cell * B + B / 2 + (PIPE_OFF if cell else -PIPE_OFF)
         hpipe('breeder_steel_pipe', start, end, PIPE_Y, z, PIPE_R, True)
         for at in (start, end - sign * 2):
-            ring('breeder_fitting', at, at + sign * 2, PIPE_Y, z, PIPE_R + 1.5, True)
+            ring('breeder_fitting', at, at + sign * 2, PIPE_Y, z, PIPE_R + 1, True)
         mid = (start + end) / 2
         ring(PAINT[kind], mid - 2, mid + 2, PIPE_Y, z, PIPE_R + 0.25, True)
 for x in (C - 8, C + 8):
-    hpipe('breeder_steel_pipe', FACE + DEPTH, HUB[0], PIPE_Y, x, 2, False)
-    for at in (FACE + DEPTH, HUB[0] - 1.5):
-        ring('breeder_fitting', at, at + 1.5, PIPE_Y, x, 3, False)
+    hpipe('breeder_steel_pipe', FACE + FRONT_DEPTH, HUB[0], 5, x, 2, False)
+    for at in (FACE + FRONT_DEPTH, HUB[0] - 1.5):
+        ring('breeder_fitting', at, at + 1.5, 5, x, 3, False)
 
 # ---------------------------------------------------------------- the walkway round the belt, and the ladder up to it
 WALK_Y = BELT[1] + 1

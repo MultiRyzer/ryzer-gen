@@ -243,41 +243,70 @@ def fireproofing():
     return t
 
 
-def console_side():
-    """The console's ends: graphite, a lit lip along the top and a shadow at the foot."""
+def louvre():
+    """A console's sloping back: a louvred vent cover, graphite slats lit on top with dark gaps
+    between, every 3 pixels down the slope and the same across, so a slope of any size shows it."""
     t = Tex()
-    t.rect(0, 0, 15, 15, 'S')
-    t.rect(0, 1, 15, 1, 'M')
+    for y in range(16):
+        t.rect(0, y, 15, y, ('M', 'S', 'U')[y % 3])
+    return t
+
+
+def back_wall(h):
+    """A console's low back wall, `h` pixels high (drawn in rows 16 - h to 15, the rows a wall
+    from the ground shows): a graphite plate per block with a lit bevel and a screw in each corner."""
+    t = Tex()
+    top = 16 - h
+    t.rect(0, top, 15, 15, 'S')
+    t.rect(0, top, 15, top, 'M')
+    t.rect(0, top, 0, 15, 'M')
+    t.rect(1, top + 1, 14, top + 1, 'b')
+    t.rect(15, top, 15, 15, 'U')
     t.rect(0, 15, 15, 15, 'U')
-    return t
-
-
-def console_back():
-    """The back of a console, a block per panel: a graphite plate with a lit bevel and screws in its
-    corners, and a louvred vent in the middle (slats lit on top, shadowed beneath), where the
-    console's electronics breathe. Rows 1 to 15 show (the console is 15 high)."""
-    t = plate('S', 'M', 'b', 'T', 'U')
-    t.rect(0, 0, 15, 0, 'U')
-    t.rect(1, 1, 14, 1, 'M')
-    for x, y in ((2, 3), (13, 3), (2, 13), (13, 13)):
+    t.rect(1, 14, 14, 14, 'T')
+    for x, y in ((2, top + 2), (13, top + 2), (2, 13), (13, 13)):
         t.set(x, y, 'l')
-    t.rect(4, 5, 11, 11, 'U')
-    for y in range(5, 12, 2):
-        t.rect(5, y, 10, y, 'm')
-        t.rect(5, y + 1, 10, y + 1, 'K') if y + 1 <= 11 else None
     return t
 
 
-def cheek():
-    """The consoles' cheeks and the hood's back: graphite ribbed every four pixels (a dark groove
-    with a lit edge under it), changing only down its height, so a cheek of any width or height
-    shows it whole."""
-    t = Tex()
-    t.rect(0, 0, 15, 15, 'S')
-    for y in range(0, 16, 4):
-        t.rect(0, y + 2, 15, y + 2, 'T')
-        t.rect(0, y + 3, 15, y + 3, 'M')
+def profile_plate(poly, h):
+    """A console's cheek, drawn at its shape: the profile `poly` (depth from -1, height) as a
+    graphite plate h pixels high on a 16-wide canvas, a lit bevel along its top and front edges, a
+    shaded one along its slope and back, and a screw near each corner."""
+    t = Tex(16, h)
+    inside = {}
+    for py in range(h):
+        for px in range(16):
+            dd, y = px + 0.5 - 1, h - py - 0.5
+            inside[px, py] = _in_poly(poly, dd, y)
+    for (px, py), on in inside.items():
+        if not on:
+            continue
+        out = lambda qx, qy: not inside.get((qx, qy), False)
+        if out(px, py - 1) or out(px - 1, py):
+            c = 'M'
+        elif out(px, py + 1) or out(px + 1, py):
+            c = 'U'
+        elif out(px, py - 2) or out(px - 2, py):
+            c = 'b'
+        elif out(px, py + 2) or out(px + 2, py):
+            c = 'T'
+        else:
+            c = 'S'
+        t.set(px, py, c)
+    # Screws, kept three pixels in from the outline.
+    for px, py in ((3, h - 4), (3, h - 15 if h > 18 else 4), (12, h - 4)):
+        if all(inside.get((px + i, py + j), False) for i in (-3, 3) for j in (-3, 3)):
+            t.set(px, py, 'l')
     return t
+
+
+def _in_poly(poly, x, y):
+    hit = False
+    for (x1, y1), (x2, y2) in zip(poly, poly[1:] + poly[:1]):
+        if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
+            hit = not hit
+    return hit
 
 
 def bund():
@@ -395,9 +424,12 @@ TEXTURES = {
     'pipe': pipe,
     'leg': leg,
     'fireproofing': fireproofing,
-    'console_side': console_side,
-    'console_back': console_back,
-    'cheek': cheek,
+    'louvre': louvre,
+    'back_12': lambda: back_wall(12),
+    'back_9': lambda: back_wall(9),
+    # The cheeks' profiles, as breeder_concept.py draws them (SIDE_CHEEK and FRONT_CHEEK).
+    'cheek_side': lambda: profile_plate([(-1, 0), (-1, 22), (6, 22), (14, 14), (14, 0)], 24),
+    'cheek_front': lambda: profile_plate([(-1, 0), (-1, 15), (4, 15), (13, 9), (13, 0)], 16),
     'bund': bund,
     'hub': hub,
     'steel_pipe': steel_pipe,
