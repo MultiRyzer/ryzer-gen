@@ -68,7 +68,7 @@ TEXTURES.update({name: 'ryzergen:block/station/' + name for name in (
     'housing', 'housing_slope', 'housing_cheek', 'hazard_upright', 'tag_coolant', 'tag_fuel', 'tag_energy')})
 TEXTURES['glass'] = 'ryzergen:block/breeder/glass'
 TEXTURES['breeder_hazard'] = 'ryzergen:block/microreactor/hazard'
-TEXTURES['front_panel'] = 'ryzergen:block/station/front_panel'
+TEXTURES['front_panel'] = 'ryzergen:block/breeder/front_panel'
 d = Design(C, TEXTURES, {'glow', 'screen', 'breeder_amber', 'tag_coolant', 'tag_fuel', 'tag_energy'})
 
 
@@ -215,7 +215,8 @@ def console(side, ports):
 
 
 # The front: the station's front panel, so the two reactors share a face. Two blocks wide, centred,
-# its face one texture drawn once across both (station/front_panel, 32 x 16, rows 1 to 15), with the
+# its face one texture drawn once across both (breeder/front_panel, the station's without the hazard
+# band at its foot, which the compound wall carries; 32 x 16, rows 1 to 15), with the
 # control core's screen standing proud of it in the bezel the panel draws.
 d.box('breeder_console_side', C - B, 0, FACE, C + B, 15, FACE + DEPTH, top='breeder_graphite', skip=('north', 'south', 'down'))
 for x0 in (C - B, C):

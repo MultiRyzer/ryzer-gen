@@ -85,7 +85,8 @@ def plinth():
     return tex
 
 
-def front_panel():
+def front_panel(hazard=True):
+    """With hazard False, the plain foot the breeder's console uses (its compound wall carries the stripes)."""
     W, H = 32, 16
     k = [['T'] * W for _ in range(H)]
     for x in range(W):
@@ -95,7 +96,7 @@ def front_panel():
         k[4][x] = 'S'
         k[15][x] = 'U'                       # shadowed foot
     for y in range(1, 16):
-        k[y][0] = 'b' if y < 13 else k[y][0]  # lit left edge
+        k[y][0] = 'b' if y < 13 or not hazard else k[y][0]  # lit left edge
         k[y][W - 1] = 'U'                     # shadowed right edge
     for x in range(2, W - 2):
         k[3][x] = 'i'                        # cyan light line, inset from the ends
@@ -119,7 +120,7 @@ def front_panel():
         for x in range(25, 29):
             k[y + 1][x] = 'b' if y < 10 else k[y + 1][x]
     # Hazard band along the foot: yellow on graphite, 45 degrees.
-    for y in (12, 13, 14):
+    for y in (12, 13, 14) if hazard else ():
         for x in range(1, W - 1):
             k[y][x] = 'Y' if (x + y) % 6 < 3 else 'B'
     return [[solid(c) for c in row] for row in k]
@@ -656,6 +657,7 @@ def publish_all():
     write_texture('block/station/rib', rib())
     write_texture('block/station/plinth', plinth())
     write_texture('block/station/front_panel', front_panel())
+    write_texture('block/breeder/front_panel', front_panel(hazard=False))
     publish_station()
     write_texture('block/fusion/plasma_wisp', plasma_wisp())
     write_texture('block/fusion/arc', arc())
