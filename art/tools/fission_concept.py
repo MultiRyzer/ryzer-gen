@@ -191,9 +191,14 @@ LAYOUT = [
 #   F fuel: a bundle of four green-glowing pins held by bright spacer grids, with end fittings,
 #     as real fuel assemblies are built
 #   C coolant: a column of water glowing Cherenkov blue, in copper hoops, with steam rising off it
-#   M moderator: a graphite column with bore holes
+#   M moderator: a column of graphite bricks keyed together, banded with steel between them, on
+#     an end fitting with a cap, as the fuel's bundles stand
 #   X control: a polished steel rod on a drive shaft, part way in (its depth marks show travel)
 d.group = 'rods'
+
+
+# The moderator's three graphite bricks, with a steel band in each gap between them.
+MODERATOR_BRICKS = ((31, 45), (46.5, 60.5), (62, 76))
 
 
 def rod(kind, x, z):
@@ -211,7 +216,12 @@ def rod(kind, x, z):
         for y in range(29, 79, 8):
             d.box('copper', x - 3.5, y, z - 3.5, x + 3.5, y + 2, z + 3.5)
     elif kind == 'M':
-        d.box('moderator', x - 4, 27, z - 4, x + 4, 80, z + 4, skip=('up',))
+        d.box('nozzle', x - 4.5, 27, z - 4.5, x + 4.5, 31, z + 4.5)
+        for y1, y2 in MODERATOR_BRICKS:
+            d.box('moderator', x - 4, y1, z - 4, x + 4, y2, z + 4, skip=('up', 'down'))
+        for y in (45, 60.5):
+            d.box('spacer', x - 4.5, y, z - 4.5, x + 4.5, y + 1.5, z + 4.5)
+        d.box('nozzle', x - 4.5, 76, z - 4.5, x + 4.5, 80, z + 4.5, skip=('up',))
     elif kind == 'X':
         d.box('control', x - 3, 44, z - 3, x + 3, 72, z + 3)
         d.box('spacer', x - 1, 72, z - 1, x + 1, 80, z + 1, skip=('up',))
