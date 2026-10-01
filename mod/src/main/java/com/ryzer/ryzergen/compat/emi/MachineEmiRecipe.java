@@ -30,6 +30,7 @@ public class MachineEmiRecipe extends BasicEmiRecipe {
         recipe.fluid().ifPresent(fluid -> inputs.add(EmiIngredient.of(Arrays.stream(fluid.getFluids())
                 .map(stack -> EmiStack.of(stack.getFluid(), stack.getAmount())).toList())));
         recipe.results().forEach(result -> outputs.add(EmiStack.of(result)));
+        recipe.fluidResult().ifPresent(fluid -> outputs.add(EmiStack.of(fluid.getFluid(), fluid.getAmount())));
     }
 
     @Override

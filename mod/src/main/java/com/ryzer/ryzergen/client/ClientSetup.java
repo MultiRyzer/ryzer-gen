@@ -144,7 +144,7 @@ public final class ClientSetup {
         event.registerReloadListener((ResourceManagerReloadListener) manager -> StationGeometry.clear());
     }
 
-    /** Steam's look in GUIs and tanks: a pale animated haze. */
+    /** Steam's look in GUIs and tanks: a pale animated haze. Liquid sodium: molten silver metal. */
     @SubscribeEvent
     public static void registerFluidLooks(RegisterClientExtensionsEvent event) {
         ResourceLocation steam = ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "block/steam");
@@ -159,6 +159,18 @@ public final class ClientSetup {
                 return steam;
             }
         }, ModFluids.STEAM_TYPE.get());
+        ResourceLocation sodium = ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "block/sodium");
+        event.registerFluidType(new IClientFluidTypeExtensions() {
+            @Override
+            public ResourceLocation getStillTexture() {
+                return sodium;
+            }
+
+            @Override
+            public ResourceLocation getFlowingTexture() {
+                return sodium;
+            }
+        }, ModFluids.SODIUM_TYPE.get());
     }
 
     private ClientSetup() {}

@@ -9,6 +9,7 @@ import com.ryzer.ryzergen.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.FluidTags;
@@ -42,13 +43,14 @@ import java.util.function.Predicate;
 
 /**
  * A fuel cycle machine at work (see {@link ProcessingMachine}): input slots, output slots, an energy
- * buffer and, for the reprocessor, a water tank. Each tick it finds the recipe its inputs make, and
+ * buffer, for the reprocessor a water tank, and for the Electrorefiner an output tank for fluid
+ * results. Each tick it finds the recipe its inputs make, and
  * while there is room for the results and power to spend, it works towards it.
  *
  * <p>Pipes connect on any side, and every side works the same way: items in (only items some recipe
  * uses, and never the same item in two input slots, so one pipe cannot fill every slot and jam it),
  * results out (only results, so a pipe set to extract never pulls ingredients),
- * energy and water on any side. When two recipes match, the one using more ingredients wins, so a
+ * energy and water in and fluid results out on any side. When two recipes match, the one using more ingredients wins, so a
  * fabricator holding uranium, steel and plutonium makes MOX rather than a plain uranium rod.
  */
 public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
@@ -62,7 +64,10 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
     public static final int DATA_ENABLED = 7;
     public static final int DATA_MODULES = 8;
     public static final int DATA_AUTO_OUTPUT = 9;
-    public static final int DATA_COUNT = 10;
+    public static final int DATA_TANK = 10;
+    /** The output tank's fluid, as its registry id (-1 empty), so the screen can draw it. */
+    public static final int DATA_TANK_FLUID = 11;
+    public static final int DATA_COUNT = 12;
     /** Auto output tries every this many ticks. */
     private static final int AUTO_OUTPUT_INTERVAL = 10;
 
@@ -75,7 +80,9 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
     private final IItemHandler outputs;
     private final MachineEnergyStorage energy;
     private final FluidTank water;
-    private final IFluidHandler waterPort;
+    /** Fluid results, drained by pipes on any side. */
+    private final FluidTank tank;
+    private final IFluidHandler fluidPort;
 
     private int progress;
     private int total;
@@ -110,6 +117,8 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
                 case DATA_ENABLED -> enabled ? 1 : 0;
                 case DATA_MODULES -> modules();
                 case DATA_AUTO_OUTPUT -> autoOutput ? 1 : 0;
+                case DATA_TANK -> tank.getFluidAmount();
+                case DATA_TANK_FLUID -> tank.isEmpty() ? -1 : BuiltInRegistries.FLUID.getId(tank.getFluid().getFluid());
                 default -> 0;
             };
         }
@@ -142,40 +151,56 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
                 setChanged();
             }
         };
-        waterPort = new IFluidHandler() {
+        tank = new FluidTank(Math.max(1, machine.tankCapacity())) {
+            @Override
+            protected void onContentsChanged() {
+                setChanged();
+            }
+        };
+        // Water in (tank 0, if it takes water), fluid results out (the last tank, if it has one).
+        fluidPort = new IFluidHandler() {
+            private @Nullable FluidTank at(int index) {
+                if (machine.usesWater() && index == 0) {
+                    return water;
+                }
+                return machine.hasTank() && index == getTanks() - 1 ? tank : null;
+            }
+
             @Override
             public int getTanks() {
-                return 1;
+                return (machine.usesWater() ? 1 : 0) + (machine.hasTank() ? 1 : 0);
             }
 
             @Override
-            public FluidStack getFluidInTank(int tank) {
-                return water.getFluid();
+            public FluidStack getFluidInTank(int index) {
+                FluidTank held = at(index);
+                return held == null ? FluidStack.EMPTY : held.getFluid();
             }
 
             @Override
-            public int getTankCapacity(int tank) {
-                return water.getCapacity();
+            public int getTankCapacity(int index) {
+                FluidTank held = at(index);
+                return held == null ? 0 : held.getCapacity();
             }
 
             @Override
-            public boolean isFluidValid(int tank, FluidStack stack) {
-                return water.isFluidValid(stack);
+            public boolean isFluidValid(int index, FluidStack stack) {
+                return at(index) == water && water.isFluidValid(stack);
             }
 
             @Override
             public int fill(FluidStack resource, FluidAction action) {
-                return water.fill(resource, action);
+                return machine.usesWater() ? water.fill(resource, action) : 0;
             }
 
             @Override
             public FluidStack drain(FluidStack resource, FluidAction action) {
-                return FluidStack.EMPTY;
+                return machine.hasTank() ? tank.drain(resource, action) : FluidStack.EMPTY;
             }
 
             @Override
             public FluidStack drain(int maxDrain, FluidAction action) {
-                return FluidStack.EMPTY;
+                return machine.hasTank() ? tank.drain(maxDrain, action) : FluidStack.EMPTY;
             }
         };
     }
@@ -321,8 +346,14 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
         return best;
     }
 
-    /** Whether all of a recipe's results fit in the output slots together. */
+    /** Whether all of a recipe's results fit: its items in the output slots together, its fluid in the tank. */
     private boolean hasRoomFor(MachineRecipe recipe) {
+        if (recipe.fluidResult().isPresent()) {
+            FluidStack fluid = recipe.fluidResult().get();
+            if (!machine.hasTank() || tank.fill(fluid.copy(), IFluidHandler.FluidAction.SIMULATE) < fluid.getAmount()) {
+                return false;
+            }
+        }
         List<ItemStack> slots = new ArrayList<>();
         for (int slot = machine.inputs(); slot < machine.slots(); slot++) {
             slots.add(items.getStackInSlot(slot).copy());
@@ -357,6 +388,7 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
             items.extractItem(slots[i], recipe.inputs().get(i).count(), false);
         }
         recipe.fluid().ifPresent(fluid -> water.drain(fluid.amount(), IFluidHandler.FluidAction.EXECUTE));
+        recipe.fluidResult().ifPresent(fluid -> tank.fill(fluid.copy(), IFluidHandler.FluidAction.EXECUTE));
         for (ItemStack result : recipe.results()) {
             ItemStack left = result.copy();
             for (int slot = machine.inputs(); slot < machine.slots() && !left.isEmpty(); slot++) {
@@ -449,6 +481,12 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
             if (machine.tall() && dir == Direction.UP) {
                 continue;
             }
+            if (!tank.isEmpty()) {
+                IFluidHandler fluids = level.getCapability(Capabilities.FluidHandler.BLOCK, pos.relative(dir), dir.getOpposite());
+                if (fluids != null) {
+                    tank.drain(fluids.fill(tank.getFluid().copy(), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+                }
+            }
             IItemHandler target = level.getCapability(Capabilities.ItemHandler.BLOCK, pos.relative(dir), dir.getOpposite());
             if (target == null) {
                 continue;
@@ -488,8 +526,9 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
         return energy;
     }
 
-    public @Nullable IFluidHandler getWater(@Nullable Direction side) {
-        return machine.usesWater() ? waterPort : null;
+    /** Water in and fluid results out, for machines with either tank. */
+    public @Nullable IFluidHandler getFluids(@Nullable Direction side) {
+        return machine.usesWater() || machine.hasTank() ? fluidPort : null;
     }
 
     public void dropContents(Level level, BlockPos pos) {
@@ -516,6 +555,9 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
         if (machine.usesWater()) {
             tag.put("water", water.writeToNBT(registries, new CompoundTag()));
         }
+        if (machine.hasTank()) {
+            tag.put("tank", tank.writeToNBT(registries, new CompoundTag()));
+        }
         tag.putInt("progress", progress);
         tag.putInt("total", total);
         tag.putBoolean("enabled", enabled);
@@ -536,6 +578,9 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
         energy.setStored(tag.getInt("energy"));
         if (machine.usesWater()) {
             water.readFromNBT(registries, tag.getCompound("water"));
+        }
+        if (machine.hasTank()) {
+            tank.readFromNBT(registries, tag.getCompound("tank"));
         }
         progress = tag.getInt("progress");
         total = tag.getInt("total");

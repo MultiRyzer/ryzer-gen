@@ -579,7 +579,7 @@ PROCESSING = {
     'reprocessor': (2, 3, True),
     'fuel_fabricator': (3, 1, False),
     'lithium_extractor': (1, 1, True),
-    'electrorefiner': (2, 3, False),
+    'electrorefiner': (2, 3, True),   # its well holds the liquid sodium it melts
 }
 
 

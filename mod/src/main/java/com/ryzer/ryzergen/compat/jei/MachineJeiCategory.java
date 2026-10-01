@@ -68,8 +68,10 @@ public class MachineJeiCategory implements IRecipeCategory<RecipeHolder<MachineR
         }
         recipe.fluid().ifPresent(fluid -> builder.addInputSlot(1 + 18 * recipe.inputs().size(), 19).setStandardSlotBackground()
                 .addIngredients(NeoForgeTypes.FLUID_STACK, List.of(fluid.getFluids())));
-        int results = recipe.results().size();
-        for (int i = 0; i < results; i++) {
+        int results = recipe.results().size() + (recipe.fluidResult().isPresent() ? 1 : 0);
+        recipe.fluidResult().ifPresent(fluid -> builder.addOutputSlot(OUTPUTS_X + 1, 19 - 9 * (results - 1) + 18 * recipe.results().size())
+                .setStandardSlotBackground().addIngredient(NeoForgeTypes.FLUID_STACK, fluid));
+        for (int i = 0; i < recipe.results().size(); i++) {
             var slot = builder.addOutputSlot(OUTPUTS_X + 1, 19 - 9 * (results - 1) + 18 * i);
             // The large output frame is 26 px: fine for one result, but stacked they overlap and spill
             // past the page, so a column of results gets plain slot frames.

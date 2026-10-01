@@ -171,7 +171,7 @@ public class RyzerGen {
         }, processing);
         event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
             ProcessingBlockEntity machine = processingMachine(level, pos, state);
-            return machine == null ? null : machine.getWater(side);
+            return machine == null ? null : machine.getFluids(side);
         }, processing);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.WASTE_CASK.get(),
                 (cask, side) -> cask.items());

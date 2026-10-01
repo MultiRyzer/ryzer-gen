@@ -7,6 +7,10 @@ Player-facing changes, newest first. Paste each release's section into the Modri
 ### New
 - **JEI and EMI pages** for the Spent Fuel Pool, the Container Battery and steam. The pool's page gives its cooling times and the battery's its capacity and rate, from your config. Look up steam to see where it comes from: the microreactor boils its coolant into steam you can pipe out, while the fission station boils its water into its own turbine.
 - **Two advancements:** Cooling Off (build a Spent Fuel Pool) and Grid Scale (build a Container Battery).
+- **Floodlights round the fission station's base.** They glow while it runs, and the base gives off light, so the ground round the station is lit at night.
+
+### Changed
+- **The fission station's graphite moderator columns** are built like its other rods: three graphite bricks banded with steel, on an end fitting with a cap.
 
 ### Fixed
 - **The Lithium Extractor's recipes show in JEI and EMI** again. It left the preview in 0.1.2, but the recipe viewers still hid it unless the preview was on.

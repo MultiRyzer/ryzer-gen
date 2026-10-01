@@ -25,19 +25,20 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
  */
 public enum ProcessingMachine {
     /** Crushes depleted fuel cores open: spent kernels out, graphite and steel back. */
-    CORE_CRACKER("core_cracker", Process.CRACKING, 1, 3, 20, 0, false, false),
+    CORE_CRACKER("core_cracker", Process.CRACKING, 1, 3, 20, 0, false, false, 0),
     /** Separates spent fuel into uranium, plutonium and waste, with fluorite and water. Two high. */
-    REPROCESSOR("reprocessor", Process.REPROCESSING, 2, 3, 80, 4_000, true, false),
+    REPROCESSOR("reprocessor", Process.REPROCESSING, 2, 3, 80, 4_000, true, false, 0),
     /** Makes fuel: uranium and MOX rods for the station, TRISO pellets for the microreactor. */
-    FUEL_FABRICATOR("fuel_fabricator", Process.FABRICATING, 3, 1, 40, 0, false, false),
+    FUEL_FABRICATOR("fuel_fabricator", Process.FABRICATING, 3, 1, 40, 0, false, false, 0),
     /** Draws lithium out of salt and water, for tritium (design section 10). */
-    LITHIUM_EXTRACTOR("lithium_extractor", Process.EXTRACTING, 1, 1, 40, 4_000, false, false),
+    LITHIUM_EXTRACTOR("lithium_extractor", Process.EXTRACTING, 1, 1, 40, 4_000, false, false, 0),
     /**
      * Pyroprocessing (design section 9): a molten salt cell that plates spent MOX out into
      * transuranic metal, uranium and waste, and splits salt alone into sodium. Tier 4, so it runs
-     * on fission power: gated, with a draw no microreactor can meet.
+     * on fission power: gated, with a draw no microreactor can meet. Its tank takes the liquid sodium
+     * it melts from ingots, for the breeder's loop.
      */
-    ELECTROREFINER("electrorefiner", Process.ELECTROREFINING, 2, 3, 1_500, 0, false, true);
+    ELECTROREFINER("electrorefiner", Process.ELECTROREFINING, 2, 3, 1_500, 0, false, true, 4_000);
 
     public static final int ENERGY_CAPACITY = 40_000;
 
@@ -60,9 +61,10 @@ public enum ProcessingMachine {
     private final int waterCapacity;
     private final boolean tall;
     private final boolean gated;
+    private final int tankCapacity;
 
     ProcessingMachine(String id, Process process, int inputs, int outputs, int energyPerTick, int waterCapacity, boolean tall,
-                      boolean gated) {
+                      boolean gated, int tankCapacity) {
         this.id = id;
         this.process = process;
         this.inputs = inputs;
@@ -71,6 +73,7 @@ public enum ProcessingMachine {
         this.waterCapacity = waterCapacity;
         this.tall = tall;
         this.gated = gated;
+        this.tankCapacity = tankCapacity;
     }
 
     /** The machine that runs a recipe type. */
@@ -136,6 +139,15 @@ public enum ProcessingMachine {
 
     public boolean usesWater() {
         return waterCapacity > 0;
+    }
+
+    /** mB its output tank holds (for recipes with a fluid result), or 0 if it has none. */
+    public int tankCapacity() {
+        return tankCapacity;
+    }
+
+    public boolean hasTank() {
+        return tankCapacity > 0;
     }
 
     /** Two blocks high, like a door: the lower half holds the block entity. */

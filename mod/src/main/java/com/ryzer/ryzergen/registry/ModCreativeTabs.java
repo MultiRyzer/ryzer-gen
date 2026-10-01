@@ -61,7 +61,7 @@ public final class ModCreativeTabs {
                 // Fuel and rods
                 List.of(ModItems.TRISO_PELLETS, ModItems.SEALED_FUEL_CORE, ModItems.DEPLETED_FUEL_CORE,
                         ModItems.URANIUM_FUEL_ROD, ModItems.MOX_FUEL_ROD, ModItems.SPENT_URANIUM_ROD, ModItems.SPENT_MOX_ROD,
-                        ModItems.CONTROL_ROD, ModItems.LITHIUM_TARGET_ROD, ModItems.IRRADIATED_TARGET_ROD));
+                        ModItems.CONTROL_ROD, ModItems.LITHIUM_TARGET_ROD, ModItems.IRRADIATED_TARGET_ROD, ModItems.BREEDER_FUEL));
         types.forEach(type -> type.forEach(item -> items.add(item.get())));
         // Ore blocks (stone, then deepslate), raw ores, then ingots.
         for (OreType ore : OreType.values()) {

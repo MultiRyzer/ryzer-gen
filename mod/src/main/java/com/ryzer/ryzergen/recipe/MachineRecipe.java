@@ -28,12 +28,13 @@ import java.util.Optional;
 
 /**
  * A recipe for one of the fuel cycle machines (design section 7): up to three item inputs in any
- * slot order, an optional fluid, and up to three results, taking {@code time} ticks. The same shape
+ * slot order, an optional fluid, and up to three results and an optional fluid result (into the
+ * machine's tank), taking {@code time} ticks. The same shape
  * serves the Core Cracker, Reprocessor and Fuel Fabricator; {@link Process} says which machine runs
  * it, and each process is its own recipe type so packs can change one machine's recipes alone.
  */
 public record MachineRecipe(Process process, List<SizedIngredient> inputs, Optional<SizedFluidIngredient> fluid,
-                            List<ItemStack> results, int time) implements Recipe<MachineRecipe.Input> {
+                            List<ItemStack> results, Optional<FluidStack> fluidResult, int time) implements Recipe<MachineRecipe.Input> {
     public static final int MAX_INPUTS = 3;
     public static final int MAX_RESULTS = 3;
     public static final int DEFAULT_TIME = 200;
@@ -115,7 +116,7 @@ public record MachineRecipe(Process process, List<SizedIngredient> inputs, Optio
 
     @Override
     public ItemStack assemble(Input input, HolderLookup.Provider registries) {
-        return results.getFirst().copy();
+        return results.isEmpty() ? ItemStack.EMPTY : results.getFirst().copy();
     }
 
     @Override
@@ -125,7 +126,7 @@ public record MachineRecipe(Process process, List<SizedIngredient> inputs, Optio
 
     @Override
     public ItemStack getResultItem(HolderLookup.Provider registries) {
-        return results.getFirst();
+        return results.isEmpty() ? ItemStack.EMPTY : results.getFirst();
     }
 
     @Override
@@ -169,18 +170,25 @@ public record MachineRecipe(Process process, List<SizedIngredient> inputs, Optio
         private final StreamCodec<RegistryFriendlyByteBuf, MachineRecipe> streamCodec;
 
         public Serializer(Process process) {
-            codec = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            MapCodec<MachineRecipe> fields = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     upTo(SizedIngredient.FLAT_CODEC, MAX_INPUTS, "inputs").fieldOf("inputs").forGetter(MachineRecipe::inputs),
                     SizedFluidIngredient.FLAT_CODEC.optionalFieldOf("fluid").forGetter(MachineRecipe::fluid),
-                    upTo(ItemStack.CODEC, MAX_RESULTS, "results").fieldOf("results").forGetter(MachineRecipe::results),
+                    ItemStack.CODEC.listOf().validate(list -> list.size() > MAX_RESULTS
+                            ? DataResult.error(() -> "A machine recipe makes at most " + MAX_RESULTS + " results, not " + list.size())
+                            : DataResult.success(list)).optionalFieldOf("results", List.of()).forGetter(MachineRecipe::results),
+                    FluidStack.CODEC.optionalFieldOf("fluid_result").forGetter(MachineRecipe::fluidResult),
                     ExtraCodecs.POSITIVE_INT.optionalFieldOf("time", DEFAULT_TIME).forGetter(MachineRecipe::time)
-            ).apply(instance, (inputs, fluid, results, time) -> new MachineRecipe(process, inputs, fluid, results, time)));
+            ).apply(instance, (inputs, fluid, results, fluidResult, time) -> new MachineRecipe(process, inputs, fluid, results,
+                    fluidResult, time)));
+            codec = fields.validate(recipe -> recipe.results().isEmpty() && recipe.fluidResult().isEmpty()
+                    ? DataResult.error(() -> "A machine recipe needs a result or a fluid result") : DataResult.success(recipe));
             streamCodec = StreamCodec.composite(
                     SizedIngredient.STREAM_CODEC.apply(ByteBufCodecs.list()), MachineRecipe::inputs,
                     ByteBufCodecs.optional(SizedFluidIngredient.STREAM_CODEC), MachineRecipe::fluid,
                     ItemStack.STREAM_CODEC.apply(ByteBufCodecs.list()), MachineRecipe::results,
+                    ByteBufCodecs.optional(FluidStack.STREAM_CODEC), MachineRecipe::fluidResult,
                     ByteBufCodecs.VAR_INT, MachineRecipe::time,
-                    (inputs, fluid, results, time) -> new MachineRecipe(process, inputs, fluid, results, time));
+                    (inputs, fluid, results, fluidResult, time) -> new MachineRecipe(process, inputs, fluid, results, fluidResult, time));
         }
 
         @Override

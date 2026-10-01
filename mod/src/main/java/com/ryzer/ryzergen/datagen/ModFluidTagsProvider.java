@@ -19,6 +19,7 @@ public class ModFluidTagsProvider extends FluidTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         tag(ModFluids.STEAM_TAG).add(ModFluids.STEAM.get(), ModFluids.FLOWING_STEAM.get());
+        tag(ModFluids.SODIUM_TAG).add(ModFluids.SODIUM.get(), ModFluids.FLOWING_SODIUM.get());
         tag(Tags.Fluids.GASEOUS).add(ModFluids.STEAM.get(), ModFluids.FLOWING_STEAM.get());
     }
 }

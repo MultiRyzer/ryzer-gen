@@ -38,9 +38,10 @@ def advanced_control_board():
     return t
 
 
-def fuel_rod(band_lit, band_dim):
+def fuel_rod(band_lit, band_dim, half=1.6):
     """A fission fuel rod, corner to corner: steel cladding lit from the top left, graphite end
-    caps and two coloured rings that say which fuel is inside."""
+    caps and two coloured rings that say which fuel is inside. `half` is half its thickness: the
+    breeder's fuel assembly is a fatter steel duct round its pins."""
     x0, y0, x1, y1 = 2.5, 13.5, 13.5, 2.5
     length = math.hypot(x1 - x0, y1 - y0)
     dx, dy = (x1 - x0) / length, (y1 - y0) / length
@@ -51,14 +52,15 @@ def fuel_rod(band_lit, band_dim):
             along = (px * dx + py * dy) / length
             # Across the rod: negative on the top-left (lit) side.
             across = py * dx - px * dy
-            if not -0.02 <= along <= 1.02 or abs(across) > 1.6:
+            if not -0.02 <= along <= 1.02 or abs(across) > half:
                 continue
             if along < 0.1 or along > 0.9:
-                key = 'b' if across < -0.5 else 'S' if across < 0.6 else 'T'
+                key = 'b' if across < -0.5 * half / 1.6 else 'S' if across < 0.6 * half / 1.6 else 'T'
             elif 0.3 <= along < 0.37 or 0.63 <= along < 0.7:
                 key = band_lit if across < 0.2 else band_dim
             else:
-                key = 'A' if across < -0.9 else 'E' if across < -0.2 else 'F' if across < 0.5 else 'I'
+                k = half / 1.6
+                key = 'A' if across < -0.9 * k else 'E' if across < -0.2 * k else 'F' if across < 0.5 * k else 'I'
             cells[(x, y)] = key
     t = Tex()
     for (x, y), key in cells.items():
@@ -83,6 +85,8 @@ TEXTURES = {
     'item/irradiated_target_rod': lambda: fuel_rod('4', '3'),
     # Control rod: the brake, ringed in warning red.
     'item/control_rod': lambda: fuel_rod('x', '8'),
+    # Breeder fuel: a fat fast reactor assembly, ringed in the breeder's cyan.
+    'item/breeder_fuel': lambda: fuel_rod('i', 'f', half=2.3),
 }
 
 
