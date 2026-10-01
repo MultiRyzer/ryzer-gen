@@ -110,7 +110,7 @@ public final class BreederStructure {
     private static void setFormed(ServerLevel level, BlockPos pos, boolean formed) {
         BlockState state = level.getBlockState(pos);
         if (state.getBlock() instanceof BreederPartBlock && state.getValue(BreederPartBlock.FORMED) != formed) {
-            level.setBlock(pos, state.setValue(BreederPartBlock.FORMED, formed), Block.UPDATE_CLIENTS);
+            level.setBlock(pos, state.setValue(BreederPartBlock.FORMED, formed).setValue(BreederPartBlock.LIT, false), Block.UPDATE_CLIENTS);
         }
     }
 }

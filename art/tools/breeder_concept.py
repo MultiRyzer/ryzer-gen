@@ -67,6 +67,7 @@ TEXTURES.update({name: 'ryzergen:block/microreactor/' + name for name in (
 TEXTURES.update({name: 'ryzergen:block/station/' + name for name in (
     'housing', 'housing_slope', 'housing_cheek', 'hazard_upright', 'tag_coolant', 'tag_fuel', 'tag_energy')})
 TEXTURES['glass'] = 'ryzergen:block/breeder/glass'
+TEXTURES['glow_off'] = 'ryzergen:block/microreactor/glow_off'
 TEXTURES['breeder_hazard'] = 'ryzergen:block/microreactor/hazard'
 TEXTURES['front_panel'] = 'ryzergen:block/breeder/front_panel'
 d = Design(C, TEXTURES, {'glow', 'screen', 'breeder_amber', 'tag_coolant', 'tag_fuel', 'tag_energy'})
@@ -630,6 +631,9 @@ with group('beacon'):
                (math.cos(pm), 0, math.sin(pm)))
 
 # ---------------------------------------------------------------- picture
+# The lights that run with the reactor, and what each shows while it is off. (Screens and the
+# ports' tags stay lit, as the station's do.)
+LIGHTS = {'glow': 'glow_off', 'breeder_amber': 'breeder_amber_off'}
 GAME_DATA = os.path.join(mp.ROOT, 'mod', 'src', 'main', 'resources', 'assets', 'ryzergen', 'breeder', 'breeder.json')
 
 
@@ -638,7 +642,19 @@ def main():
     big_machine_textures.publish_all()
     breeder_textures.main()
     # For the game: the static body and the beacon, drawn by the control core (BreederRenderer).
+    # The lights are split out of each group: <group>_on draws them lit (while the reactor runs) and
+    # <group>_off the same quads dark, so the renderer picks one. The concept shows them lit.
+    whole = d.quads
+    split = []
+    for tex, verts, n, grp in whole:
+        if tex in LIGHTS:
+            split.append((tex, verts, n, grp + '_on'))
+            split.append((LIGHTS[tex], verts, n, grp + '_off'))
+        else:
+            split.append((tex, verts, n, grp))
+    d.quads = split
     d.export(GAME_DATA)
+    d.quads = whole
     d.save_png(out, [((1, 1), 3, 0.5), ((-1, 0.4), 3, 0.35)])
 
 

@@ -365,6 +365,14 @@ def amber():
     return t
 
 
+def amber_off():
+    """The beacon's lamp while the reactor is off: the same glass, dark."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'o')
+    t.rect(5, 0, 10, 15, 'Z')
+    return t
+
+
 def band(h):
     """A graphite band `h` pixels high (a lip, a rim): lit along the top,
     shaded at the foot, the same all round. Drawn in rows 0 to h - 1."""
@@ -439,6 +447,7 @@ TEXTURES = {
     'paint_coolant': lambda: paint('v'),
     'paint_energy': lambda: paint('x'),
     'amber': amber,
+    'amber_off': amber_off,
     'trefoil': trefoil,
     'plaque': plaque,
     'bezel': bezel,
