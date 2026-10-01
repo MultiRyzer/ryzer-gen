@@ -277,8 +277,10 @@ def profile_plate(poly, h):
     inside = {}
     for py in range(h):
         for px in range(16):
-            dd, y = px + 0.5 - 1, h - py - 0.5
-            inside[px, py] = _in_poly(poly, dd, y)
+            # A pixel the outline touches at all counts as inside, so the slanted edge has no
+            # see-through notches where the face covers part of a pixel.
+            inside[px, py] = any(_in_poly(poly, px + fx - 1, h - py - fy)
+                                 for fx in (0.02, 0.5, 0.98) for fy in (0.02, 0.5, 0.98))
     for (px, py), on in inside.items():
         if not on:
             continue
