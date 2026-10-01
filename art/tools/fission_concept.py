@@ -41,9 +41,11 @@ STATION = ('skirt', 'deck', 'core_plate', 'pillar', 'rib_web', 'clamp', 'copper_
            'column', 'vane', 'stack_a', 'stack_b', 'stack_base', 'stack_inner', 'warning', 'beacon',
            'stencil_a', 'stencil_b', 'hatch_a', 'hatch_b',
            'fuel_pin', 'spacer', 'nozzle', 'cherenkov', 'moderator', 'control', 'steam',
-           'housing', 'housing_slope', 'housing_cheek', 'hazard_upright', 'tag_coolant', 'tag_fuel', 'tag_energy')
+           'housing', 'housing_slope', 'housing_cheek', 'hazard_upright', 'tag_coolant', 'tag_fuel', 'tag_energy',
+           'lamp', 'lamp_off')
 TEXTURES.update({name: 'ryzergen:block/station/' + name for name in STATION})
-d = Design(C, TEXTURES, {'glow', 'screen', 'beacon', 'fuel_pin', 'cherenkov', 'tag_coolant', 'tag_fuel', 'tag_energy'}, concept_only={'rods', 'plumes'})
+d = Design(C, TEXTURES, {'glow', 'screen', 'beacon', 'fuel_pin', 'cherenkov', 'tag_coolant', 'tag_fuel', 'tag_energy', 'lamp'},
+           concept_only={'rods', 'plumes'})
 FRONT = math.radians(270)   # the angle round the station that faces the front
 
 
@@ -78,6 +80,23 @@ d.cylinder('skirt', 0, 6, 6 * B - 3)
 d.annulus('rim', 6, 6 * B - 4, 6 * B - 3)
 d.cylinder('plinth', 6, 16, 6 * B - 4, v0=0)
 d.annulus('deck', 16, 0, 6 * B - 4)
+# Floodlights round the plinth, between the front panel and the port housings: a small graphite
+# housing on the plinth's face with a lens on its end, lit while the station runs (lamp_on, drawn
+# by the game then) and grey glass when it stops (lamp_off). The base ring's blocks give off the
+# light, so the ground round the station is lit (StationCoreBlockEntity.lightChamber).
+LAMP_Y = 11.5
+for deg in (30, 60, 90, 120, 150, 210, 240, 300, 330):
+    phi = math.radians(deg)
+    across = (-math.sin(phi), 0, math.cos(phi))
+    d.sweep('steel_dark', [d.at(phi, 6 * B - 5, LAMP_Y), d.at(phi, 6 * B - 1, LAMP_Y)], 2, 2.5,
+            lambda i, v=across: v, closed=False, caps=True)
+    for grp, tex in (('lamp_on', 'lamp'), ('lamp_off', 'lamp_off')):
+        d.group = grp
+        lens = [d.at(phi, 6 * B - 0.95, LAMP_Y + 1.5), d.at(phi, 6 * B - 0.95, LAMP_Y - 1.5)]
+        pts = [tuple(p[i] + s * 2 * across[i] for i in range(3)) for p, s in
+               ((lens[0], -1), (lens[1], -1), (lens[1], 1), (lens[0], 1))]
+        d.quad(tex, pts, [(0, 0), (0, 3), (4, 3), (4, 0)], (math.cos(phi), 0, math.sin(phi)))
+        d.group = 'static'
 # The front panel: two blocks wide (the core in cell 5 and the block beside it in cell 6, the only
 # blocks that open the screen), centred on the station. Its face is one texture drawn once across
 # both blocks (station/front_panel, 32 x 16, rows 1 to 15), and the core's screen stands proud of it.
@@ -342,6 +361,8 @@ def main():
     out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(mp.ROOT, 'art', 'concepts', 'fission_station.png')
     big_machine_textures.publish_all()
     d.export(GAME_DATA)
+    # The picture shows the station running, so its floodlights lit.
+    d.quads = [q for q in d.quads if q[3] != 'lamp_off']
     # From above at the usual angle, and at a player's eye level (looking through the glass).
     d.save_png(out, [((1, 1), 3, 0.5), ((1, 0.35), 3, 0.15)])
 

@@ -65,6 +65,8 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
             draw(buffer, pose, StationGeometry.group("static"), light);
         }
         draw(buffer, pose, rods(core, partialTick), light);
+        // The floodlights round the base: lit while the station runs, grey glass when it stops.
+        draw(buffer, pose, StationGeometry.group(core.isRunning() ? "lamp_on" : "lamp_off"), light);
         pose.pushPose();
         float angle = core.rotorAngle(partialTick);
         pose.translate(HALF, 0, HALF);

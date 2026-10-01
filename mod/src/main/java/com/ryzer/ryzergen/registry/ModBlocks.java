@@ -87,7 +87,8 @@ public final class ModBlocks {
     // Fission station parts (design section 8). All noOcclusion: once formed they stop drawing
     // themselves and the core draws the station, so they must not hide their neighbours' faces.
     public static final DeferredBlock<StationPartBlock> STATION_CASING = BLOCKS.register("station_casing",
-            () -> new StationPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+            () -> new StationPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
+                    .lightLevel(state -> state.getValue(StationPartBlock.LIT) ? 15 : 0)));
     public static final DeferredBlock<StationPartBlock> STATION_GLASS = BLOCKS.register("station_glass",
             () -> new StationPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS).strength(1.5F).noOcclusion()
                     .lightLevel(state -> state.getValue(StationPartBlock.LIT) ? 15 : 0)

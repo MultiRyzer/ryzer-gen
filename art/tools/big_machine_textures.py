@@ -450,6 +450,14 @@ def warning():
     return letters(k)
 
 
+def lamp(lit):
+    # A floodlight's lens round the base, 4 x 3: warm white while the station runs, grey glass when
+    # it stops. Lit along the top, where the lens catches its housing's lip.
+    k = fill('W' if lit else 'I')
+    k[0] = ['A' if lit else 'F'] * 16
+    return letters(k)
+
+
 def beacon():
     k = fill('x')
     for y in (1, 2):
@@ -635,7 +643,7 @@ def publish_station():
                       ('control', control()), ('steam', steam()), ('housing', housing()),
                       ('housing_slope', housing_slope()), ('housing_cheek', housing_cheek()),
                       ('hazard_upright', hazard_upright()), ('tag_coolant', tag('G')), ('tag_fuel', tag('X')),
-                      ('tag_energy', tag('x'))):
+                      ('tag_energy', tag('x')), ('lamp', lamp(True)), ('lamp_off', lamp(False))):
         write_texture('block/station/' + name, tex)
     meta = os.path.join(mp.TEXTURES, 'block', 'station', 'steam.png.mcmeta')
     with open(meta, 'w') as fh:
