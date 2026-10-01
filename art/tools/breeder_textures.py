@@ -277,15 +277,6 @@ def amber():
     return t
 
 
-def hatch():
-    """The fuel hatch on the platform, 10 x 10: a gunmetal lid with a lit rim, a seam across it and
-    an orange handle."""
-    t = plate('s', 'h', 'L', 'u', 'z', 10, 10)
-    t.rect(1, 5, 8, 5, 'z')
-    t.rect(4, 2, 5, 2, 'X')
-    return t
-
-
 def band(h):
     """A graphite band `h` pixels high (a lip, a rim): lit along the top,
     shaded at the foot, the same all round. Drawn in rows 0 to h - 1."""
@@ -350,7 +341,6 @@ TEXTURES = {
     'console': console,
     'console_side': console_side,
     'amber': amber,
-    'hatch': hatch,
     'trefoil': trefoil,
     'plaque': plaque,
     'bezel': bezel,

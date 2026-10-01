@@ -32,10 +32,11 @@ What it shows, bottom to top:
   inside, as real sodium reactors keep their refuelling machinery under a dome: a floor, the
   rotating plugs with the control rod drives standing in the middle of the hall, lit bands round
   them, and the fuel handling cask on the large plug, under a dark lined dome.
-- The platform on top: a yellow handrail, a cyan light strip, the fuel hatch, and an amber beacon.
+- The platform on top: a yellow handrail, a cyan light strip and an amber beacon.
 
 Moving parts, each drawn in its own group so a renderer can move it (design section 9): the beacon,
-turning while the reactor runs; and inside the lantern the rotating plugs (plug_large, and
+turning while the reactor runs; a haze drifting up through the lantern's hall (haze, the station's
+animated steam); and inside the lantern the rotating plugs (plug_large, and
 plug_small with the drives), which will turn while fuel goes in or out.
 """
 import contextlib
@@ -66,6 +67,7 @@ TEXTURES.update({name: 'ryzergen:block/microreactor/' + name for name in (
 TEXTURES.update({name: 'ryzergen:block/station/' + name for name in (
     'housing_slope', 'housing_cheek', 'hazard_upright', 'tag_coolant', 'tag_fuel', 'tag_energy')})
 TEXTURES['glass'] = 'ryzergen:block/breeder/glass'
+TEXTURES['steam'] = 'ryzergen:block/station/steam'
 TEXTURES['front_panel'] = 'ryzergen:block/station/front_panel'
 d = Design(C, TEXTURES, {'glow', 'screen', 'breeder_amber', 'tag_coolant', 'tag_fuel', 'tag_energy'})
 
@@ -464,6 +466,14 @@ with group('plug_small'):
             d.cylinder('glow', HALL + 14, HALL + 15, 1.8, n=6)
             d.disc('breeder_fitting', HALL + 6 + B, HALL + 8 + B, 2.2, n=6)
 
+# A haze drifting up through the hall (the station's animated steam, drawn faint and translucent):
+# a sheet round the drives and one inside the glass, outside and in. Real basis: the argon cover gas
+# over a sodium pool carries a faint haze of sodium vapour.
+with group('haze'):
+    for rad in (13, LAN_R1 - 6):
+        d.cylinder('steam', HALL + 1, HALL + 1 + B, rad, n=24)
+        d.cylinder('steam', HALL + 1, HALL + 1 + B, rad - 0.1, n=24, inward=True)
+
 # ---------------------------------------------------------------- the platform on top
 PLAT_R = 16
 PLAT_Y = EQUATOR + R
@@ -473,8 +483,6 @@ for k in range(8):
     d.post('breeder_rail', 2 * math.pi * (k + 0.5) / 8, PLAT_R - 1, PLAT_Y, PLAT_Y + 7, 0.5, 0.5)
 for y in (PLAT_Y + 3.5, PLAT_Y + 7):
     rail(arc(PLAT_R - 1, y, 0, 2 * math.pi, 16)[:-1], closed=True)
-# The fuel hatch, over the core: a 10 x 10 lid.
-d.box('breeder_fitting', C - 5, PLAT_Y, C - 1, C + 5, PLAT_Y + 1, C + 9, decals={'up': 'breeder_hatch'})
 # The beacon's mast at the platform's front, and its housing.
 BX, _, BZ = d.at(math.radians(270), 10, 0)
 d.box('breeder_fitting', BX - 1, PLAT_Y, BZ - 1, BX + 1, PLAT_Y + 10, BZ + 1)
