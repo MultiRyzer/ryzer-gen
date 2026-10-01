@@ -171,7 +171,16 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
                 }
                 case MODERATOR -> {
                     if (!item.isEmpty()) {
-                        quads.addAll(StationGeometry.box(x - 4, 27, z - 4, x + 4, 80, z + 4, MODERATOR, false));
+                        // Three graphite bricks keyed into a column, a steel band in each joint, on an
+                        // end fitting with a cap, as the fuel's bundles stand.
+                        quads.addAll(StationGeometry.box(x - 4.5F, 27, z - 4.5F, x + 4.5F, 31, z + 4.5F, NOZZLE, false));
+                        for (float[] brick : MODERATOR_BRICKS) {
+                            quads.addAll(StationGeometry.box(x - 4, brick[0], z - 4, x + 4, brick[1], z + 4, MODERATOR, false));
+                        }
+                        for (float y : new float[] {45, 60.5F}) {
+                            quads.addAll(StationGeometry.box(x - 4.5F, y, z - 4.5F, x + 4.5F, y + 1.5F, z + 4.5F, SPACER, false));
+                        }
+                        quads.addAll(StationGeometry.box(x - 4.5F, 76, z - 4.5F, x + 4.5F, 80, z + 4.5F, NOZZLE, false));
                     }
                 }
                 case CONTROL -> {
@@ -193,6 +202,9 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
         }
         return quads;
     }
+
+    /** The moderator column's graphite bricks, bottom and top in pixels (art/tools/fission_concept.py). */
+    private static final float[][] MODERATOR_BRICKS = {{31, 45}, {46.5F, 60.5F}, {62, 76}};
 
     /** A rod's length from the pedestal to the reactor head, in pixels: half of it sinks when lowered. */
     private static final float ROD_LENGTH = 53;

@@ -538,15 +538,12 @@ def cherenkov():
 
 
 def moderator():
-    # A graphite moderator column with its bore holes.
-    k = fill('S')
-    for y in range(16):
-        k[y][0] = 'b'
-        k[y][15] = 'T'
-    for y in (3, 11):
-        for x in (3, 4, 11, 12):
-            k[y][x] = 'U'
-    return letters(k)
+    # A graphite moderator brick's face, 8 across (the column is 8 wide): chamfered edges, lit on
+    # the left and shaded on the right, and a keyway groove down the middle, where real graphite
+    # bricks key into their neighbours. The same all the way down, so a brick of any height shows it
+    # whole; the bricks' joints are the steel bands between them.
+    cols = ['M', 'b', 'S', 'U', 'T', 'S', 'T', 'U']
+    return letters([[cols[x % 8] for x in range(16)] for _ in range(16)])
 
 
 def control():
