@@ -19,7 +19,8 @@ their exact size.
 What it shows, bottom to top:
 - No plinth: the legs stand on concrete piers and on the consoles, inside a compound: a slab-high
   bund wall with hazard stripes and a short fence joins the three consoles, and under the sphere
-  ducts run in from each console to a hub, from which a thick flanged pipe rises into the sphere. Real sodium plants are a maze of loops like this.
+  a pipe runs from the back of each port to a square hub, from which a thick flanged pipe rises
+  into the sphere. Real sodium plants are a maze of loops like this.
 - Three consoles on the ground, a block deep, six of the legs standing on their tops: the
   station's front panel with the control core's screen, between hazard-striped cheeks; as you
   face it, the inputs on your left side (fuel in, liquid sodium in) and the outputs on your right
@@ -181,18 +182,18 @@ def console(side, ports):
         return 2 * C - v if east else v
 
     x1, x2 = sorted((x(FACE), x(FACE + DEPTH)))
-    d.box('breeder_console_side', x1, 0, a1, x2, 15, a2, top='breeder_graphite', skip=(side, 'down'))
+    d.box('breeder_console_back', x1, 0, a1, x2, 15, a2, top='breeder_graphite', skip=(side, 'down'))
     # The face holding the ports is the station's light port housing, so the ports read the same.
     d.box('housing', x1, 0, a1, x2, 15, a2, skip=tuple(f for f in ('north', 'south', 'east', 'west', 'up', 'down') if f != side))
     sx = 1 if east else -1
     d.quad('housing_slope', [(x(HOOD_BACK), HOOD_TOP, a2), (x(FACE), 15, a2), (x(FACE), 15, a1), (x(HOOD_BACK), HOOD_TOP, a1)],
            [(0, 0), (0, 16), (16, 16), (16, 0)], (sx * (HOOD_TOP - 15), HOOD_BACK - FACE, 0))
     hx1, hx2 = sorted((x(HOOD_BACK + 4), x(HOOD_BACK)))
-    d.box('housing_cheek', hx1, 15, a1, hx2, HOOD_TOP, a2, skip=(back, 'down'))
+    d.box('breeder_cheek', hx1, 15, a1, hx2, HOOD_TOP, a2, top='breeder_graphite', skip=('down',))
     # Cheeks either end, standing proud and a little taller, hazard striped on the front.
     cx1, cx2 = sorted((x(FACE - 1), x(HOOD_BACK + 4)))
     for z1, z2 in ((a1 - 3, a1), (a2, a2 + 3)):
-        d.box('housing_cheek', cx1, 0, z1, cx2, HOOD_TOP + 2, z2, skip=('down',))
+        d.box('breeder_cheek', cx1, 0, z1, cx2, HOOD_TOP + 2, z2, top='breeder_graphite', skip=('down',))
         sx1, sx2 = sorted((x(FACE - 1), x(FACE - 1.5)))
         d.box('hazard_upright', sx1, 0, z1, sx2, HOOD_TOP + 2, z2, skip=('down', back))
     for cell, kind in enumerate(ports):
@@ -214,7 +215,10 @@ def console(side, ports):
 # The front: the station's front panel, so the two reactors share a face. Two blocks wide, centred,
 # its face one texture drawn once across both (station/front_panel, 32 x 16, rows 1 to 15), with the
 # control core's screen standing proud of it in the bezel the panel draws.
-d.box('breeder_console_side', C - B, 0, FACE, C + B, 15, FACE + DEPTH, top='breeder_graphite', skip=('north', 'down'))
+d.box('breeder_console_side', C - B, 0, FACE, C + B, 15, FACE + DEPTH, top='breeder_graphite', skip=('north', 'south', 'down'))
+for x0 in (C - B, C):
+    d.quad('breeder_console_back', [(x0, 15, FACE + DEPTH), (x0 + B, 15, FACE + DEPTH), (x0 + B, 0, FACE + DEPTH), (x0, 0, FACE + DEPTH)],
+           [(0, 1), (16, 1), (16, 16), (0, 16)], (0, 0, 1))
 # Seen from the front the viewer's left is the east (+x) end, so u runs from x = C + 16 to C - 16.
 d.quad('front_panel', [(C + B, 15, FACE), (C - B, 15, FACE), (C - B, 0, FACE), (C + B, 0, FACE)],
        [(0, 1), (16, 1), (16, 16), (0, 16)], (0, 0, -1))
@@ -223,7 +227,7 @@ d.box('breeder_fitting', C - 6, 4, FACE - 0.5, C + 6, 12, FACE, skip=('south',))
 # Cheeks either end of the front panel, as flush as its top so the front legs stand on them, hazard
 # striped on the front like the side consoles' cheeks.
 for x1, x2 in ((C - B - 4, C - B), (C + B, C + B + 4)):
-    d.box('housing_cheek', x1, 0, FACE - 1, x2, 15, FACE + DEPTH, skip=('down',))
+    d.box('breeder_cheek', x1, 0, FACE - 1, x2, 15, FACE + DEPTH, top='breeder_graphite', skip=('down',))
     d.box('hazard_upright', x1, 0, FACE - 1.5, x2, 15, FACE - 1, skip=('down', 'south'))
 console('east', ['port_fuel', None, 'port_coolant'])
 console('west', ['port_fuel', None, 'port_energy'])
@@ -354,8 +358,8 @@ for k in range(LEGS):
 # A slab-high wall round the footprint's edge joins the three consoles into one compound, as sodium
 # plants bund their equipment (spilled sodium burns, so it is caught). Graphite with hazard stripes
 # on its outer face and a short yellow fence on top, whose rail meets the consoles' tops. From the
-# back of each console a duct runs in to a hub in the middle, and from the hub a thick flanged pipe
-# rises into the sphere's foot: what the ports take in and give out goes this way.
+# back of each port a pipe runs in to a square hub in the middle, and from the hub a thick flanged
+# pipe rises into the sphere's foot: what the ports take in and give out goes this way.
 WALL_H = 8
 WALL_T = 4
 E0, E1 = FACE, 2 * C - FACE          # the wall's outer faces, in line with the consoles' faces
@@ -365,7 +369,7 @@ SIDE_ENDS = (CELLS[0] - 3, CELLS[1] + 3)   # the side consoles with their cheeks
 
 def wall(x1, z1, x2, z2, outward):
     """A straight run of wall from (x1, z1) to (x2, z2), its hazard face looking `outward`."""
-    d.box('housing_cheek', x1, 0, z1, x2, WALL_H, z2, top='breeder_graphite', skip=('down', outward))
+    d.box('breeder_bund', x1, 0, z1, x2, WALL_H, z2, top='breeder_fitting', skip=('down', outward))
     face = {'north': (x1, 0, z1 - 0.5, x2, WALL_H, z1), 'south': (x1, 0, z2, x2, WALL_H, z2 + 0.5),
             'west': (x1 - 0.5, 0, z1, x1, WALL_H, z2), 'east': (x2, 0, z1, x2 + 0.5, WALL_H, z2)}[outward]
     d.box('breeder_hazard', *face, skip=('down',))
@@ -392,37 +396,79 @@ for x1, x2, out in ((E0, E0 + WALL_T, 'west'), (E1 - WALL_T, E1, 'east')):
     wall(x1, E0 + WALL_T, x2, SIDE_ENDS[0], out)
     wall(x1, SIDE_ENDS[1], x2, E1 - WALL_T, out)
 
-# The hub in the middle, and the riser from it into the sphere's foot, flanged top and bottom.
-HUB_R, HUB_H = 14, 4
+# The hub in the middle: a square block, three blocks across and one high, on the grid, so the
+# pipes meet its faces flush. From its top a thick flanged pipe rises into the sphere's foot.
+HUB = (C - 1.5 * B, C + 1.5 * B)
+HUB_H = B
 RISER_R = 6
 FOOT = EQUATOR - R
-d.cylinder('breeder_concrete', 0, HUB_H, HUB_R, n=16)
-d.annulus('breeder_concrete', HUB_H, RISER_R, HUB_R, n=16)
-d.cylinder('breeder_pipe', HUB_H, FOOT + 1, RISER_R, n=12)
-for y in (HUB_H, FOOT - 3):
-    d.cylinder('breeder_fitting', y, y + 2, RISER_R + 1.5, n=12)
-    d.annulus('breeder_fitting', y + 2, RISER_R, RISER_R + 1.5, n=12)
-    d.annulus('breeder_fitting', y, RISER_R, RISER_R + 1.5, up=False, n=12)
+d.box('breeder_hub', HUB[0], 0, HUB[0], HUB[1], HUB_H, HUB[1], top='breeder_plinth', skip=('down',))
+d.cylinder('breeder_steel_pipe', HUB_H, FOOT + 1, RISER_R, n=12)
+d.cylinder('breeder_fitting', HUB_H, HUB_H + 2, RISER_R + 1.5, n=12)
+d.annulus('breeder_fitting', HUB_H + 2, RISER_R, RISER_R + 1.5, n=12)
 
-# Ducts from the back of each console to the hub: low graphite boxes with a light strip along the top
-# in their ports' colours (power and control from the front, fuel and sodium in from the east, fuel
-# and energy out from the west).
-DUCT_H, DUCT_W = 6, 10
-STRIPS = {'front': ['glow'], 'east': ['tag_fuel', 'tag_coolant'], 'west': ['tag_fuel', 'tag_energy']}
-duct_ends = {'front': (FACE + DEPTH, C - HUB_R), 'east': (2 * C - FACE - DEPTH, C + HUB_R), 'west': (FACE + DEPTH, C - HUB_R)}
-for side, (a1, a2) in duct_ends.items():
+
+def hpipe(mat, a1, a2, y, c, r, along_x, n=8):
+    """A round pipe lying along x (or z), from a1 to a2, its axis at height y and at c across."""
     lo, hi = sorted((a1, a2))
-    if side == 'front':
-        d.box('housing_cheek', C - DUCT_W / 2, 0, lo, C + DUCT_W / 2, DUCT_H, hi, top='breeder_graphite', skip=('down',))
-    else:
-        d.box('housing_cheek', lo, 0, C - DUCT_W / 2, hi, DUCT_H, C + DUCT_W / 2, top='breeder_graphite', skip=('down',))
-    strips = STRIPS[side]
-    for k, tex in enumerate(strips):
-        off = (k - (len(strips) - 1) / 2) * 3
-        if side == 'front':
-            d.box(tex, C + off - 1, DUCT_H, lo + 1, C + off + 1, DUCT_H + 0.2, hi - 1, skip=('down',))
-        else:
-            d.box(tex, lo + 1, DUCT_H, C + off - 1, hi - 1, DUCT_H + 0.2, C + off + 1, skip=('down',))
+    cuts = [lo + 16 * k for k in range(int((hi - lo - 0.01) // 16) + 1)] + [hi]
+    side = 2 * r * math.tan(math.pi / n)
+    for k in range(n):
+        t0, t1 = 2 * math.pi * (k - 0.5) / n, 2 * math.pi * (k + 0.5) / n
+        p0 = (r / math.cos(math.pi / n) * math.cos(t0), r / math.cos(math.pi / n) * math.sin(t0))
+        p1 = (r / math.cos(math.pi / n) * math.cos(t1), r / math.cos(math.pi / n) * math.sin(t1))
+        mid = (math.cos(2 * math.pi * k / n), math.sin(2 * math.pi * k / n))
+
+        def pt(along, q):
+            return (along, y + q[1], c + q[0]) if along_x else (c + q[0], y + q[1], along)
+
+        out = (0, mid[1], mid[0]) if along_x else (mid[0], mid[1], 0)
+        for u1, u2 in zip(cuts, cuts[1:]):
+            d.quad(mat, [pt(u1, p0), pt(u2, p0), pt(u2, p1), pt(u1, p1)],
+                   [(0, 0), (u2 - u1, 0), (u2 - u1, min(16, side)), (0, min(16, side))], out)
+
+
+def ring(mat, a1, a2, y, c, r, along_x, n=8):
+    """A short ring on a pipe (a flange or a band): its round side and both faces."""
+    hpipe(mat, a1, a2, y, c, r, along_x, n)
+    for at, sign in ((min(a1, a2), -1), (max(a1, a2), 1)):
+        rr = r / math.cos(math.pi / n)
+        pts = []
+        for k in range(n):
+            t = 2 * math.pi * (k - 0.5) / n
+            q = (rr * math.cos(t), rr * math.sin(t))
+            pts.append((at, y + q[1], c + q[0]) if along_x else (c + q[0], y + q[1], at))
+        out = (sign, 0, 0) if along_x else (0, 0, sign)
+        # A fan of quads from the first corner (an octagon as three quads).
+        for k in range(1, n - 2, 2):
+            quad = [pts[0], pts[k], pts[k + 1], pts[k + 2]]
+            d.quad(mat, quad, [(0, 0), (0, 2 * r), (2 * r, 2 * r), (2 * r, 0)], out)
+
+
+# The process lines: from the back of each side console's ports straight in to the hub, a pipe
+# behind each port at its height (the port's socket is 8 across, so is the pipe), flanged where it
+# leaves the console and where it meets the hub, with a band in the port's ring colour. Inputs come
+# in from the east, outputs leave to the west, as the ports do. From the front console two thin
+# conduits carry the control core's power and signals.
+PIPE_Y, PIPE_R = 8, 4
+PAINT = {'port_fuel': 'breeder_paint_fuel', 'port_coolant': 'breeder_paint_coolant', 'port_energy': 'breeder_paint_energy'}
+for side, ports in (('east', ['port_fuel', None, 'port_coolant']), ('west', ['port_fuel', None, 'port_energy'])):
+    start = 2 * C - FACE - DEPTH if side == 'east' else FACE + DEPTH
+    end = HUB[1] if side == 'east' else HUB[0]
+    sign = 1 if end > start else -1
+    for cell, kind in enumerate(ports):
+        if kind is None:
+            continue
+        z = CELLS[0] + cell * B + B / 2
+        hpipe('breeder_steel_pipe', start, end, PIPE_Y, z, PIPE_R, True)
+        for at in (start, end - sign * 2):
+            ring('breeder_fitting', at, at + sign * 2, PIPE_Y, z, PIPE_R + 1.5, True)
+        mid = (start + end) / 2
+        ring(PAINT[kind], mid - 2, mid + 2, PIPE_Y, z, PIPE_R + 0.25, True)
+for x in (C - 8, C + 8):
+    hpipe('breeder_steel_pipe', FACE + DEPTH, HUB[0], PIPE_Y, x, 2, False)
+    for at in (FACE + DEPTH, HUB[0] - 1.5):
+        ring('breeder_fitting', at, at + 1.5, PIPE_Y, x, 3, False)
 
 # ---------------------------------------------------------------- the walkway round the belt, and the ladder up to it
 WALK_Y = BELT[1] + 1

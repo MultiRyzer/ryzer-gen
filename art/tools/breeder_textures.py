@@ -252,6 +252,80 @@ def console_side():
     return t
 
 
+def console_back():
+    """The back of a console, a block per panel: a graphite plate with a lit bevel and screws in its
+    corners, and a louvred vent in the middle (slats lit on top, shadowed beneath), where the
+    console's electronics breathe. Rows 1 to 15 show (the console is 15 high)."""
+    t = plate('S', 'M', 'b', 'T', 'U')
+    t.rect(0, 0, 15, 0, 'U')
+    t.rect(1, 1, 14, 1, 'M')
+    for x, y in ((2, 3), (13, 3), (2, 13), (13, 13)):
+        t.set(x, y, 'l')
+    t.rect(4, 5, 11, 11, 'U')
+    for y in range(5, 12, 2):
+        t.rect(5, y, 10, y, 'm')
+        t.rect(5, y + 1, 10, y + 1, 'K') if y + 1 <= 11 else None
+    return t
+
+
+def cheek():
+    """The consoles' cheeks and the hood's back: graphite ribbed every four pixels (a dark groove
+    with a lit edge under it), changing only down its height, so a cheek of any width or height
+    shows it whole."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'S')
+    for y in range(0, 16, 4):
+        t.rect(0, y + 2, 15, y + 2, 'T')
+        t.rect(0, y + 3, 15, y + 3, 'M')
+    return t
+
+
+def bund():
+    """The bund wall's inner face, half a block high (drawn in rows 8 to 15, the rows a wall from
+    the ground shows): a gunmetal plate per block with a lit coping edge, a seam at each block,
+    a bolt either side of it, and a shadowed foot."""
+    t = Tex()
+    t.rect(0, 8, 15, 15, 'u')
+    t.rect(0, 8, 15, 8, 'h')
+    t.rect(0, 9, 15, 9, 's')
+    t.rect(0, 9, 0, 15, 'z')
+    t.rect(1, 10, 1, 14, 's')
+    t.rect(0, 15, 15, 15, 'z')
+    t.rect(0, 14, 15, 14, 'u')
+    for x in (3, 13):
+        t.set(x, 11, 'l')
+        t.set(x, 12, 'z')
+    return t
+
+
+def hub():
+    """The hub's sides, a block per panel: a gunmetal plate with a lit bevel and screws in its
+    corners, a recessed band across its middle where the pipes come in."""
+    t = plate('u', 'h', 's', 'z', 'D')
+    for x, y in ((2, 2), (13, 2), (2, 13), (13, 13)):
+        t.set(x, y, 'h')
+        t.set(x + 1, y + 1, 'z')
+    t.rect(2, 6, 13, 6, 'z')
+    t.rect(2, 9, 13, 9, 's')
+    return t
+
+
+def steel_pipe():
+    """The process lines from the consoles to the hub: off-white painted steel like the sphere and
+    its legs, plain, so a round pipe shows it evenly; its roundness comes from the shading."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'E')
+    return t
+
+
+def paint(colour):
+    """A colour band on a process line, in its port's ring colour (fuel orange, coolant blue,
+    energy red): plain, so a band of any width shows it."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, colour)
+    return t
+
+
 def amber():
     """The beacon's lamp, lit: warm amber, bright in the middle of each panel."""
     t = Tex()
@@ -322,6 +396,14 @@ TEXTURES = {
     'leg': leg,
     'fireproofing': fireproofing,
     'console_side': console_side,
+    'console_back': console_back,
+    'cheek': cheek,
+    'bund': bund,
+    'hub': hub,
+    'steel_pipe': steel_pipe,
+    'paint_fuel': lambda: paint('X'),
+    'paint_coolant': lambda: paint('v'),
+    'paint_energy': lambda: paint('x'),
     'amber': amber,
     'trefoil': trefoil,
     'plaque': plaque,
