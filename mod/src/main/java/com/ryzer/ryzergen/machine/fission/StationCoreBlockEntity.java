@@ -161,14 +161,16 @@ public class StationCoreBlockEntity extends BlockEntity implements MenuProvider 
      */
     private void lightChamber(Level level, boolean shine) {
         for (Map.Entry<BlockPos, StationPart> entry : StationLayout.PARTS.entrySet()) {
-            if (entry.getValue() != StationPart.GLASS) {
+            // The chamber's glass, and the base ring's casing, where the floodlights are.
+            boolean base = entry.getValue() == StationPart.CASING && entry.getKey().getY() == 0;
+            if (entry.getValue() != StationPart.GLASS && !base) {
                 continue;
             }
-            BlockPos glass = StationLayout.toWorld(worldPosition, facing(), entry.getKey());
-            BlockState state = level.getBlockState(glass);
-            if (state.is(ModBlocks.STATION_GLASS.get()) && state.getValue(StationPartBlock.FORMED)
-                    && state.getValue(StationPartBlock.LIT) != shine) {
-                level.setBlock(glass, state.setValue(StationPartBlock.LIT, shine), Block.UPDATE_CLIENTS);
+            BlockPos at = StationLayout.toWorld(worldPosition, facing(), entry.getKey());
+            BlockState state = level.getBlockState(at);
+            if ((state.is(ModBlocks.STATION_GLASS.get()) || state.is(ModBlocks.STATION_CASING.get()))
+                    && state.getValue(StationPartBlock.FORMED) && state.getValue(StationPartBlock.LIT) != shine) {
+                level.setBlock(at, state.setValue(StationPartBlock.LIT, shine), Block.UPDATE_CLIENTS);
             }
         }
     }
