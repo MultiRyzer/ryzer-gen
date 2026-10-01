@@ -496,27 +496,25 @@ def ring(mat, a1, a2, y, c, r, along_x, n=8):
             d.quad(mat, quad, [(0, 0), (0, 2 * r), (2 * r, 2 * r), (2 * r, 0)], out)
 
 
-# The process lines: from the back of each side console, behind its port, straight in to the hub,
-# flanged where it leaves the console and where it meets the hub, with a band in the port's ring
-# colour. Each leaves a little outward of its port, low under the sloping back, so it clears the leg
-# that stands just behind the port. Inputs come in from the east, outputs leave to the west, as
-# the ports do. From the front console two thin conduits carry the control core's power and signals.
-PIPE_Y, PIPE_R = 6, 3
-PIPE_OFF = 5
+# The process lines: one big pipe from the middle of each side console's back straight in to the
+# hub, carrying both its ports' lines (the console joins them inside), flanged where it leaves the
+# console and where it meets the hub, with a band in each port's ring colour. It leaves low under
+# the sloping back, between the two legs that stand behind the console. Inputs come in from the
+# east, outputs leave to the west, as the ports do. From the front console two thin conduits carry
+# the control core's power and signals.
+PIPE_Y, PIPE_R = 6, 4.5
 PAINT = {'port_fuel': 'breeder_paint_fuel', 'port_coolant': 'breeder_paint_coolant', 'port_energy': 'breeder_paint_energy'}
-for side, ports in (('east', ['port_fuel', None, 'port_coolant']), ('west', ['port_fuel', None, 'port_energy'])):
+for side, ports in (('east', ['port_fuel', 'port_coolant']), ('west', ['port_fuel', 'port_energy'])):
     start = 2 * C - FACE - DEPTH if side == 'east' else FACE + DEPTH
     end = HUB[1] if side == 'east' else HUB[0]
     sign = 1 if end > start else -1
-    for cell, kind in enumerate(ports):
-        if kind is None:
-            continue
-        z = CELLS[0] + cell * B + B / 2 + (PIPE_OFF if cell else -PIPE_OFF)
-        hpipe('breeder_steel_pipe', start, end, PIPE_Y, z, PIPE_R, True)
-        for at in (start, end - sign * 2):
-            ring('breeder_fitting', at, at + sign * 2, PIPE_Y, z, PIPE_R + 1, True)
-        mid = (start + end) / 2
-        ring(PAINT[kind], mid - 2, mid + 2, PIPE_Y, z, PIPE_R + 0.25, True)
+    hpipe('breeder_steel_pipe', start, end, PIPE_Y, C, PIPE_R, True)
+    for at in (start, end - sign * 2):
+        ring('breeder_fitting', at, at + sign * 2, PIPE_Y, C, PIPE_R + 1, True)
+    mid = (start + end) / 2
+    for k, kind in enumerate(ports):
+        at = mid + sign * (k * 4 - 3.5)
+        ring(PAINT[kind], at, at + 3, PIPE_Y, C, PIPE_R + 0.25, True)
 for x in (C - 8, C + 8):
     hpipe('breeder_steel_pipe', FACE + FRONT_DEPTH, HUB[0], 5, x, 2, False)
     for at in (FACE + FRONT_DEPTH, HUB[0] - 1.5):
