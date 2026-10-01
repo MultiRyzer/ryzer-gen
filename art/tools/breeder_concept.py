@@ -17,9 +17,9 @@ heights are whole blocks, and decals (the trefoil, its plaque, the bezel, the fa
 their exact size.
 
 What it shows, bottom to top:
-- No plinth: the legs stand on concrete piers on the ground, and under the sphere, seen between
-  the legs, is the sodium plant: two finned pumps at the front and two heat exchangers at the back
-  (their hot bands glowing amber), on concrete pads, joined by a copper ring main. Real sodium plants are a maze of loops like this.
+- No plinth: the legs stand on concrete piers and on the consoles, inside a compound: a slab-high
+  bund wall with hazard stripes and a short fence joins the three consoles, and under the sphere
+  ducts run in from each console to a hub, from which a thick flanged pipe rises into the sphere. Real sodium plants are a maze of loops like this.
 - Three consoles on the ground, a block deep, six of the legs standing on their tops: the
   station's front panel with the control core's screen, between hazard-striped cheeks; as you
   face it, the inputs on your left side (fuel in, liquid sodium in) and the outputs on your right
@@ -66,6 +66,7 @@ TEXTURES.update({name: 'ryzergen:block/microreactor/' + name for name in (
 TEXTURES.update({name: 'ryzergen:block/station/' + name for name in (
     'housing', 'housing_slope', 'housing_cheek', 'hazard_upright', 'tag_coolant', 'tag_fuel', 'tag_energy')})
 TEXTURES['glass'] = 'ryzergen:block/breeder/glass'
+TEXTURES['breeder_hazard'] = 'ryzergen:block/microreactor/hazard'
 TEXTURES['front_panel'] = 'ryzergen:block/station/front_panel'
 d = Design(C, TEXTURES, {'glow', 'screen', 'breeder_amber', 'tag_coolant', 'tag_fuel', 'tag_energy'})
 
@@ -349,38 +350,79 @@ for k in range(LEGS):
     with centred(fx, fz):
         d.cylinder('breeder_concrete', 0, B, 4.5, n=8)
         d.annulus('breeder_concrete', B, 2.5, 4.5, n=8)
-# The drain line from the sphere's foot to the ground.
-d.cylinder('breeder_fitting', 0, EQUATOR - R + 1, 3, n=8)
+# ---------------------------------------------------------------- the compound: a bund wall, ducts and the central riser
+# A slab-high wall round the footprint's edge joins the three consoles into one compound, as sodium
+# plants bund their equipment (spilled sodium burns, so it is caught). Graphite with hazard stripes
+# on its outer face and a short yellow fence on top, whose rail meets the consoles' tops. From the
+# back of each console a duct runs in to a hub in the middle, and from the hub a thick flanged pipe
+# rises into the sphere's foot: what the ports take in and give out goes this way.
+WALL_H = 8
+WALL_T = 4
+E0, E1 = FACE, 2 * C - FACE          # the wall's outer faces, in line with the consoles' faces
+FRONT_ENDS = (C - B - 4, C + B + 4)  # the front console with its cheeks
+SIDE_ENDS = (CELLS[0] - 3, CELLS[1] + 3)   # the side consoles with their cheeks
 
-# ---------------------------------------------------------------- the sodium plant under the sphere
-# Two pumps at the front and two heat exchangers at the back, in the bays between the legs and clear
-# of the consoles, each on a concrete pad, joined low down by a copper ring main. Seen between the legs they give the base depth, as the station's rods do
-# behind its glass. Real basis: a sodium reactor's pumps and intermediate heat exchangers.
-PLANT_R = 42
-PUMPS = [math.radians(a) for a in (240, 300)]
-EXCHANGERS = [math.radians(a) for a in (60, 120)]
-BODY = 4               # the pads' height; each body stands a block high on its pad
-for phi in PUMPS + EXCHANGERS:
-    x, _, z = d.at(phi, PLANT_R, 0)
-    pump = phi in PUMPS
-    with centred(x, z):
-        d.cylinder('breeder_concrete', 0, BODY, 9.5, n=12)
-        d.annulus('breeder_concrete', BODY, 7, 9.5, n=12)
-        d.cylinder('breeder_pump' if pump else 'breeder_exchanger', BODY, BODY + B, 7, n=12)
-        if pump:
-            d.cylinder('glow', BODY + 12, BODY + 13, 7.2, n=12)
-            d.annulus('breeder_fitting', BODY + B, 5, 7, n=12)
+
+def wall(x1, z1, x2, z2, outward):
+    """A straight run of wall from (x1, z1) to (x2, z2), its hazard face looking `outward`."""
+    d.box('housing_cheek', x1, 0, z1, x2, WALL_H, z2, top='breeder_graphite', skip=('down', outward))
+    face = {'north': (x1, 0, z1 - 0.5, x2, WALL_H, z1), 'south': (x1, 0, z2, x2, WALL_H, z2 + 0.5),
+            'west': (x1 - 0.5, 0, z1, x1, WALL_H, z2), 'east': (x2, 0, z1, x2 + 0.5, WALL_H, z2)}[outward]
+    d.box('breeder_hazard', *face, skip=('down',))
+    # The fence: posts a block apart along the middle of the wall's top, and its rail.
+    along_x = abs(x2 - x1) > abs(z2 - z1)
+    length = abs(x2 - x1) if along_x else abs(z2 - z1)
+    steps = max(1, round(length / B))
+    pts = []
+    for k in range(steps + 1):
+        t = k / steps
+        px = x1 + (x2 - x1) * t if along_x else (x1 + x2) / 2
+        pz = (z1 + z2) / 2 if along_x else z1 + (z2 - z1) * t
+        d.box('breeder_rail', px - 0.5, WALL_H, pz - 0.5, px + 0.5, 15, pz + 0.5)
+        pts.append((px, 14.5, pz))
+    d.sweep('breeder_rail', pts, 0.5, 0.5, lambda i: (0, 1, 0), closed=False, caps=True)
+
+
+# Front, either side of the front console; the back, whole; and the two sides, before and after
+# their consoles.
+wall(E0, E0, FRONT_ENDS[0], E0 + WALL_T, 'north')
+wall(FRONT_ENDS[1], E0, E1, E0 + WALL_T, 'north')
+wall(E0, E1 - WALL_T, E1, E1, 'south')
+for x1, x2, out in ((E0, E0 + WALL_T, 'west'), (E1 - WALL_T, E1, 'east')):
+    wall(x1, E0 + WALL_T, x2, SIDE_ENDS[0], out)
+    wall(x1, SIDE_ENDS[1], x2, E1 - WALL_T, out)
+
+# The hub in the middle, and the riser from it into the sphere's foot, flanged top and bottom.
+HUB_R, HUB_H = 14, 4
+RISER_R = 6
+FOOT = EQUATOR - R
+d.cylinder('breeder_concrete', 0, HUB_H, HUB_R, n=16)
+d.annulus('breeder_concrete', HUB_H, RISER_R, HUB_R, n=16)
+d.cylinder('breeder_pipe', HUB_H, FOOT + 1, RISER_R, n=12)
+for y in (HUB_H, FOOT - 3):
+    d.cylinder('breeder_fitting', y, y + 2, RISER_R + 1.5, n=12)
+    d.annulus('breeder_fitting', y + 2, RISER_R, RISER_R + 1.5, n=12)
+    d.annulus('breeder_fitting', y, RISER_R, RISER_R + 1.5, up=False, n=12)
+
+# Ducts from the back of each console to the hub: low graphite boxes with a light strip along the top
+# in their ports' colours (power and control from the front, fuel and sodium in from the east, fuel
+# and energy out from the west).
+DUCT_H, DUCT_W = 6, 10
+STRIPS = {'front': ['glow'], 'east': ['tag_fuel', 'tag_coolant'], 'west': ['tag_fuel', 'tag_energy']}
+duct_ends = {'front': (FACE + DEPTH, C - HUB_R), 'east': (2 * C - FACE - DEPTH, C + HUB_R), 'west': (FACE + DEPTH, C - HUB_R)}
+for side, (a1, a2) in duct_ends.items():
+    lo, hi = sorted((a1, a2))
+    if side == 'front':
+        d.box('housing_cheek', C - DUCT_W / 2, 0, lo, C + DUCT_W / 2, DUCT_H, hi, top='breeder_graphite', skip=('down',))
+    else:
+        d.box('housing_cheek', lo, 0, C - DUCT_W / 2, hi, DUCT_H, C + DUCT_W / 2, top='breeder_graphite', skip=('down',))
+    strips = STRIPS[side]
+    for k, tex in enumerate(strips):
+        off = (k - (len(strips) - 1) / 2) * 3
+        if side == 'front':
+            d.box(tex, C + off - 1, DUCT_H, lo + 1, C + off + 1, DUCT_H + 0.2, hi - 1, skip=('down',))
         else:
-            # Hot sodium: an amber band round the exchanger's shell, and a domed head.
-            d.cylinder('breeder_amber', BODY + 10, BODY + 12, 7.2, n=12)
-            d.lathe('breeder_fitting', [(BODY + B, 7), (BODY + B + 3, 5.5), (BODY + B + 5, 3), (BODY + B + 6, 0)], n=12)
-    if pump:
-        with group('fan'):
-            decal_disc('breeder_fan', x, z, BODY + B - 0.5, 5, 12)
-# The ring main, low down, through each body's foot.
-MAIN_Y = BODY + 4
-main = [d.at(2 * math.pi * k / 48, PLANT_R, MAIN_Y) for k in range(48)]
-d.sweep('breeder_pipe', main, 2, 2, lambda i: (0, 1, 0))
+            d.box(tex, lo + 1, DUCT_H, C + off - 1, hi - 1, DUCT_H + 0.2, C + off + 1, skip=('down',))
 
 # ---------------------------------------------------------------- the walkway round the belt, and the ladder up to it
 WALK_Y = BELT[1] + 1
