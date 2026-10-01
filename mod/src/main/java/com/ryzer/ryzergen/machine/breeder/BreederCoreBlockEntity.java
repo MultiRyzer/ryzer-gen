@@ -132,15 +132,20 @@ public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider 
     /** What the lantern's parts last showed; null after loading, so they are set once. */
     private @Nullable Boolean lit;
 
-    /** Lights (or darkens) the shell parts round the lantern, so the reactor lights the ground. */
+    /**
+     * Lights (or darkens) the shell parts round the lantern and the frame on the ground (the consoles
+     * and the legs' feet, where the floodlights are), so the reactor lights the ground round it.
+     */
     private void lightLantern(Level level, boolean shine) {
         for (Map.Entry<BlockPos, BreederPart> entry : BreederLayout.PARTS.entrySet()) {
-            if (entry.getValue() != BreederPart.SHELL || entry.getKey().getY() < BreederLayout.LANTERN_Y) {
+            boolean lantern = entry.getValue() == BreederPart.SHELL && entry.getKey().getY() >= BreederLayout.LANTERN_Y;
+            boolean ground = entry.getValue() == BreederPart.FRAME && entry.getKey().getY() == 0;
+            if (!lantern && !ground) {
                 continue;
             }
             BlockPos at = BreederLayout.toWorld(worldPosition, facing(), entry.getKey());
             BlockState part = level.getBlockState(at);
-            if (part.is(BreederPart.SHELL.block()) && part.getValue(BreederPartBlock.FORMED)
+            if (part.is(entry.getValue().block()) && part.getValue(BreederPartBlock.FORMED)
                     && part.getValue(BreederPartBlock.LIT) != shine) {
                 level.setBlock(at, part.setValue(BreederPartBlock.LIT, shine), Block.UPDATE_CLIENTS);
             }
