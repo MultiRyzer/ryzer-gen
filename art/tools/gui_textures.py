@@ -567,6 +567,38 @@ def station_control():
     return t
 
 
+def breeder_control():
+    """Breeder reactor controls, laid out as the station's (216 wide): the core's 19 positions in hex
+    rows (3, 4, 5, 4, 3, the back row on top) on the left with the plan tools under them, the readout
+    screen on the right, the heat, sodium and energy wells, the pumps' flow (a minus key, a small
+    readout and a plus key, where the station has its safety switch), the power and redstone keys,
+    and the player's inventory. Sprites below the panel as the station's: keycaps at 0,224 and
+    16,224, power keys from 32,224. Keep in step with BreederControlMenu."""
+    w = 216
+    t = Tex(SIZE)
+    panel(t, w, 222)
+    recess(t, 4, 13, w - 8, 116, 'S', 'U', 'A')
+    for r in range(-2, 3):
+        for q in range(max(-2, -r - 2), min(2, -r + 2) + 1):
+            slot(t, 7 + 9 * (2 * q + r + 4), 17 + (r + 2) * 18)
+    screen(t, 100, 16, 110, 64)
+    t.rect(103, 39, 206, 39, 'f')
+    for y in (83, 91, 99):
+        well(t, 103, y, 106, 6, ticks=False)
+    screen(t, 121, 108, 30, 16)
+    inv_x = (w - 162) // 2
+    for row in range(3):
+        for col in range(9):
+            slot(t, inv_x + col * 18, 139 + row * 18)
+    for col in range(9):
+        slot(t, inv_x + col * 18, 197)
+    keycap(t, 0, 224, False)
+    keycap(t, 16, 224, True)
+    for i, (on, hover) in enumerate(((True, False), (True, True), (False, False), (False, True))):
+        power_key(t, 32 + i * 16, 224, on, hover)
+    return t
+
+
 # Fuel cycle machines (Core Cracker, Reprocessor, Fuel Fabricator). Keep in step with ProcessingMenu
 # and ProcessingScreen: inputs in a row centred on x 53 at y 34, the arrow at 84,34, outputs in a
 # column at x 112 centred on the arrow's row, power and redstone keys at 133,17 and 133,35, the
@@ -652,6 +684,7 @@ def main():
     publish('gui/intake_pump', intake_pump())
     publish('gui/station_core', station_core())
     publish('gui/station_control', station_control())
+    publish('gui/breeder_control', breeder_control())
     publish('gui/spent_fuel_pool', spent_fuel_pool())
     publish('gui/container_battery', container_battery())
     for name, (inputs, outputs, water) in PROCESSING.items():

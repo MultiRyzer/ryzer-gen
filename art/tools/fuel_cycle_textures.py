@@ -87,6 +87,10 @@ TEXTURES = {
     'item/control_rod': lambda: fuel_rod('x', '8'),
     # Breeder fuel: a fat fast reactor assembly, ringed in the breeder's cyan.
     'item/breeder_fuel': lambda: fuel_rod('i', 'f', half=2.3),
+    'item/spent_breeder_fuel': lambda: fuel_rod('f', 'D', half=2.3),
+    # The breeder's uranium blanket: uranium green on the fat assembly; bred, plutonium blue.
+    'item/uranium_blanket': lambda: fuel_rod('n', '6', half=2.3),
+    'item/bred_uranium_blanket': lambda: fuel_rod('G', 'g', half=2.3),
 }
 
 

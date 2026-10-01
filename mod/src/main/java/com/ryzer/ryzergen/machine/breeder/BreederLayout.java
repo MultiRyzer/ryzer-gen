@@ -38,6 +38,41 @@ public final class BreederLayout {
     private static final int LEGS = 12;
     private static final double LEG_R = 55.76 / 16;
 
+    /**
+     * The ports, on the side consoles (design section 9). As you face the front: inputs on your left
+     * (fuel in and liquid sodium in, on the east console of a breeder facing north), outputs on your
+     * right (spent fuel and bred blankets out, energy out, on the west), each in its own cell.
+     */
+    public enum Port {
+        FUEL, SODIUM, OUTPUT, ENERGY;
+
+        public boolean input() {
+            return this == FUEL || this == SODIUM;
+        }
+    }
+
+    public static final Map<BlockPos, Port> PORTS = Map.of(
+            new BlockPos(SIZE - 1, 0, 3), Port.FUEL,
+            new BlockPos(SIZE - 1, 0, 5), Port.SODIUM,
+            new BlockPos(0, 0, 3), Port.OUTPUT,
+            new BlockPos(0, 0, 5), Port.ENERGY);
+
+    /** The way a port's face looks out, for a breeder facing {@code facing}. */
+    public static net.minecraft.core.Direction portFace(net.minecraft.core.Direction facing, Port port) {
+        // A player facing the front looks the opposite way to it, so their left is the front's clockwise turn.
+        return port.input() ? facing.getClockWise() : facing.getCounterClockWise();
+    }
+
+    /** Where a port is in the world, for a breeder whose core is at {@code core}. */
+    public static BlockPos portPos(BlockPos core, net.minecraft.core.Direction facing, Port port) {
+        for (Map.Entry<BlockPos, Port> entry : PORTS.entrySet()) {
+            if (entry.getValue() == port) {
+                return toWorld(core, facing, entry.getKey());
+            }
+        }
+        return core;
+    }
+
     /** Every space in the design, facing north, with the part it needs. */
     public static final Map<BlockPos, BreederPart> PARTS;
 

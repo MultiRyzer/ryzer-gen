@@ -143,9 +143,10 @@ The utility reactor: fuel for the stations and the tritium that starts fusion. F
 - [ ] Electrorefiner sound: an electrical hum from a recording (it borrows the turbine's drone for now)
 - [x] Breeder fuel from transuranic metal (the Fuel Fabricator: transuranic metal, uranium and 2 steel)
 - [x] Breeder multiblock: parts, ghost outline, auto-build, formed look (a GPU mesh lit from the open sky for shader packs); the base reworked into a compound (bund wall, shallow consoles, one shared pipe a side to a hub), white to match the station, lights and floodlights that run with it
-- [ ] Working breeder ports (fuel and sodium in on the east, fuel and energy out on the west)
-- [ ] Core and blanket: fast fuel, sodium flow and temperatures; the blanket's three choices (uranium to plutonium, thorium to U-233, lithium to tritium); spent fuel and bred products out by port
-- [ ] Control screen, safety and failure (sodium fire, not a steam explosion), steady state, sounds, advancements, JEI and EMI pages
+- [x] Working breeder ports (fuel and sodium in on the east, spent fuel, bred blankets and energy out on the west)
+- [x] Core and blanket, first pass: a 19-position hex core planned on a control screen, fast fuel, a closed sodium loop with pump flow and temperatures, SCRAM; uranium and lithium blankets; spent fuel and bred blankets out by port and refined in the Electrorefiner. Thorium to U-233 waits for monazite
+- [ ] Play-test the breeder's numbers (heat, breeding rates, loop, pumps)
+- [ ] Safety and failure (sodium fire, not a steam explosion), steady state, sounds and announcer, advancements, JEI and EMI pages
 - [ ] Retire the station's target channel; target rods go in the breeder's blanket
 - [ ] Monazite processing brought forward from milestone 4 for thorium (yttrium can wait)
 

@@ -113,4 +113,19 @@ public final class BreederStructure {
             level.setBlock(pos, state.setValue(BreederPartBlock.FORMED, formed).setValue(BreederPartBlock.LIT, false), Block.UPDATE_CLIENTS);
         }
     }
+
+    /** The formed core whose port is at {@code pos}, if any. */
+    public static @Nullable BreederCoreBlockEntity coreForPort(net.minecraft.world.level.Level level, BlockPos pos,
+                                                               BreederLayout.Port port) {
+        for (BlockPos candidate : BlockPos.betweenClosed(pos.offset(-BreederLayout.SIZE, 0, -BreederLayout.SIZE),
+                pos.offset(BreederLayout.SIZE, 0, BreederLayout.SIZE))) {
+            BlockState state = level.getBlockState(candidate);
+            if (state.getBlock() instanceof BreederCoreBlock && state.getValue(BreederPartBlock.FORMED)
+                    && BreederLayout.portPos(candidate, state.getValue(BreederCoreBlock.FACING), port).equals(pos)
+                    && level.getBlockEntity(candidate) instanceof BreederCoreBlockEntity core) {
+                return core;
+            }
+        }
+        return null;
+    }
 }

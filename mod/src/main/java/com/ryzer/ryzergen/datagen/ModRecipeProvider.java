@@ -695,6 +695,20 @@ public class ModRecipeProvider extends RecipeProvider {
                 List.of(SizedIngredient.of(ModItems.TRANSURANIC_METAL.get(), 1), SizedIngredient.of(OreType.URANIUM.ingotTag(), 1),
                         SizedIngredient.of(ModTags.INGOTS_STEEL, 2)), null,
                 List.of(new ItemStack(ModItems.BREEDER_FUEL.get())), 300);
+        // The breeder's uranium blanket: uranium in a steel tube (real blankets use depleted uranium).
+        machine(preview, "fabricating/uranium_blanket", MachineRecipe.Process.FABRICATING,
+                List.of(SizedIngredient.of(OreType.URANIUM.ingotTag(), 2), SizedIngredient.of(ModTags.INGOTS_STEEL, 1)), null,
+                List.of(new ItemStack(ModItems.URANIUM_BLANKET.get())), 200);
+        // Spent breeder fuel closes the loop (design section 9): back into transuranic metal, with
+        // its uranium and the fission products as waste.
+        machine(preview, "electrorefining/spent_breeder_fuel", MachineRecipe.Process.ELECTROREFINING,
+                List.of(SizedIngredient.of(ModItems.SPENT_BREEDER_FUEL.get(), 1), SizedIngredient.of(OreType.SALT.dropTag(), 1)), null,
+                List.of(new ItemStack(ModItems.TRANSURANIC_METAL.get()), new ItemStack(ModItems.INGOTS.get(OreType.URANIUM).get()),
+                        new ItemStack(ModItems.FISSION_WASTE.get())), 600);
+        // A bred uranium blanket: its plutonium for MOX rods, and the uranium left in it.
+        machine(preview, "electrorefining/bred_uranium_blanket", MachineRecipe.Process.ELECTROREFINING,
+                List.of(SizedIngredient.of(ModItems.BRED_URANIUM_BLANKET.get(), 1), SizedIngredient.of(OreType.SALT.dropTag(), 1)), null,
+                List.of(new ItemStack(ModItems.PLUTONIUM_INGOT.get()), new ItemStack(ModItems.INGOTS.get(OreType.URANIUM).get())), 600);
     }
 
     private static void machine(RecipeOutput output, String name, MachineRecipe.Process process, List<SizedIngredient> inputs,

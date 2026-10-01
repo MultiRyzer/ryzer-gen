@@ -13,6 +13,7 @@ import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterMenu;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorMenu;
 import com.ryzer.ryzergen.machine.fission.StationControlMenu;
 import com.ryzer.ryzergen.machine.fission.StationCoreMenu;
+import com.ryzer.ryzergen.machine.breeder.BreederControlMenu;
 import com.ryzer.ryzergen.machine.breeder.BreederCoreMenu;
 import com.ryzer.ryzergen.machine.processing.ProcessingMachine;
 import com.ryzer.ryzergen.machine.processing.ProcessingMenu;
@@ -57,6 +58,9 @@ public final class ModMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<BreederCoreMenu>> BREEDER_CORE =
             MENUS.register("breeder_core", () -> new MenuType<>(BreederCoreMenu::new, FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<BreederControlMenu>> BREEDER_CONTROL =
+            MENUS.register("breeder_control", () -> new MenuType<>(BreederControlMenu::new, FeatureFlags.DEFAULT_FLAGS));
 
     public static final DeferredHolder<MenuType<?>, MenuType<StationControlMenu>> STATION_CONTROL =
             MENUS.register("station_control", () -> new MenuType<>(StationControlMenu::new, FeatureFlags.DEFAULT_FLAGS));

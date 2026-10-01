@@ -94,6 +94,23 @@ CHECKS = [
     ('gui.ryzergen.station.plan_temperature', ['40', '600'], 104),
     ('gui.ryzergen.station.rod_life', ['9999'], 104),
     ('gui.ryzergen.station.rating', ['100'], 104),
+    # Breeder control (machine/breeder/BreederControlScreen): readout text from x 104 to 208, as the
+    # station's; the flow readout between its keys, x 121 to 151.
+    ('gui.ryzergen.breeder.status.offline', [], 104),
+    ('gui.ryzergen.breeder.status.no_fuel', [], 104),
+    ('gui.ryzergen.breeder.status.no_sodium', [], 104),
+    ('gui.ryzergen.breeder.status.warming', [], 104),
+    ('gui.ryzergen.breeder.status.online', [], 104),
+    ('gui.ryzergen.breeder.status.overheat', [], 104),
+    ('gui.ryzergen.breeder.status.scram', [], 104),
+    ('gui.ryzergen.breeder.live', ['-99.9k', '650'], 104),
+    ('gui.ryzergen.breeder.plan_empty', [], 104),
+    ('gui.ryzergen.breeder.too_hot', [], 104),
+    ('gui.ryzergen.breeder.more_flow', ['100'], 104),
+    ('gui.ryzergen.breeder.plan', ['99.9k'], 104),
+    ('gui.ryzergen.breeder.plan_temperature', ['42', '550'], 104),
+    ('gui.ryzergen.breeder.fuel_life', ['9999'], 104),
+    ('gui.ryzergen.breeder.blankets', ['19'], 104),
     # Home battery (battery/HomeBatteryScreen): screen x 30 to 114, text from x 34.
     ('gui.ryzergen.battery.stored', ['999.9k'], 76),
     ('gui.ryzergen.battery.capacity', ['999.9k'], 76),
