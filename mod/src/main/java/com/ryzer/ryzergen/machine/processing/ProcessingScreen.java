@@ -87,6 +87,13 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
             GuiGauges.fluid(graphics, leftPos + WATER_X, topPos + WELL_Y, 10, WELL_H,
                     menu.water() / (float) menu.machine().waterCapacity(), Fluids.WATER);
             GuiGauges.glass(graphics, leftPos + WATER_X, topPos + WELL_Y, 10, WELL_H);
+        } else if (menu.machine().hasTank()) {
+            // The output tank takes the left well when there is no water to show.
+            if (menu.tank() > 0) {
+                GuiGauges.fluid(graphics, leftPos + WATER_X, topPos + WELL_Y, 10, WELL_H,
+                        menu.tank() / (float) menu.machine().tankCapacity(), menu.tankFluid());
+            }
+            GuiGauges.glass(graphics, leftPos + WATER_X, topPos + WELL_Y, 10, WELL_H);
         }
 
         int power = (menu.enabled() ? 0 : 2) + (isOver(KEY_X, POWER_Y, mouseX, mouseY) ? 1 : 0);
@@ -180,6 +187,14 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
         } else if (wellRow && menu.machine().usesWater() && mx >= WATER_X - 1 && mx < WATER_X + 11) {
             graphics.renderTooltip(font, Component.translatable("gui.ryzergen.intake_pump.water",
                     String.format("%,d", menu.water()), String.format("%,d", menu.machine().waterCapacity())), mouseX, mouseY);
+        } else if (wellRow && menu.machine().hasTank() && mx >= WATER_X - 1 && mx < WATER_X + 11) {
+            Component held = menu.tank() > 0 ? menu.tankFluid().getFluidType().getDescription()
+                    : Component.translatable("gui.ryzergen.processing.tank.empty");
+            graphics.renderComponentTooltip(font, List.of(
+                    Component.translatable("gui.ryzergen.processing.tank", held,
+                            String.format("%,d", menu.tank()), String.format("%,d", menu.machine().tankCapacity())),
+                    Component.translatable("gui.ryzergen.processing.tank.hint").withStyle(style -> style.withColor(DIM))),
+                    mouseX, mouseY);
         } else if (hoveredSlot != null && hoveredSlot.getSlotIndex() == menu.machine().upgradeSlot() && !hoveredSlot.hasItem()) {
             graphics.renderComponentTooltip(font, List.of(
                     Component.translatable("gui.ryzergen.processing.upgrade_slot"),

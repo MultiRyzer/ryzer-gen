@@ -1,0 +1,29 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "ryzergen:preview"
+    }
+  ],
+  "type": "ryzergen:fabricating",
+  "inputs": [
+    {
+      "count": 1,
+      "item": "ryzergen:transuranic_metal"
+    },
+    {
+      "count": 1,
+      "tag": "c:ingots/uranium"
+    },
+    {
+      "count": 2,
+      "tag": "c:ingots/steel"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "ryzergen:breeder_fuel"
+    }
+  ],
+  "time": 300
+}

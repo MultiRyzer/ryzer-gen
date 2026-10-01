@@ -3,6 +3,7 @@ package com.ryzer.ryzergen.machine.processing;
 import com.ryzer.ryzergen.machine.RedstoneMode;
 import com.ryzer.ryzergen.machine.processing.ProcessingBlockEntity.Status;
 import com.ryzer.ryzergen.registry.ModItems;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -12,9 +13,10 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
-
 import static com.ryzer.ryzergen.machine.processing.ProcessingBlockEntity.*;
 
 /**
@@ -107,6 +109,17 @@ public class ProcessingMenu extends AbstractContainerMenu {
 
     public int water() {
         return data.get(DATA_WATER);
+    }
+
+    /** mB in the output tank. */
+    public int tank() {
+        return data.get(DATA_TANK);
+    }
+
+    /** The output tank's fluid (water while it is empty, never drawn then). */
+    public Fluid tankFluid() {
+        int id = data.get(DATA_TANK_FLUID);
+        return id < 0 ? Fluids.EMPTY : BuiltInRegistries.FLUID.byId(id);
     }
 
     public Status status() {

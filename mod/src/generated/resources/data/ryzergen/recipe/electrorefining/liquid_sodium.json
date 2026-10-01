@@ -1,0 +1,19 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "ryzergen:preview"
+    }
+  ],
+  "type": "ryzergen:electrorefining",
+  "fluid_result": {
+    "amount": 250,
+    "id": "ryzergen:sodium"
+  },
+  "inputs": [
+    {
+      "count": 1,
+      "tag": "c:ingots/sodium"
+    }
+  ],
+  "time": 40
+}

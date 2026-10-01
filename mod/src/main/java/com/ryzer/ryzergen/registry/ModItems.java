@@ -120,6 +120,12 @@ public final class ModItems {
     public static final DeferredItem<Item> SODIUM_INGOT = ITEMS.registerSimpleItem("sodium_ingot");
     /** Plutonium, americium and curium together, plated out of spent MOX: the breeder's fuel. Safe to carry (rule 10). */
     public static final DeferredItem<Item> TRANSURANIC_METAL = ITEMS.registerSimpleItem("transuranic_metal");
+    /**
+     * The breeder's fuel (design section 9): transuranic metal alloyed with uranium in a steel-clad
+     * assembly, the only fuel that starts a breeder core. Safe to carry (rule 10).
+     */
+    public static final DeferredItem<Item> BREEDER_FUEL = ITEMS.registerSimpleItem("breeder_fuel",
+            new Item.Properties().stacksTo(16));
     /** Lithium in an aluminium and steel rod, bred into tritium in a target channel of the station's core. */
     public static final DeferredItem<TargetRodItem> LITHIUM_TARGET_ROD = ITEMS.registerItem("lithium_target_rod", TargetRodItem::new,
             new Item.Properties().stacksTo(16));

@@ -6,6 +6,7 @@ import com.ryzer.ryzergen.material.ModTags;
 import com.ryzer.ryzergen.material.OreType;
 import com.ryzer.ryzergen.recipe.AlloyingRecipe;
 import com.ryzer.ryzergen.recipe.MachineRecipe;
+import com.ryzer.ryzergen.registry.ModFluids;
 import com.ryzer.ryzergen.registry.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -28,6 +29,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.NotCondition;
 import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import org.jetbrains.annotations.Nullable;
 
@@ -681,11 +683,29 @@ public class ModRecipeProvider extends RecipeProvider {
         machine(preview, "electrorefining/sodium", MachineRecipe.Process.ELECTROREFINING,
                 List.of(SizedIngredient.of(OreType.SALT.dropTag(), 2)), null,
                 List.of(new ItemStack(ModItems.SODIUM_INGOT.get())), 200);
+        // Liquid sodium for the breeder's loop: an ingot melted in the cell's molten salt (sodium melts
+        // at 98 C, the cell runs at about 500 C), into its tank. 250 mB an ingot, a generous fudge so
+        // filling a loop is no grind (rule 3).
+        machineToFluid(preview, "electrorefining/liquid_sodium", MachineRecipe.Process.ELECTROREFINING,
+                List.of(SizedIngredient.of(ModTags.INGOTS_SODIUM, 1)), new FluidStack(ModFluids.SODIUM.get(), 250), 40);
+        // Breeder fuel (design section 9): transuranic metal alloyed with uranium, clad in steel, as
+        // real fast reactor metal fuel is (EBR-II's uranium-plutonium alloy pins in steel tubes; ours
+        // leaves out the zirconium).
+        machine(preview, "fabricating/breeder_fuel", MachineRecipe.Process.FABRICATING,
+                List.of(SizedIngredient.of(ModItems.TRANSURANIC_METAL.get(), 1), SizedIngredient.of(OreType.URANIUM.ingotTag(), 1),
+                        SizedIngredient.of(ModTags.INGOTS_STEEL, 2)), null,
+                List.of(new ItemStack(ModItems.BREEDER_FUEL.get())), 300);
     }
 
     private static void machine(RecipeOutput output, String name, MachineRecipe.Process process, List<SizedIngredient> inputs,
                                 @Nullable SizedFluidIngredient fluid, List<ItemStack> results, int time) {
-        output.accept(id(name), new MachineRecipe(process, inputs, Optional.ofNullable(fluid), results, time), null);
+        output.accept(id(name), new MachineRecipe(process, inputs, Optional.ofNullable(fluid), results, Optional.empty(), time), null);
+    }
+
+    /** A machine recipe whose result is a fluid, into the machine's output tank. */
+    private static void machineToFluid(RecipeOutput output, String name, MachineRecipe.Process process, List<SizedIngredient> inputs,
+                                       FluidStack result, int time) {
+        output.accept(id(name), new MachineRecipe(process, inputs, Optional.empty(), List.of(), Optional.of(result), time), null);
     }
 
     private static void smeltAndBlast(RecipeOutput output, TagKey<Item> input, Item result, String name) {

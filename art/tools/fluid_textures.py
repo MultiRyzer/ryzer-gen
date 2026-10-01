@@ -1,4 +1,5 @@
-"""Fluid textures: steam, a pale haze that drifts upward. Run: python art/tools/fluid_textures.py
+"""Fluid textures: steam, a pale haze that drifts upward, and liquid sodium, a molten silver metal
+with slow bright sheens across it. Run: python art/tools/fluid_textures.py
 
 Steam is drawn opaque; GUIs and the pressure tank's sight glass set how see-through it is. The
 texture is an animated strip (16 wide, one 16 x 16 frame per step) with a .mcmeta beside it.
@@ -50,6 +51,27 @@ def steam():
     return rows
 
 
+def sodium():
+    """Liquid sodium: a bright silvery metal (molten sodium is mirror-like), with soft sheens
+    sliding slowly across it and darker swirls between, faintly warm. Two layers of noise drift
+    sideways at different speeds, so the surface looks liquid without churning like steam."""
+    slow = smooth_noise(37)
+    fast = smooth_noise(41, cells=8)
+    rows = []
+    for frame in range(FRAMES):
+        for y in range(16):
+            row = []
+            for x in range(16):
+                a = slow((x + frame) % 16, y)
+                b = fast((x + frame * 2) % 16, (y + 5) % 16)
+                v = max(0.0, min(1.0, (0.7 * a + 0.3 * b - 0.25) / 0.55))
+                v = v * v * (3 - 2 * v)
+                shade = 150 + int(95 * v)
+                row.append((shade + 2, shade, shade - 6, 255))
+            rows.append(row)
+    return rows
+
+
 def tank_glass():
     """Sight glass: clear, with opaque diagonal glare streaks (the model draws it as cutout, so
     pixels are either solid or empty). Mapped by position, so the streaks repeat every block down a
@@ -89,6 +111,7 @@ def publish_animated(name, rows, frametime):
 
 def main():
     publish_animated('block/steam', steam(), 3)
+    publish_animated('block/sodium', sodium(), 4)
     publish('block/machine/tank_glass', tank_glass())
 
 
