@@ -182,7 +182,9 @@ def console(side, ports):
         return 2 * C - v if east else v
 
     x1, x2 = sorted((x(FACE), x(FACE + DEPTH)))
-    d.box('breeder_console_back', x1, 0, a1, x2, 15, a2, top='breeder_graphite', skip=(side, 'down'))
+    d.box('breeder_cheek', x1, 0, a1, x2, 15, a2, top='breeder_graphite', skip=(side, back, 'down'))
+    bx = x(FACE + DEPTH)
+    d.box('breeder_console_back', bx - 0.01, 0, a1, bx + 0.01, 15, a2, skip=tuple(f for f in ('north', 'south', 'east', 'west', 'up', 'down') if f != back))
     # The face holding the ports is the station's light port housing, so the ports read the same.
     d.box('housing', x1, 0, a1, x2, 15, a2, skip=tuple(f for f in ('north', 'south', 'east', 'west', 'up', 'down') if f != side))
     sx = 1 if east else -1
@@ -367,34 +369,49 @@ FRONT_ENDS = (C - B - 4, C + B + 4)  # the front console with its cheeks
 SIDE_ENDS = (CELLS[0] - 3, CELLS[1] + 3)   # the side consoles with their cheeks
 
 
-def wall(x1, z1, x2, z2, outward):
-    """A straight run of wall from (x1, z1) to (x2, z2), its hazard face looking `outward`."""
-    d.box('breeder_bund', x1, 0, z1, x2, WALL_H, z2, top='breeder_fitting', skip=('down', outward))
-    face = {'north': (x1, 0, z1 - 0.5, x2, WALL_H, z1), 'south': (x1, 0, z2, x2, WALL_H, z2 + 0.5),
-            'west': (x1 - 0.5, 0, z1, x1, WALL_H, z2), 'east': (x2, 0, z1, x2 + 0.5, WALL_H, z2)}[outward]
-    d.box('breeder_hazard', *face, skip=('down',))
-    # The fence: posts a block apart along the middle of the wall's top, and its rail.
-    along_x = abs(x2 - x1) > abs(z2 - z1)
-    length = abs(x2 - x1) if along_x else abs(z2 - z1)
-    steps = max(1, round(length / B))
-    pts = []
-    for k in range(steps + 1):
-        t = k / steps
-        px = x1 + (x2 - x1) * t if along_x else (x1 + x2) / 2
-        pz = (z1 + z2) / 2 if along_x else z1 + (z2 - z1) * t
-        d.box('breeder_rail', px - 0.5, WALL_H, pz - 0.5, px + 0.5, 15, pz + 0.5)
-        pts.append((px, 14.5, pz))
-    d.sweep('breeder_rail', pts, 0.5, 0.5, lambda i: (0, 1, 0), closed=False, caps=True)
+def wall(x1, z1, x2, z2):
+    """A straight piece of wall. Every face on the compound's edge is hazard striped, round the
+    corners too, so the stripe runs all the way round."""
+    edge = [f for f, on in (('west', x1 == E0), ('east', x2 == E1), ('north', z1 == E0), ('south', z2 == E1)) if on]
+    d.box('breeder_bund', x1, 0, z1, x2, WALL_H, z2, top='breeder_fitting', skip=('down', *edge))
+    o = 0.5
+    # Each overlay reaches round a corner by its own thickness, so two meeting there close it.
+    ex1 = x1 - o if 'west' in edge else x1
+    ex2 = x2 + o if 'east' in edge else x2
+    ez1 = z1 - o if 'north' in edge else z1
+    ez2 = z2 + o if 'south' in edge else z2
+    for f in edge:
+        box = {'north': (ex1, 0, z1 - o, ex2, WALL_H, z1), 'south': (ex1, 0, z2, ex2, WALL_H, z2 + o),
+               'west': (x1 - o, 0, ez1, x1, WALL_H, ez2), 'east': (x2, 0, ez1, x2 + o, WALL_H, ez2)}[f]
+        d.box('breeder_hazard', *box, skip=('down',))
+
+
+def fence(path):
+    """The fence along the middle of the wall's top: one rail along `path` (round its corners in
+    one piece, so it joins), with posts at each end, each corner and about a block apart between."""
+    posts = []
+    for (ax, az), (bx, bz) in zip(path, path[1:]):
+        steps = max(1, round(math.dist((ax, az), (bx, bz)) / B))
+        posts += [(ax + (bx - ax) * k / steps, az + (bz - az) * k / steps) for k in range(steps)]
+    posts.append(path[-1])
+    for px, pz in posts:
+        d.box('breeder_rail', px - 0.5, WALL_H, pz - 0.5, px + 0.5, 14, pz + 0.5, skip=('down',))
+    d.sweep('breeder_rail', [(x, 14.5, z) for x, z in path], 0.5, 0.5, lambda i: (0, 1, 0), closed=False, caps=True)
 
 
 # Front, either side of the front console; the back, whole; and the two sides, before and after
-# their consoles.
-wall(E0, E0, FRONT_ENDS[0], E0 + WALL_T, 'north')
-wall(FRONT_ENDS[1], E0, E1, E0 + WALL_T, 'north')
-wall(E0, E1 - WALL_T, E1, E1, 'south')
-for x1, x2, out in ((E0, E0 + WALL_T, 'west'), (E1 - WALL_T, E1, 'east')):
-    wall(x1, E0 + WALL_T, x2, SIDE_ENDS[0], out)
-    wall(x1, SIDE_ENDS[1], x2, E1 - WALL_T, out)
+# their consoles. The front pieces reach the corners, so the sides start behind them.
+M0, M1 = E0 + WALL_T / 2, E1 - WALL_T / 2       # the wall's middle line, where the fence stands
+wall(E0, E0, FRONT_ENDS[0], E0 + WALL_T)
+wall(FRONT_ENDS[1], E0, E1, E0 + WALL_T)
+wall(E0, E1 - WALL_T, E1, E1)
+for x1, x2 in ((E0, E0 + WALL_T), (E1 - WALL_T, E1)):
+    wall(x1, E0 + WALL_T, x2, SIDE_ENDS[0])
+    wall(x1, SIDE_ENDS[1], x2, E1 - WALL_T)
+# Three fences, each from one console's cheek round the corners to the next.
+fence([(FRONT_ENDS[0], M0), (M0, M0), (M0, SIDE_ENDS[0])])
+fence([(FRONT_ENDS[1], M0), (M1, M0), (M1, SIDE_ENDS[0])])
+fence([(M0, SIDE_ENDS[1]), (M0, M1), (M1, M1), (M1, SIDE_ENDS[1])])
 
 # The hub in the middle: a square block, three blocks across and one high, on the grid, so the
 # pipes meet its faces flush. From its top a thick flanged pipe rises into the sphere's foot.
