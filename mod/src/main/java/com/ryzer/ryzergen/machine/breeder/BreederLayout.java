@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * <pre>
  *   0      no plinth: the three consoles (the control core front and centre, the inputs' console on
- *          the east edge and the outputs' on the west) and the piers under the other six legs
+ *          the east edge and the outputs' on the west) and the feet of the legs
  *   1-3    a ring of frame round the edge, where the legs stand
  *   4      a ring of frame, the girder belt; its top is the walkway
  *   1-7    the sphere's shell, inside the rings, open within
@@ -43,8 +43,7 @@ public final class BreederLayout {
         Map<BlockPos, BreederPart> parts = new LinkedHashMap<>();
         double c = SIZE / 2.0;
         // No plinth: on the ground stand the three consoles (the front one round the core, the
-        // inputs' on the east edge, the outputs' on the west) and the concrete piers under the six
-        // legs that do not stand on a console.
+        // inputs' on the east edge, the outputs' on the west) and the feet of the twelve legs.
         for (int i = 3; i <= 5; i++) {
             parts.put(new BlockPos(i, 0, 0), BreederPart.FRAME);
             parts.put(new BlockPos(0, 0, i), BreederPart.FRAME);
