@@ -64,11 +64,8 @@ public class BreederRenderer implements BlockEntityRenderer<BreederCoreBlockEnti
         for (String part : new String[] {"fan", "plug_large", "plug_small"}) {
             StationRenderer.draw(buffer, pose, StationGeometry.group(DATA, part), light);
         }
-        // The haze drifting up through the hall, faint, then the lantern's glass, both translucent, so
-        // they tint the hall behind them rather than hiding it.
-        VertexConsumer translucent = buffers.getBuffer(Sheets.translucentCullBlockSheet());
-        StationRenderer.draw(translucent, pose, StationGeometry.group(DATA, "haze"), light, 0xB4FFFFFF);
-        StationRenderer.draw(translucent, pose, StationGeometry.group(DATA, "glass"), light);
+        // The lantern's glass last, translucent, so it tints the hall behind it rather than hiding it.
+        StationRenderer.draw(buffers.getBuffer(Sheets.translucentCullBlockSheet()), pose, StationGeometry.group(DATA, "glass"), light);
         pose.translate(BEACON_X, 0, BEACON_Z);
         pose.mulPose(Axis.YP.rotationDegrees(core.beaconAngle(partialTick)));
         pose.translate(-BEACON_X, 0, -BEACON_Z);
