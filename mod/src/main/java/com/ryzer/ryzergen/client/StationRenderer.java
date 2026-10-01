@@ -41,6 +41,7 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
         if (!core.isFormed()) {
             return;
         }
+        light = openLight(core, StationLayout.HEIGHT + 1, light);
         Direction facing = core.facing();
         // The static body: from the GPU mesh when we can (built once, redrawn each frame in one
         // call), otherwise sent like everything else.
@@ -227,6 +228,22 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
     }
 
     private static final float[] UP = {0, 1, 0};
+
+    /**
+     * The light to draw a whole multiblock with: its own block light, and the sky light of the open
+     * air just above it, {@code above} blocks over the footprint's middle. The core sits inside its
+     * own structure, where sky light is low (and stays low in worlds lit before formed parts let
+     * light through), and shader packs read that sky light to decide how much sun a surface gets.
+     */
+    static int openLight(net.minecraft.world.level.block.entity.BlockEntity core, int above, int light) {
+        net.minecraft.world.level.Level level = core.getLevel();
+        if (level == null) {
+            return light;
+        }
+        int top = net.minecraft.client.renderer.LevelRenderer.getLightColor(level, core.getBlockPos().above(above));
+        return LightTexture.pack(Math.max(LightTexture.block(light), LightTexture.block(top)),
+                Math.max(LightTexture.sky(light), LightTexture.sky(top)));
+    }
 
     static void draw(VertexConsumer buffer, PoseStack pose, List<StationGeometry.Quad> quads, int light) {
         draw(buffer, pose, quads, light, 0xFFFFFFFF);
