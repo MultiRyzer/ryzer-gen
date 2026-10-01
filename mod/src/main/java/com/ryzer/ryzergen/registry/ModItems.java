@@ -1,26 +1,26 @@
 package com.ryzer.ryzergen.registry;
 
-import com.ryzer.ryzergen.battery.container.LfpRackItem;
 import com.ryzer.ryzergen.RyzerGen;
-import com.ryzer.ryzergen.cable.CableUpgrade;
-import com.ryzer.ryzergen.cable.FittingItem;
-import com.ryzer.ryzergen.machine.SpeedModuleItem;
 import com.ryzer.ryzergen.battery.BatteryChemistry;
 import com.ryzer.ryzergen.battery.BatteryModuleItem;
+import com.ryzer.ryzergen.battery.container.LfpRackItem;
+import com.ryzer.ryzergen.cable.CableUpgrade;
+import com.ryzer.ryzergen.cable.FittingItem;
 import com.ryzer.ryzergen.item.WrenchItem;
-import com.ryzer.ryzergen.radiation.DosimeterRingItem;
-import com.ryzer.ryzergen.radiation.GeigerCounterItem;
+import com.ryzer.ryzergen.machine.SpeedModuleItem;
+import com.ryzer.ryzergen.machine.breeder.BreederFuelItem;
 import com.ryzer.ryzergen.machine.fission.FuelRodItem;
 import com.ryzer.ryzergen.machine.fission.TargetRodItem;
 import com.ryzer.ryzergen.machine.microreactor.FuelCoreItem;
 import com.ryzer.ryzergen.material.OreType;
+import com.ryzer.ryzergen.radiation.DosimeterRingItem;
+import com.ryzer.ryzergen.radiation.GeigerCounterItem;
+import java.util.EnumMap;
+import java.util.Map;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.EnumMap;
-import java.util.Map;
 
 public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(RyzerGen.MOD_ID);
@@ -124,7 +124,16 @@ public final class ModItems {
      * The breeder's fuel (design section 9): transuranic metal alloyed with uranium in a steel-clad
      * assembly, the only fuel that starts a breeder core. Safe to carry (rule 10).
      */
-    public static final DeferredItem<Item> BREEDER_FUEL = ITEMS.registerSimpleItem("breeder_fuel",
+    public static final DeferredItem<BreederFuelItem> BREEDER_FUEL = ITEMS.registerItem("breeder_fuel", BreederFuelItem::new,
+            new Item.Properties().stacksTo(16));
+    /** What breeder fuel becomes. Safe to carry (rule 10); refined back into transuranic metal. */
+    public static final DeferredItem<Item> SPENT_BREEDER_FUEL = ITEMS.registerSimpleItem("spent_breeder_fuel",
+            new Item.Properties().stacksTo(16));
+    /** Uranium in a steel tube, for the breeder's blanket: the fuel's spare neutrons breed it into plutonium. */
+    public static final DeferredItem<TargetRodItem> URANIUM_BLANKET = ITEMS.registerItem("uranium_blanket", TargetRodItem::new,
+            new Item.Properties().stacksTo(16));
+    /** A bred uranium blanket, rich in plutonium, for the Electrorefiner. Safe to carry (rule 10). */
+    public static final DeferredItem<Item> BRED_URANIUM_BLANKET = ITEMS.registerSimpleItem("bred_uranium_blanket",
             new Item.Properties().stacksTo(16));
     /** Lithium in an aluminium and steel rod, bred into tritium in a target channel of the station's core. */
     public static final DeferredItem<TargetRodItem> LITHIUM_TARGET_ROD = ITEMS.registerItem("lithium_target_rod", TargetRodItem::new,

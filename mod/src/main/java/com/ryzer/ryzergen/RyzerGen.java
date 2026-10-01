@@ -1,27 +1,28 @@
 package com.ryzer.ryzergen;
 
-import com.ryzer.ryzergen.registry.ModParticles;
-import com.ryzer.ryzergen.battery.container.BatteryControllerBlockEntity;
-import com.ryzer.ryzergen.machine.pool.PoolControllerBlockEntity;
 import com.mojang.logging.LogUtils;
 import com.ryzer.ryzergen.battery.HomeBatteryBlock;
 import com.ryzer.ryzergen.battery.HomeBatteryBlockEntity;
+import com.ryzer.ryzergen.battery.container.BatteryControllerBlockEntity;
 import com.ryzer.ryzergen.cable.EnergyCableBlockEntity;
 import com.ryzer.ryzergen.cable.FluidPipeBlockEntity;
+import com.ryzer.ryzergen.cable.ItemPipeBlockEntity;
 import com.ryzer.ryzergen.creative.CreativeSourceBlockEntity;
+import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlockEntity;
+import com.ryzer.ryzergen.machine.breeder.BreederCoreBlockEntity;
+import com.ryzer.ryzergen.machine.breeder.BreederLayout;
+import com.ryzer.ryzergen.machine.breeder.BreederStructure;
+import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterBlockEntity;
 import com.ryzer.ryzergen.machine.fission.StationCoreBlockEntity;
 import com.ryzer.ryzergen.machine.fission.StationLayout;
 import com.ryzer.ryzergen.machine.fission.StationStructure;
-import com.ryzer.ryzergen.machine.processing.ProcessingBlock;
-import com.ryzer.ryzergen.machine.processing.ProcessingBlockEntity;
-import com.ryzer.ryzergen.machine.pump.IntakePumpBlockEntity;
-import com.ryzer.ryzergen.storage.PressureTankBlockEntity;
-import com.ryzer.ryzergen.cable.ItemPipeBlockEntity;
-import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlockEntity;
-import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterBlockEntity;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorPort;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorStructure;
 import com.ryzer.ryzergen.machine.microreactor.ReactorHeartBlockEntity;
+import com.ryzer.ryzergen.machine.pool.PoolControllerBlockEntity;
+import com.ryzer.ryzergen.machine.processing.ProcessingBlock;
+import com.ryzer.ryzergen.machine.processing.ProcessingBlockEntity;
+import com.ryzer.ryzergen.machine.pump.IntakePumpBlockEntity;
 import com.ryzer.ryzergen.radiation.RadiationClientState;
 import com.ryzer.ryzergen.radiation.RadiationPayload;
 import com.ryzer.ryzergen.registry.ModAttachments;
@@ -33,14 +34,15 @@ import com.ryzer.ryzergen.registry.ModDataComponents;
 import com.ryzer.ryzergen.registry.ModFluids;
 import com.ryzer.ryzergen.registry.ModItems;
 import com.ryzer.ryzergen.registry.ModMenus;
-import com.ryzer.ryzergen.registry.ModTriggers;
+import com.ryzer.ryzergen.registry.ModParticles;
 import com.ryzer.ryzergen.registry.ModRecipes;
 import com.ryzer.ryzergen.registry.ModSounds;
+import com.ryzer.ryzergen.registry.ModTriggers;
+import com.ryzer.ryzergen.storage.PressureTankBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -48,6 +50,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 @Mod(RyzerGen.MOD_ID)
@@ -124,6 +127,24 @@ public class RyzerGen {
             StationCoreBlockEntity core = StationStructure.coreForPort(level, pos, StationLayout.Port.ENERGY);
             return core == null ? null : core.runner().energy();
         }, ModBlocks.STATION_CASING.get());
+        // Breeder ports, on a formed breeder's side consoles: fuel and sodium in on the left as you
+        // face it, spent fuel and bred blankets out and power out on the right.
+        event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
+            BreederCoreBlockEntity core = BreederStructure.coreForPort(level, pos, BreederLayout.Port.FUEL);
+            return core == null ? null : core.runner().fuelPort();
+        }, ModBlocks.BREEDER_FRAME.get());
+        event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
+            BreederCoreBlockEntity core = BreederStructure.coreForPort(level, pos, BreederLayout.Port.SODIUM);
+            return core == null ? null : core.runner().sodiumPort();
+        }, ModBlocks.BREEDER_FRAME.get());
+        event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
+            BreederCoreBlockEntity core = BreederStructure.coreForPort(level, pos, BreederLayout.Port.OUTPUT);
+            return core == null ? null : core.runner().outputPort();
+        }, ModBlocks.BREEDER_FRAME.get());
+        event.registerBlock(Capabilities.EnergyStorage.BLOCK, (level, pos, state, be, side) -> {
+            BreederCoreBlockEntity core = BreederStructure.coreForPort(level, pos, BreederLayout.Port.ENERGY);
+            return core == null ? null : core.runner().energy();
+        }, ModBlocks.BREEDER_FRAME.get());
         // Container Battery ports: energy in and out on the back, coolant in at the fan's hub. The
         // controller takes its parts by pipe while the container is still to be built.
         event.registerBlock(Capabilities.EnergyStorage.BLOCK, (level, pos, state, be, side) ->

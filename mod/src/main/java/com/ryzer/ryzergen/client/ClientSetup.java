@@ -27,6 +27,7 @@ import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterScreen;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorScreen;
 import com.ryzer.ryzergen.machine.fission.StationControlScreen;
 import com.ryzer.ryzergen.machine.fission.StationCoreScreen;
+import com.ryzer.ryzergen.machine.breeder.BreederControlScreen;
 import com.ryzer.ryzergen.machine.breeder.BreederCoreScreen;
 import com.ryzer.ryzergen.machine.pump.IntakePumpScreen;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
@@ -57,6 +58,7 @@ public final class ClientSetup {
         event.register(ModMenus.INTAKE_PUMP.get(), IntakePumpScreen::new);
         event.register(ModMenus.STATION_CORE.get(), StationCoreScreen::new);
         event.register(ModMenus.BREEDER_CORE.get(), BreederCoreScreen::new);
+        event.register(ModMenus.BREEDER_CONTROL.get(), BreederControlScreen::new);
         event.register(ModMenus.STATION_CONTROL.get(), StationControlScreen::new);
         event.register(ModMenus.POOL_BUILD.get(), PoolBuildScreen::new);
         event.register(ModMenus.POOL.get(), PoolScreen::new);

@@ -36,10 +36,9 @@ import java.util.Map;
  * The breeder's control core. Before the reactor forms it builds it: feed its store the frame and
  * shell (by hand or by pipe) and it places them itself, bottom layer first, a few at a time, until
  * the last one snaps the reactor together. Once formed it anchors the renderer, which draws the
- * whole reactor and turns its beacon. The reactor itself (the core grid, the blanket, the sodium
- * loop) comes next; for now a formed breeder is the building, ready for it, and a redstone signal
- * on the control core stands in for it running: its lights come on, the lantern lights the ground
- * round it and the beacon turns.
+ * whole reactor and turns its beacon. Formed, it runs the reactor ({@link BreederRunner}): its
+ * screen is the control screen, and while it runs its lights come on, the lantern and the ground
+ * frame light the ground round it, and the beacon turns.
  */
 public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider {
     public static final int SLOTS = 9;
@@ -97,8 +96,29 @@ public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider 
         }
     };
 
+    private final BreederRunner runner = new BreederRunner(this::runnerChanged);
+    /** Set when the runner changes, so nearby clients hear about it (a few times a second at most). */
+    private boolean dirty;
+
     public BreederCoreBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.BREEDER_CORE.get(), pos, state);
+    }
+
+    public BreederRunner runner() {
+        return runner;
+    }
+
+    private void runnerChanged() {
+        setChanged();
+        dirty = true;
+    }
+
+    /** The middle of the reactor's footprint, for radiation. */
+    private net.minecraft.world.phys.Vec3 centre() {
+        BlockPos origin = BreederLayout.toWorld(worldPosition, facing(), BlockPos.ZERO);
+        BlockPos far = BreederLayout.toWorld(worldPosition, facing(), new BlockPos(BreederLayout.SIZE - 1, 0, BreederLayout.SIZE - 1));
+        return new net.minecraft.world.phys.Vec3((Math.min(origin.getX(), far.getX()) + Math.max(origin.getX(), far.getX()) + 1) / 2.0,
+                worldPosition.getY() + 4, (Math.min(origin.getZ(), far.getZ()) + Math.max(origin.getZ(), far.getZ()) + 1) / 2.0);
     }
 
     /** Which buildable part an item is, or null. The core itself is never stocked. */
@@ -124,9 +144,9 @@ public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider 
         return isFormed() ? null : parts;
     }
 
-    /** Whether the reactor runs. Until its reactor logic lands, a redstone signal on the core. */
+    /** Whether the reactor is making heat (on clients, as last heard from the server). */
     public boolean isRunning() {
-        return isFormed() && level != null && level.hasNeighborSignal(worldPosition);
+        return isFormed() && runner.status().running();
     }
 
     /** What the lantern's parts last showed; null after loading, so they are set once. */
@@ -154,6 +174,11 @@ public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider 
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BreederCoreBlockEntity core) {
         if (state.getValue(BreederPartBlock.FORMED)) {
+            core.runner.tick((ServerLevel) level, pos, core.facing(), core.centre());
+            if (core.dirty && level.getGameTime() % 10 == 0) {
+                core.dirty = false;
+                level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+            }
             boolean shine = core.isRunning();
             if (core.lit == null || core.lit != shine) {
                 core.lit = shine;
@@ -220,11 +245,15 @@ public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider 
         }
     }
 
-    /** Empties the parts store onto the ground at {@code pos}. */
+    /** Empties the parts store and the core's positions onto the ground at {@code pos}. */
     public void dropContents(Level level, BlockPos pos) {
         for (int slot = 0; slot < parts.getSlots(); slot++) {
             Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), parts.getStackInSlot(slot));
             parts.setStackInSlot(slot, ItemStack.EMPTY);
+        }
+        for (int slot = 0; slot < runner.positions.getSlots(); slot++) {
+            Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), runner.positions.getStackInSlot(slot));
+            runner.positions.setStackInSlot(slot, ItemStack.EMPTY);
         }
     }
 
@@ -268,23 +297,52 @@ public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider 
 
     @Override
     public Component getDisplayName() {
-        return Component.translatable("container.ryzergen.breeder_core");
+        return Component.translatable(isFormed() ? "container.ryzergen.breeder_control" : "container.ryzergen.breeder_core");
     }
 
+    /** Unbuilt, the panel is the parts store; formed, it is the reactor's controls. */
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
-        return new BreederCoreMenu(containerId, inventory, parts, data, ContainerLevelAccess.create(level, worldPosition));
+        ContainerLevelAccess access = ContainerLevelAccess.create(level, worldPosition);
+        return isFormed() ? new BreederControlMenu(containerId, inventory, this, access)
+                : new BreederCoreMenu(containerId, inventory, parts, data, access);
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("parts", parts.serializeNBT(registries));
+        runner.save(tag, registries);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         parts.deserializeNBT(registries, tag.getCompound("parts"));
+        runner.load(tag, registries);
+    }
+
+    /** Clients get the core's state: its status (for the lights and the beacon) and layout. */
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        runner.save(tag, registries);
+        return tag;
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        runner.load(tag, registries);
+    }
+
+    @Override
+    public void onDataPacket(net.minecraft.network.Connection connection,
+                             net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket packet, HolderLookup.Provider registries) {
+        handleUpdateTag(packet.getTag(), registries);
     }
 }

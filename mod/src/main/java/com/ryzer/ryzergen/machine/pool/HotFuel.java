@@ -32,7 +32,7 @@ public final class HotFuel {
      */
     public static boolean isSpentFuel(ItemStack stack) {
         return isHot(stack) || stack.is(ModItems.DEPLETED_FUEL_CORE.get()) || stack.is(ModItems.SPENT_URANIUM_ROD.get())
-                || stack.is(ModItems.SPENT_MOX_ROD.get());
+                || stack.is(ModItems.SPENT_MOX_ROD.get()) || stack.is(ModItems.SPENT_BREEDER_FUEL.get());
     }
 
     /** Takes the mark off: the item has cooled. */

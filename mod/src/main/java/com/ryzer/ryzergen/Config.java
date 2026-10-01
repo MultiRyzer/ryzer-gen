@@ -63,6 +63,7 @@ public final class Config {
     public static final ModConfigSpec.BooleanValue STATION_MELTDOWNS;
     public static final ModConfigSpec.DoubleValue STATION_MELTDOWN_POWER;
     public static final ModConfigSpec.IntValue STATION_TILT_SECONDS;
+    public static final ModConfigSpec.IntValue BREEDER_OUTPUT;
     public static final ModConfigSpec.IntValue STATION_MELTDOWN_RADIUS;
     public static final ModConfigSpec.IntValue FLUID_TANK_CAPACITY;
     public static final ModConfigSpec.IntValue STEAM_PER_WATER;
@@ -156,6 +157,13 @@ public final class Config {
         STATION_TILT_SECONDS = BUILDER
                 .comment("In overdrive, how long a fuel channel may sit without a live rod before the core goes unstable.")
                 .defineInRange("flux_tilt_seconds", 300, 10, 3600);
+        BUILDER.pop();
+
+        BUILDER.comment("Breeder reactor (tier 4).").push("breeder");
+        BREEDER_OUTPUT = BUILDER
+                .comment("Percent of the normal heat each breeder fuel assembly makes (so also power out, and how fast blankets breed).",
+                        "The sodium loop carries more in step, so layouts and flow settings play the same.")
+                .defineInRange("output_percent", 100, 1, 10_000);
         BUILDER.pop();
 
         BUILDER.comment("The fuel cycle.").push("fuel_cycle");

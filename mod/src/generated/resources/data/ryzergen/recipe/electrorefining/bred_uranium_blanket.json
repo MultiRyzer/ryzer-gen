@@ -1,0 +1,29 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "ryzergen:preview"
+    }
+  ],
+  "type": "ryzergen:electrorefining",
+  "inputs": [
+    {
+      "count": 1,
+      "item": "ryzergen:bred_uranium_blanket"
+    },
+    {
+      "count": 1,
+      "tag": "c:dusts/salt"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "ryzergen:plutonium_ingot"
+    },
+    {
+      "count": 1,
+      "id": "ryzergen:uranium_ingot"
+    }
+  ],
+  "time": 600
+}
