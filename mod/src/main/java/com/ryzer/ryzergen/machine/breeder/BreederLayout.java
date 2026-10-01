@@ -28,6 +28,8 @@ public final class BreederLayout {
     public static final int HEIGHT = 8;
     /** Where the control core sits in the design (facing north): front and centre of the plinth. */
     public static final BlockPos CORE = new BlockPos(4, 0, 0);
+    /** The lowest layer of the lantern's glass band, whose shell parts light up while the reactor runs. */
+    public static final int LANTERN_Y = 5;
     /** The sphere's middle and radius, in blocks, as the concept draws it. */
     private static final double SPHERE_Y = 4.5;
     private static final double SPHERE_R = 10 * 16 / Math.PI / 16;

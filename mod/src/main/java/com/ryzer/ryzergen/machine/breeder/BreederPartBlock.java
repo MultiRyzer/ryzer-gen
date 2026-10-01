@@ -23,10 +23,12 @@ import org.jetbrains.annotations.Nullable;
 public class BreederPartBlock extends Block {
     public static final MapCodec<BreederPartBlock> CODEC = simpleCodec(BreederPartBlock::new);
     public static final BooleanProperty FORMED = BooleanProperty.create("formed");
+    /** A formed shell part in the lantern's band, lit while the reactor runs (it lights the ground round it). */
+    public static final BooleanProperty LIT = BooleanProperty.create("lit");
 
     public BreederPartBlock(Properties properties) {
         super(properties);
-        registerDefaultState(stateDefinition.any().setValue(FORMED, false));
+        registerDefaultState(stateDefinition.any().setValue(FORMED, false).setValue(LIT, false));
     }
 
     @Override
@@ -36,7 +38,7 @@ public class BreederPartBlock extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FORMED);
+        builder.add(FORMED, LIT);
     }
 
     @Override

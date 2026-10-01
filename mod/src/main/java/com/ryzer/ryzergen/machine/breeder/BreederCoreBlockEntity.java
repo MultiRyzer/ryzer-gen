@@ -37,7 +37,9 @@ import java.util.Map;
  * shell (by hand or by pipe) and it places them itself, bottom layer first, a few at a time, until
  * the last one snaps the reactor together. Once formed it anchors the renderer, which draws the
  * whole reactor and turns its beacon. The reactor itself (the core grid, the blanket, the sodium
- * loop) comes next; for now a formed breeder is the building, ready for it.
+ * loop) comes next; for now a formed breeder is the building, ready for it, and a redstone signal
+ * on the control core stands in for it running: its lights come on, the lantern lights the ground
+ * round it and the beacon turns.
  */
 public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider {
     public static final int SLOTS = 9;
@@ -122,10 +124,39 @@ public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider 
         return isFormed() ? null : parts;
     }
 
+    /** Whether the reactor runs. Until its reactor logic lands, a redstone signal on the core. */
+    public boolean isRunning() {
+        return isFormed() && level != null && level.hasNeighborSignal(worldPosition);
+    }
+
+    /** What the lantern's parts last showed; null after loading, so they are set once. */
+    private @Nullable Boolean lit;
+
+    /** Lights (or darkens) the shell parts round the lantern, so the reactor lights the ground. */
+    private void lightLantern(Level level, boolean shine) {
+        for (Map.Entry<BlockPos, BreederPart> entry : BreederLayout.PARTS.entrySet()) {
+            if (entry.getValue() != BreederPart.SHELL || entry.getKey().getY() < BreederLayout.LANTERN_Y) {
+                continue;
+            }
+            BlockPos at = BreederLayout.toWorld(worldPosition, facing(), entry.getKey());
+            BlockState part = level.getBlockState(at);
+            if (part.is(BreederPart.SHELL.block()) && part.getValue(BreederPartBlock.FORMED)
+                    && part.getValue(BreederPartBlock.LIT) != shine) {
+                level.setBlock(at, part.setValue(BreederPartBlock.LIT, shine), Block.UPDATE_CLIENTS);
+            }
+        }
+    }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, BreederCoreBlockEntity core) {
         if (state.getValue(BreederPartBlock.FORMED)) {
+            boolean shine = core.isRunning();
+            if (core.lit == null || core.lit != shine) {
+                core.lit = shine;
+                core.lightLantern(level, shine);
+            }
             return;
         }
+        core.lit = null;
         if (level.getGameTime() % STEP_TICKS == 0) {
             core.buildStep((ServerLevel) level);
         }
@@ -204,7 +235,7 @@ public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider 
     public static void clientTick(Level level, BlockPos pos, BlockState state, BreederCoreBlockEntity core) {
         BreederGhostPreview.track(core);
         core.beaconBefore = core.beacon;
-        if (core.isFormed()) {
+        if (core.isRunning()) {
             core.beacon = (core.beacon + BEACON_SPEED) % 360;
             if (core.beacon < core.beaconBefore) {
                 core.beaconBefore -= 360;

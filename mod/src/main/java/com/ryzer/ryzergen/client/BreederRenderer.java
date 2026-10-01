@@ -39,6 +39,9 @@ public class BreederRenderer implements BlockEntityRenderer<BreederCoreBlockEnti
         }
         light = StationRenderer.openLight(core, BreederLayout.HEIGHT + 1, light);
         Direction facing = core.facing();
+        // The lights run with the reactor: each group's lit quads while it runs, the same quads dark
+        // while it is off.
+        String lights = core.isRunning() ? "_on" : "_off";
         var body = StationGeometry.group(DATA, "static");
         if (!StationMesh.shadersInUse()) {
             StationMesh mesh = core.clientMesh instanceof StationMesh cached && cached.matches(light, facing) ? cached : null;
@@ -59,9 +62,11 @@ public class BreederRenderer implements BlockEntityRenderer<BreederCoreBlockEnti
         if (StationMesh.shadersInUse()) {
             StationRenderer.draw(buffer, pose, body, light);
         }
+        StationRenderer.draw(buffer, pose, StationGeometry.group(DATA, "static" + lights), light);
         // The parts that will move, drawn where the design parks them for now: the lantern's rotating plugs.
         for (String part : new String[] {"plug_large", "plug_small"}) {
             StationRenderer.draw(buffer, pose, StationGeometry.group(DATA, part), light);
+            StationRenderer.draw(buffer, pose, StationGeometry.group(DATA, part + lights), light);
         }
         // The lantern's glass last, translucent, so it tints the hall behind it rather than hiding it.
         StationRenderer.draw(buffers.getBuffer(Sheets.translucentCullBlockSheet()), pose, StationGeometry.group(DATA, "glass"), light);
@@ -69,6 +74,7 @@ public class BreederRenderer implements BlockEntityRenderer<BreederCoreBlockEnti
         pose.mulPose(Axis.YP.rotationDegrees(core.beaconAngle(partialTick)));
         pose.translate(-BEACON_X, 0, -BEACON_Z);
         StationRenderer.draw(buffer, pose, StationGeometry.group(DATA, "beacon"), light);
+        StationRenderer.draw(buffer, pose, StationGeometry.group(DATA, "beacon" + lights), light);
         pose.popPose();
     }
 

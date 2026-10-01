@@ -101,7 +101,8 @@ public final class ModBlocks {
     public static final DeferredBlock<BreederPartBlock> BREEDER_FRAME = BLOCKS.register("breeder_frame",
             () -> new BreederPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
     public static final DeferredBlock<BreederPartBlock> BREEDER_SHELL = BLOCKS.register("breeder_shell",
-            () -> new BreederPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+            () -> new BreederPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
+                    .lightLevel(state -> state.getValue(BreederPartBlock.LIT) ? 15 : 0)));
     public static final DeferredBlock<BreederCoreBlock> BREEDER_CORE = BLOCKS.register("breeder_core",
             () -> new BreederCoreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
     // Spent Fuel Pool parts (design section 7). Formed, they draw the pool's combined model; with
