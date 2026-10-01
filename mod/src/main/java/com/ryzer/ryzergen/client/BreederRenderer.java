@@ -6,6 +6,7 @@ import com.mojang.math.Axis;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.machine.breeder.BreederCoreBlockEntity;
 import com.ryzer.ryzergen.machine.breeder.BreederLayout;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.AABB;
 
 /**
@@ -28,6 +30,8 @@ public class BreederRenderer implements BlockEntityRenderer<BreederCoreBlockEnti
     /** The beacon mast's axis in the design, in blocks: 10 pixels in front of the centre. */
     private static final float BEACON_X = HALF;
     private static final float BEACON_Z = HALF - 10 / 16F;
+    /** A cell inside the sphere, open air within the shell, where the lantern's light is read. */
+    private static final BlockPos SPHERE_MIDDLE = new BlockPos(BreederLayout.SIZE / 2, 4, BreederLayout.SIZE / 2);
 
     public BreederRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -39,6 +43,12 @@ public class BreederRenderer implements BlockEntityRenderer<BreederCoreBlockEnti
         }
         light = StationRenderer.openLight(core, BreederLayout.HEIGHT + 1, light);
         Direction facing = core.facing();
+        // The whole reactor is drawn with one light. The station's glass glows right beside its core,
+        // but the breeder's lantern is high up, so take the block light at the sphere's middle too:
+        // running, the lantern lights the reactor as the station's glass lights the station.
+        BlockPos middle = BreederLayout.toWorld(core.getBlockPos(), facing, SPHERE_MIDDLE);
+        int glow = core.getLevel().getBrightness(LightLayer.BLOCK, middle);
+        light = LightTexture.pack(Math.max(LightTexture.block(light), glow), LightTexture.sky(light));
         // The lights run with the reactor: each group's lit quads while it runs, the same quads dark
         // while it is off.
         String lights = core.isRunning() ? "_on" : "_off";
