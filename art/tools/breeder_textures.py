@@ -40,18 +40,18 @@ def plate(fill, lit, lit2, shade, shade2, w=16, h=16):
 
 # ---------------------------------------------------------------- big faces: one plate per panel
 def shell():
-    """The sphere's plates: smooth painted steel, off-white as such spheres are painted, not the
+    """The sphere's plates: smooth painted steel, white as such spheres are painted (and as the station is), not the
     framed panel the machines use, so the sphere reads as one welded vessel. Each plate draws only
     its top and left seam, so every joint shows as one line: a weld bead (a ripple of darker
     pixels) with a highlight beside it where the bead catches the light."""
     t = Tex()
-    t.rect(0, 0, 15, 15, 'E')
+    t.rect(0, 0, 15, 15, 'A')
     for i in range(16):
-        bead = 'J' if i % 2 else 'I'
+        bead = 'I' if i % 2 else 'F'
         t.set(i, 0, bead)
         t.set(0, i, bead)
-    t.rect(1, 1, 15, 1, 'A')
-    t.rect(1, 1, 1, 15, 'A')
+    t.rect(1, 1, 15, 1, 'W')
+    t.rect(1, 1, 1, 15, 'W')
     return t
 
 
@@ -226,10 +226,10 @@ def leg():
     """A leg's upper part, a block high: painted steel, off-white to match the sphere, with a weld
     ring at the block's foot, the same all round."""
     t = Tex()
-    t.rect(0, 0, 15, 15, 'E')
-    t.rect(0, 14, 15, 14, 'A')
+    t.rect(0, 0, 15, 15, 'A')
+    t.rect(0, 14, 15, 14, 'W')
     for x in range(16):
-        t.set(x, 15, 'J' if x % 2 else 'I')
+        t.set(x, 15, 'I' if x % 2 else 'F')
     return t
 
 
@@ -237,9 +237,9 @@ def fireproofing():
     """A leg's lower part, a block high: the grey fireproofing jacket real sphere legs carry near
     the ground (a concrete casing), lit at a chamfered joint at its top."""
     t = Tex()
-    t.rect(0, 0, 15, 15, 'L')
-    t.rect(0, 0, 15, 0, 'h')
-    t.rect(0, 1, 15, 1, 'M')
+    t.rect(0, 0, 15, 15, 'F')
+    t.rect(0, 0, 15, 0, 'A')
+    t.rect(0, 1, 15, 1, 'I')
     return t
 
 
@@ -316,28 +316,28 @@ def bund():
     the ground shows): a gunmetal plate per block with a lit coping edge, a seam at each block,
     a bolt either side of it, and a shadowed foot."""
     t = Tex()
-    t.rect(0, 8, 15, 15, 'u')
-    t.rect(0, 8, 15, 8, 'h')
-    t.rect(0, 9, 15, 9, 's')
-    t.rect(0, 9, 0, 15, 'z')
-    t.rect(1, 10, 1, 14, 's')
-    t.rect(0, 15, 15, 15, 'z')
-    t.rect(0, 14, 15, 14, 'u')
+    t.rect(0, 8, 15, 15, 'E')
+    t.rect(0, 8, 15, 8, 'W')
+    t.rect(0, 9, 15, 9, 'A')
+    t.rect(0, 9, 0, 15, 'I')
+    t.rect(1, 10, 1, 14, 'A')
+    t.rect(0, 15, 15, 15, 'J')
+    t.rect(0, 14, 15, 14, 'F')
     for x in (3, 13):
-        t.set(x, 11, 'l')
-        t.set(x, 12, 'z')
+        t.set(x, 11, 'A')
+        t.set(x, 12, 'J')
     return t
 
 
 def hub():
     """The hub's sides, a block per panel: a gunmetal plate with a lit bevel and screws in its
     corners, a recessed band across its middle where the pipes come in."""
-    t = plate('u', 'h', 's', 'z', 'D')
+    t = plate('E', 'W', 'A', 'I', 'J')
     for x, y in ((2, 2), (13, 2), (2, 13), (13, 13)):
-        t.set(x, y, 'h')
-        t.set(x + 1, y + 1, 'z')
-    t.rect(2, 6, 13, 6, 'z')
-    t.rect(2, 9, 13, 9, 's')
+        t.set(x, y, 'A')
+        t.set(x + 1, y + 1, 'J')
+    t.rect(2, 6, 13, 6, 'I')
+    t.rect(2, 9, 13, 9, 'A')
     return t
 
 
@@ -345,7 +345,7 @@ def steel_pipe():
     """The process lines from the consoles to the hub: off-white painted steel like the sphere and
     its legs, plain, so a round pipe shows it evenly; its roundness comes from the shading."""
     t = Tex()
-    t.rect(0, 0, 15, 15, 'E')
+    t.rect(0, 0, 15, 15, 'A')
     return t
 
 
