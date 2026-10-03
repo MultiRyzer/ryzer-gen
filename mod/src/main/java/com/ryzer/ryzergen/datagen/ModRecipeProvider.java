@@ -699,12 +699,14 @@ public class ModRecipeProvider extends RecipeProvider {
         machine(preview, "fabricating/uranium_blanket", MachineRecipe.Process.FABRICATING,
                 List.of(SizedIngredient.of(OreType.URANIUM.ingotTag(), 2), SizedIngredient.of(ModTags.INGOTS_STEEL, 1)), null,
                 List.of(new ItemStack(ModItems.URANIUM_BLANKET.get())), 200);
-        // Spent breeder fuel closes the loop (design section 9): back into transuranic metal, with
-        // its uranium and the fission products as waste.
+        // Spent breeder fuel goes back into transuranic metal, but half of it: a fast core burns more
+        // than it makes (only the blanket gains), so the breeder never fuels itself. The rest comes
+        // from the MOX station's spent fuel, which keeps the station running beside it (design
+        // section 9, pillar 6: roots run deep).
         machine(preview, "electrorefining/spent_breeder_fuel", MachineRecipe.Process.ELECTROREFINING,
-                List.of(SizedIngredient.of(ModItems.SPENT_BREEDER_FUEL.get(), 1), SizedIngredient.of(OreType.SALT.dropTag(), 1)), null,
+                List.of(SizedIngredient.of(ModItems.SPENT_BREEDER_FUEL.get(), 2), SizedIngredient.of(OreType.SALT.dropTag(), 1)), null,
                 List.of(new ItemStack(ModItems.TRANSURANIC_METAL.get()), new ItemStack(ModItems.INGOTS.get(OreType.URANIUM).get()),
-                        new ItemStack(ModItems.FISSION_WASTE.get())), 600);
+                        new ItemStack(ModItems.FISSION_WASTE.get(), 2)), 600);
         // A bred uranium blanket: its plutonium for MOX rods (3 nuggets, as much as a spent uranium rod
         // gives the Reprocessor), and the uranium left in it.
         machine(preview, "electrorefining/bred_uranium_blanket", MachineRecipe.Process.ELECTROREFINING,

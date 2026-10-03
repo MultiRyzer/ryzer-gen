@@ -7,7 +7,7 @@
   "type": "ryzergen:electrorefining",
   "inputs": [
     {
-      "count": 1,
+      "count": 2,
       "item": "ryzergen:spent_breeder_fuel"
     },
     {
@@ -25,7 +25,7 @@
       "id": "ryzergen:uranium_ingot"
     },
     {
-      "count": 1,
+      "count": 2,
       "id": "ryzergen:fission_waste"
     }
   ],
