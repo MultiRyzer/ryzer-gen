@@ -10,7 +10,7 @@ Decisions still to make. Move them into DESIGN.md once settled.
 6. **Microreactor fuel.** Does a new reactor come with its first fuel core, or does the player craft one separately?
 7. **Coolant block name.** Registered as "Coolant Jacket" (`coolant_jacket`) as a working name. Confirm or rename before release.
 8. **Middle battery tier.** A fridge-sized commercial cabinet between the home stack and the container, or go straight from house to container?
-9. **Power-spending machines.** Add things like an automated miner or powered tools and armour, or keep the mod to power and processing? Leaning towards our own quarry: a microreactor runs it slowly, and more power runs it faster. It gives bigger reactors a job, supplies uranium and fluorite for the fuel cycle in standalone play, and feeds later builds. To settle: its speed per FE, whether it upgrades by modules (rule 11) rather than a new block per tier, and a config toggle so packs that already have quarries can turn it off.
+9. Settled 3 Oct 2026: our own miner, the Melt Drill, a rock-melting drill that goes straight down a chunk quarter, with speed modules, a filter and a wearing tungsten tip. See DESIGN.md section 11c. (Powered tools and armour are still open.)
 10. Settled 30 Sep 2026: the Electrorefiner, one molten salt cell that also splits salt into sodium. See DESIGN.md section 9.
 11. Settled 30 Sep 2026: a ring of blanket slots in the breeder's planning grid. See DESIGN.md section 9.
 12. Settled 30 Sep 2026: a closed loop, back through the pyroprocessor. See DESIGN.md section 9.

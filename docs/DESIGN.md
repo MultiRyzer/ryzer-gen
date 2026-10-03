@@ -582,6 +582,18 @@ A deuterium-tritium tokamak, built and fuelled from section 10. Draft, 25 Sep 20
 - **Pressure tank:** a steel tank with sight glasses. One block on its own is a small tank (32,000 mB, config). Built as a 2 x 2 footprint and stacked up to 16 high, the blocks join into one tower that pools its gas. A gas fills its whole container instead of sitting at a level, so the steam shows through the glass as a haze that thickens with the pressure. Pipes connect to any outside face. Breaking a block vents that block's share. Real basis: a gas receiver with sight glasses.
 - **Fluid tank:** the pressure tank's twin for liquids (water, lava), with copper walls and 16,000 mB per block (config). Same 2 x 2 towers; the liquid shows through the glass at its level, settled at the bottom, and lava glows. Pressure tanks and fluid tanks never join each other.
 
+## 11c. The Melt Drill (tiers 2 to 3; settled 3 Oct 2026, first numbers)
+The mod's own miner: not a box quarry but a drill that melts its way straight down. Real basis: the rock-melting drills Los Alamos built and tested in the 1970s, which melted their own holes, pushed the melt up a central stem and left the hole lined with glass where the molten rock cooled against the sides. Oil rigs work the same way above ground: a derrick, a drill string down the hole, everything brought up to the surface. (Working name "Melt Drill"; the real project's name is never used.)
+- **The rig** stands on the surface and holds everything: the inventory, the power, the upgrades. Place it and it works the 8 x 8 quarter of the chunk it stands in, from the layer below it down to bedrock, so it never reaches outside its own chunk: whenever the rig is loaded, so is its whole shaft, and it needs no chunk loading.
+- **The drill string:** as the head goes down it leaves a pipe behind it up the shaft, which carries what it melts up to the rig. Pull it all out of the rig with an item pipe.
+- **Glazed walls:** the outer ring of the 8 x 8 is melted too (its ores collected) and left as fused rock, a glassy block, as the real holes were lined with glass; the 6 x 6 inside is cleared. That seals the shaft against water and lava, keeps everything inside the chunk, and leaves a neat glass-walled pit.
+- **Filter:** by default only ores, gems and raw materials come up; stone, dirt and the like are melted away. A filter slot holds a keep list, so players who want cobble or deepslate can add them.
+- **Speed modules** (the fuel cycle's, up to 4): each adds a full speed, and power grows as the square of the speed (rule 11, as the processing machines). Base speed runs on a microreactor; full speed needs fission power, which gives the station another job.
+- **Tungsten tip:** the head melts rock at over 1,000°C, so its refractory tip wears and is replaced in the rig's slot (pipes can feed it). First number: a tip lasts about two shafts. It ties the drill to the mines below (pillar 6) and gives tungsten a use; later upgrades will make tips last longer, so it is less of a chore.
+- **First numbers (to benchmark against ATM10's quarries):** 200 FE/t at base speed, a block every 4 ticks (about 13 s a layer); with 4 modules five times as fast for 5,000 FE/t. A full shaft from sea level to bedrock is about 8,000 blocks.
+- **Pack friendly:** config to turn it off, and to scale its speed, power and tip life. It breaks blocks as a player would, so land-claim mods can stop it.
+- **Unlocks** with the fuel cycle (advanced control boards), once the player understands mining (rule 3).
+
 ## 12. Energy storage
 
 Goal: batteries that look and grow like real ones, instead of one block recoloured per tier. Progress comes from adding modules and switching to better chemistries, not crafting a new block.
