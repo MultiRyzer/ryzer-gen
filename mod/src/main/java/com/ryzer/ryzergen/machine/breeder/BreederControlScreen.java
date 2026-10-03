@@ -143,16 +143,23 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
     }
 
     /**
-     * Over the items: a frame in the plan's colour where a position still waits for its item, and
-     * the positions beside the one under the mouse outlined, as those are the ones it affects.
+     * Over the items: a frame in the plan's colour where a position still waits for its item, a
+     * flashing red one on an assembly over the hot spot limit, and the positions beside the one under
+     * the mouse outlined, as those are the ones it affects.
      */
     private void renderPositions(GuiGraphics graphics) {
         Position[] plan = menu.plan();
         ItemStack[] items = menu.items();
+        BreederReactor.Analysis analysis = analysis();
+        boolean flash = (System.currentTimeMillis() / 400) % 2 == 0;
         graphics.pose().pushPose();
         graphics.pose().translate(0, 0, 250);
         for (int i = 0; i < BreederReactor.POSITIONS; i++) {
-            if (plan[i] != Position.EMPTY && items[i].isEmpty()) {
+            if (analysis.hotSpot(i)) {
+                if (flash) {
+                    graphics.renderOutline(BreederControlMenu.slotX(i), BreederControlMenu.slotY(i), 16, 16, BAD);
+                }
+            } else if (plan[i] != Position.EMPTY && items[i].isEmpty()) {
                 graphics.renderOutline(BreederControlMenu.slotX(i), BreederControlMenu.slotY(i), 16, 16, colour(plan[i]));
             }
         }
@@ -201,6 +208,15 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
         BreederReactor.Analysis plan = analysis();
         if (plan.fuel() == 0) {
             text(graphics, Component.translatable("gui.ryzergen.breeder.plan_empty"), 42, DIM);
+            return;
+        }
+        if (!plan.holdsSteady()) {
+            int spots = 0;
+            for (int i = 0; i < BreederReactor.POSITIONS; i++) {
+                spots += plan.hotSpot(i) ? 1 : 0;
+            }
+            text(graphics, Component.translatable("gui.ryzergen.breeder.hot_spots", spots), 42, BAD);
+            text(graphics, Component.translatable("gui.ryzergen.breeder.hot_spot_hint"), 51, DIM);
             return;
         }
         float flowFraction = menu.flow() / 100F;
@@ -320,7 +336,10 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
                     break;
                 }
                 lines.add(items[position].getHoverName().copy().withStyle(style -> style.withColor(colour)));
-                lines.add(tip(key + "fuel.heat", VALUE, compact(Math.round(analysis.heat()[position]))));
+                lines.add(tip(key + "fuel.heat", analysis.hotSpot(position) ? BAD : VALUE, compact(Math.round(analysis.heat()[position]))));
+                if (analysis.hotSpot(position)) {
+                    lines.add(tip(key + "fuel.hot_spot", BAD, compact(Math.round(BreederReactor.hotSpot()))));
+                }
                 if (fuel > 0) {
                     lines.add(Component.translatable(key + "fuel.fuel", fuel));
                 }
