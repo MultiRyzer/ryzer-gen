@@ -6,11 +6,12 @@ just outside a chunk and works the chunk it faces, split into four 8 x 8 quarter
 items: put one in the quarry block and it stands a drill up in the next free quarter. Better drills
 are crafted from the one before (Mk I, II, III), so a quarry is upgraded, not replaced (rule 11).
 The picture shows a chunk with a Mk I, a Mk II and a Mk III drill and one quarter waiting.
-- A drill: a compact tower raised on four splayed legs over its quarter, so it stands over its pit
-  as the pit deepens. Its bottom storey is the beam chamber behind glass, the emitter a graphite
-  cone pointing down, its beam sweeping the whole 8 x 8 below; above it the drill core, the beam
-  generator. Each mark is a little grander: the Mk I a plain core, the Mk II taller with a light
-  band and cooling fins, the Mk III taller again with a resonator drum and a beacon.
+- A drill: a small fission station of its own, raised on four splayed legs over its quarter, so it
+  stands over its pit as the pit deepens. A graphite skirt, the glass chamber ring between white
+  ribs with the emitter inside (a graphite cone pointing down, its beam sweeping the whole 8 x 8
+  below), a gunmetal head band with its light line, and a short white hyperbolic stack with the
+  station's aviation marking round its top. Each mark stands taller: the Mk II's stack carries a
+  second light ring, the Mk III's is taller again with beacons on its rim.
 - Below, cut away: each quarter's pit, its walls glazed in fused rock, the hot spot where the beam
   is melting.
 - The quarry block outside the chunk's edge: a console with the station's screen, the four drills'
@@ -24,6 +25,7 @@ import sys
 
 import model_preview as mp
 import breeder_textures
+import drill_textures
 from quad_design import Design
 
 B = 16
@@ -34,6 +36,7 @@ TEXTURES = {'breeder_' + name: 'ryzergen:block/breeder/' + name for name in bree
 TEXTURES.update({name: 'ryzergen:block/microreactor/' + name for name in ('hazard', 'glow', 'screen')})
 TEXTURES['front_panel'] = 'ryzergen:block/breeder/front_panel'
 TEXTURES['glass'] = 'ryzergen:block/breeder/glass'
+TEXTURES.update({'drill_' + name: 'ryzergen:block/drill/' + name for name in drill_textures.TEXTURES})
 d = Design(CHUNK / 2, TEXTURES, {'glow', 'screen', 'breeder_amber'})
 UV = [(0, 0), (16, 0), (16, 16), (0, 16)]
 
@@ -73,79 +76,88 @@ def marker(x1, z1):
 
 
 def drill(x1, z1, mark, aim):
-    """A drill over the quarter at (x1, z1): legs, the glass beam chamber, the core for its mark,
-    and its beam aimed at `aim` (a point on the pit's floor, as it sweeps)."""
+    """A drill over the quarter at (x1, z1): a small fission station of its own, raised on four
+    splayed legs over its pit. Bottom to top: a graphite skirt round the chamber's floor, the glass
+    chamber ring between white ribs with the emitter inside firing down, a gunmetal head band with
+    its cyan light line, and a short white hyperbolic stack topped with the station's aviation
+    marking. Each mark stands taller: the Mk II's stack carries a second light ring, the Mk III's
+    is taller again with beacons on its rim. Its beam is aimed at `aim` on the pit's floor."""
     qx, qz = x1 + QUARTER / 2, z1 + QUARTER / 2
-    half = 2 * B            # the tower is 4 x 4
+    r = 26                  # the station's radius (a little under 4 blocks across)
     base = 28               # the chamber's floor, up on the legs
-    chamber = base + 2 * B
-    core = chamber + 4 + (2, 3, 3)[mark - 1] * B
-    # Legs from the quarter's corners up to the tower's corners, with a foot plate and a brace.
-    for sx in (-1, 1):
-        for sz in (-1, 1):
-            foot = (qx + sx * (QUARTER / 2 - 5), 0, qz + sz * (QUARTER / 2 - 5))
-            top = (qx + sx * (half - 3), base, qz + sz * (half - 3))
-            d.sweep('breeder_leg', [foot, top], 1.6, 1.6, lambda i: (0, 1, 0), closed=False, caps=True)
+    chamber = (base, base + 2 * B)
+    head = (chamber[1], chamber[1] + 8)
+    stack_h = (24, 36, 48)[mark - 1]
+    top = head[1] + stack_h
+
+    def at(phi, rad, y):
+        return (qx + rad * math.cos(phi), y, qz + rad * math.sin(phi))
+
+    whole = d.at
+    d.at = at
+    try:
+        # Legs from the quarter's corners up under the skirt, with foot plates.
+        for k in range(4):
+            phi = math.radians(45 + 90 * k)
+            foot = at(phi, (QUARTER / 2 - 5) * math.sqrt(2), 0)
+            d.sweep('breeder_leg', [foot, at(phi, r - 4, base - 6)], 1.6, 1.6, lambda i: (0, 1, 0), closed=False, caps=True)
             d.box('breeder_fitting', foot[0] - 4, 0, foot[2] - 4, foot[0] + 4, 2, foot[2] + 4, skip=('down',))
-    # The chamber's floor: a graphite frame with a hazard edge, open in the middle for the beam.
-    d.box('breeder_graphite', qx - half, base - 4, qz - half, qx + half, base, qz + half, skip=())
-    for y, h in ((base - 4, 4),):
-        d.box('hazard', qx - half - 0.4, y, qz - half - 0.4, qx + half + 0.4, y + h, qz + half + 0.4, skip=('up', 'down'))
-    # Pillars and glass round the chamber.
-    for sx in (-1, 1):
-        for sz in (-1, 1):
-            px, pz = qx + sx * (half - 2), qz + sz * (half - 2)
-            d.box('breeder_leg', px - 2, base, pz - 2, px + 2, chamber, pz + 2, skip=('up', 'down'))
-    d.group = 'glass'
-    for y in range(base, chamber, B):
-        for side in (-1, 1):
-            z = qz + side * (half - 1)
-            for sign in (1, -1):
-                d.quad('glass', [(qx - half + 4, y + B, z), (qx + half - 4, y + B, z), (qx + half - 4, y, z), (qx - half + 4, y, z)], UV,
-                       (0, 0, side * sign))
-            x = qx + side * (half - 1)
-            for sign in (1, -1):
-                d.quad('glass', [(x, y + B, qz - half + 4), (x, y + B, qz + half - 4), (x, y, qz + half - 4), (x, y, qz - half + 4)], UV,
-                       (side * sign, 0, 0))
-    d.group = 'static'
-    d.box('breeder_graphite', qx - half, chamber, qz - half, qx + half, chamber + 4, qz + half)
-    d.box('glow', qx - half - 0.2, chamber + 1.5, qz - half - 0.2, qx + half + 0.2, chamber + 2.5, qz + half + 0.2, skip=('up', 'down'))
-    # The emitter: a mount and a graphite cone pointing down, its lens glowing.
-    tip = chamber - 18
-    centred(qx, qz, lambda: (
-        d.cylinder('breeder_hub', chamber - 8, chamber, 7, n=12),
-        d.annulus('breeder_fitting', chamber - 8, 0, 7, up=False, n=12),
-        d.lathe('breeder_graphite', [(tip + 2, 2), (chamber - 8, 6)], n=12),
-        d.cylinder('glow', tip, tip + 2, 2, n=8)))
+        # The skirt and the chamber's floor: a ring, open in the middle for the beam.
+        d.cylinder('drill_skirt', base - 8, base, r + 1, n=16)
+        d.annulus('drill_skirt', base - 8, 8, r + 1, up=False, n=16)
+        d.annulus('breeder_grate', base, 8, r, n=16)
+        d.cylinder('breeder_fitting', base - 8, base, 8, n=12, inward=True)
+        # The glass chamber between eight white ribs.
+        with_group('glass', lambda: (d.cylinder('glass', chamber[0], chamber[1], r - 1, n=16),
+                                     d.cylinder('glass', chamber[0], chamber[1], r - 1, n=16, inward=True)))
+        for k in range(8):
+            d.post('breeder_leg', math.radians(22.5 * (2 * k + 1)), r, chamber[0], chamber[1], 1.5, 1.5)
+        # The emitter, hung from the head: a mount and a graphite cone pointing down, lens glowing.
+        tip = chamber[1] - 18
+        d.cylinder('drill_frame', chamber[1] - 8, chamber[1], 7, n=12, v0=8)
+        d.annulus('breeder_fitting', chamber[1] - 8, 0, 7, up=False, n=12)
+        d.lathe('breeder_graphite', [(tip + 2, 2), (chamber[1] - 8, 6)], n=12)
+        d.cylinder('glow', tip, tip + 2, 2, n=8)
+        # The head band and its light line.
+        d.cylinder('drill_ring', head[0], head[1], r + 1, n=16, v0=8)
+        d.annulus('drill_ring', head[0], 0, r + 1, up=False, n=16)
+        d.cylinder('glow', head[0] + 2.5, head[0] + 3.5, r + 1.2, n=16)
+        # The stack: a short hyperbolic tower in white cladding, narrowing then flaring a little.
+        profile = []
+        for k in range(7):
+            t = k / 6
+            y = head[1] + stack_h * t
+            profile.append((y, r - 2 - 6 * (1 - (2 * t - 1) ** 2) * 0.8))
+        d.lathe('drill_casing', profile, n=16)
+        d.lathe('breeder_graphite', profile, n=16, inward=True)
+        if mark >= 2:
+            mid = head[1] + stack_h * 0.5
+            d.cylinder('glow', mid, mid + 1, r - 2 - 6 * 0.8 + 0.3, n=16)
+        # The aviation marking round the top, and the rim.
+        d.cylinder('drill_warning', top, top + 6, r - 1.5, n=16, v0=10)
+        d.annulus('breeder_fitting', top + 6, r - 4, r - 1.5, n=16)
+        d.cylinder('breeder_graphite', top, top + 6, r - 4, n=16, inward=True)
+        if mark >= 3:
+            for k in range(4):
+                d.post('breeder_amber', math.radians(45 + 90 * k), r - 2.8, top + 6, top + 9, 1, 1)
+        # The mark: one, two or three cyan bars on the head band's front.
+        for k in range(mark):
+            x = qx - (mark - 1) * 3 + k * 6
+            d.box('glow', x - 1.5, head[0] + 4.5, qz - r - 1.6, x + 1.5, head[1] - 0.5, qz - r - 1.1, skip=('south',))
+    finally:
+        d.at = whole
     # The beam, from the lens to where it is melting on the pit's floor, and the hot spot there.
     d.sweep('glow', [(qx, tip, qz), (aim[0], -DEPTH + 0.5, aim[1])], 0.8, 0.8, lambda i: (1, 0, 0), closed=False, caps=True)
     centred(aim[0], aim[1], lambda: d.disc('breeder_amber', -DEPTH, -DEPTH + 0.6, 7, n=12))
-    # The core: casing panels between graphite bands, a light strip under the top band.
-    inset = 2
-    d.box('breeder_hub', qx - half + inset, chamber + 4, qz - half + inset, qx + half - inset, core, qz + half - inset, top='breeder_grate')
-    d.box('breeder_graphite', qx - half, core - 4, qz - half, qx + half, core, qz + half, top='breeder_grate', skip=('down',))
-    if mark >= 2:
-        d.box('glow', qx - half - 0.2, core - 6, qz - half - 0.2, qx + half + 0.2, core - 5, qz + half + 0.2, skip=('up', 'down'))
-        # Cooling fins down the sides.
-        for k in range(3):
-            off = (k - 1) * 10
-            for sx in (-1, 1):
-                d.box('breeder_fitting', qx + sx * (half - inset) - (0 if sx > 0 else 3), chamber + 10, qz + off - 1,
-                      qx + sx * (half - inset) + (3 if sx > 0 else 0), core - 10, qz + off + 1)
-    if mark >= 3:
-        drum = (core, core + 14)
-        centred(qx, qz, lambda: (
-            d.cylinder('breeder_steel_pipe', drum[0], drum[1], 20, n=16),
-            d.cylinder('breeder_graphite', drum[0] + 5, drum[0] + 8, 20.2, n=16),
-            d.cylinder('glow', drum[0] + 6, drum[0] + 7, 20.4, n=16),
-            d.annulus('breeder_fitting', drum[1], 0, 20, n=16),
-            d.cylinder('breeder_graphite', drum[1], drum[1] + 4, 4, n=8),
-            d.cylinder('breeder_amber', drum[1] + 4, drum[1] + 7, 2, n=8)))
-    # The mark's plaque on the front: one, two or three cyan bars.
-    for k in range(mark):
-        x = qx - (mark - 1) * 3 + k * 6
-        d.box('glow', x - 1.5, chamber + 10, qz - half + inset - 0.3, x + 1.5, chamber + 18, qz - half + inset, skip=('south',))
     return (qx - QUARTER / 2 + 5, qz - QUARTER / 2 + 5)
+
+
+def with_group(name, draw):
+    d.group = name
+    try:
+        draw()
+    finally:
+        d.group = 'static'
 
 
 # The chunk: quarters 1 to 4 (as the user's sketch numbers them), each with its pit; drills in three.
@@ -163,7 +175,7 @@ marker(*Q[4])
 BX, BZ = CHUNK - B - 4, -B - 4
 d.box('breeder_graphite', BX - 2, 0, BZ - 2, BX + B + 2, 3, BZ + B + 2, skip=('down',))
 d.box('hazard', BX - 2.4, 0, BZ - 2.4, BX + B + 2.4, 3, BZ + B + 2.4, skip=('up', 'down'))
-d.box('breeder_hub', BX, 3, BZ, BX + B, 3 + B, BZ + B, top='breeder_grate')
+d.box('drill_casing', BX, 3, BZ, BX + B, 3 + B, BZ + B, top='breeder_grate')
 d.box('breeder_fitting', BX + 3, 7, BZ - 0.5, BX + B - 3, 15, BZ, decals={'north': 'screen'}, skip=('south',))
 d.box('glow', BX - 0.2, 3 + B - 3, BZ - 0.2, BX + B + 0.2, 3 + B - 2, BZ + B + 0.2, skip=('up', 'down'))
 # Conduits from each drill's front foot along the ground to the quarry block.
@@ -176,6 +188,7 @@ for k, (fx, fz) in enumerate(feet):
 def main():
     out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(mp.ROOT, 'art', 'concepts', 'melt_drill.png')
     breeder_textures.main()
+    drill_textures.main()
     d.save_png(out, [((1, 1), 1.5, 0.5), ((-1, 1), 1.5, 0.4)])
 
 
