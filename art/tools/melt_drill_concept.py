@@ -8,10 +8,10 @@ and mounted on the deck, so a rig mines faster as miners are added (upgrade, don
 11). Up to 4 miners per quarter.
 - The deck: a slab-high girder frame round the quarter's edge with hazard stripes on its outer face
   (melting rock is dangerous), grating on top, and two cross girders between the cells.
-- A miner: a white four-legged derrick standing over its cell, its legs on the deck, braced on each
-  face, with a graphite crown and a light strip on top. Hanging in it, the heat unit (the drill's
-  melt furnace) with a glowing amber band, and from it the drill string straight down into the
-  shaft, to the melt head glowing at the bottom.
+- A miner: a rocket standing on four fins over its cell, nose up, its nozzle pointing down into the
+  shaft: the melt head is its exhaust, burning its way into the ground. White welded plates with
+  graphite bands, an orange stripe, a cyan light ring and portholes, an ogive nose with a beacon,
+  and the drill string from the nozzle down to the head glowing at the bottom.
 - Below the deck, cut away: each miner's 4 x 4 shaft with its walls glazed in fused rock, and the
   molten pool at the bottom.
 - The rig's controller on the front of the deck, the station's front panel and screen, so all
@@ -82,48 +82,70 @@ def shaft(cx, cz):
 
 
 # ---------------------------------------------------------------- a miner
+def fin(cx, cz, ax, az):
+    """A fin along the direction (ax, az): a flat graphite plate from the body out to the deck,
+    swept back at its leading edge, a pixel thick, drawn both sides with an edge cap."""
+    inner, outer = BODY_R - 0.5, CELL / 2 - 2
+    profile = [(inner, FIN_TOP), (outer, DECK + 10), (outer, DECK), (inner, DECK + 4)]
+    across = (-az, 0, ax)
+    for side in (-0.6, 0.6):
+        pts = [(cx + ax * r + across[0] * side, y, cz + az * r + across[2] * side) for r, y in profile]
+        d.quad('breeder_graphite', pts, [(0, 0), (16, 0), (16, 16), (0, 16)], (across[0] * side, 0, across[2] * side))
+    # The fin's outer edge, where it stands on the deck.
+    p0 = [(cx + ax * outer + across[0] * s, y, cz + az * outer + across[2] * s) for s, y in ((-0.6, DECK + 10), (0.6, DECK + 10), (0.6, DECK), (-0.6, DECK))]
+    d.quad('breeder_fitting', p0, [(0, 0), (1, 0), (1, 10), (0, 10)], (ax, 0, az))
+    # A foot plate under it.
+    fx, fz = cx + ax * (outer - 2), cz + az * (outer - 2)
+    d.box('breeder_fitting', fx - 3, DECK, fz - 3, fx + 3, DECK + 1, fz + 3, skip=('down',))
+
+
+BODY_R = 8             # the rocket's body
+NOZZLE_Y = DECK + 6    # the nozzle's mouth, just above the deck
+BODY_Y = (DECK + 14, 70)   # the body's straight part
+FIN_TOP = DECK + 30
+
+
 def miner(cx, cz):
-    """A derrick over its cell: four legs from the deck's corners leaning in to the crown, braced
-    on each face; the heat unit hanging inside; the drill string down to the melt head."""
-    foot, head = CELL / 2 - 6, 6
-    corners = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
-
-    def leg_at(sx, sz, y):
-        t = (y - DECK) / (TOP - DECK)
-        r = foot + (head - foot) * t
-        return (cx + sx * r, y, cz + sz * r)
-
-    for sx, sz in corners:
-        path = [leg_at(sx, sz, y) for y in (DECK, DECK + 16, DECK + 32, TOP)]
-        d.sweep('breeder_leg', path, 1.2, 1.2, lambda i: (0, 1, 0), closed=False, caps=True)
-        # A foot plate on the deck.
-        fx, _, fz = leg_at(sx, sz, DECK)
-        d.box('breeder_fitting', fx - 3, DECK, fz - 3, fx + 3, DECK + 1, fz + 3, skip=('down',))
-    # Girts round the derrick, and X bracing on each face between them.
-    levels = (DECK + 12, DECK + 30, DECK + 46)
-    for y in levels:
-        ring = [leg_at(sx, sz, y) for sx, sz in corners]
-        d.sweep('breeder_fitting', ring, 0.6, 0.6, lambda i: (0, 1, 0), closed=True)
-    for (ya, yb) in zip(levels, levels[1:]):
-        for k in range(4):
-            a, b = corners[k], corners[(k + 1) % 4]
-            for p, q in ((leg_at(*a, ya), leg_at(*b, yb)), (leg_at(*a, yb), leg_at(*b, ya))):
-                d.sweep('breeder_fitting', [p, q], 0.4, 0.4, lambda i: (0, 1, 0), closed=False, caps=True)
-    # The crown: a graphite block with a light strip round it.
-    d.box('breeder_graphite', cx - 8, TOP, cz - 8, cx + 8, TOP + 6, cz + 8, skip=('down',))
-    d.box('glow', cx - 8.2, TOP + 2.5, cz - 8.2, cx + 8.2, TOP + 3.5, cz + 8.2, skip=('up', 'down'))
-    # The heat unit: a white drum with a glowing amber band, hung from the crown.
-    d.cylinder('breeder_steel_pipe', TOP - 22, TOP - 4, 7, n=12)
-    d.annulus('breeder_fitting', TOP - 4, 0, 7, n=12)
-    d.annulus('breeder_fitting', TOP - 22, 0, 7, up=False, n=12)
-    d.cylinder('breeder_amber', TOP - 15, TOP - 12, 7.2, n=12)
-    d.cylinder('breeder_fitting', TOP - 4, TOP, 2, n=8)
-    # The drill string, down through the deck into the shaft, and the melt head at the bottom.
-    with_centre(cx, cz, lambda: (
-        d.cylinder('breeder_fitting', -DEPTH + 8, TOP - 22, STRING, n=8),
-        d.lathe('breeder_amber', [(-DEPTH + 2, 0), (-DEPTH + 8, 5)], n=8),
-        d.cylinder('breeder_fitting', -DEPTH + 8, -DEPTH + 11, 5, n=8),
-        d.annulus('breeder_fitting', -DEPTH + 11, STRING, 5, n=8)))
+    """A miner as a rocket standing on its fins over its cell, nose up, its nozzle pointing down
+    into the shaft: the melt head is its exhaust, burning its way into the ground. A white body in
+    welded plates with graphite bands and an orange stripe, a cyan light ring and portholes near
+    the top, an ogive nose with a beacon, four graphite fins standing on the deck, and the drill
+    string from the nozzle down to the glowing head."""
+    # The nozzle: a graphite bell flaring down to its mouth, glowing amber inside.
+    d.lathe('breeder_graphite', [(NOZZLE_Y, 6.5), (NOZZLE_Y + 4, 5), (BODY_Y[0] - 2, 4)], n=12)
+    d.lathe('breeder_amber', [(BODY_Y[0] - 2, 3.5), (NOZZLE_Y + 2, 5.6)], n=12, inward=True)
+    d.cylinder('breeder_fitting', BODY_Y[0] - 2, BODY_Y[0], 6, n=12)
+    # The body: a boat tail into the straight part, then the nose.
+    d.lathe('breeder_steel_pipe', [(BODY_Y[0], 6), (BODY_Y[0] + 6, BODY_R)], n=12)
+    d.cylinder('breeder_shell', BODY_Y[0] + 6, BODY_Y[1], BODY_R, n=12)
+    for y in (BODY_Y[0] + 8, BODY_Y[1] - 12):
+        d.cylinder('breeder_graphite', y, y + 3, BODY_R + 0.2, n=12)
+    d.cylinder('breeder_amber', BODY_Y[0] + 20, BODY_Y[0] + 22, BODY_R + 0.2, n=12)
+    d.cylinder('glow', BODY_Y[1] - 4, BODY_Y[1] - 3, BODY_R + 0.25, n=12)
+    nose = [(BODY_Y[1], BODY_R)]
+    for k in range(1, 7):
+        t = k / 6
+        nose.append((BODY_Y[1] + 22 * t, BODY_R * math.sqrt(max(0.0, 1 - t * t))))
+    d.lathe('breeder_shell', nose, n=12)
+    d.cylinder('breeder_graphite', BODY_Y[1] + 21, BODY_Y[1] + 24, 1.2, n=6)
+    d.cylinder('glow', BODY_Y[1] + 24, BODY_Y[1] + 25.5, 1.4, n=6)
+    # Portholes round the upper body: small dark plates with a cyan rim.
+    for k in range(4):
+        phi = math.radians(45 + 90 * k)
+        px, _, pz = d.at(phi, BODY_R + 0.3, 0)
+        nx, nz = math.cos(phi), math.sin(phi)
+        across = (-nz, nx)
+        y0, y1, w = BODY_Y[1] - 10, BODY_Y[1] - 6, 2
+        pts = [(px + across[0] * w, y1, pz + across[1] * w), (px - across[0] * w, y1, pz - across[1] * w),
+               (px - across[0] * w, y0, pz - across[1] * w), (px + across[0] * w, y0, pz + across[1] * w)]
+        d.quad('screen', pts, [(0, 0), (4, 0), (4, 4), (0, 4)], (nx, 0, nz))
+    for ax, az in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+        fin(cx, cz, ax, az)
+    # The drill string, down from the nozzle into the shaft, and the melt head at the bottom.
+    d.cylinder('breeder_fitting', -DEPTH + 8, NOZZLE_Y, STRING, n=8)
+    d.lathe('breeder_amber', [(-DEPTH + 2, 0), (-DEPTH + 8, 5)], n=8)
+    d.cylinder('breeder_fitting', -DEPTH + 8, -DEPTH + 11, 5, n=8)
+    d.annulus('breeder_fitting', -DEPTH + 11, STRING, 5, n=8)
 
 
 def with_centre(x, z, draw):
