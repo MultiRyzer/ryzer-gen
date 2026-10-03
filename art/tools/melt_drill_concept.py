@@ -6,14 +6,12 @@ just outside a chunk and works the chunk it faces, split into four 8 x 8 quarter
 items: put one in the quarry block and it stands a drill up in the next free quarter. Better drills
 are crafted from the one before (Mk I, II, III), so a quarry is upgraded, not replaced (rule 11).
 The picture shows a chunk with a Mk I, a Mk II and a Mk III drill and one quarter waiting.
-- A drill: a small reactor of its own, raised on four splayed legs over its quarter, so it stands
-  over its pit as the pit deepens. A graphite skirt, the glass chamber ring between white ribs with
-  the emitter inside (a graphite cone pointing down, its beam sweeping the whole 8 x 8 below), and
-  above it the pressure vessel, shaped like a pressure cooker (as a real reactor vessel is): a
-  squat brushed-steel pot, a bolted flange with studs all round and the light line in it, a domed
-  lid with the weighted regulator at its crown, and a handle either side. Each mark is bigger: the
-  Mk II's pot taller with a pressure gauge, the Mk III's taller again with a relief valve and
-  beacons on its flange.
+- A drill: as big as its quarter (8 x 8), as the user drew it, standing on the glazed rim of its
+  own pit. Its base is the beam chamber behind glass, the emitter a graphite cone hung over the
+  middle, its beam sweeping the whole quarter; above it the drill core, light cladding between
+  graphite bands with a vent in each face, a bolted lid flange with studs along its edges and the
+  weighted regulator on the roof (a pressure vessel's touches). Each mark's core is a block
+  taller; the Mk II adds a pressure gauge, the Mk III a relief valve and beacons.
 - Below, cut away: each quarter's pit, its walls glazed in fused rock, the hot spot where the beam
   is melting.
 - The quarry block outside the chunk's edge: a console with the station's screen, the four drills'
@@ -78,99 +76,98 @@ def marker(x1, z1):
 
 
 def drill(x1, z1, mark, aim):
-    """A drill over the quarter at (x1, z1): a small fission station of its own, raised on four
-    splayed legs over its pit. Bottom to top: a graphite skirt round the chamber's floor, the glass
-    chamber ring between white ribs with the emitter inside firing down, a gunmetal head band with
-    its cyan light line, and a short white hyperbolic stack topped with the station's aviation
-    marking. Each mark stands taller: the Mk II's stack carries a second light ring, the Mk III's
-    is taller again with beacons on its rim. Its beam is aimed at `aim` on the pit's floor."""
+    """A drill as big as its quarter (8 x 8), as the user drew it: a rectangle standing on the
+    glazed rim of its own pit. Its base is the beam chamber behind glass, the emitter a graphite cone
+    hung from the ceiling, its beam sweeping the whole quarter below; above it the drill core, a
+    block of light cladding between graphite bands, with a pressure vessel's touches: a bolted lid
+    flange along its top edges with studs, the weighted regulator on the roof. Each mark's core is
+    a block taller; the Mk II adds a pressure gauge, the Mk III a relief valve and beacons. Its
+    beam is aimed at `aim` on the pit's floor."""
+    gap = 1                 # neighbouring drills stand a pixel apart
+    xa, xb, za, zb = x1 + gap, x1 + QUARTER - gap, z1 + gap, z1 + QUARTER - gap
     qx, qz = x1 + QUARTER / 2, z1 + QUARTER / 2
-    r = 26                  # the station's radius (a little under 4 blocks across)
-    base = 28               # the chamber's floor, up on the legs
-    chamber = (base, base + 2 * B)
-    pot_h = (18, 26, 34)[mark - 1]
-    dome_h = (8, 10, 12)[mark - 1]
-
-    def at(phi, rad, y):
-        return (qx + rad * math.cos(phi), y, qz + rad * math.sin(phi))
-
-    whole = d.at
-    d.at = at
-    try:
-        # Legs from the quarter's corners up under the skirt, with foot plates.
-        for k in range(4):
-            phi = math.radians(45 + 90 * k)
-            foot = at(phi, (QUARTER / 2 - 5) * math.sqrt(2), 0)
-            d.sweep('breeder_leg', [foot, at(phi, r - 4, base - 6)], 1.6, 1.6, lambda i: (0, 1, 0), closed=False, caps=True)
-            d.box('breeder_fitting', foot[0] - 4, 0, foot[2] - 4, foot[0] + 4, 2, foot[2] + 4, skip=('down',))
-        # The skirt and the chamber's floor: a ring, open in the middle for the beam.
-        d.cylinder('drill_skirt', base - 8, base, r + 1, n=16)
-        d.annulus('drill_skirt', base - 8, 8, r + 1, up=False, n=16)
-        d.annulus('breeder_grate', base, 8, r, n=16)
-        d.cylinder('breeder_fitting', base - 8, base, 8, n=12, inward=True)
-        # The glass chamber between eight white ribs.
-        with_group('glass', lambda: (d.cylinder('glass', chamber[0], chamber[1], r - 1, n=16),
-                                     d.cylinder('glass', chamber[0], chamber[1], r - 1, n=16, inward=True)))
-        for k in range(8):
-            d.post('breeder_leg', math.radians(22.5 * (2 * k + 1)), r, chamber[0], chamber[1], 1.5, 1.5)
-        # The emitter, hung from the head: a mount and a graphite cone pointing down, lens glowing.
-        tip = chamber[1] - 18
-        d.cylinder('drill_frame', chamber[1] - 8, chamber[1], 7, n=12, v0=8)
-        d.annulus('breeder_fitting', chamber[1] - 8, 0, 7, up=False, n=12)
-        d.lathe('breeder_graphite', [(tip + 2, 2), (chamber[1] - 8, 6)], n=12)
-        d.cylinder('glow', tip, tip + 2, 2, n=8)
-        # The pressure vessel, the shape of a pressure cooker (as a reactor's pressure vessel is):
-        # a squat brushed-steel pot, a bolted flange ring with studs all round and the light line in
-        # it, a domed lid, the weighted pressure regulator at its crown, and a handle either side.
-        pot = (chamber[1], chamber[1] + pot_h)
-        d.cylinder('drill_ring', pot[0], pot[0] + 4, r + 1, n=16, v0=12)
-        d.annulus('drill_ring', pot[0], 0, r + 1, up=False, n=16)
-        d.cylinder('drill_pot', pot[0] + 4, pot[1], r, n=16)
-        flange = (pot[1], pot[1] + 5)
-        d.cylinder('drill_ring', flange[0], flange[1], r + 3, n=16, v0=11)
-        d.annulus('drill_ring', flange[0], r, r + 3, up=False, n=16)
-        d.annulus('drill_ring', flange[1], r - 1, r + 3, n=16)
-        d.cylinder('glow', flange[0] + 2, flange[0] + 3, r + 3.2, n=16)
-        for k in range(16):
-            d.post('breeder_fitting', math.radians(11.25 + 22.5 * k), r + 1.5, flange[1], flange[1] + 2, 1, 1)
-        dome = []
-        for k in range(7):
-            t = k / 6
-            dome.append((flange[1] + dome_h * math.sin(t * math.pi / 2), (r - 1) * math.cos(t * math.pi / 2)))
-        d.lathe('drill_pot', dome, n=16)
-        crown = flange[1] + dome_h
-        # The regulator: a stem and its weight.
-        d.cylinder('breeder_fitting', crown - 1, crown + 4, 1.5, n=8)
-        d.cylinder('breeder_graphite', crown + 4, crown + 9, 4, n=8)
-        d.annulus('breeder_graphite', crown + 9, 0, 4, n=8)
-        d.cylinder('breeder_amber', crown + 9, crown + 10, 1.5, n=6)
-        # Handles either side of the pot, under the flange.
-        for side in (0, math.pi):
-            p0, p1, p2, p3 = (at(side, r, pot[1] - 8), at(side, r + 7, pot[1] - 8), at(side, r + 7, pot[1] - 2), at(side, r, pot[1] - 2))
-            d.sweep('breeder_graphite', [p0, p1, p2, p3], 1.5, 3, lambda i, a=side: (-math.sin(a), 0, math.cos(a)), closed=False, caps=True)
-        if mark >= 2:
-            # A pressure gauge on the front of the pot: a dial with its cyan face.
-            gx, gy, gz = at(math.radians(270), r + 0.5, pot[0] + pot_h * 0.55)
-            d.box('breeder_graphite', gx - 4, gy - 4, gz - 1.5, gx + 4, gy + 4, gz + 1, skip=('south',))
-            d.box('breeder_fitting', gx - 3, gy - 3, gz - 2, gx + 3, gy + 3, gz - 1.5, decals={'north': 'screen'}, skip=('south',))
-        if mark >= 3:
-            # A relief valve beside the regulator, and beacons round the flange.
-            vx, vy, vz = at(math.radians(315), r * 0.55, 0)
-            centred(vx, vz, lambda: (d.cylinder('breeder_fitting', crown - 6, crown + 2, 1.2, n=6),
-                                     d.cylinder('breeder_amber', crown + 2, crown + 4, 2, n=6)))
-            for k in range(4):
-                d.post('breeder_amber', math.radians(45 + 90 * k), r + 2.5, flange[1] + 2, flange[1] + 5, 1, 1)
-        head = (flange[0], flange[1])
-        # The mark: one, two or three cyan bars on the head band's front.
-        for k in range(mark):
-            x = qx - (mark - 1) * 3 + k * 6
-            d.box('glow', x - 1.5, pot[0] + 6, qz - r - 0.6, x + 1.5, pot[0] + 11, qz - r - 0.1, skip=('south',))
-    finally:
-        d.at = whole
+    chamber = (0, 2 * B)
+    core = (chamber[1] + 4, chamber[1] + 4 + (3, 4, 5)[mark - 1] * B)
+    # The base frame on the pit's rim, hazard striped outside.
+    # A ring, open in the middle, so the pit and the beam show through the glass.
+    for bx1, bz1, bx2, bz2 in ((xa, za, xb, za + 6), (xa, zb - 6, xb, zb), (xa, za + 6, xa + 6, zb - 6), (xb - 6, za + 6, xb, zb - 6)):
+        d.box('drill_frame', bx1, 0, bz1, bx2, 4, bz2, top='breeder_grate', skip=('down',))
+    d.box('hazard', xa - 0.4, 0, za - 0.4, xb + 0.4, 4, zb + 0.4, skip=('up', 'down'))
+    # Pillars at the corners and the middle of each side, glass between them.
+    P = 5
+    for px in (xa, qx - P / 2, xb - P):
+        for pz in (za, qz - P / 2, zb - P):
+            if px == qx - P / 2 and pz == qz - P / 2:
+                continue
+            d.box('breeder_leg', px, 4, pz, px + P, chamber[1], pz + P, skip=('up', 'down'))
+    d.group = 'glass'
+    for a1, a2 in ((xa + P, qx - P / 2), (qx + P / 2, xb - P)):
+        for y in range(4, chamber[1], B):
+            y2 = min(chamber[1], y + B)
+            for z, out in ((za + 1.5, -1), (zb - 1.5, 1)):
+                for sign in (1, -1):
+                    d.quad('glass', [(a1, y2, z), (a2, y2, z), (a2, y, z), (a1, y, z)], UV, (0, 0, out * sign))
+    for b1, b2 in ((za + P, qz - P / 2), (qz + P / 2, zb - P)):
+        for y in range(4, chamber[1], B):
+            y2 = min(chamber[1], y + B)
+            for x, out in ((xa + 1.5, -1), (xb - 1.5, 1)):
+                for sign in (1, -1):
+                    d.quad('glass', [(x, y2, b1), (x, y2, b2), (x, y, b2), (x, y, b1)], UV, (out * sign, 0, 0))
+    d.group = 'static'
+    # The chamber's ceiling: a graphite band with the light line round it.
+    d.box('drill_band', xa, chamber[1], za, xb, core[0], zb)
+    d.box('glow', xa - 0.2, chamber[1] + 1.5, za - 0.2, xb + 0.2, chamber[1] + 2.5, zb + 0.2, skip=('up', 'down'))
+    # The emitter, hung from the ceiling over the middle: a mount and a graphite cone pointing down.
+    tip = chamber[1] - 18
+    centred(qx, qz, lambda: (
+        d.cylinder('drill_frame', chamber[1] - 8, chamber[1], 9, n=12, v0=8),
+        d.annulus('breeder_fitting', chamber[1] - 8, 0, 9, up=False, n=12),
+        d.lathe('breeder_graphite', [(tip + 2, 2), (chamber[1] - 8, 7)], n=12),
+        d.cylinder('glow', tip, tip + 2, 2, n=8)))
+    # The core: light cladding, a vent set into the middle of each face, the lid flange on top.
+    inset = 2
+    d.box('drill_casing', xa + inset, core[0], za + inset, xb - inset, core[1], zb - inset, skip=('down',))
+    vy = core[0] + B
+    for face, box in (('north', (qx - B, vy, za + inset - 0.3, qx + B, vy + B, za + inset)),
+                      ('south', (qx - B, vy, zb - inset, qx + B, vy + B, zb - inset + 0.3)),
+                      ('west', (xa + inset - 0.3, vy, qz - B, xa + inset, vy + B, qz + B)),
+                      ('east', (xb - inset, vy, qz - B, xb - inset + 0.3, vy + B, qz + B))):
+        d.box('drill_vent', *box, skip=tuple(f for f in ('north', 'south', 'east', 'west', 'up', 'down') if f != face))
+    lid = (core[1], core[1] + 4)
+    d.box('drill_band', xa, lid[0], za, xb, lid[1], zb, top='drill_pot')
+    d.box('glow', xa - 0.2, lid[0] + 1.5, za - 0.2, xb + 0.2, lid[0] + 2.5, zb + 0.2, skip=('up', 'down'))
+    # Studs along the lid's edges, a block apart.
+    for k in range(8):
+        for sx, sz in ((xa + 8 + k * 16 - 0.5, za + 2), (xa + 8 + k * 16 - 0.5, zb - 3)):
+            if sx < xb - 2:
+                d.box('breeder_fitting', sx - 1, lid[1], sz - 0.5, sx + 1, lid[1] + 2, sz + 1.5)
+        for sx, sz in ((xa + 2, za + 8 + k * 16 - 0.5), (xb - 3, za + 8 + k * 16 - 0.5)):
+            if sz < zb - 2:
+                d.box('breeder_fitting', sx - 0.5, lid[1], sz - 1, sx + 1.5, lid[1] + 2, sz + 1)
+    # The regulator on the roof: a stem, its graphite weight, an amber tip.
+    centred(qx, qz, lambda: (
+        d.cylinder('breeder_fitting', lid[1], lid[1] + 5, 2, n=8),
+        d.cylinder('breeder_graphite', lid[1] + 5, lid[1] + 11, 6, n=10),
+        d.annulus('breeder_graphite', lid[1] + 11, 0, 6, n=10),
+        d.cylinder('breeder_amber', lid[1] + 11, lid[1] + 12, 2, n=6)))
+    if mark >= 2:
+        # A pressure gauge on the front, beside the mark.
+        gx, gy = qx + 24, core[0] + 8
+        d.box('breeder_graphite', gx - 6, gy - 6, za + inset - 1.5, gx + 6, gy + 6, za + inset, skip=('south',))
+        d.box('breeder_fitting', gx - 4, gy - 4, za + inset - 2, gx + 4, gy + 4, za + inset - 1.5, decals={'north': 'screen'}, skip=('south',))
+    if mark >= 3:
+        centred(qx - 30, qz + 30, lambda: (d.cylinder('breeder_fitting', lid[1], lid[1] + 8, 1.5, n=6),
+                                         d.cylinder('breeder_amber', lid[1] + 8, lid[1] + 10, 2.5, n=6)))
+        for bx, bz in ((xa + 4, za + 4), (xb - 4, za + 4), (xa + 4, zb - 4), (xb - 4, zb - 4)):
+            d.box('breeder_amber', bx - 1.5, lid[1], bz - 1.5, bx + 1.5, lid[1] + 3, bz + 1.5, skip=('down',))
+    # The mark: one, two or three cyan bars on the core's front.
+    for k in range(mark):
+        x = qx - 24 - (mark - 1) * 3 + k * 6
+        d.box('glow', x - 1.5, core[0] + 4, za + inset - 0.5, x + 1.5, core[0] + 12, za + inset, skip=('south',))
     # The beam, from the lens to where it is melting on the pit's floor, and the hot spot there.
     d.sweep('glow', [(qx, tip, qz), (aim[0], -DEPTH + 0.5, aim[1])], 0.8, 0.8, lambda i: (1, 0, 0), closed=False, caps=True)
     centred(aim[0], aim[1], lambda: d.disc('breeder_amber', -DEPTH, -DEPTH + 0.6, 7, n=12))
-    return (qx - QUARTER / 2 + 5, qz - QUARTER / 2 + 5)
+    return (xa + 4, za + 4)
 
 
 def with_group(name, draw):
@@ -210,7 +207,7 @@ def main():
     out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(mp.ROOT, 'art', 'concepts', 'melt_drill.png')
     breeder_textures.main()
     drill_textures.main()
-    d.save_png(out, [((1, 1), 1.5, 0.5), ((-1, 1), 1.5, 0.4)])
+    d.save_png(out, [((1, 1), 1.4, 0.45), ((1, 0.25), 1.4, 0.08)])
 
 
 if __name__ == '__main__':

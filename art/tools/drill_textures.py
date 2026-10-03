@@ -27,10 +27,6 @@ def casing():
     t.rect(15, 2, 15, 14, 'J')
     t.rect(0, 15, 15, 15, 'I')
     t.rect(1, 14, 14, 14, 'F')
-    # Rivets in the corners.
-    for x, y in ((2, 3), (13, 3), (2, 12), (13, 12)):
-        t.set(x, y, 'I')
-        t.set(x - 1, y - 1, 'A')
     return t
 
 
