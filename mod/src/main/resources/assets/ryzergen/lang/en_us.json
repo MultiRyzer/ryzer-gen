@@ -747,7 +747,7 @@
   "tooltip.ryzergen.uranium_blanket.details.2": "Bred, the Electrorefiner gives plutonium for MOX rods",
   "tooltip.ryzergen.uranium_blanket.details.3": "<i>Real basis: the uranium blankets round a fast reactor core</i>",
   "tooltip.ryzergen.bred_uranium_blanket": "Rich in plutonium, for the Electrorefiner.",
-  "tooltip.ryzergen.bred_uranium_blanket.details.1": "With <v>1</v> salt: a plutonium ingot and a uranium ingot",
+  "tooltip.ryzergen.bred_uranium_blanket.details.1": "With <v>1</v> salt: <v>3</v> plutonium nuggets and a uranium ingot",
   "tooltip.ryzergen.bred_uranium_blanket.details.2": "<g>Safe to carry</g>: only running reactors give off radiation",
   "block.ryzergen.breeder_core": "Breeder Control Core",
   "block.ryzergen.breeder_frame": "Breeder Frame",

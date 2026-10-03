@@ -705,10 +705,11 @@ public class ModRecipeProvider extends RecipeProvider {
                 List.of(SizedIngredient.of(ModItems.SPENT_BREEDER_FUEL.get(), 1), SizedIngredient.of(OreType.SALT.dropTag(), 1)), null,
                 List.of(new ItemStack(ModItems.TRANSURANIC_METAL.get()), new ItemStack(ModItems.INGOTS.get(OreType.URANIUM).get()),
                         new ItemStack(ModItems.FISSION_WASTE.get())), 600);
-        // A bred uranium blanket: its plutonium for MOX rods, and the uranium left in it.
+        // A bred uranium blanket: its plutonium for MOX rods (3 nuggets, as much as a spent uranium rod
+        // gives the Reprocessor), and the uranium left in it.
         machine(preview, "electrorefining/bred_uranium_blanket", MachineRecipe.Process.ELECTROREFINING,
                 List.of(SizedIngredient.of(ModItems.BRED_URANIUM_BLANKET.get(), 1), SizedIngredient.of(OreType.SALT.dropTag(), 1)), null,
-                List.of(new ItemStack(ModItems.PLUTONIUM_INGOT.get()), new ItemStack(ModItems.INGOTS.get(OreType.URANIUM).get())), 600);
+                List.of(new ItemStack(ModItems.PLUTONIUM_NUGGET.get(), 3), new ItemStack(ModItems.INGOTS.get(OreType.URANIUM).get())), 600);
     }
 
     private static void machine(RecipeOutput output, String name, MachineRecipe.Process process, List<SizedIngredient> inputs,
