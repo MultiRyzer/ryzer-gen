@@ -181,6 +181,11 @@ The utility reactor: fuel for the stations and the tritium that starts fusion. F
 - [ ] Hand-launched anchor sails and swarm counter
 - [ ] Sky renderer showing swarm coverage
 
+## Melt Drill (design section 11c)
+- [ ] Concept: the rig on the surface, the drill string, the head and the glazed shaft
+- [ ] The drill: 8 x 8 chunk quarter to bedrock, drill string, fused rock walls, filter, speed modules, tungsten tip, config
+- [ ] Benchmark its speed against ATM10's quarries
+
 ## Progression map
 - [x] An in-game map of the whole production line (key Y): tier columns, arrows, steps lit as you reach them and the next ones pulsing, a panel per step with how it works and spoilers for the best setups (3 Oct 2026)
 - [ ] Open a step's recipes in JEI or EMI from its panel
