@@ -3,6 +3,7 @@ the house style and even, as the breeder's are: big faces get panels drawn a blo
 textures drawn at their height, round parts change only down their height.
 - casing: the drill core's light cladding, one plate per block, lit along the top and the left, a
   shadowed foot and right edge, so a wall of them reads as neat plates (as the station's stack).
+- pot: the pressure vessel's brushed steel, changing only across, so the round pot shows it evenly.
 - vent: a louvred graphite vent, a block, set into the middle of each face of the core.
 - band: a graphite band 4 high (rows 12 to 15), lit along its top, bolted every 4 pixels: the
   core's top and the chamber's ceiling.
@@ -30,6 +31,18 @@ def casing():
     for x, y in ((2, 3), (13, 3), (2, 12), (13, 12)):
         t.set(x, y, 'I')
         t.set(x - 1, y - 1, 'A')
+    return t
+
+
+def pot():
+    """The pressure vessel's brushed steel: light, with fine vertical brushing (columns a shade
+    apart), changing only across, so a round pot shows it evenly; lit along the top, shadowed at
+    the foot."""
+    t = Tex()
+    for x in range(16):
+        t.rect(x, 0, x, 15, ('E', 'E', 'F', 'E', 'A', 'E', 'F', 'F')[x % 8])
+    t.rect(0, 0, 15, 0, 'A')
+    t.rect(0, 15, 15, 15, 'I')
     return t
 
 
@@ -93,6 +106,7 @@ def warning():
 
 TEXTURES = {
     'casing': casing,
+    'pot': pot,
     'vent': vent,
     'band': band,
     'frame': frame,
