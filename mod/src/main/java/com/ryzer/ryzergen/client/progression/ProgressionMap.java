@@ -40,10 +40,14 @@ public final class ProgressionMap {
     /** The first column that is still a preview: shown greyed as "more to come" with the preview off. */
     public static final int FIRST_PREVIEW_COLUMN = 5;
 
-    /** Cell colours for the spoiler grids, by letter. */
+    /**
+     * Cell colours for the spoiler grids, by letter, as each control screen colours its plan: the
+     * station's fuel green, moderator amber, control red, coolant blue; the breeder's fuel cyan (B)
+     * and blanket green (b).
+     */
     public static final Map<Character, Integer> CELL_COLOURS = Map.of(
             'F', 0xFF44D65E, 'M', 0xFFE8B030, 'R', 0xFFE0503C, 'C', 0xFF3A8CF0,
-            'b', 0xFF8AD06A, 'B', 0xFF35C8F5);
+            'B', 0xFF35C8F5, 'b', 0xFF44D65E);
 
     private static final Map<String, Node> NODES = new LinkedHashMap<>();
 
@@ -122,8 +126,8 @@ public final class ProgressionMap {
         add("breeder_fuel", ModItems.BREEDER_FUEL, 5, 3, "transuranic", "fuel_fabricator");
         add("uranium_blanket", ModItems.URANIUM_BLANKET, 5, 4, "fuel_fabricator", "uranium_ingot");
         add("breeder", ModItems.BREEDER_CORE, 5, 5, List.of(
-                new Grid("breeder_economy", new String[] {"FFF", "FbFF", "FFbbb", "bbbb", "bbb"}, true),
-                new Grid("breeder_breeding", new String[] {"FbF", "bFbb", "FFbFF", "bbFb", "Fbb"}, true)),
+                new Grid("breeder_economy", new String[] {"BBB", "BbBB", "BBbbb", "bbbb", "bbb"}, true),
+                new Grid("breeder_breeding", new String[] {"BbB", "bBbb", "BBbBB", "bbBb", "Bbb"}, true)),
                 "breeder_fuel", "sodium", "uranium_blanket", "station");
         add("tritium", ModItems.IRRADIATED_TARGET_ROD, 5, 7, "breeder", "lithium_extractor");
 

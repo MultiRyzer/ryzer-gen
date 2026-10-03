@@ -793,6 +793,7 @@
   "progression.ryzergen.cell.M": "Graphite",
   "progression.ryzergen.cell.R": "Control rod",
   "progression.ryzergen.cell.C": "Coolant",
+  "progression.ryzergen.cell.B": "Fuel",
   "progression.ryzergen.cell.lower_b": "Blanket",
   "progression.ryzergen.grid.uranium_power": "Uranium, most power (as the control screen shows it, front row at the bottom)",
   "progression.ryzergen.grid.uranium_economy": "Uranium, most energy per rod",
