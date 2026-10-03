@@ -181,6 +181,10 @@ The utility reactor: fuel for the stations and the tritium that starts fusion. F
 - [ ] Hand-launched anchor sails and swarm counter
 - [ ] Sky renderer showing swarm coverage
 
+## Progression map
+- [x] An in-game map of the whole production line (key Y): tier columns, arrows, steps lit as you reach them and the next ones pulsing, a panel per step with how it works and spoilers for the best setups (3 Oct 2026)
+- [ ] Open a step's recipes in JEI or EMI from its panel
+
 ## Later
 - Fusion
 - Sail launcher automation and receiver dish
