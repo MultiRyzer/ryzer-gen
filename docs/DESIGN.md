@@ -19,6 +19,7 @@ Most reactor mods have one answer to "how do I get more power": build it bigger.
 3. **No grind.** Cheap structure, meaningful components. Milestones unlock tiers, not piles of ingots. Power is the price of progress (section 5).
 4. **Every tier stays useful.** Earlier reactors become stepping stones, not junk.
 5. **Pack friendly.** Standard energy, easy recipe tweaking, sensible configs, good performance. Built to earn a spot in packs like ATM10.
+6. **Roots run deep** (settled 3 Oct 2026). Harvesting the sun sits at the end of one long production line that starts with a rock dug out of the ground. No tier becomes self-sufficient on its own advanced tech: each keeps needing the tiers below it (their fuel, materials or power), so a late base still runs its first machines, and the player can look back down the line and see their roots. Real basis: even the most advanced technology starts as ore in a mine. So the breeder cannot refuel itself (it needs the MOX station's spent fuel), and the station feeds on the fuel cycle and the mines below it.
 
 ## 3. Progression ladder
 
@@ -379,7 +380,7 @@ Real basis: every pass through a thermal reactor builds up heavier plutonium iso
    - **Lithium:** lithium target rods breed tritium, the fuel that starts fusion (section 10). The only source of tritium until a fusion reactor's own blanket breeds enough.
    Every blanket slot given to one is a slot not given to the others, so the breeder's layout is a choice between fuel for fission and fuel for fusion.
    The blanket is a ring of slots round the fuel in the breeder's own planning grid, planned on its control screen like the station's channels (settled 30 Sep 2026).
-6. **Spent breeder fuel closes the loop:** it goes back through the pyroprocessor into transuranic metal and fission waste, so a breeder can keep itself fuelled once started. Real basis: fast reactor fuel cycles are designed to close this way (settled 30 Sep 2026).
+6. **Spent breeder fuel closes part of the loop:** it goes back through the pyroprocessor into transuranic metal and fission waste, but only half of it, so a breeder always needs spent MOX from a station to stay fuelled (pillar 6, settled 3 Oct 2026; it was once a full loop).
 
 ### The core (first pass, 1 Oct 2026; numbers to play-test)
 `machine/breeder/BreederReactor` (the sums, shared with the screen) and `BreederRunner` (running it).
@@ -389,7 +390,7 @@ Real basis: every pass through a thermal reactor builds up heavier plutonium iso
 - **The sodium loop:** 4,000 mB of liquid sodium, closed (never used up), filled through the sodium port; the reactor will not start until it is full, and a part-filled loop carries less. Cooling is not local, as the station's is: the sodium flows through the whole core and carries up to 100,000 thermal FE/t at 100% flow, set on the screen in 5% steps. The pumps draw 4,000 FE/t at 100%, as the square of the flow. As in the station, the harder the sodium works the hotter the core settles (300 to 550°C) and the more efficient the steam plant (30 to 42%), so the best flow carries the heat with little to spare. Too little flow and the core heats: overheating from 600°C, SCRAM at 650°C until below 450°C. Real basis: a sodium-cooled fast reactor's primary pumps, and its scram.
 - **Output:** a full core at the right flow gives about 36,000 FE/t (the low end of the tier's 20,000 to 100,000 target, room for the steady-state streak later). `breeder.output_percent` scales the heat, the loop and the pumps together, so layouts and flows play the same.
 - **Ports** (on the side consoles, inputs on your left as you face the front): fuel in (fuel, control rods and blankets, into planned positions), liquid sodium in; out on the right, spent fuel and bred blankets (pushed to whatever is beside the port, or pulled by a pipe), and energy (pushed, or pulled by a cable).
-- **Spent breeder fuel** comes out hot (cool it in the pool), and the Electrorefiner turns it and a salt back into transuranic metal, a uranium ingot and fission waste, so a running breeder keeps itself fuelled with only steel and salt added.
+- **Spent breeder fuel** comes out hot (cool it in the pool). The Electrorefiner turns 2 of it and a salt back into one transuranic metal, a uranium ingot and fission waste: half what it took, so the breeder never fuels itself (pillar 6). The other half comes from the MOX station's spent fuel, so the two reactors feed each other: the breeder's blanket makes the station's plutonium, and the station's spent MOX tops up the breeder. Real basis: a fast reactor's core burns more fissile fuel than it makes; only the blanket gains (settled 3 Oct 2026).
 - Still to come: the sodium fire (its failure), the steady-state streak, sounds and the announcer, advancements, and JEI and EMI pages.
 
 ### Shape (concept 30 Sep 2026, base reworked 1 Oct 2026)
