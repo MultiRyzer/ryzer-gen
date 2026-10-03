@@ -5,6 +5,7 @@ Player-facing changes, newest first. Paste each release's section into the Modri
 ## Unreleased
 
 ### New
+- **The progression map.** Press Y for a map of the whole mod, from ore in the ground to the fission station: every step in tier columns, with arrows from each step to what it feeds. The steps you have reached light up and the ones you can make next pulse, so you can see how far you have come. Click a step to read how it works, and open its spoilers for the best setups we have found (the station's best layouts among them). The key can be changed under Controls.
 - **JEI and EMI pages** for the Spent Fuel Pool, the Container Battery and steam. The pool's page gives its cooling times and the battery's its capacity and rate, from your config. Look up steam to see where it comes from: the microreactor boils its coolant into steam you can pipe out, while the fission station boils its water into its own turbine.
 - **Two advancements:** Cooling Off (build a Spent Fuel Pool) and Grid Scale (build a Container Battery).
 - **Floodlights round the fission station's base.** They glow while it runs, and the base gives off light, so the ground round the station is lit at night.

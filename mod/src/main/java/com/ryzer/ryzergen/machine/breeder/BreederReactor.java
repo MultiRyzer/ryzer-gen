@@ -118,7 +118,7 @@ public final class BreederReactor {
 
         /** Whether the assembly at {@code i} is over the hot spot limit. */
         public boolean hotSpot(int i) {
-            return heat[i] > hotSpot() + 0.5F;
+            return heat[i] > BreederReactor.hotSpot() + 0.5F;
         }
 
         /** Minutes a fresh blanket at position {@code i} takes to breed, or 0 if nothing is breeding it. */

@@ -662,6 +662,14 @@ Radiation is on by default (config toggle to turn it off). It exists to make the
 - Test designs in the planner before building.
 - Any repeated manual action should be replaced by automation soon after the player understands it.
 
+### The progression map (3 Oct 2026)
+An in-game map of the whole production line, from ore in the ground to the sun (pillar 6), opened with its own key (Y by default, rebindable). `client/progression/`.
+- **Layout:** left to right in tier columns (from the ground, tier 1 materials, the microreactor, the fuel cycle, fission, breeder, fusion, the sun), a step per node with its item's icon and name, and an arrow from each step to the steps it feeds. Drag or scroll to move along it.
+- **Your roots:** a step lights up once you have reached it (its item has been in your inventory, or the game's statistics show it crafted or picked up); the steps you can make next pulse amber; the rest wait, dimmed. The lit part grows as you play, so you can look back down the line at where you started. What the inventory scan has seen is kept per world in the game folder.
+- **Panels:** click a step for what it needs and how it works. A spoiler button shows the best setups found: the microreactor's best mode, the station's and the breeder's best layouts from the optimisers, drawn as the control screens show them.
+- **Preview:** with the preview setting off the map ends at fission, with a "more to come" column; on, the breeder, fusion and the swarm appear.
+- The steps live in `ProgressionMap` (structure) and the lang file (`progression.ryzergen.<step>.info.N` and `.spoiler.N`); keep them in step with recipes and best layouts as they change.
+
 ## 15. Compatibility
 
 - Standard NeoForge energy (FE).

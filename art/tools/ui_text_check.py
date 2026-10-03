@@ -113,6 +113,19 @@ CHECKS = [
     ('gui.ryzergen.breeder.plan_temperature', ['42', '550'], 104),
     ('gui.ryzergen.breeder.fuel_life', ['9999'], 104),
     ('gui.ryzergen.breeder.blankets', ['19'], 104),
+    # Progression map (client/progression/ProgressionScreen): column headings in a 118-wide column
+    # less its gap, and the spoiler button across the 210-wide panel less its margins.
+    ('progression.ryzergen.column.dig', [], 106),
+    ('progression.ryzergen.column.materials', [], 106),
+    ('progression.ryzergen.column.microreactor', [], 106),
+    ('progression.ryzergen.column.fuel_cycle', [], 106),
+    ('progression.ryzergen.column.fission', [], 106),
+    ('progression.ryzergen.column.breeder', [], 106),
+    ('progression.ryzergen.column.fusion', [], 106),
+    ('progression.ryzergen.column.swarm', [], 106),
+    ('progression.ryzergen.column.more', [], 106),
+    ('progression.ryzergen.spoilers.show', [], 190),
+    ('progression.ryzergen.spoilers.hide', [], 190),
     # Home battery (battery/HomeBatteryScreen): screen x 30 to 114, text from x 34.
     ('gui.ryzergen.battery.stored', ['999.9k'], 76),
     ('gui.ryzergen.battery.capacity', ['999.9k'], 76),
