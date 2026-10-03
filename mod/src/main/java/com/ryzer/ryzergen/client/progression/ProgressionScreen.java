@@ -38,7 +38,7 @@ public class ProgressionScreen extends Screen {
     private static final int NODE = 0xFF2B3036;
     private static final int NODE_AHEAD = 0xFF1F2328;
     private static final int TOP = 30;
-    private static final int COLUMN_W = 118;
+    private static final int COLUMN_W = 132;
     private static final int ROW_H = 26;
     private static final int BOX = 20;
     private static final int MARGIN = 14;
@@ -192,9 +192,10 @@ public class ProgressionScreen extends Screen {
     }
 
     /**
-     * An arrow from each input to the step it feeds: right from the input, down or up in the gap
-     * just before the step's column, then into it. Lit cyan where the input is reached; the
-     * hovered or selected step's inputs stand out.
+     * An arrow from each input to the step it feeds, routed like a metro map so it never crosses a
+     * step or its name: down out of the input into the gap below its row, along that gap, then in
+     * the gap just before the step's column up or down to the step, and into it from the left.
+     * Lit cyan where the input is reached; the hovered or selected step's inputs stand out.
      */
     private void renderEdges(GuiGraphics graphics, @Nullable Node focus) {
         for (int pass = 0; pass < 2; pass++) {
@@ -209,20 +210,17 @@ public class ProgressionScreen extends Screen {
                         continue;
                     }
                     int colour = focused ? 0xFFFFFFFF : reached(from) ? 0x9035C8F5 : 0x30FFFFFF;
-                    int x1 = nodeX(from) + BOX;
-                    int y1 = nodeY(from) + BOX / 2;
-                    int x2 = nodeX(node);
-                    int y2 = nodeY(node) + BOX / 2;
-                    int mid = x2 - 5;
-                    if (from.column() == node.column()) {
-                        // Same column: down the step's left side.
-                        mid = x2 - 4;
-                        x1 = nodeX(from);
-                    }
-                    graphics.fill(Math.min(x1, mid), y1, Math.max(x1, mid) + 1, y1 + 1, colour);
-                    graphics.fill(mid, Math.min(y1, y2), mid + 1, Math.max(y1, y2) + 1, colour);
-                    graphics.fill(mid, y2, x2, y2 + 1, colour);
-                    graphics.fill(x2 - 3, y2 - 1, x2 - 1, y2 + 2, colour);
+                    int sx = nodeX(from) + BOX / 2;
+                    int sy = nodeY(from) + BOX;
+                    int lane = sy + (ROW_H - BOX) / 2;
+                    int tx = nodeX(node);
+                    int ty = nodeY(node) + BOX / 2;
+                    int gap = tx - 5;
+                    graphics.fill(sx, sy, sx + 1, lane + 1, colour);
+                    graphics.fill(Math.min(sx, gap), lane, Math.max(sx, gap) + 1, lane + 1, colour);
+                    graphics.fill(gap, Math.min(lane, ty), gap + 1, Math.max(lane, ty) + 1, colour);
+                    graphics.fill(gap, ty, tx, ty + 1, colour);
+                    graphics.fill(tx - 3, ty - 1, tx - 1, ty + 2, colour);
                 }
             }
         }
@@ -244,11 +242,13 @@ public class ProgressionScreen extends Screen {
             graphics.fill(x + 1, y + 1, x + BOX - 1, y + BOX - 1, next ? 0x60141820 : 0xA0141820);
             graphics.pose().popPose();
         }
-        // The step's name beside it, small, cut to the column.
-        graphics.pose().pushPose();
-        graphics.pose().translate(x + BOX + 4, y + 6, 0);
-        graphics.pose().scale(0.75F, 0.75F, 1);
+        // The step's name beside it, small, cut to the column, on a backing so no line shows through.
         String label = font.plainSubstrByWidth(name(node).getString(), (int) ((COLUMN_W - BOX - 16) / 0.75F));
+        int labelW = Math.round(font.width(label) * 0.75F);
+        graphics.fill(x + BOX + 2, y + 4, x + BOX + 6 + labelW, y + BOX - 4, 0xFF141820);
+        graphics.pose().pushPose();
+        graphics.pose().translate(x + BOX + 4, y + 7, 0);
+        graphics.pose().scale(0.75F, 0.75F, 1);
         graphics.drawString(font, label, 0, 0, reached ? TEXT : next ? NEXT : DIM, false);
         graphics.pose().popPose();
     }
@@ -289,7 +289,7 @@ public class ProgressionScreen extends Screen {
         int left = width - PANEL_W;
         graphics.fill(left, TOP, width, height, HEADER);
         graphics.fill(left, TOP, left + 1, height, LINE);
-        int textW = PANEL_W - 16;
+        int textW = PANEL_W - 30;
         graphics.enableScissor(left + 1, TOP, width, height);
         int y = TOP + 8 - Math.round(panelScroll);
         int top = y;
@@ -337,6 +337,31 @@ public class ProgressionScreen extends Screen {
         }
         panelHeight = y - top + 16;
         graphics.disableScissor();
+        // The close button, top right, fixed while the panel scrolls.
+        boolean overClose = overClose(mouseX, mouseY);
+        graphics.fill(width - CLOSE - 6, TOP + 4, width - 6, TOP + 4 + CLOSE, overClose ? 0xFF7A3030 : 0xFF3A4047);
+        graphics.renderOutline(width - CLOSE - 6, TOP + 4, CLOSE, CLOSE, overClose ? 0xFFE0503C : 0xFF535A64);
+        graphics.drawString(font, "x", width - CLOSE - 6 + (CLOSE - font.width("x")) / 2 + 1, TOP + 6, TEXT, false);
+    }
+
+    private static final int CLOSE = 12;
+
+    private boolean overClose(double mouseX, double mouseY) {
+        return selected != null && mouseX >= width - CLOSE - 6 && mouseX < width - 6 && mouseY >= TOP + 4 && mouseY < TOP + 4 + CLOSE;
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        // Esc closes a step's panel first, then the map; the map's own key closes it too.
+        if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE && selected != null) {
+            selected = null;
+            return true;
+        }
+        if (ProgressionKeys.OPEN_MAP.matches(keyCode, scanCode)) {
+            onClose();
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     private int paragraph(GuiGraphics graphics, Component text, int x, int y, int w, int colour) {
@@ -388,6 +413,11 @@ public class ProgressionScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
+            if (overClose(mouseX, mouseY)) {
+                selected = null;
+                click();
+                return true;
+            }
             if (selected != null && mouseX >= width - PANEL_W) {
                 if (mouseY >= spoilerButtonY && mouseY < spoilerButtonY + 14 && mouseX >= width - PANEL_W + 8 && mouseX < width - 8) {
                     spoilers = !spoilers;
