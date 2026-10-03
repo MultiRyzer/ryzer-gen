@@ -106,6 +106,8 @@ CHECKS = [
     ('gui.ryzergen.breeder.live', ['-99.9k', '650'], 104),
     ('gui.ryzergen.breeder.plan_empty', [], 104),
     ('gui.ryzergen.breeder.too_hot', [], 104),
+    ('gui.ryzergen.breeder.hot_spots', ['19'], 104),
+    ('gui.ryzergen.breeder.hot_spot_hint', [], 104),
     ('gui.ryzergen.breeder.more_flow', ['100'], 104),
     ('gui.ryzergen.breeder.plan', ['99.9k'], 104),
     ('gui.ryzergen.breeder.plan_temperature', ['42', '550'], 104),

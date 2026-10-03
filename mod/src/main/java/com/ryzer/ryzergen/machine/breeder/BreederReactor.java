@@ -17,12 +17,18 @@ import net.minecraft.world.item.ItemStack;
  *
  * <p>Heat is in thermal FE per tick. A fuel assembly makes a base amount, 10% more for each fuel
  * assembly beside it (fast neutrons shared across the core) and 30% less for each control rod. A
- * fast reactor has no moderator: the neutrons stay fast, which is what lets it breed.
+ * fast reactor has no moderator: the neutrons stay fast, which is what lets it breed. Packed fuel is
+ * also thriftier: the shared neutrons raise an assembly's burn by only half as much as its heat, as
+ * a bigger core leaks fewer neutrons. But no assembly may run past the hot spot limit (13,000), the
+ * most heat its pins can pass to the sodium: any more stays in the core, which then cannot hold
+ * steady. So fuel can be packed up to three abreast, or more with a control rod to trim it. Real
+ * basis: a fuel pin's linear heat rating, the limit every fast reactor core is designed round.
  *
  * <p>Breeding: every blanket assembly catches the spare neutrons of the fuel beside it, so it breeds
  * at a rate set by that fuel's heat. A blanket costs the fuel nothing (its neutrons would otherwise
  * leak out of the core), so the choice is which blanket, and where: fuel for the stations
- * (plutonium) or for fusion (tritium). Real basis: the breeding blankets round a fast reactor core.
+ * (plutonium) or for fusion (tritium). Spread fuel touches more blankets and breeds more; packed
+ * fuel burns less. Real basis: the breeding blankets round a fast reactor core.
  *
  * <p>Cooling is not local, as in the station: the liquid sodium flows through the whole core, so the
  * loop carries away up to its capacity, set by the pumps' flow (0 to 100%) and how full the loop
@@ -53,14 +59,19 @@ public final class BreederReactor {
     /** Ticks an assembly lasts burning at 100%: an hour. */
     public static final int FUEL_LIFE = 72_000;
     private static final float FUEL_BONUS = 0.1F;
+    /** What each fuel neighbour adds to an assembly's burn: half its heat bonus (packed cores leak less). */
+    private static final float FUEL_BURN_BONUS = 0.05F;
+    /** The most heat one assembly can pass to the sodium (before the config's output setting). */
+    public static final float HOT_SPOT = 13_000;
     private static final float CONTROL_CUT = 0.3F;
     private static final float MIN_FACTOR = 0.1F;
     /**
      * Breeding work per thermal FE of the fuel beside a blanket, in the station's target units
      * ({@link StationReactor#TARGET_WORK} thousands to finish one): a blanket beside two
-     * assemblies takes about 20 minutes, as a target rod beside two uranium rods in the station.
+     * assemblies takes about 40 minutes (halved from 20 on 3 Oct 2026, so a breeder is not a flood
+     * of plutonium).
      */
-    public static final float BREED_SHARE = 0.1F;
+    public static final float BREED_SHARE = 0.05F;
     /** mB of liquid sodium that fills the loop. Less than full carries less heat in step. */
     public static final int LOOP = 4_000;
     /** Thermal FE per tick the full loop carries away at 100% flow: a whole core at full load. */
@@ -97,9 +108,19 @@ public final class BreederReactor {
 
     /**
      * A layout worked out: per position, the heat each assembly makes, how hard it burns, and how
-     * fast each blanket breeds; then the total heat.
+     * fast each blanket breeds; then the total heat. {@code stranded} is heat over the hot spot
+     * limit, which the sodium cannot take: any at all and the core cannot hold steady.
      */
-    public record Analysis(float[] heat, float[] burn, float[] breed, float generation, int fuel, int blankets) {
+    public record Analysis(float[] heat, float[] burn, float[] breed, float generation, float stranded, int fuel, int blankets) {
+        public boolean holdsSteady() {
+            return stranded <= 0.5F;
+        }
+
+        /** Whether the assembly at {@code i} is over the hot spot limit. */
+        public boolean hotSpot(int i) {
+            return heat[i] > hotSpot() + 0.5F;
+        }
+
         /** Minutes a fresh blanket at position {@code i} takes to breed, or 0 if nothing is breeding it. */
         public float breedMinutes(int i) {
             return breed[i] <= 0 ? 0 : StationReactor.TARGET_WORK * 1000F / breed[i] / 1200F;
@@ -161,6 +182,11 @@ public final class BreederReactor {
             }
         }
         return java.util.Arrays.copyOf(out, n);
+    }
+
+    /** The hot spot limit after the config's output setting. */
+    public static float hotSpot() {
+        return HOT_SPOT * multiplier();
     }
 
     /** Thermal FE per tick the loop carries at this flow (0 to 1) and fill (mB of sodium). */
@@ -226,6 +252,7 @@ public final class BreederReactor {
         float[] heat = new float[POSITIONS];
         float[] burn = new float[POSITIONS];
         float generation = 0;
+        float stranded = 0;
         int fuel = 0;
         int blankets = 0;
         for (int i = 0; i < POSITIONS; i++) {
@@ -236,20 +263,23 @@ public final class BreederReactor {
                 continue;
             }
             float factor = 1;
+            float burnFactor = 1;
             for (int n : neighbours(i)) {
                 if (!types[n].accepts(items[n])) {
                     continue;
                 }
                 if (types[n] == Position.FUEL) {
                     factor += FUEL_BONUS;
+                    burnFactor += FUEL_BURN_BONUS;
                 } else if (types[n] == Position.CONTROL) {
                     factor -= CONTROL_CUT;
+                    burnFactor -= CONTROL_CUT;
                 }
             }
-            factor = Math.max(MIN_FACTOR, factor);
-            heat[i] = FUEL_HEAT * factor * multiplier;
-            burn[i] = factor;
+            heat[i] = FUEL_HEAT * Math.max(MIN_FACTOR, factor) * multiplier;
+            burn[i] = Math.max(MIN_FACTOR, burnFactor);
             generation += heat[i];
+            stranded += Math.max(0, heat[i] - HOT_SPOT * multiplier);
             fuel++;
         }
         float[] breed = new float[POSITIONS];
@@ -261,6 +291,6 @@ public final class BreederReactor {
                 breed[i] += heat[n] * BREED_SHARE;
             }
         }
-        return new Analysis(heat, burn, breed, generation, fuel, blankets);
+        return new Analysis(heat, burn, breed, generation, stranded, fuel, blankets);
     }
 }

@@ -32,7 +32,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
  *
  * <p>The loop is closed: its sodium is never used up, but it must be filled before the reactor will
  * start, and a loop less than full carries less heat in step. If the sodium cannot keep up (too
- * little flow, or a part-filled loop) the core heats; at 650°C the automatic SCRAM drops the control
+ * little flow, a part-filled loop, or an assembly over the hot spot limit) the core heats; at 650°C the automatic SCRAM drops the control
  * rods until it is below 450°C. Real basis: a sodium-cooled fast reactor and its scram. (A sodium
  * fire, the breeder's own failure, comes with its safety systems.)
  */
@@ -309,12 +309,14 @@ public class BreederRunner {
         // sodium carries less, and the core heats.
         float generation = allowed && !scrammed && (filled || status.running()) ? analysis.generation() : 0;
 
-        // The sodium carries away what the loop and the core's temperature allow: all the heat made
-        // if it can, and with the reaction stopped, whatever heat the core still holds.
+        // The sodium carries away what the loop and the core's temperature allow: the heat made, less
+        // any over a hot spot's limit (which stays in the core), and with the reaction stopped,
+        // whatever heat the core still holds.
         float stored = (temperature - AMBIENT) * HEAT_CAPACITY;
         float capacity = BreederReactor.capacity(flow(), sodium.getFluidAmount());
         float potential = capacity * BreederReactor.coolingRamp(temperature);
-        float removed = Math.max(0, Math.min(potential, generation > 0 ? generation : stored));
+        float carryable = generation > 0 ? Math.max(0, generation - analysis.stranded()) : stored;
+        float removed = Math.max(0, Math.min(potential, carryable));
         temperature += (generation - removed) / HEAT_CAPACITY;
         if (generation <= 0) {
             temperature -= (temperature - AMBIENT) * 0.0005F;
