@@ -80,12 +80,42 @@ def prism(mat, y1, y2, w, c, top=None, bottom=None, inward=False, v0=None):
             d.quad(mat, [(p0[0], y2, p0[1]), (p1[0], y2, p1[1]), (p1[0], y1, p1[1]), (p0[0], y1, p0[1])],
                    [(0, va), (min(16, u), va), (min(16, u), va + min(16, h)), (0, va + min(16, h))], (nx, 0, nz))
     for cap, y, up in ((top, y2, 1), (bottom, y1, -1)):
-        if cap is None:
-            continue
-        for k in range(1, 7, 2):
-            q = [pts[0], pts[k], pts[k + 1], pts[min(k + 2, 7)]]
-            d.quad(cap, [(x, y, z) for x, z in q], [((x - C) % 16, (z - C) % 16) for x, z in q], (0, up, 0))
-        d.quad(cap, [(x, y, z) for x, z in (pts[0], pts[7], pts[7], pts[0])], UV, (0, up, 0))
+        if cap is not None:
+            tiled_cap(cap, pts, y, up)
+
+
+def clip(poly, a, b):
+    """Keeps the part of a polygon on the left of the line a to b (one step of clipping to a convex shape)."""
+    out = []
+    for i in range(len(poly)):
+        p, q = poly[i], poly[(i + 1) % len(poly)]
+        sp = (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0])
+        sq = (b[0] - a[0]) * (q[1] - a[1]) - (b[1] - a[1]) * (q[0] - a[0])
+        if sp >= 0:
+            out.append(p)
+        if (sp >= 0) != (sq >= 0):
+            t = sp / (sp - sq)
+            out.append((p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t))
+    return out
+
+
+def tiled_cap(mat, pts, y, up):
+    """A flat cap over a convex outline, cut into block cells on the grid and each cell clipped to the
+    outline, so its texture shows whole a block at a time, as the grid's flat faces do."""
+    xs, zs = [p[0] for p in pts], [p[1] for p in pts]
+    order = pts if sum((pts[i][0] * pts[(i + 1) % 8][1] - pts[(i + 1) % 8][0] * pts[i][1]) for i in range(8)) > 0 else pts[::-1]
+    for gx in range(int(min(xs) // 16) * 16, int(max(xs)) + 1, 16):
+        for gz in range(int(min(zs) // 16) * 16, int(max(zs)) + 1, 16):
+            cell = [(gx, gz), (gx + 16, gz), (gx + 16, gz + 16), (gx, gz + 16)]
+            for i in range(len(order)):
+                cell = clip(cell, order[i], order[(i + 1) % len(order)])
+                if len(cell) < 3:
+                    break
+            if len(cell) < 3:
+                continue
+            for k in range(1, len(cell) - 1, 2):
+                q = [cell[0], cell[k], cell[k + 1], cell[min(k + 2, len(cell) - 1)]]
+                d.quad(mat, [(x, y, z) for x, z in q], [(x - gx, z - gz) for x, z in q], (0, up, 0))
 
 
 # ---------------------------------------------------------------- the base and the pit
@@ -103,6 +133,14 @@ for xa, xb in zip(steps, steps[1:]):
     d.quad('breeder_graphite', [(hi, RING, xa), (hi, RING, xb), (hi, 1, xb), (hi, 1, xa)], UV, (-1, 0, 0))
     for za, zb in zip(steps, steps[1:]):
         d.quad('drill_melt', [(xa, 1, za), (xb, 1, za), (xb, 1, zb), (xa, 1, zb)], UV, (0, 1, 0))
+
+# A hazard border round the pit's edge, a pixel proud of the ring.
+for x1, z1, x2, z2 in ((lo - 3, lo - 3, hi + 3, lo), (lo - 3, hi, hi + 3, hi + 3), (lo - 3, lo, lo, hi), (hi, lo, hi + 3, hi)):
+    d.box('hazard', x1, RING, z1, x2, RING + 0.4, z2, skip=('down',))
+# Heat warning signs on the base's front, either side of the ladder.
+for sx in (-1, 1):
+    x = C + sx * 34
+    d.box('breeder_fitting', x - 3, 0, -0.4, x + 3, 6, 0, decals={'north': 'drill_heat_sign'}, skip=('south',))
 
 # ---------------------------------------------------------------- the buttress legs
 DECK_Y = 4 * B
@@ -135,14 +173,14 @@ base = [(C - EMIT + 3, DECK_Y - 6, C - EMIT + 3), (C + EMIT - 3, DECK_Y - 6, C -
 tip = (C, tip_y, C)
 for k in range(4):
     a, b = base[k], base[(k + 1) % 4]
-    d.quad('breeder_graphite', [a, b, tip, tip], [(0, 0), (16, 0), (8, 16), (8, 16)],
+    d.quad('drill_emitter', [a, b, tip, tip], [(0, 0), (16, 0), (8, 16), (8, 16)],
            ((a[0] + b[0]) / 2 - C, -0.7 * EMIT, (a[2] + b[2]) / 2 - C))
 d.box('glow', C - 2.5, tip_y - 2, C - 2.5, C + 2.5, tip_y + 1, C + 2.5)
 d.box('drill_beam', C - 1.2, 1, C - 1.2, C + 1.2, tip_y - 2, C + 1.2, skip=('up', 'down'))
 d.box('breeder_amber', C - 7, 1, C - 7, C + 7, 1.6, C + 7, skip=('down',))
 
 # ---------------------------------------------------------------- the deck
-prism('drill_band8', DECK_Y, DECK_Y + 8, DECK_W, DECK_C, top='breeder_grate', bottom='breeder_graphite', v0=8)
+prism('drill_band8', DECK_Y, DECK_Y + 8, DECK_W, DECK_C, top='breeder_plinth', bottom='breeder_graphite', v0=8)
 prism('glow', DECK_Y + 3, DECK_Y + 4, DECK_W + 0.3, DECK_C)
 # The handrail round the deck's edge: one run from the right of the ladder's gap, round the deck,
 # back to the left of it, with a post at every corner and either side of the gap.
@@ -175,15 +213,15 @@ for k in range(3):
 # ---------------------------------------------------------------- the column
 COL = (RY, RY + 6 * B)
 for x, z in corners(CW, CC):
-    d.box('drill_casing', x - 2.5, COL[0], z - 2.5, x + 2.5, COL[1], z + 2.5, skip=('down', 'up'))
+    d.box('drill_post', x - 2.5, COL[0], z - 2.5, x + 2.5, COL[1], z + 2.5, skip=('down', 'up'))
 for face, (ax, az, bx, bz) in (('north', (C - CW + CC, C - CW, C + CW - CC, C - CW)), ('south', (C - CW + CC, C + CW, C + CW - CC, C + CW)),
                                ('west', (C - CW, C - CW + CC, C - CW, C + CW - CC)), ('east', (C + CW, C - CW + CC, C + CW, C + CW - CC))):
     normal = {'north': (0, 0, -1), 'south': (0, 0, 1), 'west': (-1, 0, 0), 'east': (1, 0, 0)}[face]
     for ya in range(int(COL[0]), int(COL[1]), 2 * B):
         yb = ya + 2 * B
         for p0, p1 in (((ax, ya, az), (bx, yb, bz)), ((ax, yb, az), (bx, ya, bz))):
-            d.sweep('breeder_graphite', [p0, p1], 1.8, 2.2, lambda i, v=normal: v, closed=False, caps=True)
-        d.sweep('breeder_graphite', [(ax, ya, az), (bx, ya, bz)], 1.8, 2.2, lambda i, v=normal: v, closed=False, caps=True)
+            d.sweep('drill_brace', [p0, p1], 1.8, 2.2, lambda i, v=normal: v, closed=False, caps=True)
+        d.sweep('drill_brace', [(ax, ya, az), (bx, ya, bz)], 1.8, 2.2, lambda i, v=normal: v, closed=False, caps=True)
 d.box('breeder_graphite', C - 10, COL[0], C - 10, C + 10, COL[1], C + 10, skip=('down', 'up'))
 d.box('breeder_amber', C - 10.3, COL[0] + 40, C - 10.3, C + 10.3, COL[0] + 44, C + 10.3, skip=('up', 'down'))
 d.box('breeder_pipe', C + CW + 2, COL[0], C - 6, C + CW + 8, COL[1] + 4, C + 2)
@@ -198,7 +236,7 @@ prism('drill_ring', COLLAR[0], COLLAR[1], 40, 12, top='breeder_grate', bottom='b
 prism('glow', COLLAR[0] + 6.5, COLLAR[0] + 7.5, 40.3, 12)
 HW = 30                 # the housing's half width: a box on the collar, not a round head
 HOUSE = (COLLAR[1], COLLAR[1] + 2 * B)
-d.box('drill_casing', C - HW, HOUSE[0], C - HW, C + HW, HOUSE[1], C + HW, top='breeder_grate', skip=('down',))
+d.box('drill_panel', C - HW, HOUSE[0], C - HW, C + HW, HOUSE[1], C + HW, top='breeder_plinth', skip=('down',))
 d.box('drill_band8', C - HW - 1, HOUSE[1] - 8, C - HW - 1, C + HW + 1, HOUSE[1], C + HW + 1, skip=('down', 'up'))
 outline(C - HW, HOUSE[1] - 10, C - HW, C + HW, HOUSE[1] - 9, C + HW, 'glow')
 # A louvred vent two blocks wide in the front and back faces.
@@ -206,13 +244,15 @@ for face, z, push in (('north', C - HW, -0.3), ('south', C + HW, 0.3)):
     a1, a2 = sorted((z, z + push))
     d.box('drill_vent', C - B, HOUSE[0] + 4, a1, C, HOUSE[0] + 20, a2, skip=face_only(face))
     d.box('drill_vent', C, HOUSE[0] + 4, a1, C + B, HOUSE[0] + 20, a2, skip=face_only(face))
+# The drill's number stencilled on the front, left of the vents.
+d.box('drill_panel', C - 29, HOUSE[0] + 9, C - HW - 0.3, C - 17, HOUSE[0] + 15, C - HW, decals={'north': 'drill_stencil'}, skip=('south',))
 # An inspection hatch on the front, a small window onto the generator glowing inside.
 d.box('breeder_graphite', C + 18, HOUSE[0] + 5, C - HW - 1, C + 26, HOUSE[0] + 17, C - HW, skip=('south',))
 d.box('drill_window', C + 19.5, HOUSE[0] + 7, C - HW - 1.3, C + 24.5, HOUSE[0] + 15, C - HW - 1, skip=('south',))
 # Generator pods on the flanks: boxes with cooling fins, a graphite base and a cyan line.
 for sx in (-1, 1):
     x1, x2 = sorted((C + sx * HW, C + sx * (HW + 14)))
-    d.box('drill_casing', x1, HOUSE[0] - 4, C - 18, x2, HOUSE[0] + 22, C + 18, top='breeder_graphite')
+    d.box('drill_panel', x1, HOUSE[0] - 4, C - 18, x2, HOUSE[0] + 22, C + 18, top='breeder_graphite')
     d.box('breeder_graphite', min(x1, x2) - 0.5, HOUSE[0] - 6, C - 18.5, max(x1, x2) + 0.5, HOUSE[0] - 2, C + 18.5)
     outline(x1, HOUSE[0] + 18, C - 18, x2, HOUSE[0] + 19, C + 18, 'glow')
     fx = C + sx * (HW + 14)
