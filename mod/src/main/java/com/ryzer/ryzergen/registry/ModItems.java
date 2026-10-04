@@ -48,6 +48,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> CREATIVE_WATER_TANK = ITEMS.registerSimpleBlockItem(ModBlocks.CREATIVE_WATER_TANK);
     public static final DeferredItem<BlockItem> FUSION_PREVIEW = ITEMS.registerSimpleBlockItem(ModBlocks.FUSION_PREVIEW);
     public static final DeferredItem<BlockItem> SUN_GATE_PREVIEW = ITEMS.registerSimpleBlockItem(ModBlocks.SUN_GATE_PREVIEW);
+    public static final DeferredItem<BlockItem> MEGA_DRILL_PREVIEW = ITEMS.registerSimpleBlockItem(ModBlocks.MEGA_DRILL_PREVIEW);
     public static final DeferredItem<BlockItem> STATION_CASING = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_CASING);
     public static final DeferredItem<BlockItem> POOL_CONTROLLER = ITEMS.registerSimpleBlockItem(ModBlocks.POOL_CONTROLLER);
     public static final DeferredItem<BlockItem> POOL_LINER = ITEMS.registerSimpleBlockItem(ModBlocks.POOL_LINER);

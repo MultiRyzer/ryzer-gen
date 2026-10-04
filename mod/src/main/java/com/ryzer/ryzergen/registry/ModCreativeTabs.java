@@ -84,7 +84,7 @@ public final class ModCreativeTabs {
                 ModItems.BASIC_CONTROL_BOARD, ModItems.ADVANCED_CONTROL_BOARD).forEach(item -> items.add(item.get()));
         // Anything not placed above, then the creative and preview items last.
         List<DeferredItem<? extends Item>> last = List.of(ModItems.CREATIVE_BATTERY, ModItems.CREATIVE_WATER_TANK,
-                ModItems.SWARM_CONTROLLER, ModItems.FUSION_PREVIEW, ModItems.SUN_GATE_PREVIEW);
+                ModItems.SWARM_CONTROLLER, ModItems.MEGA_DRILL_PREVIEW, ModItems.FUSION_PREVIEW, ModItems.SUN_GATE_PREVIEW);
         Set<Item> lastItems = new LinkedHashSet<>();
         last.forEach(item -> lastItems.add(item.get()));
         ModItems.ITEMS.getEntries().forEach(entry -> {

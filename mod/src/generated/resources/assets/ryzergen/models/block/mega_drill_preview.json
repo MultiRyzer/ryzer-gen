@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "ryzergen:block/drill/underside",
+    "side": "ryzergen:block/drill/panel_stencil",
+    "top": "ryzergen:block/drill/tread"
+  }
+}

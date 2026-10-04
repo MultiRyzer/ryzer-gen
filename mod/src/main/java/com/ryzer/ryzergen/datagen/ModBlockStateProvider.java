@@ -543,6 +543,12 @@ public class ModBlockStateProvider extends BlockStateProvider {
         // The sun gate preview uses the same block (its coverage setting changes only the drawing).
         horizontalBlock(ModBlocks.SUN_GATE_PREVIEW.get(), fusionPreview);
         simpleBlockItem(ModBlocks.SUN_GATE_PREVIEW.get(), fusionPreview);
+        // The mega drill preview: the block is not drawn in the world (it sits in the pit), so this
+        // is its item: the housing's stencilled panel round a cube, tread plate on top.
+        ModelFile drillPreview = models().cubeBottomTop("mega_drill_preview", modLoc("block/drill/panel_stencil"),
+                modLoc("block/drill/underside"), modLoc("block/drill/tread"));
+        getVariantBuilder(ModBlocks.MEGA_DRILL_PREVIEW.get()).forAllStates(state -> ConfiguredModel.builder().modelFile(drillPreview).build());
+        simpleBlockItem(ModBlocks.MEGA_DRILL_PREVIEW.get(), drillPreview);
     }
 
     /** The machine family's shared textures (art/tools/machine_family.py). */

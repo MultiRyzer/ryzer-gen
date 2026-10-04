@@ -6,6 +6,7 @@ import com.ryzer.ryzergen.machine.pool.PoolPartBlock;
 import com.ryzer.ryzergen.machine.pool.PoolLook;
 import com.ryzer.ryzergen.machine.pool.PoolControllerBlock;
 import com.ryzer.ryzergen.machine.fusion.FusionPreviewBlock;
+import com.ryzer.ryzergen.machine.drill.MegaDrillPreviewBlock;
 import com.ryzer.ryzergen.machine.sun.SunGatePreviewBlock;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.battery.HomeBatteryBlock;
@@ -133,6 +134,10 @@ public final class ModBlocks {
     // Creative-only: draws the fusion reactor's concept design round itself (next-tier preview).
     public static final DeferredBlock<FusionPreviewBlock> FUSION_PREVIEW = BLOCKS.register("fusion_preview",
             () -> new FusionPreviewBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+    // Creative-only: draws the mega drill's concept design round itself, running on a redstone signal.
+    public static final DeferredBlock<MegaDrillPreviewBlock> MEGA_DRILL_PREVIEW = BLOCKS.register("mega_drill_preview",
+            () -> new MegaDrillPreviewBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
+                    .lightLevel(state -> state.getValue(MegaDrillPreviewBlock.POWERED) ? 15 : 0)));
     // Creative-only: draws the sun gate's concept design round itself, and lights its platform.
     public static final DeferredBlock<SunGatePreviewBlock> SUN_GATE_PREVIEW = BLOCKS.register("sun_gate_preview",
             () -> new SunGatePreviewBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion().lightLevel(state -> 15)));

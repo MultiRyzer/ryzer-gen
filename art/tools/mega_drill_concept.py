@@ -1,5 +1,5 @@
-"""The mega drill's concept (design section 11c, option B), drawn as smooth quads, not yet in the
-game. Run:
+"""The mega drill's concept (design section 11c, option B), drawn as smooth quads and exported for
+the game's preview block (MegaDrillPreviewRenderer), before the real multiblock exists. Run:
     python art/tools/mega_drill_concept.py [OUT.png]
 
 One landmark tower that never moves, standing over the middle of a chunk on a 9 x 9 base (the
@@ -409,15 +409,38 @@ for sx in (-1, 1):
         ebox('drill_amber', lx - 1.5, ROOF + 2, lz - 1.5, lx + 1.5, ROOF + 5, lz + 1.5, skip=('down',))
 
 
+# ---------------------------------------------------------------- running and idle, export and pictures
+# Idle: the pit crusted over and dark, the beam off, the lamps, window and light lines dim, the
+# firebrick and the emitter's tip cooled.
+IDLE = {'drill_melt': 'drill_crust', 'drill_amber': 'drill_amber_off', 'glow': 'glow_off', 'drill_window': 'drill_window_off',
+        'drill_lamps': 'drill_lamps_off', 'drill_pit_wall': 'drill_pit_wall_cold', 'drill_emitter': 'drill_emitter_cold'}
+RUNNING_ONLY = ('drill_beam', 'drill_spot')
+GAME_DATA = os.path.join(mp.ROOT, 'mod', 'src', 'main', 'resources', 'assets', 'ryzergen', 'drill', 'mega_drill.json')
+
+
+def idle(quads):
+    return [(IDLE.get(t, t), v, n, g) for t, v, n, g in quads if t not in RUNNING_ONLY]
+
+
+def export():
+    """For the game's preview block (MegaDrillPreviewRenderer): the body that never changes in
+    'static', what changes when it runs in 'on' (running) and 'off' (idle)."""
+    running = d.quads
+    changes = [q for q in running if q[0] in IDLE or q[0] in RUNNING_ONLY]
+    d.quads = ([(t, v, n, 'static') for t, v, n, g in running if t not in IDLE and t not in RUNNING_ONLY]
+               + [(t, v, n, 'on') for t, v, n, g in changes]
+               + [(t, v, n, 'off') for t, v, n, g in idle(changes)])
+    d.export(GAME_DATA)
+    d.quads = running
+
+
 def main():
     out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(mp.ROOT, 'art', 'concepts', 'mega_drill.png')
     drill_textures.main()
+    export()
     d.save_png(out, [((1, 1), 2.0, 0.3), ((-1, 0.5), 2.0, 0.12)])
-    # Idle: the pit crusted over and dark, the beam off, the windows and light lines dim.
     running = d.quads
-    swap = {'drill_melt': 'drill_crust', 'drill_amber': 'drill_amber_off', 'glow': 'glow_off', 'drill_window': 'drill_window_off',
-            'drill_lamps': 'drill_lamps_off', 'drill_pit_wall': 'drill_pit_wall_cold', 'drill_emitter': 'drill_emitter_cold'}
-    d.quads = [(swap.get(t, t), v, n, g) for t, v, n, g in running if t not in ('drill_beam', 'drill_spot')]
+    d.quads = idle(running)
     d.save_png(out.replace('.png', '_idle.png'), [((1, 1), 2.0, 0.3)])
     d.quads = running
 
