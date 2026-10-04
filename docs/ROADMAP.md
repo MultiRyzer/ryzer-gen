@@ -185,7 +185,10 @@ The utility reactor: fuel for the stations and the tritium that starts fusion. F
 - [x] Concept (`art/tools/melt_drill_concept.py`): the quarry block outside a chunk, drills (Mk I to III) standing up in its four quarters, each a tower on legs with a glass beam chamber (after a derrick, a rocket and a single-machine version)
 - [x] Concept refined with the user: drills as tall eight-sided towers (`art/concepts/melt_drill_mk3.png`) that sink layer by layer; a static mega drill as the fallback
 - [x] Option B drafted: one static mega drill over the chunk (`art/concepts/mega_drill.png`)
-- [ ] Choose: sinking towers or the mega drill; then settle its open points
+- [x] Chosen: the mega drill (4 Oct 2026), an angular landmark tower over the chunk
+- [ ] Refine its look with the user; textures and effects
+- [ ] Build it: the multiblock (parts, ghost, auto-build), mining the chunk from 8 under its base, glazed cavity, filter, drill heads, speed modules, tips, coolant, config
+- [ ] The deep bore past bedrock, and its balance (open question 22)
 - [ ] The quarry block and drills: four quarters to bedrock, fused rock walls, filter, drill marks, speed modules, tungsten tips, chunk loading, config
 - [ ] Benchmark its speed against ATM10's quarries
 
