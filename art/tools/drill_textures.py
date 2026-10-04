@@ -17,9 +17,8 @@ squeezed out of shape.
   copper coolant duct, a joint each block).
 - Bands drawn at their height (rows 16 - h to 15) with patterns that repeat every 4 or 8 pixels,
   so they run on unbroken round any length: band (4 high), band6, band8 (with the slot the light
-  line sits in), base (6: a lit lip over hazard stripes), pit_wall (5: firebrick lining the pit,
-  glowing where the melt laps it), collar (12: vents, the light line's slot, a bolt line), desk
-  (8: cabinet doors). Every band texture is filled to the top, so one used on a taller face shows
+  line sits in), base (6: a lit lip over hazard stripes, the frame's edges inside and out), collar
+  (12: vents, the light line's slot, a bolt line), desk (8: cabinet doors). Every band texture is filled to the top, so one used on a taller face shows
   plain graphite rather than nothing.
 - Patterns that repeat every 8 pixels, laid from the world grid so any cut shows them evenly:
   grating (bar grating round the pit), tread (diamond plate for decks and roofs), underside
@@ -29,13 +28,17 @@ squeezed out of shape.
 - Decals at their exact size, drawn in the top left corner of their sheet: window (6 x 10),
   screen (16 x 9).
 - Lit: window, screen, amber (the lamps and the shaft's light band), lamps (the console's status
-  lights). Those that go dark when the drill stands idle have an _off picture, as do
-  pit_wall and emitter (cold).
+  lights), charge and charge_head (the charge running down the shaft before the beam fires). Those
+  that go dark when the drill stands idle have an _off picture, as does emitter (cold).
+- The heat overlay (textures/effect/, not on the block atlas): heat_0 to heat_3, glowing cracks the
+  game adds over any block's own model as the layer being mined heats, over heat_tint, a plain white
+  sheet the renderer colours to redden and darken the block. One overlay for every block, modded
+  ones too.
 - The sinking towers' (melt_drill_concept.py): casing, pot, vent, frame, skirt, ring, warning.
 - melt and beam (animated, lit): the molten pit, dark crust drifting slowly over glowing melt,
   and the laser beam, a bright core flickering along its length. crust is the pit while idle.
-  hot_obsidian (animated, lit): the mega drill's pit floor while it runs, vanilla obsidian mapped
-  onto a heat ramp, glowing red hot; idle, its pit is plain vanilla obsidian.
+  hot_obsidian and hot_obsidian_core (animated, lit): the layer being mined in the concept's
+  pictures, vanilla obsidian mapped onto a heat ramp, white hot where the beam strikes.
 Run from the repo root:
     python art/tools/drill_textures.py
 """
@@ -427,23 +430,6 @@ def base():
     return t
 
 
-def pit_wall(cold=False):
-    """The pit's walls, 5 high (rows 11 to 15): a steel lip, then firebrick in two courses, the
-    bricks a block apart staggered, glowing where the melt laps them. Cold, the glow is gone."""
-    t = Tex()
-    t.rect(0, 0, 15, 15, 'O')
-    t.rect(0, 11, 15, 11, 'T')
-    t.rect(0, 12, 15, 12, 'r')
-    t.rect(0, 13, 15, 13, 'O')
-    t.rect(0, 14, 15, 14, 'O' if cold else 'Z')
-    t.rect(0, 15, 15, 15, 'o' if cold else 'X')
-    for x in range(0, 16, 8):
-        t.set(x, 12, 'o')
-        t.set(x, 13, 'o')
-        t.set(x + 4, 14, 'o' if cold else 'O')
-    return t
-
-
 def collar():
     """The column's collar, 12 high (rows 4 to 15): gunmetal, a lit lip, louvred vents every 8
     pixels, the slot its light line sits in (row 8), a bolt line and a shadowed foot."""
@@ -791,6 +777,65 @@ def hot_obsidian(core=False):
     return out
 
 
+# The heat overlay's glow is light added, not paint: black adds nothing, so the block shows through.
+HEAT = [(0.0, (0, 0, 0)), (0.3, (60, 6, 2)), (0.6, (170, 35, 6)), (0.85, (245, 110, 25)), (1.0, (255, 190, 80))]
+HEAT_STAGES = 4
+
+
+def cells(seed, count):
+    """Tileable cell noise: for each pixel, how far it lies from the border between its two nearest
+    of `count` random points on the 16 x 16 tile (wrapped), so 0 on the cracks between cells."""
+    import random
+    rnd = random.Random(seed)
+    pts = [(rnd.uniform(0, 16), rnd.uniform(0, 16)) for _ in range(count)]
+
+    def at(x, y):
+        ds = sorted(math.hypot(min(abs(x + 0.5 - px), 16 - abs(x + 0.5 - px)), min(abs(y + 0.5 - py), 16 - abs(y + 0.5 - py)))
+                    for px, py in pts)
+        return ds[1] - ds[0]
+
+    return at
+
+
+def heat(stage):
+    """The heat overlay's glow, stage 0 to 3. The mega drill draws it over any block's own model as
+    the layer it fires on heats (as the game draws its breaking cracks), over a tint that reddens and
+    darkens the block, so every block, modded ones too, turns red hot without a texture of its own.
+    A faint glow over the whole face and a network of cracks between rock grains, widening and
+    branching stage by stage, dim red to orange. Tileable."""
+    big = cells(91, 6)
+    small = cells(97, 14)
+    width = (0.55, 0.85, 1.2, 1.6)[stage]
+    fine = (0.0, 0.0, 0.45, 0.8)[stage]
+    fill = (0.05, 0.12, 0.22, 0.34)[stage]
+    bright = (0.62, 0.74, 0.88, 1.0)[stage]
+    out = []
+    for y in range(16):
+        row = []
+        for x in range(16):
+            k = max(0.0, 1 - big(x, y) / width)
+            if fine:
+                k = max(k, 0.8 * max(0.0, 1 - small(x, y) / fine))
+            v = max(fill, k * bright)
+            for (p0, c0), (p1, c1) in zip(HEAT, HEAT[1:]):
+                if v <= p1:
+                    t = (v - p0) / (p1 - p0)
+                    row.append(tuple(round(c0[i] + (c1[i] - c0[i]) * t) for i in range(3)) + (255,))
+                    break
+        out.append(row)
+    return out
+
+
+def charge(head=False):
+    """The drill's charge, lit, running down the drive shaft's ribs before it fires: cyan light, a
+    bright line down its middle; the head of the charge white hot."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'C' if head else 'i')
+    for x in range(0, 16, 2):
+        t.rect(x, 0, x, 15, 'W' if head else 'j')
+    return t
+
+
 def publish_animated(name, frames, frametime):
     for root in (ART_TEXTURES, MOD_TEXTURES):
         out = os.path.join(root, name + '.png')
@@ -828,8 +873,6 @@ TEXTURES = {
     'band6': band6,
     'band8': band8,
     'base': base,
-    'pit_wall': pit_wall,
-    'pit_wall_cold': lambda: pit_wall(cold=True),
     'collar': collar,
     'desk': desk,
     'desk_top': desk_top,
@@ -864,6 +907,8 @@ LIT = {
     'screen': screen,
     'window': window,
     'window_off': lambda: window(off=True),
+    'charge': charge,
+    'charge_head': lambda: charge(head=True),
 }
 NAMES = list(TEXTURES) + list(LIT) + ['melt', 'beam', 'hot_obsidian', 'hot_obsidian_core']
 
@@ -876,6 +921,14 @@ def main():
     publish_animated(FOLDER + 'melt', melt(), 6)
     publish_animated(FOLDER + 'hot_obsidian', hot_obsidian(), 4)
     publish_animated(FOLDER + 'hot_obsidian_core', hot_obsidian(core=True), 4)
+    for stage in range(HEAT_STAGES):
+        for root in (ART_TEXTURES, MOD_TEXTURES):
+            out = os.path.join(root, 'effect', 'heat_%d.png' % stage)
+            os.makedirs(os.path.dirname(out), exist_ok=True)
+            write_png(out, heat(stage))
+    # The tint under the glow: plain white, coloured by the renderer as the block heats.
+    for root in (ART_TEXTURES, MOD_TEXTURES):
+        write_png(os.path.join(root, 'effect', 'heat_tint.png'), [[(255, 255, 255, 255)] * 16 for _ in range(16)])
     publish_animated(FOLDER + 'beam', beam(), 2)
 
 

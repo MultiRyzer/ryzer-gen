@@ -47,6 +47,55 @@
     ],
     "subtitle": "subtitles.ryzergen.lithium_extractor"
   },
+  "mega_drill_burst": {
+    "sounds": [
+      {
+        "attenuation_distance": 48,
+        "name": "random/explode1",
+        "pitch": 1.4,
+        "volume": 0.6
+      },
+      {
+        "attenuation_distance": 48,
+        "name": "random/explode2",
+        "pitch": 1.4,
+        "volume": 0.6
+      },
+      {
+        "attenuation_distance": 48,
+        "name": "random/explode3",
+        "pitch": 1.4,
+        "volume": 0.6
+      },
+      {
+        "attenuation_distance": 48,
+        "name": "random/explode4",
+        "pitch": 1.4,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.ryzergen.mega_drill_burst"
+  },
+  "mega_drill_charge": {
+    "sounds": [
+      {
+        "attenuation_distance": 48,
+        "name": "block/beacon/activate",
+        "pitch": 0.7
+      }
+    ],
+    "subtitle": "subtitles.ryzergen.mega_drill_charge"
+  },
+  "mega_drill_fire": {
+    "sounds": [
+      {
+        "attenuation_distance": 48,
+        "name": "mob/ghast/fireball4",
+        "pitch": 0.6
+      }
+    ],
+    "subtitle": "subtitles.ryzergen.mega_drill_fire"
+  },
   "microreactor_alarm": {
     "sounds": [
       {

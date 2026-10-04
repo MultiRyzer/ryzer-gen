@@ -26,6 +26,21 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         add(ModSounds.MICROREACTOR_HUM, definition()
                 .subtitle("subtitles.ryzergen.microreactor_hum")
                 .with(sound(ResourceLocation.withDefaultNamespace("block/beacon/ambient")).pitch(0.55F).volume(0.8F)));
+        // The mega drill, until it has recordings of its own: the beacon powering up, slowed, as the
+        // charge runs down the shaft; a ghast's fireball, deepened, as the beam fires; an explosion,
+        // pitched up and quieter, as a layer bursts.
+        add(ModSounds.MEGA_DRILL_CHARGE, definition()
+                .subtitle("subtitles.ryzergen.mega_drill_charge")
+                .with(sound(ResourceLocation.withDefaultNamespace("block/beacon/activate")).pitch(0.7F).attenuationDistance(48)));
+        add(ModSounds.MEGA_DRILL_FIRE, definition()
+                .subtitle("subtitles.ryzergen.mega_drill_fire")
+                .with(sound(ResourceLocation.withDefaultNamespace("mob/ghast/fireball4")).pitch(0.6F).attenuationDistance(48)));
+        add(ModSounds.MEGA_DRILL_BURST, definition()
+                .subtitle("subtitles.ryzergen.mega_drill_burst")
+                .with(sound(ResourceLocation.withDefaultNamespace("random/explode1")).pitch(1.4F).volume(0.6F).attenuationDistance(48),
+                        sound(ResourceLocation.withDefaultNamespace("random/explode2")).pitch(1.4F).volume(0.6F).attenuationDistance(48),
+                        sound(ResourceLocation.withDefaultNamespace("random/explode3")).pitch(1.4F).volume(0.6F).attenuationDistance(48),
+                        sound(ResourceLocation.withDefaultNamespace("random/explode4")).pitch(1.4F).volume(0.6F).attenuationDistance(48)));
         // Our own recordings are cut into loops by art/tools/machine_sounds.py, which also credits them.
         // The coolant-loss alarm: sixteen beeps of a depressurisation alarm. The client loops it and
         // raises the pitch towards meltdown. Heard from 64 blocks, so a runaway core is hard to miss.
