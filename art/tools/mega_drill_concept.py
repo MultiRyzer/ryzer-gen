@@ -1,24 +1,25 @@
-"""The mega drill's concept (design section 11c, the static option), drawn as smooth quads, not yet
-in the game. Run:
+"""The mega drill's concept (design section 11c, option B), drawn as smooth quads, not yet in the
+game. Run:
     python art/tools/mega_drill_concept.py [OUT.png]
 
-One big machine that never moves, built round a glowing molten pit (the user's reference, 4 Oct
-2026). It stands over the middle of a chunk on 9 x 9 blocks and mines the whole chunk below it,
-starting well under its base, so it always stands on solid ground.
-- The foundation: an eight-sided graphite plinth with hazard stripes, grated on top.
-- Four armoured corner pylons, light casing with an orange stripe and a cyan light line, leaning
-  in a little, the heavy frame that holds the drill.
-- The pit at its heart: a ring of grating round a molten core glowing amber, sunk into the plinth,
-  where the beam melts its way down the bore.
-- The drill column held over the pit by eight hydraulic rams from the pylons: its head a graphite
-  collar and a cone down to a tip glowing where it meets the melt, then a brushed-steel column
-  banded in graphite, an orange collar, a ring of cooling fins, and a domed cap with a beacon.
-- Pipes up its sides (copper for the coolant, steel for what comes up), two exhaust stacks at the
-  back venting steam, and the controller on the front: the station's front panel and screen.
+One big square machine that never moves, built round a glowing molten pit (the user's reference,
+4 Oct 2026; made square on 4 Oct, as players have asked for fewer round shapes). It stands over the
+middle of a chunk on 9 x 9 blocks and mines the whole chunk below it, starting well under its base,
+so it always stands on solid ground. Everything sits on the block grid, heights in whole blocks.
+- The plinth: a square graphite base with hazard stripes, grated on top, and in its middle the
+  square molten pit glowing amber, stepped down inside a gunmetal rim.
+- Four square corner pylons, two blocks a side and five high, light casing with an orange stripe
+  down their outer faces and a cyan light line under their graphite caps.
+- The gantry: girders joining the pylons round the top, and a cross of girders the drill hangs
+  from, braced to the pylons by four hydraulic rams.
+- The drill: a square column two blocks a side in light casing, vents on each face, graphite bands
+  and a light line, its foot a heavy collar and a pyramid tip glowing where it meets the melt; a
+  stepped cap above the gantry with a beacon.
+- Square ducts up the column (coolant in, spoil up), two square exhaust stacks at the back, and the
+  controller on the front of the plinth: the station's front panel and screen.
 Real basis: blind-shaft boring rigs, which stand over the hole they bore and lift the cuttings up
-through it, here melting the rock with the beam the other drills use (thermal spallation).
+through it, here melting the rock with a beam (thermal spallation).
 """
-import math
 import os
 import sys
 
@@ -35,124 +36,117 @@ TEXTURES.update({'drill_' + name: 'ryzergen:block/drill/' + name for name in dri
 TEXTURES.update({name: 'ryzergen:block/microreactor/' + name for name in ('hazard', 'glow', 'screen')})
 TEXTURES['front_panel'] = 'ryzergen:block/breeder/front_panel'
 d = Design(C, TEXTURES, {'glow', 'screen', 'breeder_amber'})
-OCT = math.pi / 8           # eight-sided parts turned so a flat faces each side
+ALL = ('north', 'south', 'east', 'west', 'up', 'down')
+UV = [(0, 0), (16, 0), (16, 16), (0, 16)]
 
 
-def centred(x, z, draw):
-    whole = d.at
-    d.at = lambda phi, rad, y: (x + rad * math.cos(phi), y, z + rad * math.sin(phi))
-    try:
-        draw()
-    finally:
-        d.at = whole
+def face_only(face):
+    return tuple(f for f in ALL if f != face)
 
 
-def octagonal(draw):
-    whole = d.at
-    d.at = lambda phi, rad, y: (C + rad * math.cos(phi + OCT), y, C + rad * math.sin(phi + OCT))
-    try:
-        draw()
-    finally:
-        d.at = whole
+def outline(x1, y1, z1, x2, y2, z2, mat, t=0.3):
+    """A thin overlay round a box's four sides (a light line or a hazard band)."""
+    d.box(mat, x1 - t, y1, z1 - t, x2 + t, y2, z2 + t, skip=('up', 'down'))
 
 
-# ---------------------------------------------------------------- the foundation and the pit
-PLINTH = 10
-PIT_R = 46
-COL_R = 18
-COL = (PLINTH + 26, 100)
-octagonal(lambda: (
-    d.cylinder('drill_skirt', 0, PLINTH, 70, n=8, v0=6),
-    d.cylinder('hazard', 0, 4, 70.3, n=8),
-    d.annulus('breeder_grate', PLINTH, PIT_R + 6, 70, n=8),
-    # The pit: a stepped graphite ring down to the molten core.
-    d.cylinder('drill_frame', PLINTH - 4, PLINTH, PIT_R + 6, n=16, inward=True, v0=12),
-    d.annulus('breeder_grate', PLINTH - 4, PIT_R, PIT_R + 6, n=16),
-    d.cylinder('breeder_graphite', 2, PLINTH - 4, PIT_R, n=16, inward=True),
-))
-centred(C, C, lambda: (
-    d.disc('breeder_amber', 1, 2, PIT_R, n=16),
-    d.cylinder('breeder_amber', 2, 3, PIT_R - 0.2, n=16, inward=True),
-))
+# ---------------------------------------------------------------- the plinth and the pit
+PLINTH = B
+PIT = 3 * B            # the pit's half width: a 6 x 6 pit in the 9 x 9 plinth
+for x1, z1, x2, z2 in ((0, 0, SIZE, C - PIT), (0, C + PIT, SIZE, SIZE), (0, C - PIT, C - PIT, C + PIT), (C + PIT, C - PIT, SIZE, C + PIT)):
+    d.box('drill_skirt', x1, 0, z1, x2, PLINTH, z2, top='breeder_grate', skip=('down',))
+outline(0, 0, 0, SIZE, 4, SIZE, 'hazard')
+# The pit: a gunmetal rim stepped in, graphite walls, the melt glowing at the bottom.
+RIM = 4
+for x1, z1, x2, z2 in ((C - PIT, C - PIT, C + PIT, C - PIT + RIM), (C - PIT, C + PIT - RIM, C + PIT, C + PIT),
+                       (C - PIT, C - PIT + RIM, C - PIT + RIM, C + PIT - RIM), (C + PIT - RIM, C - PIT + RIM, C + PIT, C + PIT - RIM)):
+    d.box('drill_frame', x1, PLINTH - 4, z1, x2, PLINTH, z2, top='breeder_grate', skip=('down',))
+lo, hi = C - PIT + RIM, C + PIT - RIM
+steps = [lo + k * B for k in range(int((hi - lo) // B))] + [hi]
+for xa, xb in zip(steps, steps[1:]):
+    d.quad('breeder_graphite', [(xa, PLINTH - 4, lo), (xb, PLINTH - 4, lo), (xb, 2, lo), (xa, 2, lo)], UV, (0, 0, 1))
+    d.quad('breeder_graphite', [(xb, PLINTH - 4, hi), (xa, PLINTH - 4, hi), (xa, 2, hi), (xb, 2, hi)], UV, (0, 0, -1))
+    d.quad('breeder_graphite', [(lo, PLINTH - 4, xb), (lo, PLINTH - 4, xa), (lo, 2, xa), (lo, 2, xb)], UV, (1, 0, 0))
+    d.quad('breeder_graphite', [(hi, PLINTH - 4, xa), (hi, PLINTH - 4, xb), (hi, 2, xb), (hi, 2, xa)], UV, (-1, 0, 0))
+    for za, zb in zip(steps, steps[1:]):
+        d.quad('breeder_amber', [(xa, 2, za), (xb, 2, za), (xb, 2, zb), (xa, 2, zb)], UV, (0, 1, 0))
 
-# ---------------------------------------------------------------- the corner pylons
-PYLON = 18
+# ---------------------------------------------------------------- the corner pylons and the gantry
+P = 2 * B
+TOP = PLINTH + 5 * B
+for px, pz, sx, sz in ((0, 0, -1, -1), (SIZE - P, 0, 1, -1), (0, SIZE - P, -1, 1), (SIZE - P, SIZE - P, 1, 1)):
+    d.box('drill_casing', px, PLINTH, pz, px + P, TOP, pz + P, skip=('down',))
+    d.box('drill_band', px - 1, TOP, pz - 1, px + P + 1, TOP + 4, pz + P + 1, top='breeder_grate')
+    outline(px, TOP - 4, pz, px + P, TOP - 3, pz + P, 'glow')
+    # An orange stripe down each outer face.
+    ox = px if sx < 0 else px + P
+    oz = pz if sz < 0 else pz + P
+    d.box('breeder_rail', ox - (0.3 if sx < 0 else 0), PLINTH + 8, pz + P / 2 - 3, ox + (0 if sx < 0 else 0.3), TOP - 10, pz + P / 2 + 3,
+          skip=face_only('west' if sx < 0 else 'east'))
+    d.box('breeder_rail', px + P / 2 - 3, PLINTH + 8, oz - (0.3 if sz < 0 else 0), px + P / 2 + 3, TOP - 10, oz + (0 if sz < 0 else 0.3),
+          skip=face_only('north' if sz < 0 else 'south'))
+# Girders joining the pylons round the top, and a cross of girders over the middle for the drill.
+G = 6
+GY = TOP - B
+for x1, z1, x2, z2 in ((P, C - G, SIZE - P, C + G), (C - G, P, C + G, SIZE - P),
+                       (P, P / 2 - G, SIZE - P, P / 2 + G), (P, SIZE - P / 2 - G, SIZE - P, SIZE - P / 2 + G),
+                       (P / 2 - G, P, P / 2 + G, SIZE - P), (SIZE - P / 2 - G, P, SIZE - P / 2 + G, SIZE - P)):
+    d.box('breeder_girder', x1, GY, z1, x2, GY + 12, z2, top='breeder_grate')
+
+# ---------------------------------------------------------------- the drill
+D = B                  # the column's half width: 2 x 2 blocks
+COL = (PLINTH + 2 * B, TOP + 2 * B)
+d.box('drill_casing', C - D, COL[0], C - D, C + D, COL[1], C + D, skip=('down',))
+for face, box in (('north', (C - 8, COL[0] + B, C - D - 0.3, C + 8, COL[0] + 2 * B, C - D)),
+                  ('south', (C - 8, COL[0] + B, C + D, C + 8, COL[0] + 2 * B, C + D + 0.3)),
+                  ('west', (C - D - 0.3, COL[0] + B, C - 8, C - D, COL[0] + 2 * B, C + 8)),
+                  ('east', (C + D, COL[0] + B, C - 8, C + D + 0.3, COL[0] + 2 * B, C + 8))):
+    d.box('drill_vent', *box, skip=face_only(face))
+for y in (COL[0] + 3 * B, COL[1] - 4):
+    d.box('drill_band', C - D - 1, y, C - D - 1, C + D + 1, y + 4, C + D + 1)
+outline(C - D, COL[0] + 3 * B + 5, C - D, C + D, COL[0] + 3 * B + 6, C + D, 'glow')
+# The collar at its foot, and the pyramid tip down to the melt.
+COLLAR = 22
+d.box('drill_band', C - COLLAR, COL[0] - 8, C - COLLAR, C + COLLAR, COL[0], C + COLLAR)
+outline(C - COLLAR, COL[0] - 5, C - COLLAR, C + COLLAR, COL[0] - 4, C + COLLAR, 'glow')
+tip = (C, PLINTH - 2, C)
+corners = [(C - COLLAR + 2, COL[0] - 8, C - COLLAR + 2), (C + COLLAR - 2, COL[0] - 8, C - COLLAR + 2),
+           (C + COLLAR - 2, COL[0] - 8, C + COLLAR - 2), (C - COLLAR + 2, COL[0] - 8, C + COLLAR - 2)]
 for k in range(4):
-    phi = math.radians(45 + 90 * k)
-    out = (math.cos(phi), math.sin(phi))
-    base = (C + out[0] * 52, C + out[1] * 52)
-    top = (C + out[0] * 44, C + out[1] * 44)
-    across = (-out[1], 0, out[0])
-    # A heavy leaning pylon: a swept block, light casing, orange stripe, light line.
-    d.sweep('drill_casing', [(base[0], PLINTH, base[1]), (base[0], PLINTH + 14, base[1]), (top[0], 76, top[1])],
-            PYLON / 2, PYLON / 2, lambda i, v=across: v, closed=False, caps=True)
-    d.sweep('breeder_amber' if False else 'breeder_rail', [(base[0] + out[0] * (PYLON / 2 + 0.3), PLINTH + 30, base[1] + out[1] * (PYLON / 2 + 0.3)),
-                                                           (top[0] + out[0] * (PYLON / 2 + 0.3), 58, top[1] + out[1] * (PYLON / 2 + 0.3))],
-            0.3, 3, lambda i, v=across: v, closed=False)
-    d.box('glow', top[0] - PYLON / 2 - 0.3, 70, top[1] - PYLON / 2 - 0.3, top[0] + PYLON / 2 + 0.3, 71, top[1] + PYLON / 2 + 0.3,
-          skip=('up', 'down'))
-    # A graphite cap on each pylon.
-    d.box('drill_band', top[0] - PYLON / 2 - 1, 76, top[1] - PYLON / 2 - 1, top[0] + PYLON / 2 + 1, 80, top[1] + PYLON / 2 + 1,
-          top='breeder_graphite')
-    # A hydraulic ram from the pylon's head to the column's collar, and one lower down.
-    for (y0, y1) in ((72, 60), (34, 30)):
-        p0 = (top[0] - out[0] * PYLON / 2, y0, top[1] - out[1] * PYLON / 2)
-        p1 = (C + out[0] * (COL_R + 3), y1 + 8, C + out[1] * (COL_R + 3))
-        mid = tuple(p0[i] + (p1[i] - p0[i]) * 0.5 for i in range(3))
-        d.sweep('breeder_graphite', [p0, mid], 2.2, 2.2, lambda i: (0, 1, 0), closed=False, caps=True)
-        d.sweep('breeder_fitting', [mid, p1], 1.4, 1.4, lambda i: (0, 1, 0), closed=False, caps=True)
+    a, b = corners[k], corners[(k + 1) % 4]
+    mid = ((a[0] + b[0]) / 2 - C, 0, (a[2] + b[2]) / 2 - C)
+    d.quad('breeder_graphite', [a, b, tip, tip], [(0, 0), (16, 0), (8, 16), (8, 16)], (mid[0], -0.6 * COLLAR, mid[2]))
+d.box('breeder_amber', C - 3, PLINTH - 5, C - 3, C + 3, PLINTH, C + 3)
+# Four hydraulic rams from the pylons' inner corners to the collar.
+for sx, sz in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
+    p0 = (C + sx * (C - P), TOP - 2 * B, C + sz * (C - P))
+    p1 = (C + sx * COLLAR, COL[0] - 4, C + sz * COLLAR)
+    mid = tuple(p0[i] + (p1[i] - p0[i]) * 0.55 for i in range(3))
+    d.sweep('breeder_graphite', [p0, mid], 2.4, 2.4, lambda i: (0, 1, 0), closed=False, caps=True)
+    d.sweep('breeder_fitting', [mid, p1], 1.5, 1.5, lambda i: (0, 1, 0), closed=False, caps=True)
+# The stepped cap and its beacon.
+d.box('drill_band', C - D - 3, COL[1], C - D - 3, C + D + 3, COL[1] + 4, C + D + 3, top='breeder_graphite')
+d.box('drill_casing', C - 10, COL[1] + 4, C - 10, C + 10, COL[1] + 12, C + 10, top='breeder_grate')
+d.box('breeder_graphite', C - 3, COL[1] + 12, C - 3, C + 3, COL[1] + 16, C + 3, skip=('down',))
+d.box('breeder_amber', C - 2, COL[1] + 16, C - 2, C + 2, COL[1] + 19, C + 2, skip=('down',))
 
-# ---------------------------------------------------------------- the drill column
-centred(C, C, lambda: (
-    # The drill's head hanging over the pit: a graphite collar, a cone down to a tip glowing white
-    # hot where it meets the melt, with the beam's lens.
-    d.cylinder('drill_ring', COL[0] - 6, COL[0], COL_R + 4, n=16, v0=8),
-    d.annulus('drill_ring', COL[0] - 6, 0, COL_R + 4, up=False, n=16),
-    d.annulus('drill_ring', COL[0], COL_R, COL_R + 4, n=16),
-    d.cylinder('glow', COL[0] - 3.5, COL[0] - 2.5, COL_R + 4.2, n=16),
-    d.lathe('breeder_graphite', [(PLINTH - 2, 3), (COL[0] - 6, COL_R)], n=16),
-    d.cylinder('breeder_amber', PLINTH - 4, PLINTH - 2, 3, n=8),
-    # The column in brushed steel, banded in graphite, an orange collar, a ring of fins.
-    d.cylinder('drill_pot', COL[0], COL[1], COL_R, n=16),
-    d.cylinder('drill_band', COL[0] + 20, COL[0] + 24, COL_R + 0.3, n=16, v0=12),
-    d.cylinder('breeder_rail', 58, 63, COL_R + 0.4, n=16),
-    d.cylinder('glow', 64, 65, COL_R + 0.4, n=16),
-    d.cylinder('drill_band', COL[1] - 6, COL[1], COL_R + 2, n=16, v0=10),
-))
-for k in range(16):
-    phi = 2 * math.pi * k / 16
-    centred(C, C, lambda phi=phi: d.post('drill_frame', phi, COL_R + 3, 70, 88, 3, 0.8))
-# The domed cap and its beacon.
-dome = [(COL[1] + 12 * math.sin(t * math.pi / 2), (COL_R + 1) * math.cos(t * math.pi / 2)) for t in [k / 6 for k in range(7)]]
-centred(C, C, lambda: (
-    d.lathe('drill_pot', dome, n=16),
-    d.cylinder('breeder_graphite', COL[1] + 11, COL[1] + 16, 5, n=8),
-    d.cylinder('breeder_amber', COL[1] + 16, COL[1] + 19, 2.5, n=8),
-))
-
-# ---------------------------------------------------------------- pipes, stacks and the controller
-# Pipes up the column's sides: copper for the coolant, steel for what the bore brings up.
-for k, (deg, mat, r) in enumerate(((150, 'breeder_pipe', 2.5), (210, 'breeder_steel_pipe', 3.5), (330, 'breeder_pipe', 2.5), (30, 'breeder_steel_pipe', 3.5))):
-    phi = math.radians(deg)
-    px, pz = C + (COL_R + r + 1) * math.cos(phi), C + (COL_R + r + 1) * math.sin(phi)
-    centred(px, pz, lambda mat=mat, r=r: d.cylinder(mat, COL[0], COL[1] - 8, r, n=8))
-    # Clamps up the pipe.
-    for y in range(COL[0] + 8, COL[1] - 8, 20):
-        centred(px, pz, lambda y=y, r=r: d.cylinder('breeder_rail', y, y + 2, r + 0.6, n=8))
-# Two exhaust stacks at the back, venting steam.
+# ---------------------------------------------------------------- ducts, stacks and the controller
+# Square ducts up the column's front: coolant in on the left (copper), spoil up on the right.
+for x1, mat in ((C - D - 7, 'breeder_pipe'), (C + D + 1, 'breeder_graphite')):
+    d.box(mat, x1, COL[0], C - D - 6, x1 + 6, COL[1] - 6, C - D)
+    for y in range(int(COL[0]) + 10, int(COL[1]) - 8, 16):
+        d.box('breeder_rail', x1 - 0.6, y, C - D - 6.6, x1 + 6.6, y + 2, C - D)
+# Two square exhaust stacks at the back, between the pylons.
 for sx in (-1, 1):
-    ex, ez = C + sx * 30, C + 52
-    centred(ex, ez, lambda: (
-        d.cylinder('breeder_graphite', PLINTH, 100, 6, n=10),
-        d.cylinder('drill_band', 100, 106, 7, n=10, v0=10),
-        d.cylinder('breeder_graphite', 98, 106, 5, n=10, inward=True),
-        d.cylinder('breeder_rail', 80, 83, 6.3, n=10),
-    ))
+    ex = C + sx * 30
+    ez = SIZE - P / 2
+    d.box('breeder_graphite', ex - 6, PLINTH, ez - 6, ex + 6, TOP + 2 * B, ez + 6)
+    d.box('drill_band', ex - 7, TOP + 2 * B - 4, ez - 7, ex + 7, TOP + 2 * B, ez + 7, skip=('up',))
+    d.box('breeder_rail', ex - 6.4, TOP, ez - 6.4, ex + 6.4, TOP + 3, ez + 6.4, skip=('up', 'down'))
 # The controller on the front of the plinth: the station's front panel with its screen.
-FACE = C - 70 * math.cos(OCT) - 2
-d.box('breeder_graphite', C - 18, PLINTH, FACE, C + 18, PLINTH + 18, FACE + 10, skip=('down',))
-d.quad('front_panel', [(C + B, PLINTH + 16, FACE - 0.1), (C - B, PLINTH + 16, FACE - 0.1), (C - B, PLINTH + 1, FACE - 0.1), (C + B, PLINTH + 1, FACE - 0.1)],
-       [(0, 1), (16, 1), (16, 16), (0, 16)], (0, 0, -1))
+FACE = -2
+d.box('breeder_graphite', C - B - 2, 0, FACE, C + B + 2, PLINTH + B, 0, skip=('south',))
+d.quad('front_panel', [(C + B, PLINTH + B - 2, FACE - 0.1), (C - B, PLINTH + B - 2, FACE - 0.1), (C - B, PLINTH + 1, FACE - 0.1),
+                       (C + B, PLINTH + 1, FACE - 0.1)], [(0, 1), (16, 1), (16, 16), (0, 16)], (0, 0, -1))
 d.box('breeder_fitting', C - 5, PLINTH + 6, FACE - 1.1, C + 5, PLINTH + 12, FACE - 0.6, decals={'north': 'screen'}, skip=('south',))
 
 
@@ -160,7 +154,7 @@ def main():
     out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(mp.ROOT, 'art', 'concepts', 'mega_drill.png')
     breeder_textures.main()
     drill_textures.main()
-    d.save_png(out, [((1, 1), 2.4, 0.5), ((-1, 0.6), 2.4, 0.25)])
+    d.save_png(out, [((1, 1), 2.2, 0.5), ((-1, 0.6), 2.2, 0.25)])
 
 
 if __name__ == '__main__':
