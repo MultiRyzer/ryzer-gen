@@ -28,6 +28,10 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> FUEL_FABRICATOR = register("fuel_fabricator");
     public static final DeferredHolder<SoundEvent, SoundEvent> LITHIUM_EXTRACTOR = register("lithium_extractor");
     public static final DeferredHolder<SoundEvent, SoundEvent> ELECTROREFINER = register("electrorefiner");
+    /** The mega drill: the charge running down its shaft, the beam firing, and a layer bursting. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> MEGA_DRILL_CHARGE = register("mega_drill_charge");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MEGA_DRILL_FIRE = register("mega_drill_fire");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MEGA_DRILL_BURST = register("mega_drill_burst");
     /** One Geiger counter click from the dosimeter ring. */
     public static final DeferredHolder<SoundEvent, SoundEvent> DOSIMETER_CLICK = register("dosimeter_click");
 

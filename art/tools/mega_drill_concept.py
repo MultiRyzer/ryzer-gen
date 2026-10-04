@@ -226,19 +226,23 @@ def tiled_cap(mat, pts, y, up):
 PIT = 3 * B
 RING = 6
 lo, hi = C - PIT, C + PIT
-# The ring: its edge a lit lip over hazard stripes, its top bar grating, the pit lined with firebrick.
+# The ring: a steel frame round the pit, standing on its legs' footings over the hole the drill
+# mines from the surface down: its edges a lit lip over hazard stripes inside and out, its top bar
+# grating, joists under it.
 ebox('drill_base', 0, 0, 0, SIZE, RING, SIZE, skip=('up', 'down'))
 for x1, z1, x2, z2 in ((0, 0, SIZE, lo), (0, hi, SIZE, SIZE), (0, lo, lo, hi), (hi, lo, SIZE, hi)):
-    d.box('drill_grating', x1, 0, z1, x2, RING, z2, skip=('north', 'south', 'east', 'west', 'down'))
+    d.box('drill_grating', x1, 0, z1, x2, RING, z2, skip=('north', 'south', 'east', 'west'))
+    d.box('drill_underside', x1, 0, z1, x2, RING, z2, skip=('north', 'south', 'east', 'west', 'up'))
 steps = [lo + k * B for k in range(int((hi - lo) // B))] + [hi]
-WALL = [(0, 11), (16, 11), (16, 16), (0, 16)]
+WALL = [(0, 10), (16, 10), (16, 16), (0, 16)]
 for xa, xb in zip(steps, steps[1:]):
-    d.quad('drill_pit_wall', [(xa, RING, lo), (xb, RING, lo), (xb, 1, lo), (xa, 1, lo)], WALL, (0, 0, 1))
-    d.quad('drill_pit_wall', [(xb, RING, hi), (xa, RING, hi), (xa, 1, hi), (xb, 1, hi)], WALL, (0, 0, -1))
-    d.quad('drill_pit_wall', [(lo, RING, xb), (lo, RING, xa), (lo, 1, xa), (lo, 1, xb)], WALL, (1, 0, 0))
-    d.quad('drill_pit_wall', [(hi, RING, xa), (hi, RING, xb), (hi, 1, xb), (hi, 1, xa)], WALL, (-1, 0, 0))
-# The pit's floor, tiled on the block grid (half tiles at its edges), so the beam strikes the middle
-# of one tile: the core, white hot under it and fading to the plain hot floor at its edges.
+    d.quad('drill_base', [(xa, RING, lo), (xb, RING, lo), (xb, 0, lo), (xa, 0, lo)], WALL, (0, 0, 1))
+    d.quad('drill_base', [(xb, RING, hi), (xa, RING, hi), (xa, 0, hi), (xb, 0, hi)], WALL, (0, 0, -1))
+    d.quad('drill_base', [(lo, RING, xb), (lo, RING, xa), (lo, 0, xa), (lo, 0, xb)], WALL, (1, 0, 0))
+    d.quad('drill_base', [(hi, RING, xa), (hi, RING, xb), (hi, 0, xb), (hi, 0, xa)], WALL, (-1, 0, 0))
+# In the pictures only: the layer being mined, as red-hot obsidian, tiled on the block grid (half
+# tiles at its edges) so the beam strikes the middle of one tile, white hot under it. In the game the
+# real ground is mined and the renderer draws the heat over it, and the beam down to it.
 FLOOR = [lo] + list(range(int(lo) + 8, int(hi), B)) + [hi]
 for xa, xb in zip(FLOOR, FLOOR[1:]):
     for za, zb in zip(FLOOR, FLOOR[1:]):
@@ -421,7 +425,9 @@ for sx in (-1, 1):
 # Idle: the pit plain obsidian, the beam off, the lamps, window and light lines dim, the
 # firebrick and the emitter's tip cooled.
 IDLE = {'drill_hot_obsidian': 'obsidian', 'drill_hot_obsidian_core': 'obsidian', 'drill_amber': 'drill_amber_off', 'glow': 'glow_off', 'drill_window': 'drill_window_off',
-        'drill_lamps': 'drill_lamps_off', 'drill_pit_wall': 'drill_pit_wall_cold', 'drill_emitter': 'drill_emitter_cold'}
+        'drill_lamps': 'drill_lamps_off', 'drill_emitter': 'drill_emitter_cold'}
+# Drawn by the game itself, so left out of the export: the layer being mined and the beam.
+PICTURE_ONLY = ('drill_hot_obsidian', 'drill_hot_obsidian_core', 'drill_beam')
 RUNNING_ONLY = ('drill_beam',)
 GAME_DATA = os.path.join(mp.ROOT, 'mod', 'src', 'main', 'resources', 'assets', 'ryzergen', 'drill', 'mega_drill.json')
 
@@ -434,8 +440,9 @@ def export():
     """For the game's preview block (MegaDrillPreviewRenderer): the body that never changes in
     'static', what changes when it runs in 'on' (running) and 'off' (idle)."""
     running = d.quads
-    changes = [q for q in running if q[0] in IDLE or q[0] in RUNNING_ONLY]
-    d.quads = ([(t, v, n, 'static') for t, v, n, g in running if t not in IDLE and t not in RUNNING_ONLY]
+    d.quads = [q for q in running if q[0] not in PICTURE_ONLY]
+    changes = [q for q in d.quads if q[0] in IDLE or q[0] in RUNNING_ONLY]
+    d.quads = ([(t, v, n, 'static') for t, v, n, g in d.quads if t not in IDLE and t not in RUNNING_ONLY]
                + [(t, v, n, 'on') for t, v, n, g in changes]
                + [(t, v, n, 'off') for t, v, n, g in idle(changes)])
     d.export(GAME_DATA)
