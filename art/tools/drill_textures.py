@@ -34,6 +34,8 @@ squeezed out of shape.
 - The sinking towers' (melt_drill_concept.py): casing, pot, vent, frame, skirt, ring, warning.
 - melt and beam (animated, lit): the molten pit, dark crust drifting slowly over glowing melt,
   and the laser beam, a bright core flickering along its length. crust is the pit while idle.
+  hot_obsidian (animated, lit): the mega drill's pit floor while it runs, vanilla obsidian mapped
+  onto a heat ramp, glowing red hot; idle, its pit is plain vanilla obsidian.
 Run from the repo root:
     python art/tools/drill_textures.py
 """
@@ -761,6 +763,38 @@ def beam():
     return out
 
 
+HOT = [(0.0, (22, 6, 12)), (0.35, (70, 12, 16)), (0.6, (150, 30, 14)), (0.8, (226, 82, 22)), (1.0, (255, 176, 70))]
+
+
+def hot_obsidian():
+    """Frames of the pit floor while the drill runs: obsidian glowing red hot. Vanilla's obsidian
+    (read from the jar at run time, never copied) is gradient-mapped by brightness onto a heat ramp,
+    its dark glass deep red and its light flecks orange to yellow, and the heat swells and ebbs in
+    slow patches across it. Off, the pit is plain vanilla obsidian."""
+    base = vanilla('block/obsidian')
+    lum = [[sum(int(base.px[y][x][i:i + 2], 16) * w for i, w in ((0, 0.3), (2, 0.59), (4, 0.11))) / 255
+            for x in range(16)] for y in range(16)]
+    lo = min(min(r) for r in lum)
+    hi = max(max(r) for r in lum)
+    slow = smooth_noise(57)
+    out = []
+    for f in range(FRAMES):
+        phase = 2 * math.pi * f / FRAMES
+        for y in range(16):
+            row = []
+            for x in range(16):
+                heat = (lum[y][x] - lo) / (hi - lo)
+                swell = 0.75 + 0.25 * math.sin(phase + 2 * math.pi * slow(x, y))
+                v = max(0.0, min(1.0, heat * 0.85 * swell + 0.12 * swell))
+                for (a, ca), (b, cb) in zip(HOT, HOT[1:]):
+                    if v <= b:
+                        k = (v - a) / (b - a)
+                        row.append(tuple(round(ca[i] + (cb[i] - ca[i]) * k) for i in range(3)) + (255,))
+                        break
+            out.append(row)
+    return out
+
+
 def publish_animated(name, frames, frametime):
     for root in (ART_TEXTURES, MOD_TEXTURES):
         out = os.path.join(root, name + '.png')
@@ -836,7 +870,7 @@ LIT = {
     'window_off': lambda: window(off=True),
     'spot': spot,
 }
-NAMES = list(TEXTURES) + list(LIT) + ['melt', 'beam']
+NAMES = list(TEXTURES) + list(LIT) + ['melt', 'beam', 'hot_obsidian']
 
 
 def main():
@@ -845,6 +879,7 @@ def main():
     for name, fn in LIT.items():
         publish(FOLDER + name, fn())
     publish_animated(FOLDER + 'melt', melt(), 6)
+    publish_animated(FOLDER + 'hot_obsidian', hot_obsidian(), 4)
     publish_animated(FOLDER + 'beam', beam(), 2)
 
 

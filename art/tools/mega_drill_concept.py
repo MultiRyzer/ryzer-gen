@@ -38,8 +38,9 @@ B = 16
 SIZE = 9 * B
 C = SIZE / 2
 TEXTURES = {'drill_' + name: 'ryzergen:block/drill/' + name for name in drill_textures.NAMES}
+TEXTURES['obsidian'] = 'minecraft:block/obsidian'
 TEXTURES.update({name: 'ryzergen:block/microreactor/' + name for name in ('glow', 'glow_off')})
-LIT = {'glow', 'drill_melt', 'drill_beam', 'drill_spot', 'drill_window', 'drill_screen', 'drill_amber', 'drill_lamps'}
+LIT = {'glow', 'drill_hot_obsidian', 'drill_beam', 'drill_spot', 'drill_window', 'drill_screen', 'drill_amber', 'drill_lamps'}
 d = Design(C, TEXTURES, LIT)
 ALL = ('north', 'south', 'east', 'west', 'up', 'down')
 UV = [(0, 0), (16, 0), (16, 16), (0, 16)]
@@ -237,7 +238,7 @@ for xa, xb in zip(steps, steps[1:]):
     d.quad('drill_pit_wall', [(lo, RING, xb), (lo, RING, xa), (lo, 1, xa), (lo, 1, xb)], WALL, (1, 0, 0))
     d.quad('drill_pit_wall', [(hi, RING, xa), (hi, RING, xb), (hi, 1, xb), (hi, 1, xa)], WALL, (-1, 0, 0))
     for za, zb in zip(steps, steps[1:]):
-        d.quad('drill_melt', [(xa, 1, za), (xb, 1, za), (xb, 1, zb), (xa, 1, zb)], UV, (0, 1, 0))
+        d.quad('drill_hot_obsidian', [(xa, 1, za), (xb, 1, za), (xb, 1, zb), (xa, 1, zb)], UV, (0, 1, 0))
 
 # A hazard border round the pit's edge, a pixel proud of the grating.
 for x1, z1, x2, z2 in ((lo - 3, lo - 3, hi + 3, lo), (lo - 3, hi, hi + 3, hi + 3), (lo - 3, lo, lo, hi), (hi, lo, hi + 3, hi)):
@@ -259,9 +260,10 @@ for sx, sz in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
         for az in (-8, 8):
             ebox('drill_rod', foot[0] + ax - 1, RING + 4, foot[1] + az - 1, foot[0] + ax + 1, RING + 5, foot[1] + az + 1,
                  skip=('down',), v0=1)
-    # A hydraulic ram from the leg's foot up under the deck, beside it: its barrel, then its rod.
-    p0 = (foot[0] - sx * 8, RING + 4, foot[1])
-    p1 = (head[0] - sx * 6, DECK_Y - 2, head[1] - sz * 10)
+    # A hydraulic ram from the leg's foot pad up under the deck, straight alongside the leg in its
+    # plane: its barrel, then its rod.
+    p0 = (foot[0] + across[0] * 9.5, RING + 4, foot[1] + across[2] * 9.5)
+    p1 = (head[0] + across[0] * 9.5, DECK_Y, head[1] + across[2] * 9.5)
     mid = tuple(p0[i] + (p1[i] - p0[i]) * 0.5 for i in range(3))
     bar('drill_ram', [p0, mid], 2, 2)
     bar('drill_rod', [mid, p1], 1.5, 1.5)
@@ -361,7 +363,7 @@ ebox('drill_panel', C - HW, HOUSE[0], C - HW, C + HW, HOUSE[1], C + HW, skip=('u
      panels={('north', 0, 1): 'drill_panel_hatch', ('north', 3, 1): 'drill_panel_stencil'})
 # Its cap band, 8 high and a pixel proud, with the light line under it; the roof in tread plate.
 ROOF = HOUSE[1] + 8
-ebox('drill_band8', C - HW - 1, HOUSE[1], C - HW - 1, C + HW + 1, ROOF, C + HW + 1, top='drill_tread', skip=('down',), v0=8)
+ebox('drill_band8', C - HW - 1, HOUSE[1], C - HW - 1, C + HW + 1, ROOF, C + HW + 1, top='drill_tread', bottom='drill_underside', v0=8)
 outline(C - HW, HOUSE[1] - 1.5, C - HW, C + HW, HOUSE[1] - 0.5, C + HW, 'glow')
 # Louvred vents over the middle two panels of the upper row, front and back; the hatch's window,
 # lit, in its door.
@@ -410,9 +412,9 @@ for sx in (-1, 1):
 
 
 # ---------------------------------------------------------------- running and idle, export and pictures
-# Idle: the pit crusted over and dark, the beam off, the lamps, window and light lines dim, the
+# Idle: the pit plain obsidian, the beam off, the lamps, window and light lines dim, the
 # firebrick and the emitter's tip cooled.
-IDLE = {'drill_melt': 'drill_crust', 'drill_amber': 'drill_amber_off', 'glow': 'glow_off', 'drill_window': 'drill_window_off',
+IDLE = {'drill_hot_obsidian': 'obsidian', 'drill_amber': 'drill_amber_off', 'glow': 'glow_off', 'drill_window': 'drill_window_off',
         'drill_lamps': 'drill_lamps_off', 'drill_pit_wall': 'drill_pit_wall_cold', 'drill_emitter': 'drill_emitter_cold'}
 RUNNING_ONLY = ('drill_beam', 'drill_spot')
 GAME_DATA = os.path.join(mp.ROOT, 'mod', 'src', 'main', 'resources', 'assets', 'ryzergen', 'drill', 'mega_drill.json')
