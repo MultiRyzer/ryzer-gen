@@ -36,7 +36,7 @@ TEXTURES = {'breeder_' + name: 'ryzergen:block/breeder/' + name for name in bree
 TEXTURES.update({name: 'ryzergen:block/microreactor/' + name for name in ('hazard', 'glow', 'screen')})
 TEXTURES['front_panel'] = 'ryzergen:block/breeder/front_panel'
 TEXTURES['glass'] = 'ryzergen:block/breeder/glass'
-TEXTURES.update({'drill_' + name: 'ryzergen:block/drill/' + name for name in drill_textures.TEXTURES})
+TEXTURES.update({'drill_' + name: 'ryzergen:block/drill/' + name for name in drill_textures.NAMES})
 d = Design(CHUNK / 2, TEXTURES, {'glow', 'screen', 'breeder_amber'})
 UV = [(0, 0), (16, 0), (16, 16), (0, 16)]
 
