@@ -14,8 +14,10 @@ the foot so you see the laser going in. Bottom to top:
 - The column: an open lattice, eight posts with big X braces on its four faces, the drive shaft
   inside with an amber band, a square duct up one side.
 - The collar: a wider cut-corner ring with vents and its light line.
-- The head: light cladding with windows onto the beam generator glowing inside and orange lamps on
-  its corners, a stepped cap and a beacon.
+- The drive housing (reworked 4 Oct, as the round head looked like a lighthouse): a heavy box with
+  louvred vents and an inspection hatch, generator pods with cooling fins bolted to its flanks, and
+  on its roof a rig's crown frame with its sheave block, square cooling fans, short exhaust stacks
+  and warning lamps on the corners.
 Real basis: blind-shaft boring rigs stand over the hole they bore and lift the cuttings up through
 it; this one melts the rock with a beam (thermal spallation).
 """
@@ -181,26 +183,61 @@ d.box('breeder_pipe', C + CW + 2, COL[0], C - 6, C + CW + 8, COL[1] + 4, C + 2)
 for y in range(int(COL[0]) + 10, int(COL[1]), 18):
     d.box('breeder_rail', C + CW + 1.4, y, C - 6.6, C + CW + 8.6, y + 2, C + 2.6)
 
-# ---------------------------------------------------------------- the collar and the head
+# ---------------------------------------------------------------- the collar and the drive housing
+# Not a lantern: a heavy drive housing with louvred vents, generator pods bolted to its flanks, and
+# on its roof the crown frame, cooling fans, exhaust stacks and warning lamps, as a rig's top.
 COLLAR = (COL[1], COL[1] + 12)
-prism('drill_ring', COLLAR[0], COLLAR[1], 40, 12, top='breeder_graphite', bottom='breeder_graphite', v0=4)
+prism('drill_ring', COLLAR[0], COLLAR[1], 40, 12, top='breeder_grate', bottom='breeder_graphite', v0=4)
 prism('glow', COLLAR[0] + 6.5, COLLAR[0] + 7.5, 40.3, 12)
-HEAD = (COLLAR[1], COLLAR[1] + 3 * B)
-prism('drill_casing', HEAD[0], HEAD[1], 34, 12)
-# Windows on the four faces onto the generator glowing inside, and orange lamps on the corners.
-for face, (x1, z1, x2, z2) in (('north', (C - 12, C - 34.3, C + 12, C - 34)), ('south', (C - 12, C + 34, C + 12, C + 34.3)),
-                               ('west', (C - 34.3, C - 12, C - 34, C + 12)), ('east', (C + 34, C - 12, C + 34.3, C + 12))):
-    d.box('breeder_graphite', x1 - 2 * (face in ('north', 'south')), HEAD[0] + 8, z1 - 2 * (face in ('west', 'east')),
-          x2 + 2 * (face in ('north', 'south')), HEAD[1] - 8, z2 + 2 * (face in ('west', 'east')), skip=face_only(face))
-    push = {'north': (0, -0.3), 'south': (0, 0.3), 'west': (-0.3, 0), 'east': (0.3, 0)}[face]
-    d.box('drill_window', x1 + push[0], HEAD[0] + 11, z1 + push[1], x2 + push[0], HEAD[1] - 11, z2 + push[1], skip=face_only(face))
-for x, z in corners(34, 12)[::2]:
-    d.box('breeder_rail', x - 2, HEAD[1] - 14, z - 2, x + 2, HEAD[1] - 8, z + 2)
-CAP = (HEAD[1], HEAD[1] + 8)
-prism('drill_band8', CAP[0], CAP[1], 36, 12, top='breeder_graphite', v0=8)
-prism('drill_casing', CAP[1], CAP[1] + 10, 22, 7, top='breeder_grate')
-d.box('breeder_graphite', C - 4, CAP[1] + 10, C - 4, C + 4, CAP[1] + 15, C + 4, skip=('down',))
-d.box('breeder_amber', C - 2.5, CAP[1] + 15, C - 2.5, C + 2.5, CAP[1] + 18, C + 2.5, skip=('down',))
+HW = 30                 # the housing's half width: a box on the collar, not a round head
+HOUSE = (COLLAR[1], COLLAR[1] + 2 * B)
+d.box('drill_casing', C - HW, HOUSE[0], C - HW, C + HW, HOUSE[1], C + HW, top='breeder_grate', skip=('down',))
+d.box('drill_band8', C - HW - 1, HOUSE[1] - 8, C - HW - 1, C + HW + 1, HOUSE[1], C + HW + 1, skip=('down', 'up'))
+outline(C - HW, HOUSE[1] - 10, C - HW, C + HW, HOUSE[1] - 9, C + HW, 'glow')
+# A louvred vent two blocks wide in the front and back faces.
+for face, z, push in (('north', C - HW, -0.3), ('south', C + HW, 0.3)):
+    a1, a2 = sorted((z, z + push))
+    d.box('drill_vent', C - B, HOUSE[0] + 4, a1, C, HOUSE[0] + 20, a2, skip=face_only(face))
+    d.box('drill_vent', C, HOUSE[0] + 4, a1, C + B, HOUSE[0] + 20, a2, skip=face_only(face))
+# An inspection hatch on the front, a small window onto the generator glowing inside.
+d.box('breeder_graphite', C + 18, HOUSE[0] + 5, C - HW - 1, C + 26, HOUSE[0] + 17, C - HW, skip=('south',))
+d.box('drill_window', C + 19.5, HOUSE[0] + 7, C - HW - 1.3, C + 24.5, HOUSE[0] + 15, C - HW - 1, skip=('south',))
+# Generator pods on the flanks: boxes with cooling fins, a graphite base and a cyan line.
+for sx in (-1, 1):
+    x1, x2 = sorted((C + sx * HW, C + sx * (HW + 14)))
+    d.box('drill_casing', x1, HOUSE[0] - 4, C - 18, x2, HOUSE[0] + 22, C + 18, top='breeder_graphite')
+    d.box('breeder_graphite', min(x1, x2) - 0.5, HOUSE[0] - 6, C - 18.5, max(x1, x2) + 0.5, HOUSE[0] - 2, C + 18.5)
+    outline(x1, HOUSE[0] + 18, C - 18, x2, HOUSE[0] + 19, C + 18, 'glow')
+    fx = C + sx * (HW + 14)
+    for k in range(5):
+        z = C - 14 + k * 7
+        a1, a2 = sorted((fx, fx + sx * 3))
+        d.box('drill_frame', a1, HOUSE[0], z - 1, a2, HOUSE[0] + 16, z + 1)
+# The crown frame on the roof: an A-frame of girders over the middle carrying the sheave block,
+# as a drilling rig's crown, with the drill string's head under it.
+ROOF = HOUSE[1]
+for sx in (-1, 1):
+    for sz in (-1, 1):
+        d.sweep('breeder_graphite', [(C + sx * 22, ROOF, C + sz * 10), (C + sx * 5, ROOF + 26, C + sz * 10)], 2, 2,
+                lambda i: (0, 1, 0), closed=False, caps=True)
+d.box('breeder_girder', C - 7, ROOF + 24, C - 13, C + 7, ROOF + 30, C + 13, top='breeder_graphite')
+d.box('breeder_fitting', C - 4, ROOF + 18, C - 9, C + 4, ROOF + 24, C + 9)
+for z in (C - 6, C, C + 6):
+    d.box('breeder_rail', C - 4.4, ROOF + 19, z - 1.5, C + 4.4, ROOF + 23, z + 1.5)
+d.box('breeder_graphite', C - 6, ROOF, C - 6, C + 6, ROOF + 6, C + 6, top='breeder_fitting')
+# Two square cooling fans on the roof's front corners, and two short stacks at the back.
+for sx in (-1, 1):
+    fx = C + sx * 19
+    d.box('breeder_graphite', fx - 8, ROOF, C - 26, fx + 8, ROOF + 3, C - 10, top='breeder_grate')
+    d.box('breeder_rail', fx - 1, ROOF + 3, C - 19, fx + 1, ROOF + 4, C - 17, skip=('down',))
+    d.box('breeder_graphite', fx - 4, ROOF, C + 14, fx + 4, ROOF + 18, C + 22)
+    d.box('breeder_rail', fx - 4.4, ROOF + 12, C + 13.6, fx + 4.4, ROOF + 15, C + 22.4, skip=('up', 'down'))
+# Warning lamps on the housing's roof corners, instead of one beacon on top.
+for sx in (-1, 1):
+    for sz in (-1, 1):
+        lx, lz = C + sx * (HW - 3), C + sz * (HW - 3)
+        d.box('breeder_graphite', lx - 2, ROOF, lz - 2, lx + 2, ROOF + 2, lz + 2, skip=('down',))
+        d.box('breeder_amber', lx - 1.5, ROOF + 2, lz - 1.5, lx + 1.5, ROOF + 5, lz + 1.5, skip=('down',))
 
 
 def main():
