@@ -40,7 +40,7 @@ C = SIZE / 2
 TEXTURES = {'drill_' + name: 'ryzergen:block/drill/' + name for name in drill_textures.NAMES}
 TEXTURES['obsidian'] = 'minecraft:block/obsidian'
 TEXTURES.update({name: 'ryzergen:block/microreactor/' + name for name in ('glow', 'glow_off')})
-LIT = {'glow', 'drill_hot_obsidian', 'drill_beam', 'drill_spot', 'drill_window', 'drill_screen', 'drill_amber', 'drill_lamps'}
+LIT = {'glow', 'drill_hot_obsidian', 'drill_hot_obsidian_core', 'drill_beam', 'drill_window', 'drill_screen', 'drill_amber', 'drill_lamps'}
 d = Design(C, TEXTURES, LIT)
 ALL = ('north', 'south', 'east', 'west', 'up', 'down')
 UV = [(0, 0), (16, 0), (16, 16), (0, 16)]
@@ -237,8 +237,15 @@ for xa, xb in zip(steps, steps[1:]):
     d.quad('drill_pit_wall', [(xb, RING, hi), (xa, RING, hi), (xa, 1, hi), (xb, 1, hi)], WALL, (0, 0, -1))
     d.quad('drill_pit_wall', [(lo, RING, xb), (lo, RING, xa), (lo, 1, xa), (lo, 1, xb)], WALL, (1, 0, 0))
     d.quad('drill_pit_wall', [(hi, RING, xa), (hi, RING, xb), (hi, 1, xb), (hi, 1, xa)], WALL, (-1, 0, 0))
-    for za, zb in zip(steps, steps[1:]):
-        d.quad('drill_hot_obsidian', [(xa, 1, za), (xb, 1, za), (xb, 1, zb), (xa, 1, zb)], UV, (0, 1, 0))
+# The pit's floor, tiled on the block grid (half tiles at its edges), so the beam strikes the middle
+# of one tile: the core, white hot under it and fading to the plain hot floor at its edges.
+FLOOR = [lo] + list(range(int(lo) + 8, int(hi), B)) + [hi]
+for xa, xb in zip(FLOOR, FLOOR[1:]):
+    for za, zb in zip(FLOOR, FLOOR[1:]):
+        u0, v0 = xa % 16, za % 16
+        tex = 'drill_hot_obsidian_core' if (xa, za) == (C - B / 2, C - B / 2) else 'drill_hot_obsidian'
+        d.quad(tex, [(xa, 1, za), (xb, 1, za), (xb, 1, zb), (xa, 1, zb)],
+               [(u0, v0), (u0 + xb - xa, v0), (u0 + xb - xa, v0 + zb - za), (u0, v0 + zb - za)], (0, 1, 0))
 
 # A hazard border round the pit's edge, a pixel proud of the grating.
 for x1, z1, x2, z2 in ((lo - 3, lo - 3, hi + 3, lo), (lo - 3, hi, hi + 3, hi + 3), (lo - 3, lo, lo, hi), (hi, lo, hi + 3, hi)):
@@ -288,7 +295,6 @@ for k in range(4):
     d.quad('drill_emitter', [a1, b1, tip, tip], [(0, 0), (16, 0), (8, 16), (8, 16)], out)
 d.box('glow', C - 2.5, tip_y - 2, C - 2.5, C + 2.5, tip_y + 1, C + 2.5)
 d.box('drill_beam', C - 1.2, 1, C - 1.2, C + 1.2, tip_y - 2, C + 1.2, skip=('up', 'down'))
-d.box('drill_amber', C - 7, 1, C - 7, C + 7, 1.6, C + 7, decals={'up': 'drill_spot'}, skip=('down',))
 
 # ---------------------------------------------------------------- the deck
 prism('drill_band8', DECK_Y, DECK_Y + 8, DECK_W, DECK_C, top='drill_tread', bottom='drill_underside', v0=8)
@@ -414,9 +420,9 @@ for sx in (-1, 1):
 # ---------------------------------------------------------------- running and idle, export and pictures
 # Idle: the pit plain obsidian, the beam off, the lamps, window and light lines dim, the
 # firebrick and the emitter's tip cooled.
-IDLE = {'drill_hot_obsidian': 'obsidian', 'drill_amber': 'drill_amber_off', 'glow': 'glow_off', 'drill_window': 'drill_window_off',
+IDLE = {'drill_hot_obsidian': 'obsidian', 'drill_hot_obsidian_core': 'obsidian', 'drill_amber': 'drill_amber_off', 'glow': 'glow_off', 'drill_window': 'drill_window_off',
         'drill_lamps': 'drill_lamps_off', 'drill_pit_wall': 'drill_pit_wall_cold', 'drill_emitter': 'drill_emitter_cold'}
-RUNNING_ONLY = ('drill_beam', 'drill_spot')
+RUNNING_ONLY = ('drill_beam',)
 GAME_DATA = os.path.join(mp.ROOT, 'mod', 'src', 'main', 'resources', 'assets', 'ryzergen', 'drill', 'mega_drill.json')
 
 
