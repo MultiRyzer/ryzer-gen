@@ -15,12 +15,12 @@ textures drawn at their height, round parts change only down their height.
   a bolt line, a groove and a shadowed foot.
 - leg: the mega drill's buttress legs, drawn for swept bars (u runs along the leg, v across it):
   light plating with a lit edge, a recessed groove down the middle and bolts every 8 pixels.
-- window (lit): a head window onto the beam generator: its coils glowing orange behind the glass,
+- window (lit decal, 6 x 10): the hatch's window onto the beam generator: its coils glowing orange behind the glass,
   dark bars between them, a pale glint across the top corner.
 - panel: the mega drill's housing and pods, a designed plate a block each: an inset, a lit bevel,
   a shadowed foot and a screw in each corner.
-- post: the column's posts, a block each: lit on the left, shadowed on the right, a joint with two
-  bolts at each block.
+- post: the column's posts, changing only down their height so a narrow post shows it whole: lit
+  at the top of each block, a joint at its foot.
 - brace: the lattice's X braces, drawn for swept bars (v across): graphite, lit along one edge,
   shadowed along the other, a bolt hole every 8 pixels down the middle.
 - emitter: the beam emitter's pyramid faces (the tip at the bottom middle): graphite, heat-tinted
@@ -120,13 +120,14 @@ def leg():
 
 
 def window():
-    t = Tex()
-    for y in range(16):
-        t.rect(0, y, 15, y, ('Z', 'X', 'X', 'e', 'e', 'X', 'X', 'Z')[y % 8])
-    for x in (3, 8, 13):
-        t.rect(x, 0, x, 15, 'o')
-    for k in range(4):
-        t.set(1 + k, 3 - k, 'W')
+    """A decal, 6 x 10: the hatch's window onto the generator, its coils glowing orange behind the
+    glass, a dark bar between them, a pale glint in the top corner."""
+    t = Tex(6, 10)
+    for y in range(10):
+        t.rect(0, y, 5, y, ('Z', 'X', 'e', 'e', 'X', 'X', 'e', 'e', 'X', 'Z')[y])
+    t.rect(2, 0, 2, 9, 'o')
+    t.set(0, 0, 'W')
+    t.set(1, 1, 'W')
     return t
 
 
@@ -148,15 +149,11 @@ def panel():
 
 
 def post():
+    """Changes only down its height, so a post of any width shows it whole: lit at the top, a
+    plated face, a joint at the foot of each block with a bolt line above it."""
     t = Tex()
-    t.rect(0, 0, 15, 15, 'E')
-    t.rect(0, 0, 1, 15, 'A')
-    t.rect(14, 0, 15, 15, 'I')
-    t.rect(0, 15, 15, 15, 'J')
-    t.rect(0, 0, 15, 0, 'A')
-    for x in (4, 11):
-        t.set(x, 2, 'J')
-        t.set(x, 13, 'J')
+    for y, c in enumerate(['A', 'A', 'E', 'E', 'E', 'E', 'E', 'F', 'E', 'E', 'E', 'E', 'I', 'F', 'I', 'J']):
+        t.rect(0, y, 15, y, c)
     return t
 
 
