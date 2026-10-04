@@ -17,6 +17,16 @@ textures drawn at their height, round parts change only down their height.
   light plating with a lit edge, a recessed groove down the middle and bolts every 8 pixels.
 - window (lit): a head window onto the beam generator: its coils glowing orange behind the glass,
   dark bars between them, a pale glint across the top corner.
+- panel: the mega drill's housing and pods, a designed plate a block each: an inset, a lit bevel,
+  a shadowed foot and a screw in each corner.
+- post: the column's posts, a block each: lit on the left, shadowed on the right, a joint with two
+  bolts at each block.
+- brace: the lattice's X braces, drawn for swept bars (v across): graphite, lit along one edge,
+  shadowed along the other, a bolt hole every 8 pixels down the middle.
+- emitter: the beam emitter's pyramid faces (the tip at the bottom middle): graphite, heat-tinted
+  bronze lower down and glowing orange at the tip, as metal discolours near a hot spot.
+- heat_sign (decal, 6 x 6): a heat warning: a yellow plate with a black border and a black flame.
+- stencil (decal, 12 x 6): the drill's number stencilled in graphite, D-1, as the station's RG-1.
 - crust: the pit while the drill stands idle, the melt cooled to dark glassy rock with faint red
   cracks still glowing in it.
 - melt and beam (animated, lit): the molten pit, dark crust drifting slowly over glowing melt,
@@ -117,6 +127,81 @@ def window():
         t.rect(x, 0, x, 15, 'o')
     for k in range(4):
         t.set(1 + k, 3 - k, 'W')
+    return t
+
+
+def panel():
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'F')
+    t.rect(0, 0, 15, 0, 'A')
+    t.rect(0, 0, 0, 15, 'A')
+    t.rect(15, 0, 15, 15, 'J')
+    t.rect(0, 15, 15, 15, 'J')
+    t.rect(2, 2, 13, 13, 'E')
+    t.rect(2, 2, 13, 2, 'I')
+    t.rect(2, 2, 2, 13, 'I')
+    t.rect(3, 13, 13, 13, 'A')
+    t.rect(13, 3, 13, 13, 'A')
+    for x, y in ((1, 1), (14, 1), (1, 14), (14, 14)):
+        t.set(x, y, 'J')
+    return t
+
+
+def post():
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'E')
+    t.rect(0, 0, 1, 15, 'A')
+    t.rect(14, 0, 15, 15, 'I')
+    t.rect(0, 15, 15, 15, 'J')
+    t.rect(0, 0, 15, 0, 'A')
+    for x in (4, 11):
+        t.set(x, 2, 'J')
+        t.set(x, 13, 'J')
+    return t
+
+
+def brace():
+    t = Tex()
+    for y, c in enumerate(['M', 'b', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'T', 'U']):
+        t.rect(0, y, 15, y, c)
+    for x in (3, 11):
+        t.set(x, 7, 'U')
+        t.set(x, 8, 'U')
+    return t
+
+
+def emitter():
+    t = Tex()
+    for y, c in enumerate(['b', 'S', 'S', 'S', 'S', 'S', 'S', 'T', 'o', 'o', 'O', 'O', 'r', 'R', 'X', 'e']):
+        t.rect(0, y, 15, y, c)
+    return t
+
+
+def heat_sign():
+    t = Tex(6, 6)
+    t.rect(0, 0, 5, 5, 'B')
+    t.rect(1, 1, 4, 4, 'Y')
+    for x, y in ((3, 1), (2, 2), (3, 2), (2, 3), (3, 3), (4, 3), (1, 4), (2, 4), (3, 4), (4, 4)):
+        t.set(x, y, 'B')
+    return t
+
+
+GLYPHS = {
+    'D': ['110', '101', '101', '101', '110'],
+    '-': ['000', '000', '111', '000', '000'],
+    '1': ['010', '110', '010', '010', '111'],
+}
+
+
+def stencil():
+    t = Tex(12, 6)
+    x0 = 1
+    for ch in 'D-1':
+        for y, row in enumerate(GLYPHS[ch]):
+            for x, bit in enumerate(row):
+                if bit == '1':
+                    t.set(x0 + x, y, 'S')
+        x0 += 4
     return t
 
 
@@ -227,6 +312,12 @@ TEXTURES = {
     'leg': leg,
     'crust': crust,
     'window': window,
+    'panel': panel,
+    'post': post,
+    'brace': brace,
+    'emitter': emitter,
+    'heat_sign': heat_sign,
+    'stencil': stencil,
     'skirt': skirt,
     'ring': ring,
     'warning': warning,
