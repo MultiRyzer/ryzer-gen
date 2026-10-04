@@ -26,7 +26,7 @@ public final class Preview {
 
     public static List<ItemLike> items() {
         return List.of(ModItems.LITHIUM_TARGET_ROD.get(), ModItems.IRRADIATED_TARGET_ROD.get(), ModItems.FUSION_PREVIEW.get(),
-                ModItems.SUN_GATE_PREVIEW.get(), ModItems.ELECTROREFINER.get(), ModItems.SODIUM_INGOT.get(),
+                ModItems.SUN_GATE_PREVIEW.get(), ModItems.MEGA_DRILL_PREVIEW.get(), ModItems.ELECTROREFINER.get(), ModItems.SODIUM_INGOT.get(),
                 ModItems.TRANSURANIC_METAL.get(), ModItems.BREEDER_CORE.get(), ModItems.BREEDER_FRAME.get(),
                 ModItems.BREEDER_SHELL.get(), ModItems.BREEDER_FUEL.get(), ModItems.SPENT_BREEDER_FUEL.get(),
                 ModItems.URANIUM_BLANKET.get(), ModItems.BRED_URANIUM_BLANKET.get());

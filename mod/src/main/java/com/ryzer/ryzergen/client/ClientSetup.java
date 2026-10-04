@@ -100,6 +100,7 @@ public final class ClientSetup {
         event.registerBlockEntityRenderer(ModBlockEntities.BATTERY_CONTROLLER.get(), ContainerFanRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.FUSION_PREVIEW.get(), FusionPreviewRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.SUN_GATE_PREVIEW.get(), SunGateRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.MEGA_DRILL_PREVIEW.get(), MegaDrillPreviewRenderer::new);
     }
 
     /** Optional mods' client hooks: no renderer for the worn dosimeter ring, when Accessories is here. */

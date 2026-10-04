@@ -30,6 +30,8 @@ public final class StationGeometry {
     private static final ResourceLocation DATA = ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "station/fission_station.json");
     /** The fusion reactor's concept design (art/tools/tokamak_concept.py), drawn by its preview block. */
     public static final ResourceLocation FUSION = ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "fusion/fusion_reactor.json");
+    /** The mega drill's concept design (art/tools/mega_drill_concept.py): its body, and its running and idle parts. */
+    public static final ResourceLocation MEGA_DRILL = ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "drill/mega_drill.json");
     /** The sun gate's concept design (art/tools/sun_gate_concept.py): its platform and arms. */
     public static final ResourceLocation SUN_GATE = ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "sun/sun_gate.json");
     private static final Map<String, Direction> FACES = Map.of("n", Direction.NORTH, "s", Direction.SOUTH,

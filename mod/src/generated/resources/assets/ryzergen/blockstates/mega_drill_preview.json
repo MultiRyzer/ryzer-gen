@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=east,powered=false": {
+      "model": "ryzergen:block/mega_drill_preview"
+    },
+    "facing=east,powered=true": {
+      "model": "ryzergen:block/mega_drill_preview"
+    },
+    "facing=north,powered=false": {
+      "model": "ryzergen:block/mega_drill_preview"
+    },
+    "facing=north,powered=true": {
+      "model": "ryzergen:block/mega_drill_preview"
+    },
+    "facing=south,powered=false": {
+      "model": "ryzergen:block/mega_drill_preview"
+    },
+    "facing=south,powered=true": {
+      "model": "ryzergen:block/mega_drill_preview"
+    },
+    "facing=west,powered=false": {
+      "model": "ryzergen:block/mega_drill_preview"
+    },
+    "facing=west,powered=true": {
+      "model": "ryzergen:block/mega_drill_preview"
+    }
+  }
+}

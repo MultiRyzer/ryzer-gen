@@ -3,6 +3,7 @@ package com.ryzer.ryzergen.registry;
 import com.ryzer.ryzergen.battery.container.BatteryControllerBlockEntity;
 import com.ryzer.ryzergen.machine.pool.PoolControllerBlockEntity;
 import com.ryzer.ryzergen.machine.fusion.FusionPreviewBlockEntity;
+import com.ryzer.ryzergen.machine.drill.MegaDrillPreviewBlockEntity;
 import com.ryzer.ryzergen.machine.sun.SunGatePreviewBlockEntity;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.battery.HomeBatteryBlockEntity;
@@ -65,6 +66,9 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FusionPreviewBlockEntity>> FUSION_PREVIEW =
             BLOCK_ENTITIES.register("fusion_preview",
                     () -> BlockEntityType.Builder.of(FusionPreviewBlockEntity::new, ModBlocks.FUSION_PREVIEW.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MegaDrillPreviewBlockEntity>> MEGA_DRILL_PREVIEW =
+            BLOCK_ENTITIES.register("mega_drill_preview",
+                    () -> BlockEntityType.Builder.of(MegaDrillPreviewBlockEntity::new, ModBlocks.MEGA_DRILL_PREVIEW.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SunGatePreviewBlockEntity>> SUN_GATE_PREVIEW =
             BLOCK_ENTITIES.register("sun_gate_preview",
                     () -> BlockEntityType.Builder.of(SunGatePreviewBlockEntity::new, ModBlocks.SUN_GATE_PREVIEW.get()).build(null));
