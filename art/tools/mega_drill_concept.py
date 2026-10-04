@@ -10,9 +10,8 @@ the foot so you see the laser going in. Bottom to top:
 - The emitter: a graphite pyramid hung under the deck, its lens glowing, its beam straight down into
   the pit.
 - The deck: a cut-corner square platform, grated, its edge a graphite band with the light line, a
-  yellow handrail round it, a ladder up from the ground; the console against the column facing the
-  ladder's top; and the coolant tank beside the column, piped into its coolant duct and fed by a
-  supply line down off the deck's edge.
+  yellow handrail round it with a gap for the ladder up from the ground, and the console against the
+  column facing the ladder's top.
 - The column: an open lattice, eight posts with big X braces on its four faces, the drive shaft
   inside with an amber band, a square duct up one side.
 - The collar: a wider cut-corner ring with vents and its light line.
@@ -116,9 +115,7 @@ for sx, sz in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
     across = (-out[2], 0, out[0])
     d.sweep('drill_leg', [(foot[0], RING, foot[1]), (foot[0], RING + 10, foot[1]), (head[0], DECK_Y, head[1])], 7, 6,
             lambda i, v=across: v, closed=False, caps=True)
-    # An orange clamp and a foot pad.
-    mx, mz = foot[0] + (head[0] - foot[0]) * 0.4, foot[1] + (head[1] - foot[1]) * 0.4
-    d.box('breeder_rail', mx - 6, 26, mz - 6, mx + 6, 29, mz + 6)
+    # A foot pad.
     d.box('drill_frame', foot[0] - 11, RING, foot[1] - 11, foot[0] + 11, RING + 4, foot[1] + 11, top='breeder_grate', skip=('down',))
     outline(foot[0] - 11, RING, foot[1] - 11, foot[0] + 11, RING + 4, foot[1] + 11, 'hazard')
     # A hydraulic ram from the leg's foot up under the deck, beside it.
@@ -147,20 +144,25 @@ d.box('breeder_amber', C - 7, 1, C - 7, C + 7, 1.6, C + 7, skip=('down',))
 # ---------------------------------------------------------------- the deck
 prism('drill_band8', DECK_Y, DECK_Y + 8, DECK_W, DECK_C, top='breeder_grate', bottom='breeder_graphite', v0=8)
 prism('glow', DECK_Y + 3, DECK_Y + 4, DECK_W + 0.3, DECK_C)
-# The handrail round the deck's edge, with a gap at the ladder on the front.
+# The handrail round the deck's edge: one run from the right of the ladder's gap, round the deck,
+# back to the left of it, with a post at every corner and either side of the gap.
+GAP = 8
 rail = corners(DECK_W - 3, DECK_C - 1)
 RY = DECK_Y + 8
-path = [(x, RY + 7, z) for x, z in rail[7:] + rail[:7]]
-path = [(C + 10, RY + 7, C - DECK_W + 3)] + path[1:] + [(C - 10 + 0, RY + 7, C - DECK_W + 3)]
-d.sweep('breeder_rail', path[:-1], 0.7, 0.7, lambda i: (0, 1, 0), closed=False, caps=True)
-for x, z in rail:
-    d.box('breeder_rail', x - 0.7, RY, z - 0.7, x + 0.7, RY + 7, z + 0.7)
-# The ladder up the front, from the ground to the deck.
+front_z = rail[6][1]
+run = [(C + GAP, front_z)] + [rail[7]] + rail[0:7] + [(C - GAP, front_z)]
+d.sweep('breeder_rail', [(x, RY + 8, z) for x, z in run], 0.7, 0.7, lambda i: (0, 1, 0), closed=False, caps=True)
+d.sweep('breeder_rail', [(x, RY + 4, z) for x, z in run], 0.5, 0.5, lambda i: (0, 1, 0), closed=False, caps=True)
+for x, z in run:
+    d.box('breeder_rail', x - 0.8, RY, z - 0.8, x + 0.8, RY + 8.7, z + 0.8)
+# The ladder up the front, in the rail's gap: two stiles from the ground to hand height over the
+# deck's edge, rungs every 4 pixels.
 LZ = C - DECK_W - 1.5
 for lx in (C - 5, C + 5):
-    d.box('breeder_rail', lx - 0.8, 0, LZ - 0.8, lx + 0.8, RY + 10, LZ + 0.8)
-for y in range(6, int(RY), 5):
+    d.box('breeder_rail', lx - 0.8, 0, LZ - 0.8, lx + 0.8, RY + 8.7, LZ + 0.8)
+for y in range(4, int(RY), 4):
     d.box('breeder_rail', C - 5, y, LZ - 0.5, C + 5, y + 1, LZ + 0.5)
+
 # The console: its back against the column, facing the top of the ladder, so it greets whoever
 # climbs onto the deck: a graphite desk with its lamps, and an upright panel carrying the screen.
 CON = (C - 16, C + 16)          # across the column's front face
@@ -170,19 +172,6 @@ d.box('drill_casing', CON[0] + 2, RY + 8, CZ - 4, CON[1] - 2, RY + 24, CZ, top='
 d.box('breeder_fitting', C - 8, RY + 12, CZ - 4.6, C + 8, RY + 21, CZ - 4, decals={'north': 'screen'}, skip=('south',))
 for k in range(3):
     d.box('glow', C - 7 + k * 6, RY + 8, CZ - 9, C - 5 + k * 6, RY + 8.6, CZ - 7, skip=('down',))
-# The coolant tank beside the column, banded, piped into the column's coolant duct, and fed by a
-# supply line dropping off the deck's edge to the ground (where the intake pumps go).
-TX, TZ = C + 40, C + 16
-d.box('drill_pot', TX - 8, RY, TZ - 8, TX + 8, RY + 28, TZ + 8, top='breeder_graphite')
-for y in (RY + 6, RY + 20):
-    d.box('breeder_graphite', TX - 8.5, y, TZ - 8.5, TX + 8.5, y + 3, TZ + 8.5, skip=('up', 'down'))
-d.sweep('breeder_pipe', [(TX - 8, RY + 24, TZ - 4), (C + CW + 5, RY + 24, TZ - 4), (C + CW + 5, RY + 24, C - 2)], 1.6, 1.6,
-        lambda i: (0, 1, 0), closed=False, caps=True)
-d.sweep('breeder_pipe', [(TX + 8, RY + 4, TZ), (C + DECK_W + 3, RY + 4, TZ), (C + DECK_W + 3, RING, TZ)], 1.6, 1.6,
-        lambda i: (0, 1, 0), closed=False, caps=True)
-d.box('breeder_rail', C + DECK_W, RY - 6, TZ - 3, C + DECK_W + 6, RY - 3, TZ + 3)
-d.box('breeder_rail', C + DECK_W, 24, TZ - 3, C + DECK_W + 6, 27, TZ + 3)
-
 # ---------------------------------------------------------------- the column
 COL = (RY, RY + 6 * B)
 for x, z in corners(CW, CC):
