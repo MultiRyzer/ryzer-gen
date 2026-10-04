@@ -32,9 +32,9 @@ B = 16
 SIZE = 9 * B
 C = SIZE / 2
 TEXTURES = {'breeder_' + name: 'ryzergen:block/breeder/' + name for name in breeder_textures.TEXTURES}
-TEXTURES.update({'drill_' + name: 'ryzergen:block/drill/' + name for name in drill_textures.TEXTURES})
+TEXTURES.update({'drill_' + name: 'ryzergen:block/drill/' + name for name in list(drill_textures.TEXTURES) + ['melt', 'beam']})
 TEXTURES.update({name: 'ryzergen:block/microreactor/' + name for name in ('hazard', 'glow', 'screen')})
-d = Design(C, TEXTURES, {'glow', 'screen', 'breeder_amber'})
+d = Design(C, TEXTURES, {'glow', 'screen', 'breeder_amber', 'drill_melt', 'drill_beam', 'drill_window'})
 ALL = ('north', 'south', 'east', 'west', 'up', 'down')
 UV = [(0, 0), (16, 0), (16, 16), (0, 16)]
 
@@ -99,7 +99,7 @@ for xa, xb in zip(steps, steps[1:]):
     d.quad('breeder_graphite', [(lo, RING, xb), (lo, RING, xa), (lo, 1, xa), (lo, 1, xb)], UV, (1, 0, 0))
     d.quad('breeder_graphite', [(hi, RING, xa), (hi, RING, xb), (hi, 1, xb), (hi, 1, xa)], UV, (-1, 0, 0))
     for za, zb in zip(steps, steps[1:]):
-        d.quad('breeder_amber', [(xa, 1, za), (xb, 1, za), (xb, 1, zb), (xa, 1, zb)], UV, (0, 1, 0))
+        d.quad('drill_melt', [(xa, 1, za), (xb, 1, za), (xb, 1, zb), (xa, 1, zb)], UV, (0, 1, 0))
 
 # ---------------------------------------------------------------- the buttress legs
 DECK_Y = 4 * B
@@ -109,7 +109,7 @@ for sx, sz in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
     head = (C + sx * 36, C + sz * 36)
     out = (sx / math.sqrt(2), 0, sz / math.sqrt(2))
     across = (-out[2], 0, out[0])
-    d.sweep('drill_casing', [(foot[0], RING, foot[1]), (foot[0], RING + 10, foot[1]), (head[0], DECK_Y, head[1])], 7, 6,
+    d.sweep('drill_leg', [(foot[0], RING, foot[1]), (foot[0], RING + 10, foot[1]), (head[0], DECK_Y, head[1])], 7, 6,
             lambda i, v=across: v, closed=False, caps=True)
     # An orange clamp and a foot pad.
     mx, mz = foot[0] + (head[0] - foot[0]) * 0.4, foot[1] + (head[1] - foot[1]) * 0.4
@@ -126,7 +126,7 @@ for sx, sz in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
 # ---------------------------------------------------------------- the emitter and its beam
 EMIT = 22
 tip_y = DECK_Y - 26
-d.box('drill_band', C - EMIT, DECK_Y - 6, C - EMIT, C + EMIT, DECK_Y, C + EMIT)
+d.box('drill_band8', C - EMIT, DECK_Y - 6, C - EMIT, C + EMIT, DECK_Y, C + EMIT)
 outline(C - EMIT, DECK_Y - 4, C - EMIT, C + EMIT, DECK_Y - 3, C + EMIT, 'glow')
 base = [(C - EMIT + 3, DECK_Y - 6, C - EMIT + 3), (C + EMIT - 3, DECK_Y - 6, C - EMIT + 3),
         (C + EMIT - 3, DECK_Y - 6, C + EMIT - 3), (C - EMIT + 3, DECK_Y - 6, C + EMIT - 3)]
@@ -136,11 +136,11 @@ for k in range(4):
     d.quad('breeder_graphite', [a, b, tip, tip], [(0, 0), (16, 0), (8, 16), (8, 16)],
            ((a[0] + b[0]) / 2 - C, -0.7 * EMIT, (a[2] + b[2]) / 2 - C))
 d.box('glow', C - 2.5, tip_y - 2, C - 2.5, C + 2.5, tip_y + 1, C + 2.5)
-d.box('glow', C - 1, 1, C - 1, C + 1, tip_y - 2, C + 1, skip=('up', 'down'))
+d.box('drill_beam', C - 1.2, 1, C - 1.2, C + 1.2, tip_y - 2, C + 1.2, skip=('up', 'down'))
 d.box('breeder_amber', C - 7, 1, C - 7, C + 7, 1.6, C + 7, skip=('down',))
 
 # ---------------------------------------------------------------- the deck
-prism('drill_band', DECK_Y, DECK_Y + 8, DECK_W, DECK_C, top='breeder_grate', bottom='drill_frame', v0=8)
+prism('drill_band8', DECK_Y, DECK_Y + 8, DECK_W, DECK_C, top='breeder_grate', bottom='breeder_graphite', v0=8)
 prism('glow', DECK_Y + 3, DECK_Y + 4, DECK_W + 0.3, DECK_C)
 # The handrail round the deck's edge, with a gap at the ladder on the front.
 rail = corners(DECK_W - 3, DECK_C - 1)
@@ -155,12 +155,12 @@ LZ = C - DECK_W - 1.5
 for lx in (C - 5, C + 5):
     d.box('breeder_rail', lx - 0.8, 0, LZ - 0.8, lx + 0.8, RY + 10, LZ + 0.8)
 for y in range(6, int(RY), 5):
-    d.box('drill_band', C - 5, y, LZ - 0.5, C + 5, y + 1, LZ + 0.5)
+    d.box('breeder_rail', C - 5, y, LZ - 0.5, C + 5, y + 1, LZ + 0.5)
 # A console on the deck beside the ladder, and a tank at the back.
 d.box('drill_casing', C + 18, RY, C - 46, C + 40, RY + 14, C - 36, top='breeder_graphite', skip=('down',))
 d.box('breeder_fitting', C + 21, RY + 5, C - 46.5, C + 37, RY + 12, C - 46, decals={'north': 'screen'}, skip=('south',))
-d.box('drill_pot', C - 44, RY, C + 26, C - 24, RY + 26, C + 46, top='drill_band')
-d.box('drill_band', C - 45, RY + 12, C + 25, C - 23, RY + 16, C + 47, skip=('up', 'down'))
+d.box('drill_pot', C - 44, RY, C + 26, C - 24, RY + 26, C + 46, top='breeder_graphite')
+d.box('breeder_graphite', C - 45, RY + 12, C + 25, C - 23, RY + 16, C + 47, skip=('up', 'down'))
 
 # ---------------------------------------------------------------- the column
 COL = (RY, RY + 6 * B)
@@ -183,7 +183,7 @@ for y in range(int(COL[0]) + 10, int(COL[1]), 18):
 
 # ---------------------------------------------------------------- the collar and the head
 COLLAR = (COL[1], COL[1] + 12)
-prism('drill_ring', COLLAR[0], COLLAR[1], 40, 12, top='breeder_graphite', bottom='drill_frame', v0=4)
+prism('drill_ring', COLLAR[0], COLLAR[1], 40, 12, top='breeder_graphite', bottom='breeder_graphite', v0=4)
 prism('glow', COLLAR[0] + 6.5, COLLAR[0] + 7.5, 40.3, 12)
 HEAD = (COLLAR[1], COLLAR[1] + 3 * B)
 prism('drill_casing', HEAD[0], HEAD[1], 34, 12)
@@ -193,11 +193,11 @@ for face, (x1, z1, x2, z2) in (('north', (C - 12, C - 34.3, C + 12, C - 34)), ('
     d.box('breeder_graphite', x1 - 2 * (face in ('north', 'south')), HEAD[0] + 8, z1 - 2 * (face in ('west', 'east')),
           x2 + 2 * (face in ('north', 'south')), HEAD[1] - 8, z2 + 2 * (face in ('west', 'east')), skip=face_only(face))
     push = {'north': (0, -0.3), 'south': (0, 0.3), 'west': (-0.3, 0), 'east': (0.3, 0)}[face]
-    d.box('breeder_amber', x1 + push[0], HEAD[0] + 11, z1 + push[1], x2 + push[0], HEAD[1] - 11, z2 + push[1], skip=face_only(face))
+    d.box('drill_window', x1 + push[0], HEAD[0] + 11, z1 + push[1], x2 + push[0], HEAD[1] - 11, z2 + push[1], skip=face_only(face))
 for x, z in corners(34, 12)[::2]:
     d.box('breeder_rail', x - 2, HEAD[1] - 14, z - 2, x + 2, HEAD[1] - 8, z + 2)
 CAP = (HEAD[1], HEAD[1] + 8)
-prism('drill_band', CAP[0], CAP[1], 36, 12, top='breeder_graphite', v0=8)
+prism('drill_band8', CAP[0], CAP[1], 36, 12, top='breeder_graphite', v0=8)
 prism('drill_casing', CAP[1], CAP[1] + 10, 22, 7, top='breeder_grate')
 d.box('breeder_graphite', C - 4, CAP[1] + 10, C - 4, C + 4, CAP[1] + 15, C + 4, skip=('down',))
 d.box('breeder_amber', C - 2.5, CAP[1] + 15, C - 2.5, C + 2.5, CAP[1] + 18, C + 2.5, skip=('down',))
@@ -208,6 +208,12 @@ def main():
     breeder_textures.main()
     drill_textures.main()
     d.save_png(out, [((1, 1), 2.0, 0.3), ((-1, 0.5), 2.0, 0.12)])
+    # Idle: the pit crusted over and dark, the beam off, the windows and light lines dim.
+    running = d.quads
+    swap = {'drill_melt': 'drill_crust', 'breeder_amber': 'breeder_graphite', 'glow': 'breeder_graphite', 'drill_window': 'breeder_graphite'}
+    d.quads = [(swap.get(t, t), v, n, g) for t, v, n, g in running if t != 'drill_beam']
+    d.save_png(out.replace('.png', '_idle.png'), [((1, 1), 2.0, 0.3)])
+    d.quads = running
 
 
 if __name__ == '__main__':
