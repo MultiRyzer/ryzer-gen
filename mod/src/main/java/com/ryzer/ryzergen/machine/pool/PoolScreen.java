@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.machine.pool;
 
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.GuiGauges;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -76,13 +77,13 @@ public class PoolScreen extends AbstractContainerScreen<PoolMenu> {
         Component status;
         int colour;
         if (menu.water() < COVERED) {
-            status = Component.translatable("gui.ryzergen.pool.low_water");
+            status = RichText.tr("gui.ryzergen.pool.low_water");
             colour = WARN;
         } else if (anyFuel()) {
-            status = Component.translatable("gui.ryzergen.pool.cooling");
+            status = RichText.tr("gui.ryzergen.pool.cooling");
             colour = GOOD;
         } else {
-            status = Component.translatable("gui.ryzergen.pool.idle");
+            status = RichText.tr("gui.ryzergen.pool.idle");
             colour = DIM;
         }
         graphics.drawString(font, status, STATUS_RIGHT - font.width(status), titleLabelY, colour, false);
@@ -96,8 +97,8 @@ public class PoolScreen extends AbstractContainerScreen<PoolMenu> {
         int my = mouseY - topPos;
         if (mx >= WELL_X && mx < WELL_X + WELL_W && my >= WELL_Y && my < WELL_Y + WELL_H) {
             graphics.renderComponentTooltip(font, List.of(
-                    Component.translatable("gui.ryzergen.pool.water", String.format("%,d", menu.water()), String.format("%,d", CAPACITY)),
-                    Component.translatable("gui.ryzergen.pool.water_hint").withStyle(style -> style.withColor(DIM))),
+                    RichText.tr("gui.ryzergen.pool.water", String.format("%,d", menu.water()), String.format("%,d", CAPACITY)),
+                    RichText.tr("gui.ryzergen.pool.water_hint").withStyle(style -> style.withColor(DIM))),
                     mouseX, mouseY);
         }
     }
@@ -111,8 +112,8 @@ public class PoolScreen extends AbstractContainerScreen<PoolMenu> {
             int seconds = Math.round((1 - progress) * HotFuel.coolingTicks(stack) / 20F);
             lines = new java.util.ArrayList<>(lines);
             lines.add(progress >= 1
-                    ? Component.translatable("gui.ryzergen.pool.ready").withStyle(style -> style.withColor(GOOD))
-                    : Component.translatable("gui.ryzergen.pool.time_left", seconds / 60, String.format("%02d", seconds % 60))
+                    ? RichText.tr("gui.ryzergen.pool.ready").withStyle(style -> style.withColor(GOOD))
+                    : RichText.tr("gui.ryzergen.pool.time_left", seconds / 60, String.format("%02d", seconds % 60))
                     .withStyle(style -> style.withColor(DIM)));
         }
         return lines;

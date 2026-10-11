@@ -3,6 +3,7 @@ package com.ryzer.ryzergen.radiation;
 import com.ryzer.ryzergen.compat.accessories.AccessoriesCompat;
 import com.ryzer.ryzergen.registry.ModDataComponents;
 import com.ryzer.ryzergen.registry.ModItems;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -70,7 +71,7 @@ public class GeigerCounterItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable(isMuted(stack) ? "item.ryzergen.geiger_counter.muted" : "item.ryzergen.geiger_counter.unmuted")
-                .withStyle(ChatFormatting.DARK_AQUA));
+        tooltip.add(RichText.tr(isMuted(stack) ? "item.ryzergen.geiger_counter.muted" : "item.ryzergen.geiger_counter.unmuted")
+                .withStyle(ChatFormatting.GRAY));
     }
 }

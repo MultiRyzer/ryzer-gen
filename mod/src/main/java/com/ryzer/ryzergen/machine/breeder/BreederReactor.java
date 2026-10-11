@@ -81,10 +81,15 @@ public final class BreederReactor {
     public static final float IDLE_TEMPERATURE = 300;
     public static final float FULL_LOAD_TEMPERATURE = 550;
 
+    /** How fast a thorium blanket breeds, against a uranium one. */
+    private static final float THORIUM_BREEDING = 0.5F;
+
     /** What a position is planned to hold. */
     public enum Position {
-        // New types go at the end: plans are saved by position in this list.
-        EMPTY, FUEL, CONTROL, URANIUM, LITHIUM;
+        // New types go at the end: plans are saved by position in this list. CONTROL is retired (the
+        // breeder's SCRAM uses built-in shutdown rods) and can no longer be planned, but stays so a
+        // breeder planned with one in an older world still loads and runs.
+        EMPTY, FUEL, CONTROL, URANIUM, LITHIUM, THORIUM;
 
         public static Position byId(int id) {
             return id >= 0 && id < values().length ? values()[id] : EMPTY;
@@ -97,12 +102,13 @@ public final class BreederReactor {
                 case CONTROL -> stack.is(ModItems.CONTROL_ROD.get());
                 case URANIUM -> stack.is(ModItems.URANIUM_BLANKET.get());
                 case LITHIUM -> stack.is(ModItems.LITHIUM_TARGET_ROD.get());
+                case THORIUM -> stack.is(ModItems.THORIUM_BLANKET.get());
                 case EMPTY -> false;
             };
         }
 
         public boolean blanket() {
-            return this == URANIUM || this == LITHIUM;
+            return this == URANIUM || this == LITHIUM || this == THORIUM;
         }
     }
 
@@ -225,6 +231,7 @@ public final class BreederReactor {
 
     public static boolean isFinished(ItemStack stack) {
         return stack.is(ModItems.SPENT_BREEDER_FUEL.get()) || stack.is(ModItems.BRED_URANIUM_BLANKET.get())
+                || stack.is(ModItems.BRED_THORIUM_BLANKET.get())
                 || stack.is(ModItems.IRRADIATED_TARGET_ROD.get());
     }
 
@@ -240,7 +247,11 @@ public final class BreederReactor {
 
     /** What a fully bred blanket becomes. */
     public static ItemStack bred(Position type) {
-        return new ItemStack(type == Position.URANIUM ? ModItems.BRED_URANIUM_BLANKET.get() : ModItems.IRRADIATED_TARGET_ROD.get());
+        return new ItemStack(switch (type) {
+            case URANIUM -> ModItems.BRED_URANIUM_BLANKET.get();
+            case THORIUM -> ModItems.BRED_THORIUM_BLANKET.get();
+            default -> ModItems.IRRADIATED_TARGET_ROD.get();
+        });
     }
 
     /**
@@ -287,8 +298,10 @@ public final class BreederReactor {
             if (!types[i].blanket() || !types[i].accepts(items[i])) {
                 continue;
             }
+            // Thorium catches fast neutrons less readily than uranium, so it breeds at half the rate.
+            float share = types[i] == Position.THORIUM ? BREED_SHARE * THORIUM_BREEDING : BREED_SHARE;
             for (int n : neighbours(i)) {
-                breed[i] += heat[n] * BREED_SHARE;
+                breed[i] += heat[n] * share;
             }
         }
         return new Analysis(heat, burn, breed, generation, stranded, fuel, blankets);

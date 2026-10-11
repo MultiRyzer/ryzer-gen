@@ -65,6 +65,8 @@ public class ModAdvancementProvider extends AdvancementProvider {
                 Milestone.SAFETIES_OFF, AdvancementType.TASK, false);
         milestone(saver, overdrive, "meltdown", ModItems.DEPLETED_FUEL_CORE.get(),
                 Milestone.MELTDOWN, AdvancementType.CHALLENGE, true);
+        milestone(saver, formed, "microreactor_steady", ModItems.SEALED_FUEL_CORE.get(),
+                Milestone.MICROREACTOR_STEADY, AdvancementType.CHALLENGE, false);
         AdvancementHolder depleted = has(saver, core, "depleted_fuel_core", ModItems.DEPLETED_FUEL_CORE.get(), AdvancementType.GOAL);
 
         // The fission station (design section 8): fuel rods, then the station itself.
@@ -75,6 +77,16 @@ public class ModAdvancementProvider extends AdvancementProvider {
         AdvancementHolder stationOverdrive = milestone(saver, station, "station_overdrive", ModItems.CONTROL_ROD.get(),
                 Milestone.STATION_OVERDRIVE, AdvancementType.TASK, false);
         milestone(saver, stationOverdrive, "station_meltdown", ModItems.SPENT_URANIUM_ROD.get(), Milestone.STATION_MELTDOWN,
+                AdvancementType.CHALLENGE, true);
+        milestone(saver, station, "station_steady", ModItems.URANIUM_FUEL_ROD.get(), Milestone.STATION_STEADY,
+                AdvancementType.CHALLENGE, false);
+
+        // The breeder (design section 9).
+        AdvancementHolder breeder = milestone(saver, station, "breeder", ModItems.BREEDER_CORE.get(), Milestone.BREEDER_FORMED,
+                AdvancementType.GOAL, false);
+        milestone(saver, breeder, "breeder_steady", ModItems.BREEDER_FUEL.get(), Milestone.BREEDER_STEADY,
+                AdvancementType.CHALLENGE, false);
+        milestone(saver, breeder, "sodium_fire", ModItems.SODIUM_INGOT.get(), Milestone.SODIUM_FIRE,
                 AdvancementType.CHALLENGE, true);
 
         // The fuel cycle (design section 7): crack the core, reprocess it, make MOX.

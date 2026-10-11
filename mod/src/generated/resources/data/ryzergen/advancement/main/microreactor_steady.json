@@ -1,0 +1,30 @@
+{
+  "parent": "ryzergen:main/microreactor",
+  "criteria": {
+    "microreactor_steady": {
+      "conditions": {
+        "milestone": "microreactor_steady"
+      },
+      "trigger": "ryzergen:milestone"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.microreactor_steady.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:sealed_fuel_core"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.microreactor_steady.title"
+    }
+  },
+  "requirements": [
+    [
+      "microreactor_steady"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

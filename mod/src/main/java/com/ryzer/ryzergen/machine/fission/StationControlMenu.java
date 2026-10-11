@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import com.ryzer.ryzergen.machine.RedstoneMode;
 import com.ryzer.ryzergen.machine.fission.StationReactor.Channel;
 import com.ryzer.ryzergen.registry.ModMenus;
+import com.ryzer.ryzergen.machine.SteadyState;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -47,7 +48,11 @@ public class StationControlMenu extends AbstractContainerMenu {
     public static final int DATA_SAFETIES = 10;
     /** Seconds left before a flux tilt makes the core unstable. */
     public static final int DATA_TILT = 11;
-    public static final int DATA_PLAN = 12;
+    /** The steady-state streak (tenths of a load), its bonus (thousandths) and the next milestone (tenths). */
+    public static final int DATA_STREAK = 12;
+    public static final int DATA_BONUS = 13;
+    public static final int DATA_NEXT = 14;
+    public static final int DATA_PLAN = 15;
     public static final int DATA_COUNT = DATA_PLAN + StationReactor.CHANNELS;
 
     public static final int GRID_X = 8;
@@ -146,6 +151,9 @@ public class StationControlMenu extends AbstractContainerMenu {
                     case DATA_ENERGY_HIGH -> runner.energy().getEnergyStored() >>> 16;
                     case DATA_ENABLED -> runner.enabled ? 1 : 0;
                     case DATA_REDSTONE -> runner.redstoneMode.ordinal();
+                    case DATA_STREAK -> runner.steady.loadsTenths();
+                    case DATA_BONUS -> runner.steady.bonusPermille(SteadyState.Tier.STATION);
+                    case DATA_NEXT -> runner.steady.nextTenths();
                     case DATA_SAFETIES -> runner.safeties ? 1 : 0;
                     case DATA_TILT -> (runner.tiltTicksLeft() + 19) / 20;
                     default -> 0;
@@ -195,6 +203,18 @@ public class StationControlMenu extends AbstractContainerMenu {
     public StationRunner.Status status() {
         int id = data.get(DATA_STATUS);
         return id >= 0 && id < StationRunner.Status.values().length ? StationRunner.Status.values()[id] : StationRunner.Status.OFFLINE;
+    }
+
+    public int streak() {
+        return data.get(DATA_STREAK);
+    }
+
+    public int bonus() {
+        return data.get(DATA_BONUS);
+    }
+
+    public int nextMilestone() {
+        return data.get(DATA_NEXT);
     }
 
     public int output() {

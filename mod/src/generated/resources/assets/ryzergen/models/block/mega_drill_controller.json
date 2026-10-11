@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "ryzergen:block/drill/panel_screen",
+    "side": "ryzergen:block/drill/panel",
+    "top": "ryzergen:block/drill/lid"
+  }
+}

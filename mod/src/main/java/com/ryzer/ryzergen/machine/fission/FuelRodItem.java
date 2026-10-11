@@ -1,6 +1,7 @@
 package com.ryzer.ryzergen.machine.fission;
 
 import com.ryzer.ryzergen.registry.ModDataComponents;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -41,7 +42,7 @@ public class FuelRodItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("item.ryzergen.fuel_rod.fuel", Math.round(fraction(stack) * 100))
+        tooltip.add(RichText.tr("item.ryzergen.fuel_rod.fuel", Math.round(fraction(stack) * 100))
                 .withStyle(ChatFormatting.GRAY));
     }
 }

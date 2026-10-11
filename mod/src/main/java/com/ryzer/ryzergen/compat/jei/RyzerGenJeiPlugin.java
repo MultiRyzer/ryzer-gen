@@ -23,6 +23,7 @@ import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import net.minecraft.network.chat.Component;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -82,10 +83,10 @@ public class RyzerGenJeiPlugin implements IModPlugin {
                 Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(ModRecipes.ALLOYING_TYPE.get()));
         registration.addRecipes(FUEL, RecipeViewerPages.fuels());
         for (RecipeViewerPages.Info info : RecipeViewerPages.info()) {
-            registration.addItemStackInfo(info.items(), info.text());
+            registration.addItemStackInfo(info.items(), info.lines().toArray(Component[]::new));
             if (!info.fluids().isEmpty()) {
                 registration.addIngredientInfo(info.fluids().stream().map(fluid -> new FluidStack(fluid, 1000)).toList(),
-                        NeoForgeTypes.FLUID_STACK, info.text());
+                        NeoForgeTypes.FLUID_STACK, info.lines().toArray(Component[]::new));
             }
         }
         MACHINES.forEach((machine, type) -> {

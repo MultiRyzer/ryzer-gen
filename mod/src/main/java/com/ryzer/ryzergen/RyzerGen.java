@@ -10,6 +10,7 @@ import com.ryzer.ryzergen.cable.ItemPipeBlockEntity;
 import com.ryzer.ryzergen.creative.CreativeSourceBlockEntity;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlockEntity;
 import com.ryzer.ryzergen.machine.breeder.BreederCoreBlockEntity;
+import com.ryzer.ryzergen.machine.drill.MegaDrillBlockEntity;
 import com.ryzer.ryzergen.machine.breeder.BreederLayout;
 import com.ryzer.ryzergen.machine.breeder.BreederStructure;
 import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterBlockEntity;
@@ -161,6 +162,17 @@ public class RyzerGen {
                 PoolControllerBlockEntity.fluidAt(level, pos, state, side), ModBlocks.POOL_LINER.get());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.POOL_CONTROLLER.get(),
                 PoolControllerBlockEntity::partsFor);
+        // Mega drill ports, on a formed drill's consoles: energy, tungsten tips and water in on the left
+        // as you face it, what it mined out on the right. The controller takes its frame by pipe while
+        // the drill is still to be built.
+        event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) ->
+                MegaDrillBlockEntity.itemsAt(level, pos, state, side), ModBlocks.DRILL_FRAME.get());
+        event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) ->
+                MegaDrillBlockEntity.fluidAt(level, pos, state, side), ModBlocks.DRILL_FRAME.get());
+        event.registerBlock(Capabilities.EnergyStorage.BLOCK, (level, pos, state, be, side) ->
+                MegaDrillBlockEntity.energyAt(level, pos, state, side), ModBlocks.DRILL_FRAME.get());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.MEGA_DRILL.get(),
+                MegaDrillBlockEntity::partsFor);
         // The station core takes its parts by pipe while the station is still to be built.
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.STATION_CORE.get(),
                 StationCoreBlockEntity::itemsFor);
@@ -181,7 +193,7 @@ public class RyzerGen {
         // Fuel cycle machines: registered on the blocks so both halves of the two-high reprocessor
         // reach the block entity in its lower half.
         Block[] processing = {ModBlocks.CORE_CRACKER.get(), ModBlocks.REPROCESSOR.get(), ModBlocks.FUEL_FABRICATOR.get(),
-                ModBlocks.LITHIUM_EXTRACTOR.get(), ModBlocks.ELECTROREFINER.get()};
+                ModBlocks.LITHIUM_EXTRACTOR.get(), ModBlocks.ELECTROREFINER.get(), ModBlocks.MONAZITE_PROCESSOR.get()};
         event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
             ProcessingBlockEntity machine = processingMachine(level, pos, state);
             return machine == null ? null : machine.getItemHandler(side);

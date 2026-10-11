@@ -1,6 +1,7 @@
 package com.ryzer.ryzergen.battery;
 
 import com.ryzer.ryzergen.registry.ModDataComponents;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -56,8 +57,8 @@ public class BatteryModuleItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("item.ryzergen.battery_module.charge",
+        tooltip.add(RichText.tr("item.ryzergen.battery_module.charge",
                 String.format("%,d", energy(stack)), String.format("%,d", chemistry.capacity())).withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("item.ryzergen.battery_module.rate",
-                String.format("%,d", chemistry.rate())).withStyle(ChatFormatting.DARK_GRAY));    }
+        tooltip.add(RichText.tr("item.ryzergen.battery_module.rate",
+                String.format("%,d", chemistry.rate())).withStyle(ChatFormatting.GRAY));    }
 }

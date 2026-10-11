@@ -14,6 +14,7 @@ import com.ryzer.ryzergen.material.ModTags;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
 import com.ryzer.ryzergen.registry.ModFluids;
 import com.ryzer.ryzergen.registry.ModItems;
+import com.ryzer.ryzergen.machine.SteadyState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -143,7 +144,11 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
     public static final int DATA_EFFICIENCY = 9;
     public static final int DATA_SAFETIES = 10;
     public static final int DATA_DUMP = 11;
-    public static final int DATA_COUNT = 12;
+    /** The steady-state streak (tenths of a load), its bonus (thousandths) and the next milestone (tenths). */
+    public static final int DATA_STREAK = 12;
+    public static final int DATA_BONUS = 13;
+    public static final int DATA_NEXT = 14;
+    public static final int DATA_COUNT = 15;
 
     /** Extract only from outside; the reactor fills it through {@link Buffer#generate}. */
     private final class Buffer extends EnergyStorage {
@@ -348,6 +353,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
     private boolean safeties = true;
     /** The control system's voice, and what it last knew, to speak only on a change. Not saved. */
     private final Announcer announcer = new Announcer();
+    final SteadyState steady = new SteadyState();
     private @Nullable Boolean announcedSafeties;
     /** Ticks the reactor has been stopped: it only says it is online after a real shutdown. */
     private int stoppedTicks = RESTART_ANNOUNCE_TICKS;
@@ -378,6 +384,9 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
                 case DATA_EFFICIENCY -> efficiency;
                 case DATA_SAFETIES -> safeties ? 1 : 0;
                 case DATA_DUMP -> dumpExcess ? 1 : 0;
+                case DATA_STREAK -> steady.loadsTenths();
+                case DATA_BONUS -> steady.bonusPermille(SteadyState.Tier.MICROREACTOR);
+                case DATA_NEXT -> steady.nextTenths();
                 default -> 0;
             };
         }
@@ -508,6 +517,13 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
             heart.alarm((ServerLevel) level, origin, facing);
         }
         heart.announce((ServerLevel) level, MicroreactorStructure.centre(origin, facing), before, running);
+        // The steady-state streak: a core's worth of burn makes one load; standing by on a full
+        // buffer only pauses it.
+        float burned = running ? (heart.safeties ? BURN : OVERDRIVE_BURN) / 10F / FuelCoreItem.fuelLife() : 0;
+        int milestone = heart.steady.tick(running ? SteadyState.State.RUNNING
+                : heart.status == Status.STANDBY ? SteadyState.State.PAUSED : SteadyState.State.DOWN, burned);
+        SteadyState.reached((ServerLevel) level, MicroreactorStructure.centre(origin, facing), heart.announcer, milestone,
+                Milestone.MICROREACTOR_STEADY);
         // Nearby clients follow a coolant loss closely, so the alarm can speed up with the heat.
         boolean alarmChanged = (before == Status.COOLANT_LOSS) != (heart.status == Status.COOLANT_LOSS);
         if (alarmChanged || (heart.status == Status.COOLANT_LOSS && level.getGameTime() % 5 == 0)) {
@@ -584,7 +600,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         double warmup = Mth.clamp((temperature - AMBIENT_TEMPERATURE) / (double) (WARM_TEMPERATURE - AMBIENT_TEMPERATURE), 0, 1);
         double eff = efficiency(operating, cooled, overdrive && cooled) * warmup;
         efficiency = (int) Math.round(eff * 1000);
-        generation = (int) Math.round(thermalPower * eff);
+        generation = (int) Math.round(thermalPower * eff * steady.bonus(SteadyState.Tier.MICROREACTOR));
         energy.generate(generation);
         if (cooled) {
             // Boiled water leaves as steam: a fixed amount per mB (real water expands far more, but
@@ -634,6 +650,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
      * Only reachable with the safeties off, no water, and meltdowns allowed in the config.
      */
     private void meltdown(ServerLevel level, BlockPos origin, Direction facing) {
+        steady.reset();
         Vec3 centre = MicroreactorStructure.centre(origin, facing);
         fuel.setStackInSlot(0, ItemStack.EMPTY);
         for (MicroreactorSlot part : MicroreactorSlot.FORMED) {
@@ -791,6 +808,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         tag.putInt("temperature", temperature);
         tag.putBoolean("safeties", safeties);
         tag.putBoolean("dump_excess", dumpExcess);
+        steady.save(tag);
     }
 
     @Override
@@ -807,5 +825,6 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         temperature = tag.contains("temperature") ? tag.getInt("temperature") : AMBIENT_TEMPERATURE;
         safeties = !tag.contains("safeties") || tag.getBoolean("safeties");
         dumpExcess = tag.getBoolean("dump_excess");
+        steady.load(tag);
     }
 }

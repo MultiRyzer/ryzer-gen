@@ -9,6 +9,8 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.minecraft.client.renderer.BiomeColors;
 import com.ryzer.ryzergen.machine.pool.PoolScreen;
 import com.ryzer.ryzergen.machine.pool.PoolBuildScreen;
+import com.ryzer.ryzergen.machine.drill.MegaDrillBuildScreen;
+import com.ryzer.ryzergen.machine.drill.MegaDrillScreen;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.compat.accessories.AccessoriesClient;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -61,6 +63,8 @@ public final class ClientSetup {
         event.register(ModMenus.BREEDER_CONTROL.get(), BreederControlScreen::new);
         event.register(ModMenus.STATION_CONTROL.get(), StationControlScreen::new);
         event.register(ModMenus.POOL_BUILD.get(), PoolBuildScreen::new);
+        event.register(ModMenus.MEGA_DRILL_BUILD.get(), MegaDrillBuildScreen::new);
+        event.register(ModMenus.MEGA_DRILL.get(), MegaDrillScreen::new);
         event.register(ModMenus.POOL.get(), PoolScreen::new);
         event.register(ModMenus.CONTAINER_BUILD.get(), ContainerBuildScreen::new);
         event.register(ModMenus.CONTAINER_BATTERY.get(), ContainerScreen::new);
@@ -70,6 +74,7 @@ public final class ClientSetup {
         event.register(ModMenus.FUEL_FABRICATOR.get(), ProcessingScreen::new);
         event.register(ModMenus.LITHIUM_EXTRACTOR.get(), ProcessingScreen::new);
         event.register(ModMenus.ELECTROREFINER.get(), ProcessingScreen::new);
+        event.register(ModMenus.MONAZITE_PROCESSOR.get(), ProcessingScreen::new);
     }
 
     /**
@@ -97,10 +102,12 @@ public final class ClientSetup {
         event.registerBlockEntityRenderer(ModBlockEntities.CORE_CRACKER.get(), CoreCrackerRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.FUEL_FABRICATOR.get(), FuelFabricatorRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.LITHIUM_EXTRACTOR.get(), LithiumExtractorRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.MONAZITE_PROCESSOR.get(), MonaziteProcessorRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.BATTERY_CONTROLLER.get(), ContainerFanRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.FUSION_PREVIEW.get(), FusionPreviewRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.SUN_GATE_PREVIEW.get(), SunGateRenderer::new);
-        event.registerBlockEntityRenderer(ModBlockEntities.MEGA_DRILL_PREVIEW.get(), MegaDrillPreviewRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.MEGA_DRILL_PREVIEW.get(), MegaDrillRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.MEGA_DRILL.get(), MegaDrillRenderer::new);
     }
 
     /** Optional mods' client hooks: no renderer for the worn dosimeter ring, when Accessories is here. */

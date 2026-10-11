@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.compat.emi;
 
 import com.ryzer.ryzergen.machine.processing.ProcessingMachine;
 import com.ryzer.ryzergen.recipe.MachineRecipe;
+import com.ryzer.ryzergen.client.text.RichText;
 import dev.emi.emi.api.recipe.BasicEmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.stack.EmiIngredient;
@@ -43,7 +44,7 @@ public class MachineEmiRecipe extends BasicEmiRecipe {
         for (int i = 0; i < outputs.size(); i++) {
             widgets.addSlot(outputs.get(i), OUTPUTS_X, 18 - 9 * (outputs.size() - 1) + 18 * i).recipeContext(this);
         }
-        widgets.addText(Component.translatable("jei.ryzergen.machine.time", time / 20F, machine.energyPerTick()),
+        widgets.addText(RichText.trLight("jei.ryzergen.machine.time", String.format("%.1f", time / 20F), machine.energyPerTick()),
                 0, 56, 0xFF404040, false);
     }
 }

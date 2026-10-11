@@ -1,0 +1,19 @@
+{
+  "type": "ryzergen:fabricating",
+  "inputs": [
+    {
+      "count": 2,
+      "tag": "c:ingots/thorium"
+    },
+    {
+      "count": 1,
+      "tag": "c:ingots/steel"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "ryzergen:thorium_blanket"
+    }
+  ]
+}

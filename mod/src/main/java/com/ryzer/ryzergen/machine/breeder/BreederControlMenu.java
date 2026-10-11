@@ -3,6 +3,7 @@ package com.ryzer.ryzergen.machine.breeder;
 import com.ryzer.ryzergen.machine.RedstoneMode;
 import com.ryzer.ryzergen.machine.breeder.BreederReactor.Position;
 import com.ryzer.ryzergen.registry.ModMenus;
+import com.ryzer.ryzergen.machine.SteadyState;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -43,7 +44,11 @@ public class BreederControlMenu extends AbstractContainerMenu {
     public static final int DATA_REDSTONE = 9;
     public static final int DATA_FLOW = 10;
     public static final int DATA_PUMPING = 11;
-    public static final int DATA_PLAN = 12;
+    /** The steady-state streak (tenths of a load), its bonus (thousandths) and the next milestone (tenths). */
+    public static final int DATA_STREAK = 12;
+    public static final int DATA_BONUS = 13;
+    public static final int DATA_NEXT = 14;
+    public static final int DATA_PLAN = 15;
     public static final int DATA_COUNT = DATA_PLAN + BreederReactor.POSITIONS;
 
     public static final int WIDTH = 216;
@@ -139,6 +144,9 @@ public class BreederControlMenu extends AbstractContainerMenu {
                     case DATA_ENERGY_HIGH -> runner.energy().getEnergyStored() >>> 16;
                     case DATA_ENABLED -> runner.enabled ? 1 : 0;
                     case DATA_REDSTONE -> runner.redstoneMode.ordinal();
+                    case DATA_STREAK -> runner.steady.loadsTenths();
+                    case DATA_BONUS -> runner.steady.bonusPermille(SteadyState.Tier.BREEDER);
+                    case DATA_NEXT -> runner.steady.nextTenths();
                     case DATA_FLOW -> runner.flow;
                     case DATA_PUMPING -> runner.pumping;
                     default -> 0;
@@ -191,6 +199,18 @@ public class BreederControlMenu extends AbstractContainerMenu {
     }
 
     /** Net power out (the steam plant's, less the pumps'): negative while the pumps run on the buffer. */
+    public int streak() {
+        return data.get(DATA_STREAK);
+    }
+
+    public int bonus() {
+        return data.get(DATA_BONUS);
+    }
+
+    public int nextMilestone() {
+        return data.get(DATA_NEXT);
+    }
+
     public int output() {
         return wide(DATA_OUTPUT_LOW, DATA_OUTPUT_HIGH);
     }

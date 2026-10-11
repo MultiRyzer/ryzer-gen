@@ -40,6 +40,8 @@ public class ProcessingMachineSound extends AbstractTickableSoundInstance {
             case FUEL_FABRICATOR -> ModSounds.FUEL_FABRICATOR.get();
             case LITHIUM_EXTRACTOR -> ModSounds.LITHIUM_EXTRACTOR.get();
             case ELECTROREFINER -> ModSounds.ELECTROREFINER.get();
+            // Acid pumped round the digester: the Reprocessor's pump, for now.
+            case MONAZITE_PROCESSOR -> ModSounds.REPROCESSOR.get();
         };
     }
 

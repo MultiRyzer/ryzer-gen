@@ -1,0 +1,30 @@
+{
+  "parent": "ryzergen:main/breeder",
+  "criteria": {
+    "breeder_steady": {
+      "conditions": {
+        "milestone": "breeder_steady"
+      },
+      "trigger": "ryzergen:milestone"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.breeder_steady.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:breeder_fuel"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.breeder_steady.title"
+    }
+  },
+  "requirements": [
+    [
+      "breeder_steady"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

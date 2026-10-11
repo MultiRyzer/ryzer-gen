@@ -64,6 +64,12 @@ public final class Config {
     public static final ModConfigSpec.DoubleValue STATION_MELTDOWN_POWER;
     public static final ModConfigSpec.IntValue STATION_TILT_SECONDS;
     public static final ModConfigSpec.IntValue BREEDER_OUTPUT;
+    public static final ModConfigSpec.BooleanValue BREEDER_SODIUM_FIRE;
+    public static final ModConfigSpec.BooleanValue STEADY_STATE_ENABLED;
+    public static final ModConfigSpec.IntValue STEADY_STATE_MICROREACTOR_CAP;
+    public static final ModConfigSpec.IntValue STEADY_STATE_STATION_CAP;
+    public static final ModConfigSpec.IntValue STEADY_STATE_BREEDER_CAP;
+    public static final ModConfigSpec.IntValue STEADY_STATE_MILESTONE_PERCENT;
     public static final ModConfigSpec.IntValue STATION_MELTDOWN_RADIUS;
     public static final ModConfigSpec.IntValue FLUID_TANK_CAPACITY;
     public static final ModConfigSpec.IntValue STEAM_PER_WATER;
@@ -103,7 +109,7 @@ public final class Config {
 
         BUILDER.comment("Water and steam.").push("water");
         PUMP_RATE = BUILDER
-                .comment("mB of water per tick an intake pump draws. It needs at least two water source blocks next to it.")
+                .comment("mB of water per tick an intake pump draws, from the water source block under it.")
                 .defineInRange("pump_rate", 100, 1, 100_000);
         PUMP_ENERGY = BUILDER
                 .comment("FE per tick an intake pump uses while pumping.")
@@ -157,6 +163,25 @@ public final class Config {
         STATION_TILT_SECONDS = BUILDER
                 .comment("In overdrive, how long a fuel channel may sit without a live rod before the core goes unstable.")
                 .defineInRange("flux_tilt_seconds", 300, 10, 3600);
+        BREEDER_SODIUM_FIRE = BUILDER
+                .comment("With the flow stopped, a hot core's decay heat boils the sodium, which bursts a seal and burns inside the",
+                        "bund wall for 30 seconds (setting anyone inside alight; no blocks burn), and the loop must be refilled.",
+                        "Off: the sodium boils in place and nothing burns.")
+                .define("sodium_fire", true);
+        BUILDER.pop();
+
+        BUILDER.comment("Steady state: a reactor that keeps running builds a streak of fuel loads burned without downtime, which",
+                "raises its power output (not its fuel burn or heat) up to a cap per tier. More than 5 seconds of downtime",
+                "costs a quarter of the streak. The bonus reaches a quarter of the cap at 8 loads, half at 32, all at 128.").push("steady_state");
+        STEADY_STATE_ENABLED = BUILDER.comment("Off: no streak and no bonus.").define("enabled", true);
+        STEADY_STATE_MICROREACTOR_CAP = BUILDER.comment("The microreactor's cap, in percent of its normal output.")
+                .defineInRange("microreactor_cap_percent", 125, 100, 1_000);
+        STEADY_STATE_STATION_CAP = BUILDER.comment("The fission station's cap, in percent.")
+                .defineInRange("station_cap_percent", 150, 100, 1_000);
+        STEADY_STATE_BREEDER_CAP = BUILDER.comment("The breeder's cap, in percent.")
+                .defineInRange("breeder_cap_percent", 175, 100, 1_000);
+        STEADY_STATE_MILESTONE_PERCENT = BUILDER.comment("Scales the milestones (8, 32 and 128 loads): 50 halves them.")
+                .defineInRange("milestone_percent", 100, 1, 1_000);
         BUILDER.pop();
 
         BUILDER.comment("Breeder reactor (tier 4).").push("breeder");
@@ -230,14 +255,54 @@ public final class Config {
         BUILDER.pop();
     }
 
+    public static final ModConfigSpec.IntValue DRILL_DRAW;
+    public static final ModConfigSpec.IntValue DRILL_TIME_PERCENT;
+    public static final ModConfigSpec.IntValue DRILL_WATER;
+    public static final ModConfigSpec.IntValue DRILL_TIP_WEAR;
+    public static final ModConfigSpec.BooleanValue DRILL_GLAZE;
+    public static final ModConfigSpec.BooleanValue DRILL_DEEP_BORE;
+    public static final ModConfigSpec.IntValue DRILL_DEEP_DRAW;
+    public static final ModConfigSpec.IntValue DRILL_DEEP_ORE;
+
+    static {
+        BUILDER.comment("Mega drill: mines the 7 x 7 under its base a layer at a time, from its base down to bedrock.").push("mega_drill");
+        DRILL_DRAW = BUILDER
+                .comment("FE per tick while charging and firing, at speed 1. It grows with the square of the speed",
+                        "(a Mk I head is speed 1, Mk II 2, Mk III 3, and each speed module adds 1).")
+                .defineInRange("draw", 160, 1, 1_000_000);
+        DRILL_TIME_PERCENT = BUILDER
+                .comment("Percent of the normal time a layer takes (5 seconds charging and 4 heating at speed 1).")
+                .defineInRange("time_percent", 100, 1, 10_000);
+        DRILL_WATER = BUILDER
+                .comment("mB of water a layer takes to cool the bore, drawn while the beam fires.")
+                .defineInRange("water_per_layer", 4_000, 0, 1_000_000);
+        DRILL_TIP_WEAR = BUILDER
+                .comment("Percent chance a layer wears the tungsten tip. A tip lasts 160 wearing layers, so 50 makes it last twice as long.")
+                .defineInRange("tip_wear_percent", 100, 0, 100);
+        DRILL_GLAZE = BUILDER
+                .comment("Water and lava in the pit's wall set into obsidian as each layer is mined, so nothing flows in.")
+                .define("glaze_walls", true);
+        DRILL_DEEP_BORE = BUILDER
+                .comment("Once the shaft reaches bedrock, bore on into the deep crust for ore (loot tables",
+                        "ryzergen:mega_drill/deep_bore_mk1 to _mk3, by head). Off: it stops at bedrock, for packs with void miners.")
+                .define("deep_bore", true);
+        DRILL_DEEP_DRAW = BUILDER
+                .comment("Percent of the shaft's draw the deep bore uses.")
+                .defineInRange("deep_bore_draw_percent", 400, 1, 100_000);
+        DRILL_DEEP_ORE = BUILDER
+                .comment("Draws from the head's deep bore table each cycle (a cycle is 9 seconds at speed 1).")
+                .defineInRange("deep_bore_ore_per_cycle", 3, 1, 64);
+        BUILDER.pop();
+    }
+
     public static final ModConfigSpec.BooleanValue PREVIEW_CONTENT;
 
     static {
         BUILDER.comment("Unfinished content.").push("preview");
         PREVIEW_CONTENT = BUILDER
-                .comment("Turn on unfinished content from the next tier: the Lithium Extractor, lithium target rods and the",
-                        "creative Fusion Reactor Preview block.",
-                        "Their products have no use yet. Needs a restart (or /reload) to add or remove their recipes.")
+                .comment("Turn on unfinished content from the next tier: lithium target rods (tritium for fusion) and the",
+                        "creative previews.",
+                        "Needs a restart (or /reload) to add or remove their recipes.")
                 .define("next_tier", false);
         BUILDER.pop();
     }

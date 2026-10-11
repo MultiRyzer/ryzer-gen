@@ -1,6 +1,8 @@
 package com.ryzer.ryzergen.machine.breeder;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.advancement.Milestone;
+import com.ryzer.ryzergen.registry.ModTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -9,6 +11,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -105,6 +108,7 @@ public final class BreederStructure {
         level.playSound(null, middle, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 1.0F, 0.8F);
         level.playSound(null, middle, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0F, 1.2F);
         level.sendParticles(ParticleTypes.ELECTRIC_SPARK, middle.getX() + 0.5, middle.getY() + 0.5, middle.getZ() + 0.5, 80, 3, 3, 3, 0.05);
+        ModTriggers.MILESTONE.get().triggerNearby(level, Vec3.atCenterOf(middle), Milestone.BREEDER_FORMED);
     }
 
     private static void setFormed(ServerLevel level, BlockPos pos, boolean formed) {

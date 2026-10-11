@@ -1,6 +1,9 @@
 {
   "values": [
     "#c:ingots/plutonium",
+    "#c:ingots/thorium",
+    "#c:ingots/yttrium",
+    "#c:ingots/uranium_233",
     "#c:ingots/sodium",
     "#c:ingots/steel",
     "#c:ingots/uranium",

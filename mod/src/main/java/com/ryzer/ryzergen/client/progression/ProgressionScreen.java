@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.client.progression;
 
 import com.ryzer.ryzergen.client.progression.ProgressionMap.Grid;
 import com.ryzer.ryzergen.client.progression.ProgressionMap.Node;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -78,6 +79,25 @@ public class ProgressionScreen extends Screen {
         }
         // With the preview off, one more column says there is more to come.
         return last + 1 + (last < ProgressionMap.COLUMNS.length - 1 ? 1 : 0);
+    }
+
+    /** A milestone's card: the column's width, and two rows tall. */
+    private static final int CARD_W = COLUMN_W - 16;
+    private static final int CARD_H = ROW_H + BOX;
+    /** The square its icon sits in, at the card's left. */
+    private static final int CARD_ICON = 30;
+
+    private static int nodeW(Node node) {
+        return node.milestone() ? CARD_W : BOX;
+    }
+
+    private static int nodeH(Node node) {
+        return node.milestone() ? CARD_H : BOX;
+    }
+
+    /** Where arrows leave a step: under its icon's middle. */
+    private int iconCentreX(Node node) {
+        return nodeX(node) + (node.milestone() ? CARD_ICON / 2 + 4 : BOX / 2);
     }
 
     private int nodeX(Node node) {
@@ -210,11 +230,11 @@ public class ProgressionScreen extends Screen {
                         continue;
                     }
                     int colour = focused ? 0xFFFFFFFF : reached(from) ? 0x9035C8F5 : 0x30FFFFFF;
-                    int sx = nodeX(from) + BOX / 2;
-                    int sy = nodeY(from) + BOX;
+                    int sx = iconCentreX(from);
+                    int sy = nodeY(from) + nodeH(from);
                     int lane = sy + (ROW_H - BOX) / 2;
                     int tx = nodeX(node);
-                    int ty = nodeY(node) + BOX / 2;
+                    int ty = nodeY(node) + nodeH(node) / 2;
                     int gap = tx - 5;
                     graphics.fill(sx, sy, sx + 1, lane + 1, colour);
                     graphics.fill(Math.min(sx, gap), lane, Math.max(sx, gap) + 1, lane + 1, colour);
@@ -227,6 +247,10 @@ public class ProgressionScreen extends Screen {
     }
 
     private void renderNode(GuiGraphics graphics, Node node, boolean highlight) {
+        if (node.milestone()) {
+            renderMilestone(graphics, node, highlight);
+            return;
+        }
         int x = nodeX(node);
         int y = nodeY(node);
         boolean reached = reached(node);
@@ -253,6 +277,64 @@ public class ProgressionScreen extends Screen {
         graphics.pose().popPose();
     }
 
+    /**
+     * A tier's milestone, as a card: a soft halo (cyan once reached, pulsing amber when it is next), a
+     * bar of the same colour along its top, its icon large in a well on the left, and beside it its
+     * name at full size, "Milestone" and the tier, and its headline stat in the mod's markup.
+     */
+    private void renderMilestone(GuiGraphics graphics, Node node, boolean highlight) {
+        int x = nodeX(node);
+        int y = nodeY(node);
+        boolean reached = reached(node);
+        boolean next = next(node);
+        int accent = reached ? CYAN : next ? pulse(NEXT) : 0xFF3A4047;
+        if (reached || next) {
+            int halo = (accent & 0x00FFFFFF) | (reached ? 0x30000000 : (accent >>> 24) / 3 << 24);
+            graphics.fill(x - 2, y - 2, x + CARD_W + 2, y + CARD_H + 2, halo);
+        }
+        graphics.fill(x, y, x + CARD_W, y + CARD_H, reached ? 0xFF22303A : next ? 0xFF2A2620 : NODE_AHEAD);
+        graphics.fill(x, y, x + CARD_W, y + 2, accent);
+        graphics.renderOutline(x, y, CARD_W, CARD_H, highlight ? 0xFFFFFFFF : accent);
+        // The icon, half as big again, in its well.
+        int ix = x + 4;
+        int iy = y + (CARD_H - CARD_ICON) / 2 + 1;
+        graphics.fill(ix, iy, ix + CARD_ICON, iy + CARD_ICON, 0xFF141820);
+        graphics.pose().pushPose();
+        graphics.pose().translate(ix + 3, iy + 3, 0);
+        graphics.pose().scale(1.5F, 1.5F, 1);
+        graphics.renderItem(new ItemStack(node.item()), 0, 0);
+        graphics.pose().popPose();
+        if (!reached) {
+            graphics.pose().pushPose();
+            graphics.pose().translate(0, 0, 200);
+            graphics.fill(ix, iy, ix + CARD_ICON, iy + CARD_ICON, next ? 0x60141820 : 0xA0141820);
+            graphics.pose().popPose();
+        }
+        // Name, caption and headline beside it.
+        int tx = ix + CARD_ICON + 5;
+        int room = x + CARD_W - 4 - tx;
+        String label = font.plainSubstrByWidth(name(node).getString(), room);
+        graphics.drawString(font, label, tx, y + 7, reached ? 0xFFFFFFFF : next ? NEXT : DIM, false);
+        small(graphics, RichText.tr("progression.ryzergen.milestone"), tx, y + 18, reached ? CYAN : DIM, room);
+        String headline = "progression.ryzergen." + node.id() + ".headline";
+        if (RichText.has(headline)) {
+            small(graphics, RichText.tr(headline), tx, y + 28, reached ? TEXT : DIM, room);
+        }
+    }
+
+    /** A line at three quarters size, cut to {@code room} pixels. */
+    private void small(GuiGraphics graphics, Component text, int x, int y, int colour, int room) {
+        List<FormattedCharSequence> lines = font.split(text, (int) (room / 0.75F));
+        if (lines.isEmpty()) {
+            return;
+        }
+        graphics.pose().pushPose();
+        graphics.pose().translate(x, y, 0);
+        graphics.pose().scale(0.75F, 0.75F, 1);
+        graphics.drawString(font, lines.get(0), 0, 0, colour, false);
+        graphics.pose().popPose();
+    }
+
     private static int pulse(int colour) {
         float t = (float) (Math.sin(System.currentTimeMillis() / 250.0) * 0.5 + 0.5);
         int alpha = (int) (0x70 + 0x8F * t);
@@ -266,7 +348,7 @@ public class ProgressionScreen extends Screen {
         for (Node node : nodes) {
             int x = nodeX(node);
             int y = nodeY(node);
-            if (mouseX >= x && mouseX < x + BOX && mouseY >= y && mouseY < y + BOX) {
+            if (mouseX >= x && mouseX < x + nodeW(node) && mouseY >= y && mouseY < y + nodeH(node)) {
                 return node;
             }
         }
@@ -277,7 +359,7 @@ public class ProgressionScreen extends Screen {
     private static List<Component> lines(String base) {
         List<Component> out = new ArrayList<>();
         for (int i = 1; I18n.exists(base + "." + i); i++) {
-            out.add(Component.translatable(base + "." + i));
+            out.add(RichText.tr(base + "." + i));
         }
         return out;
     }
@@ -298,15 +380,27 @@ public class ProgressionScreen extends Screen {
         graphics.drawString(font, Component.translatable("progression.ryzergen.column." + ProgressionMap.COLUMNS[node.column()]),
                 left + 28, y + 11, CYAN, false);
         y += 24;
-        if (!node.inputs().isEmpty()) {
-            List<String> needs = new ArrayList<>();
-            for (String input : node.inputs()) {
-                Node from = byId.get(input);
-                if (from != null) {
-                    needs.add(name(from).getString());
-                }
+        // What it takes, and what it is for: the steps that feed it, and the steps it feeds.
+        List<String> needs = new ArrayList<>();
+        for (String input : node.inputs()) {
+            Node from = byId.get(input);
+            if (from != null) {
+                needs.add("<b>" + name(from).getString() + "</b>");
             }
-            y = paragraph(graphics, Component.translatable("progression.ryzergen.needs", String.join(", ", needs)), left + 8, y, textW, DIM);
+        }
+        if (!needs.isEmpty()) {
+            y = paragraph(graphics, RichText.tr("progression.ryzergen.needs", String.join(", ", needs)), left + 8, y, textW, DIM);
+        }
+        List<String> leads = new ArrayList<>();
+        for (Node to : nodes) {
+            if (to.inputs().contains(node.id())) {
+                leads.add("<b>" + name(to).getString() + "</b>");
+            }
+        }
+        if (!leads.isEmpty()) {
+            y = paragraph(graphics, RichText.tr("progression.ryzergen.leads", String.join(", ", leads)), left + 8, y, textW, DIM);
+        }
+        if (!needs.isEmpty() || !leads.isEmpty()) {
             y += 4;
         }
         for (Component line : lines("progression.ryzergen." + node.id() + ".info")) {
@@ -325,11 +419,14 @@ public class ProgressionScreen extends Screen {
             y += 20;
             if (spoilers) {
                 for (Component line : spoilerLines) {
-                    y = paragraph(graphics, line, left + 8, y, textW, NEXT);
+                    y = paragraph(graphics, line, left + 8, y, textW, TEXT);
                     y += 3;
                 }
+                if (!node.grids().isEmpty()) {
+                    y = renderGridKey(graphics, node.grids(), left + 8, y + 4, textW);
+                }
                 for (Grid grid : node.grids()) {
-                    y = renderGrid(graphics, grid, left + 8, y + 4, textW);
+                    y = renderGrid(graphics, grid, left + 8, y, textW);
                 }
             }
         } else {
@@ -372,42 +469,64 @@ public class ProgressionScreen extends Screen {
         return y;
     }
 
-    /** A best layout: its name, the cells in their colours (hex rows offset half a cell), and a key. */
+    /**
+     * The best layouts' key, once above them: the kinds of cell they use, in a fixed order, each as
+     * its term (icon and word in the cell's colour), then where the front row is.
+     */
+    private int renderGridKey(GuiGraphics graphics, List<Grid> grids, int x, int y, int w) {
+        StringBuilder used = new StringBuilder();
+        for (char c : ProgressionMap.CELL_ORDER.toCharArray()) {
+            for (Grid grid : grids) {
+                if (String.join("", grid.rows()).indexOf(c) >= 0 && used.indexOf(String.valueOf(c)) < 0) {
+                    used.append(c);
+                }
+            }
+        }
+        int kx = x;
+        for (char c : used.toString().toCharArray()) {
+            Component label = RichText.parse("{" + ProgressionMap.CELL_WORDS.get(c) + "}");
+            int need = font.width(label) + 8;
+            if (kx + need > x + w) {
+                kx = x;
+                y += 10;
+            }
+            graphics.drawString(font, label, kx, y, TEXT, false);
+            kx += need;
+        }
+        y += 11;
+        if (!grids.get(0).hex()) {
+            y = paragraph(graphics, RichText.tr("progression.ryzergen.grid.note"), x, y, w, DIM);
+        }
+        return y + 4;
+    }
+
+    /**
+     * A best layout as a stat box: the cells on the left (hex rows offset half a cell), and beside
+     * them its heading and the numbers that tell it from the others.
+     */
     private int renderGrid(GuiGraphics graphics, Grid grid, int x, int y, int w) {
-        y = paragraph(graphics, Component.translatable("progression.ryzergen.grid." + grid.title()), x, y, w, CYAN);
         int cell = 11;
         int widest = 0;
         for (String row : grid.rows()) {
             widest = Math.max(widest, row.length());
         }
-        StringBuilder used = new StringBuilder();
+        int top = y;
         for (String row : grid.rows()) {
             int offset = grid.hex() ? (widest - row.length()) * cell / 2 : 0;
             for (int i = 0; i < row.length(); i++) {
-                char c = row.charAt(i);
                 int cx = x + offset + i * cell;
-                graphics.fill(cx, y, cx + cell - 1, y + cell - 1, ProgressionMap.CELL_COLOURS.getOrDefault(c, 0xFF3A4047));
-                if (used.indexOf(String.valueOf(c)) < 0) {
-                    used.append(c);
-                }
+                graphics.fill(cx, y, cx + cell - 1, y + cell - 1, ProgressionMap.CELL_COLOURS.getOrDefault(row.charAt(i), 0xFF3A4047));
             }
             y += cell;
         }
-        y += 3;
-        // The key: a swatch and a name for each kind of cell in this layout.
-        int kx = x;
-        for (char c : used.toString().toCharArray()) {
-            Component label = Component.translatable("progression.ryzergen.cell." + (Character.isUpperCase(c) ? c : "lower_" + c));
-            int need = 9 + font.width(label) + 8;
-            if (kx + need > x + w) {
-                kx = x;
-                y += 10;
-            }
-            graphics.fill(kx, y + 1, kx + 7, y + 8, ProgressionMap.CELL_COLOURS.getOrDefault(c, 0xFF3A4047));
-            graphics.drawString(font, label, kx + 9, y, DIM, false);
-            kx += need;
+        int tx = x + widest * cell + 7;
+        int tw = x + w - tx;
+        String key = "progression.ryzergen.grid." + grid.title();
+        int ty = paragraph(graphics, RichText.tr(key), tx, top, tw, TEXT) + 2;
+        for (int n = 1; RichText.has(key + ".stat." + n); n++) {
+            ty = paragraph(graphics, RichText.tr(key + ".stat." + n), tx, ty, tw, DIM);
         }
-        return y + 16;
+        return Math.max(y, ty) + 8;
     }
 
     @Override

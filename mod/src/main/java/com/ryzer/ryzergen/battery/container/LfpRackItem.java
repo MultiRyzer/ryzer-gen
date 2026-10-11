@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.battery.container;
 
 import com.ryzer.ryzergen.Config;
 import com.ryzer.ryzergen.battery.BatteryModuleItem;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -46,9 +47,9 @@ public class LfpRackItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("item.ryzergen.battery_module.charge",
+        tooltip.add(RichText.tr("item.ryzergen.battery_module.charge",
                 String.format("%,d", BatteryModuleItem.energy(stack)), String.format("%,d", capacity())).withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("item.ryzergen.battery_module.rate",
-                String.format("%,d", rate())).withStyle(ChatFormatting.DARK_GRAY));
+        tooltip.add(RichText.tr("item.ryzergen.battery_module.rate",
+                String.format("%,d", rate())).withStyle(ChatFormatting.GRAY));
     }
 }

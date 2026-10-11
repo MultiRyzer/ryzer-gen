@@ -23,14 +23,23 @@ public final class Announcer {
     public enum Line {
         REACTOR_ONLINE(ModSounds.VOICE_REACTOR_ONLINE, 0, 2.0F),
         STATION_ONLINE(ModSounds.VOICE_STATION_ONLINE, 0, 3.5F),
-        SAFETIES_ON(ModSounds.VOICE_SAFETIES_ON, 0, 1.9F),
-        CONTROLLED_SHUTDOWN(ModSounds.VOICE_CONTROLLED_SHUTDOWN, 1, 3.3F),
-        SAFETIES_OFF(ModSounds.VOICE_SAFETIES_OFF, 1, 5.3F),
+        SAFETIES_ON(ModSounds.VOICE_SAFETIES_ON, 0, 2.1F),
+        CONTROLLED_SHUTDOWN(ModSounds.VOICE_CONTROLLED_SHUTDOWN, 1, 3.5F),
+        SAFETIES_OFF(ModSounds.VOICE_SAFETIES_OFF, 1, 4.6F),
         OVERHEAT(ModSounds.VOICE_OVERHEAT, 1, 3.1F),
-        FLUX_TILT(ModSounds.VOICE_FLUX_TILT, 1, 2.9F),
-        SCRAM(ModSounds.VOICE_SCRAM, 2, 3.7F),
-        COOLANT_LOSS(ModSounds.VOICE_COOLANT_LOSS, 2, 2.3F),
-        MELTDOWN_RISK(ModSounds.VOICE_MELTDOWN_RISK, 3, 5.1F);
+        FLUX_TILT(ModSounds.VOICE_FLUX_TILT, 1, 3.6F),
+        SCRAM(ModSounds.VOICE_SCRAM, 2, 3.5F),
+        COOLANT_LOSS(ModSounds.VOICE_COOLANT_LOSS, 2, 2.6F),
+        // Ready for features still to come: no fuel, the steady-state streak, the breeder.
+        NO_FUEL(ModSounds.VOICE_NO_FUEL, 0, 3.2F),
+        STEADY_STATE_1(ModSounds.VOICE_STEADY_STATE_1, 0, 2.3F),
+        STEADY_STATE_2(ModSounds.VOICE_STEADY_STATE_2, 0, 3.7F),
+        STEADY_STATE_3(ModSounds.VOICE_STEADY_STATE_3, 0, 3.8F),
+        BREEDER_ONLINE(ModSounds.VOICE_BREEDER_ONLINE, 0, 3.9F),
+        SODIUM_LOW(ModSounds.VOICE_SODIUM_LOW, 1, 3.2F),
+        HOT_SPOT(ModSounds.VOICE_HOT_SPOT, 1, 2.9F),
+        SODIUM_FIRE(ModSounds.VOICE_SODIUM_FIRE, 2, 2.8F),
+        MELTDOWN_RISK(ModSounds.VOICE_MELTDOWN_RISK, 3, 4.1F);
 
         private final DeferredHolder<SoundEvent, SoundEvent> sound;
         private final int priority;

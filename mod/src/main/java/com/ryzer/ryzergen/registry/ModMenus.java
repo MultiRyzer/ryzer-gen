@@ -15,6 +15,8 @@ import com.ryzer.ryzergen.machine.fission.StationControlMenu;
 import com.ryzer.ryzergen.machine.fission.StationCoreMenu;
 import com.ryzer.ryzergen.machine.breeder.BreederControlMenu;
 import com.ryzer.ryzergen.machine.breeder.BreederCoreMenu;
+import com.ryzer.ryzergen.machine.drill.MegaDrillBuildMenu;
+import com.ryzer.ryzergen.machine.drill.MegaDrillMenu;
 import com.ryzer.ryzergen.machine.processing.ProcessingMachine;
 import com.ryzer.ryzergen.machine.processing.ProcessingMenu;
 import com.ryzer.ryzergen.machine.pump.IntakePumpMenu;
@@ -65,6 +67,12 @@ public final class ModMenus {
     public static final DeferredHolder<MenuType<?>, MenuType<StationControlMenu>> STATION_CONTROL =
             MENUS.register("station_control", () -> new MenuType<>(StationControlMenu::new, FeatureFlags.DEFAULT_FLAGS));
 
+    public static final DeferredHolder<MenuType<?>, MenuType<MegaDrillBuildMenu>> MEGA_DRILL_BUILD =
+            MENUS.register("mega_drill_build", () -> new MenuType<>(MegaDrillBuildMenu::new, FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<MegaDrillMenu>> MEGA_DRILL =
+            MENUS.register("mega_drill", () -> new MenuType<>(MegaDrillMenu::new, FeatureFlags.DEFAULT_FLAGS));
+
     public static final DeferredHolder<MenuType<?>, MenuType<PoolBuildMenu>> POOL_BUILD =
             MENUS.register("pool_build", () -> new MenuType<>(PoolBuildMenu::new, FeatureFlags.DEFAULT_FLAGS));
 
@@ -88,6 +96,7 @@ public final class ModMenus {
     public static final DeferredHolder<MenuType<?>, MenuType<ProcessingMenu>> FUEL_FABRICATOR = processing(ProcessingMachine.FUEL_FABRICATOR);
     public static final DeferredHolder<MenuType<?>, MenuType<ProcessingMenu>> LITHIUM_EXTRACTOR = processing(ProcessingMachine.LITHIUM_EXTRACTOR);
     public static final DeferredHolder<MenuType<?>, MenuType<ProcessingMenu>> ELECTROREFINER = processing(ProcessingMachine.ELECTROREFINER);
+    public static final DeferredHolder<MenuType<?>, MenuType<ProcessingMenu>> MONAZITE_PROCESSOR = processing(ProcessingMachine.MONAZITE_PROCESSOR);
 
     private static DeferredHolder<MenuType<?>, MenuType<ProcessingMenu>> processing(ProcessingMachine machine) {
         return MENUS.register(machine.id(), () -> new MenuType<>(

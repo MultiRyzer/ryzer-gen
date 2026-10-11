@@ -46,21 +46,25 @@ public final class ModCreativeTabs {
                 // Machines and multiblock parts
                 List.of(ModItems.REACTOR_HEART, ModItems.REACTOR_MACHINE_UNIT, ModItems.COOLANT_JACKET,
                         ModItems.ALLOY_SMELTER, ModItems.ELECTRIC_ALLOY_SMELTER, ModItems.INTAKE_PUMP,
-                        ModItems.CORE_CRACKER, ModItems.REPROCESSOR, ModItems.FUEL_FABRICATOR, ModItems.LITHIUM_EXTRACTOR, ModItems.ELECTROREFINER,
+                        ModItems.CORE_CRACKER, ModItems.REPROCESSOR, ModItems.FUEL_FABRICATOR, ModItems.LITHIUM_EXTRACTOR, ModItems.ELECTROREFINER, ModItems.MONAZITE_PROCESSOR,
                         ModItems.POOL_CONTROLLER, ModItems.POOL_LINER, ModItems.POOL_CRANE,
                         ModItems.BATTERY_CONTROLLER, ModItems.CONTAINER_FRAME, ModItems.THERMAL_UNIT,
                         ModItems.STATION_CORE, ModItems.STATION_CASING, ModItems.STATION_GLASS, ModItems.TURBINE_ROTOR,
-                        ModItems.BREEDER_CORE, ModItems.BREEDER_FRAME, ModItems.BREEDER_SHELL),
+                        ModItems.BREEDER_CORE, ModItems.BREEDER_FRAME, ModItems.BREEDER_SHELL,
+                        ModItems.MEGA_DRILL_CONTROLLER, ModItems.DRILL_FRAME),
                 // Pipes and cables
                 List.of(ModItems.ENERGY_CABLE, ModItems.ITEM_PIPE, ModItems.FLUID_PIPE, ModItems.GAS_PIPE),
                 // Storage
                 List.of(ModItems.HOME_BATTERY, ModItems.FLUID_TANK, ModItems.PRESSURE_TANK, ModItems.WASTE_CASK),
                 // Upgrades and modules
                 List.of(ModItems.LEAD_ACID_MODULE, ModItems.LFP_BATTERY_RACK, ModItems.SPEED_MODULE,
+                        ModItems.DRILL_HEAD_MK1, ModItems.DRILL_HEAD_MK2, ModItems.DRILL_HEAD_MK3, ModItems.TUNGSTEN_TIP,
                         ModItems.SILVER_FITTINGS, ModItems.BUSBAR_FITTINGS, ModItems.CRYOGENIC_FITTINGS),
                 // Fuel and rods
                 List.of(ModItems.TRISO_PELLETS, ModItems.SEALED_FUEL_CORE, ModItems.DEPLETED_FUEL_CORE,
-                        ModItems.URANIUM_FUEL_ROD, ModItems.MOX_FUEL_ROD, ModItems.SPENT_URANIUM_ROD, ModItems.SPENT_MOX_ROD,
+                        ModItems.URANIUM_FUEL_ROD, ModItems.MOX_FUEL_ROD, ModItems.U233_FUEL_ROD, ModItems.SPENT_URANIUM_ROD, ModItems.SPENT_MOX_ROD,
+                        ModItems.SPENT_U233_ROD, ModItems.THORIUM_INGOT, ModItems.YTTRIUM_INGOT, ModItems.URANIUM_233_INGOT,
+                        ModItems.THORIUM_BLANKET, ModItems.BRED_THORIUM_BLANKET,
                         ModItems.CONTROL_ROD, ModItems.LITHIUM_TARGET_ROD, ModItems.IRRADIATED_TARGET_ROD, ModItems.BREEDER_FUEL,
                         ModItems.SPENT_BREEDER_FUEL, ModItems.URANIUM_BLANKET, ModItems.BRED_URANIUM_BLANKET));
         types.forEach(type -> type.forEach(item -> items.add(item.get())));

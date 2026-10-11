@@ -5,6 +5,7 @@ import com.ryzer.ryzergen.cable.CableBlockEntity;
 import com.ryzer.ryzergen.cable.CableNetwork;
 import com.ryzer.ryzergen.cable.CableSide;
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.machine.drill.MegaDrillPartBlock;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorPartBlock;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.BlockPos;
@@ -63,12 +64,14 @@ public class WrenchItem extends Item {
 
     /**
      * Any of our machines with a horizontal facing turns, so new machines get this for free. The
-     * microreactor's parts do not: its ports and layout are fixed to the way it was built.
+     * microreactor's parts do not: its ports and layout are fixed to the way it was built. Nor do a
+     * formed mega drill's: each part's facing is how it finds its controller.
      */
     private static boolean canTurn(BlockState state) {
         return state.hasProperty(HorizontalDirectionalBlock.FACING)
                 && RyzerGen.MOD_ID.equals(BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace())
-                && !(state.getBlock() instanceof MicroreactorPartBlock);
+                && !(state.getBlock() instanceof MicroreactorPartBlock)
+                && !(state.getBlock() instanceof MegaDrillPartBlock && MegaDrillPartBlock.isFormed(state));
     }
 
     /** A quarter turn clockwise. Both halves of a two-high machine turn together. */

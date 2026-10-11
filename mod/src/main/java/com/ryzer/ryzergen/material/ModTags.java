@@ -20,6 +20,9 @@ public final class ModTags {
     /** Silicon as AE2 and others tag it. */
     public static final TagKey<Item> SILICON = common("silicon");
     public static final TagKey<Item> INGOTS_PLUTONIUM = common("ingots/plutonium");
+    public static final TagKey<Item> INGOTS_THORIUM = common("ingots/thorium");
+    public static final TagKey<Item> INGOTS_YTTRIUM = common("ingots/yttrium");
+    public static final TagKey<Item> INGOTS_URANIUM_233 = common("ingots/uranium_233");
     public static final TagKey<Item> NUGGETS_PLUTONIUM = common("nuggets/plutonium");
     public static final TagKey<Item> STORAGE_BLOCKS_GRAPHITE = common("storage_blocks/graphite");
     /** Vanilla has no charcoal block, but several mods add one. */
@@ -28,6 +31,13 @@ public final class ModTags {
     /** Sealed fuel cores the microreactor heart accepts. Data-driven, so packs can add their own. */
     public static final TagKey<Item> MICROREACTOR_FUEL = TagKey.create(Registries.ITEM,
             ResourceLocation.fromNamespaceAndPath("ryzergen", "microreactor_fuel"));
+    /**
+     * What the mega drill brings up besides ores (whose drops it always keeps): the raw ore blocks in
+     * vanilla's big ore veins by default. Data-driven, so packs can add their own; players add more
+     * with the drill's filter.
+     */
+    public static final TagKey<Item> MEGA_DRILL_KEEPS = TagKey.create(Registries.ITEM,
+            ResourceLocation.fromNamespaceAndPath("ryzergen", "mega_drill_keeps"));
 
     private static TagKey<Item> common(String path) {
         return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", path));

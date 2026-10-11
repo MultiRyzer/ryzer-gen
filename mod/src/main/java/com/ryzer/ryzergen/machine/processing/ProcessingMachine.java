@@ -1,7 +1,11 @@
 package com.ryzer.ryzergen.machine.processing;
 
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.tags.TagKey;
+import net.minecraft.tags.FluidTags;
+import com.ryzer.ryzergen.registry.ModFluids;
 import com.ryzer.ryzergen.Config;
-import com.ryzer.ryzergen.Preview;
 import com.ryzer.ryzergen.recipe.MachineRecipe.Process;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
 import com.ryzer.ryzergen.registry.ModBlocks;
@@ -38,13 +42,18 @@ public enum ProcessingMachine {
      * on fission power: gated, with a draw no microreactor can meet. Its tank takes the liquid sodium
      * it melts from ingots, for the breeder's loop.
      */
-    ELECTROREFINER("electrorefiner", Process.ELECTROREFINING, 2, 3, 1_500, 0, false, true, 4_000);
+    ELECTROREFINER("electrorefiner", Process.ELECTROREFINING, 2, 3, 1_500, 0, false, true, 4_000),
+    /**
+     * Monazite processing (design sections 9 and 10): raw monazite digested in acid, then thorium and
+     * yttrium drawn apart by solvent extraction. Gated at 2,000 FE/t, so it runs on fission power.
+     */
+    MONAZITE_PROCESSOR("monazite_processor", Process.MONAZITE, 1, 2, 2_000, 4_000, false, true, 0);
 
     public static final int ENERGY_CAPACITY = 40_000;
 
-    /** False for unfinished machines while the preview is off, so recipe viewers leave them out. */
+    /** False for an unfinished machine while the preview is off, so recipe viewers leave it out (none now). */
     public boolean shown() {
-        return this != ELECTROREFINER || Preview.enabled();
+        return true;
     }
     /** Enough for a fully upgraded reprocessor (80 FE/t at five times the speed, squared). */
     public static final int MAX_INPUT = 5_000;
@@ -141,6 +150,18 @@ public enum ProcessingMachine {
         return waterCapacity > 0;
     }
 
+    /**
+     * The fluid its input tank takes: water, except the Monazite Processor's, which cracks monazite
+     * with sodium (real plants use hot caustic soda), so its yttrium waits on the Electrorefiner.
+     */
+    public Fluid inputFluid() {
+        return this == MONAZITE_PROCESSOR ? ModFluids.SODIUM.get() : Fluids.WATER;
+    }
+
+    public TagKey<Fluid> inputTag() {
+        return this == MONAZITE_PROCESSOR ? ModFluids.SODIUM_TAG : FluidTags.WATER;
+    }
+
     /** mB its output tank holds (for recipes with a fluid result), or 0 if it has none. */
     public int tankCapacity() {
         return tankCapacity;
@@ -162,6 +183,7 @@ public enum ProcessingMachine {
             case FUEL_FABRICATOR -> ModBlocks.FUEL_FABRICATOR.get();
             case LITHIUM_EXTRACTOR -> ModBlocks.LITHIUM_EXTRACTOR.get();
             case ELECTROREFINER -> ModBlocks.ELECTROREFINER.get();
+            case MONAZITE_PROCESSOR -> ModBlocks.MONAZITE_PROCESSOR.get();
         };
     }
 
@@ -172,6 +194,7 @@ public enum ProcessingMachine {
             case FUEL_FABRICATOR -> ModBlockEntities.FUEL_FABRICATOR.get();
             case LITHIUM_EXTRACTOR -> ModBlockEntities.LITHIUM_EXTRACTOR.get();
             case ELECTROREFINER -> ModBlockEntities.ELECTROREFINER.get();
+            case MONAZITE_PROCESSOR -> ModBlockEntities.MONAZITE_PROCESSOR.get();
         };
     }
 
@@ -182,6 +205,7 @@ public enum ProcessingMachine {
             case FUEL_FABRICATOR -> ModMenus.FUEL_FABRICATOR.get();
             case LITHIUM_EXTRACTOR -> ModMenus.LITHIUM_EXTRACTOR.get();
             case ELECTROREFINER -> ModMenus.ELECTROREFINER.get();
+            case MONAZITE_PROCESSOR -> ModMenus.MONAZITE_PROCESSOR.get();
         };
     }
 }

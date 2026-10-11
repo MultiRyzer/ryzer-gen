@@ -31,11 +31,14 @@ public final class ModSounds {
     /** The mega drill: the charge running down its shaft, the beam firing, and a layer bursting. */
     public static final DeferredHolder<SoundEvent, SoundEvent> MEGA_DRILL_CHARGE = register("mega_drill_charge");
     public static final DeferredHolder<SoundEvent, SoundEvent> MEGA_DRILL_FIRE = register("mega_drill_fire");
+    /** The beam's shot played twice and four times as fast, for a faster drill (pitch stretches one only 2x). */
+    public static final DeferredHolder<SoundEvent, SoundEvent> MEGA_DRILL_FIRE_X2 = register("mega_drill_fire_x2");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MEGA_DRILL_FIRE_X4 = register("mega_drill_fire_x4");
     public static final DeferredHolder<SoundEvent, SoundEvent> MEGA_DRILL_BURST = register("mega_drill_burst");
     /** One Geiger counter click from the dosimeter ring. */
     public static final DeferredHolder<SoundEvent, SoundEvent> DOSIMETER_CLICK = register("dosimeter_click");
 
-    /** The reactor announcer's voice lines (machine/Announcer), spoken by Ryzer. */
+    /** The reactor announcer's voice lines (machine/Announcer). */
     public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_REACTOR_ONLINE = register("voice_reactor_online");
     public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_STATION_ONLINE = register("voice_station_online");
     public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_SAFETIES_ON = register("voice_safeties_on");
@@ -46,6 +49,14 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_SCRAM = register("voice_scram");
     public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_COOLANT_LOSS = register("voice_coolant_loss");
     public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_MELTDOWN_RISK = register("voice_meltdown_risk");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_NO_FUEL = register("voice_no_fuel");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_STEADY_STATE_1 = register("voice_steady_state_1");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_STEADY_STATE_2 = register("voice_steady_state_2");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_STEADY_STATE_3 = register("voice_steady_state_3");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_BREEDER_ONLINE = register("voice_breeder_online");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_SODIUM_LOW = register("voice_sodium_low");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_HOT_SPOT = register("voice_hot_spot");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_SODIUM_FIRE = register("voice_sodium_fire");
 
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, name)));

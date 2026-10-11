@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.compat.jei;
 
 import com.ryzer.ryzergen.machine.processing.ProcessingMachine;
 import com.ryzer.ryzergen.recipe.MachineRecipe;
+import com.ryzer.ryzergen.client.text.RichText;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
@@ -84,7 +85,7 @@ public class MachineJeiCategory implements IRecipeCategory<RecipeHolder<MachineR
         int time = machine.time(holder.value().time());
         builder.addAnimatedRecipeArrowWidget(time).setPosition(74, 19);
         // addText takes the text's size; setPosition places it.
-        builder.addText(Component.translatable("jei.ryzergen.machine.time", time / 20F, machine.energyPerTick()), getWidth(), 10)
+        builder.addText(RichText.trLight("jei.ryzergen.machine.time", String.format("%.1f", time / 20F), machine.energyPerTick()), getWidth(), 10)
                 .setPosition(0, 56)
                 .setColor(0xFF808080);
     }

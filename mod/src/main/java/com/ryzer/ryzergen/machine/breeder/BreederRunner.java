@@ -1,17 +1,28 @@
 package com.ryzer.ryzergen.machine.breeder;
 
+import com.ryzer.ryzergen.Config;
+import com.ryzer.ryzergen.machine.Announcer;
 import com.ryzer.ryzergen.machine.RedstoneMode;
 import com.ryzer.ryzergen.machine.breeder.BreederReactor.Position;
 import com.ryzer.ryzergen.machine.fission.StationReactor;
 import com.ryzer.ryzergen.radiation.RadiationSources;
 import com.ryzer.ryzergen.registry.ModDataComponents;
 import com.ryzer.ryzergen.registry.ModFluids;
+import com.ryzer.ryzergen.machine.SteadyState;
+import com.ryzer.ryzergen.advancement.Milestone;
+import com.ryzer.ryzergen.registry.ModTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.EnergyStorage;
@@ -33,8 +44,13 @@ import net.neoforged.neoforge.items.ItemStackHandler;
  * <p>The loop is closed: its sodium is never used up, but it must be filled before the reactor will
  * start, and a loop less than full carries less heat in step. If the sodium cannot keep up (too
  * little flow, a part-filled loop, or an assembly over the hot spot limit) the core heats; at 650°C the automatic SCRAM drops the control
- * rods until it is below 450°C. Real basis: a sodium-cooled fast reactor and its scram. (A sodium
- * fire, the breeder's own failure, comes with its safety systems.)
+ * rods until it is below 450°C. Real basis: a sodium-cooled fast reactor and its scram.
+ *
+ * <p>A core that stops still makes decay heat, which only the flow carries away, and the pumps need
+ * power: the reactor's own, or its buffer's, half of which is kept back from the energy port for
+ * them. With the flow stopped, a strong core's decay heat drives the sodium past its boiling point
+ * (883°C): it bursts a seal and burns inside the bund wall for 30 seconds, and the loop is lost
+ * (design section 9, the sodium fire).
  */
 public class BreederRunner {
     public static final int ENERGY_CAPACITY = 4_000_000;
@@ -44,12 +60,26 @@ public class BreederRunner {
     public static final float HOT_TEMPERATURE = 600;
     public static final float SCRAM_TEMPERATURE = 650;
     private static final float RESET_TEMPERATURE = 450;
+    /** Sodium boils here: a stopped loop past it bursts a seal, and the sodium fire starts. */
+    public static final float SODIUM_BOIL = 883;
+    /** Decay heat at shutdown, as a share of what the core was making. */
+    private static final float DECAY_SHARE = 0.07F;
+    /** Decay heat halves every 2 minutes. */
+    private static final float DECAY_PER_TICK = (float) Math.pow(0.5, 1 / 2400.0);
+    /** The core's slow loss of heat to the building round it, a share of its heat over ambient a tick. */
+    private static final float PASSIVE_LOSS = 0.00002F;
+    /** How long the sodium burns, in ticks. */
+    private static final int FIRE_TICKS = 600;
+    /** A just-burnt core: its boiling sodium carried the heat off as it burst. */
+    private static final float AFTER_FIRE_TEMPERATURE = 400;
+    /** Ticks a breeder must have been down before starting again is announced. */
+    private static final int RESTART_ANNOUNCE_TICKS = 100;
     /** Flow steps on the control screen, in percent. */
     public static final int FLOW_STEP = 5;
 
     public enum Status {
         // New statuses go at the end: the status is saved by its position in this list.
-        OFFLINE, NO_FUEL, NO_SODIUM, WARMING, ONLINE, OVERHEAT, SCRAM;
+        OFFLINE, NO_FUEL, NO_SODIUM, WARMING, ONLINE, OVERHEAT, SCRAM, SODIUM_FIRE;
 
         /** Whether the reactor is making heat. */
         public boolean running() {
@@ -219,6 +249,19 @@ public class BreederRunner {
         }
     };
 
+    private final Announcer announcer = new Announcer();
+    final SteadyState steady = new SteadyState();
+    /** One load: an assembly's life, an hour at full output. */
+    private static final float LOAD_TICKS = 72_000;
+    private Boolean announcedScram;
+    private boolean announcedHotSpot;
+    private int downTicks = RESTART_ANNOUNCE_TICKS;
+    /** Decay heat still coming off a core that has stopped, in thermal FE a tick. */
+    private float decayHeat;
+    /** What the core was making last tick, to start its decay heat from when it stops. */
+    private float lastGeneration;
+    /** Ticks the sodium fire still has to burn. */
+    int fireTicks;
     boolean enabled = true;
     RedstoneMode redstoneMode = RedstoneMode.IGNORED;
     /** The pumps' flow, in percent. */
@@ -297,40 +340,63 @@ public class BreederRunner {
         changed.run();
     }
 
-    /** One tick. {@code centre} is the middle of the reactor, for radiation. */
+    /** One tick. {@code centre} is the middle of the reactor, for radiation and the sodium fire. */
     void tick(ServerLevel level, BlockPos core, Direction facing, Vec3 centre) {
         BreederReactor.Analysis analysis = BreederReactor.analyse(types, items());
         boolean allowed = enabled && redstoneMode.allows(level.hasNeighborSignal(core));
         boolean filled = sodium.getFluidAmount() >= BreederReactor.LOOP;
-        if (scrammed && temperature < RESET_TEMPERATURE) {
+        if (scrammed && temperature < RESET_TEMPERATURE && fireTicks <= 0) {
             scrammed = false;
         }
         // The reactor will not start on a loop that is not full; once running, a loop that loses
         // sodium carries less, and the core heats.
         float generation = allowed && !scrammed && (filled || status.running()) ? analysis.generation() : 0;
+        // A core that stops keeps making decay heat, which fades over minutes.
+        if (generation > 0) {
+            decayHeat = 0;
+        } else if (lastGeneration > 0) {
+            decayHeat = lastGeneration * DECAY_SHARE;
+        }
+        lastGeneration = generation;
+        decayHeat *= DECAY_PER_TICK;
+
+        // A core making heat always drives its pumps (the steam plant, or its startup supply while it
+        // warms). A stopped one runs them from its buffer, and with that empty they stall.
+        float wanted = flow > 0 && sodium.getFluidAmount() > 0 ? BreederReactor.pumpPower(flow()) : 0;
+        boolean pumped = wanted <= 0 || generation > 0 || energy.getEnergyStored() >= wanted;
+        float flowing = pumped ? flow() : 0;
 
         // The sodium carries away what the loop and the core's temperature allow: the heat made, less
         // any over a hot spot's limit (which stays in the core), and with the reaction stopped,
-        // whatever heat the core still holds.
+        // whatever heat the core still holds; decay heat on top.
         float stored = (temperature - AMBIENT) * HEAT_CAPACITY;
-        float capacity = BreederReactor.capacity(flow(), sodium.getFluidAmount());
+        float capacity = BreederReactor.capacity(flowing, sodium.getFluidAmount());
         float potential = capacity * BreederReactor.coolingRamp(temperature);
-        float carryable = generation > 0 ? Math.max(0, generation - analysis.stranded()) : stored;
+        float carryable = (generation > 0 ? Math.max(0, generation - analysis.stranded()) : stored) + decayHeat;
         float removed = Math.max(0, Math.min(potential, carryable));
-        temperature += (generation - removed) / HEAT_CAPACITY;
-        if (generation <= 0) {
-            temperature -= (temperature - AMBIENT) * 0.0005F;
-        }
+        temperature += (generation + decayHeat - removed) / HEAT_CAPACITY;
+        temperature -= (temperature - AMBIENT) * PASSIVE_LOSS;
         temperature = Math.max(AMBIENT, temperature);
         if (temperature >= SCRAM_TEMPERATURE) {
             scrammed = true;
+        }
+        // Past sodium's boiling point the loop bursts: the sodium fire.
+        if (temperature >= SODIUM_BOIL && sodium.getFluidAmount() > 0) {
+            if (Config.get(Config.BREEDER_SODIUM_FIRE)) {
+                ignite(level, centre);
+            } else {
+                temperature = SODIUM_BOIL;
+            }
+        }
+        if (fireTicks > 0) {
+            burnFire(level, core, centre);
         }
 
         // The steam plant makes power from what the sodium carries; the pumps take theirs first. A
         // SCRAM trips the steam plant too, as the station's turbine trips.
         float efficiency = BreederReactor.efficiency(temperature);
-        pumping = flow > 0 && sodium.getFluidAmount() > 0 ? Math.round(BreederReactor.pumpPower(flow())) : 0;
-        int made = scrammed ? 0 : Math.round(removed * efficiency);
+        pumping = pumped ? Math.round(wanted) : 0;
+        int made = scrammed ? 0 : Math.round(removed * efficiency * steady.bonus(SteadyState.Tier.BREEDER));
         output = made - pumping;
         efficiencyPermille = removed > 0 && !scrammed ? Math.round(efficiency * 1000) : 0;
         if (output > 0) {
@@ -351,16 +417,86 @@ public class BreederRunner {
         }
 
         Status before = status;
-        status = !allowed ? Status.OFFLINE
+        status = fireTicks > 0 ? Status.SODIUM_FIRE
+                : !allowed ? Status.OFFLINE
                 : scrammed ? Status.SCRAM
                 : analysis.fuel() == 0 ? Status.NO_FUEL
                 : generation <= 0 ? Status.NO_SODIUM
                 : temperature >= HOT_TEMPERATURE ? Status.OVERHEAT
                 : temperature < BreederReactor.IDLE_TEMPERATURE ? Status.WARMING
                 : Status.ONLINE;
+        announce(level, centre, before, generation > 0 && analysis.stranded() > 0);
+        int milestone = steady.tick(generation > 0 ? SteadyState.State.RUNNING : SteadyState.State.DOWN, generation > 0 ? 1 / LOAD_TICKS : 0);
+        SteadyState.reached(level, centre, announcer, milestone, Milestone.BREEDER_STEADY);
         if (status != before) {
             changed.run();
         }
+    }
+
+    /** The loop bursts: the sodium is lost, the core SCRAMs, and the fire starts. */
+    private void ignite(ServerLevel level, Vec3 centre) {
+        sodium.setFluid(FluidStack.EMPTY);
+        scrammed = true;
+        decayHeat = 0;
+        temperature = AFTER_FIRE_TEMPERATURE;
+        fireTicks = FIRE_TICKS;
+        steady.reset();
+        ModTriggers.MILESTONE.get().triggerNearby(level, centre, Milestone.SODIUM_FIRE);
+        changed.run();
+    }
+
+    /**
+     * The sodium burning inside the bund wall: dense white smoke (sodium oxide) and flames over the
+     * compound, and anyone inside it set alight. No blocks burn: the bund holds it.
+     */
+    private void burnFire(ServerLevel level, BlockPos core, Vec3 centre) {
+        fireTicks--;
+        double half = BreederLayout.SIZE / 2.0;
+        AABB compound = new AABB(centre.x - half, core.getY(), centre.z - half, centre.x + half, core.getY() + 3, centre.z + half);
+        if (level.getGameTime() % 10 == 0) {
+            for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, compound)) {
+                entity.igniteForSeconds(4);
+            }
+        }
+        RandomSource random = level.random;
+        for (int i = 0; i < 4; i++) {
+            double x = centre.x + (random.nextDouble() - 0.5) * (BreederLayout.SIZE - 2);
+            double z = centre.z + (random.nextDouble() - 0.5) * (BreederLayout.SIZE - 2);
+            level.sendParticles(ParticleTypes.FLAME, x, core.getY() + 0.2, z, 2, 0.2, 0.1, 0.2, 0.02);
+            level.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, x, core.getY() + 0.5, z, 1, 0.3, 0.2, 0.3, 0.01);
+        }
+        if (level.getGameTime() % 5 == 0) {
+            level.sendParticles(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, centre.x, core.getY() + 1, centre.z, 2, 2.5, 0.5, 2.5, 0.01);
+        }
+        if (level.getGameTime() % 30 == 0) {
+            level.playSound(null, centre.x, core.getY() + 1, centre.z, SoundEvents.FIRE_AMBIENT, SoundSource.BLOCKS, 3.0F, 0.8F);
+        }
+    }
+
+    /** Speaks when something worth hearing has changed since the last tick, most urgent first. */
+    private void announce(ServerLevel level, Vec3 at, Status before, boolean hotSpot) {
+        if (status == Status.SODIUM_FIRE && before != Status.SODIUM_FIRE) {
+            announcer.say(level, at, Announcer.Line.SODIUM_FIRE);
+        }
+        // Not on the first tick after loading a breeder that was already scrammed.
+        if (scrammed && announcedScram != null && !announcedScram && status != Status.SODIUM_FIRE) {
+            announcer.say(level, at, Announcer.Line.SCRAM);
+        }
+        announcedScram = scrammed;
+        if (status == Status.OVERHEAT && before != Status.OVERHEAT) {
+            announcer.say(level, at, Announcer.Line.OVERHEAT);
+        }
+        if (hotSpot && !announcedHotSpot) {
+            announcer.say(level, at, Announcer.Line.HOT_SPOT);
+        }
+        announcedHotSpot = hotSpot;
+        if (status == Status.NO_SODIUM && before != Status.NO_SODIUM) {
+            announcer.say(level, at, Announcer.Line.SODIUM_LOW);
+        }
+        if (status.running() && !before.running() && downTicks >= RESTART_ANNOUNCE_TICKS) {
+            announcer.say(level, at, Announcer.Line.BREEDER_ONLINE);
+        }
+        downTicks = status.running() ? 0 : Math.min(downTicks + 1, RESTART_ANNOUNCE_TICKS);
     }
 
     /** Burns each assembly by how hard it runs; one that is used up becomes spent breeder fuel. */
@@ -430,16 +566,17 @@ public class BreederRunner {
         }
     }
 
-    /** Pushes power out of the energy port into whatever is beside it. */
+    /** Pushes power out of the energy port into whatever is beside it, keeping half the buffer back for the pumps. */
     private void pushEnergy(ServerLevel level, BlockPos core, Direction facing) {
-        if (energy.getEnergyStored() <= 0) {
+        int spare = energy.getEnergyStored() - ENERGY_CAPACITY / 2;
+        if (spare <= 0) {
             return;
         }
         BlockPos port = BreederLayout.portPos(core, facing, BreederLayout.Port.ENERGY);
         Direction face = BreederLayout.portFace(facing, BreederLayout.Port.ENERGY);
         IEnergyStorage receiver = level.getCapability(Capabilities.EnergyStorage.BLOCK, port.relative(face), face.getOpposite());
         if (receiver != null && receiver.canReceive()) {
-            int sent = receiver.receiveEnergy(energy.getEnergyStored(), false);
+            int sent = receiver.receiveEnergy(spare, false);
             energy.extractEnergy(sent, false);
         }
     }
@@ -459,6 +596,10 @@ public class BreederRunner {
         tag.putInt("redstone_mode", redstoneMode.ordinal());
         tag.putInt("flow", flow);
         tag.putInt("status", status.ordinal());
+        tag.putFloat("decay_heat", decayHeat);
+        tag.putFloat("last_generation", lastGeneration);
+        tag.putInt("fire_ticks", fireTicks);
+        steady.save(tag);
     }
 
     void load(CompoundTag tag, HolderLookup.Provider registries) {
@@ -476,5 +617,9 @@ public class BreederRunner {
         flow = tag.contains("flow") ? tag.getInt("flow") : 80;
         int id = tag.getInt("status");
         status = id >= 0 && id < Status.values().length ? Status.values()[id] : Status.OFFLINE;
+        decayHeat = tag.getFloat("decay_heat");
+        lastGeneration = tag.getFloat("last_generation");
+        fireTicks = tag.getInt("fire_ticks");
+        steady.load(tag);
     }
 }

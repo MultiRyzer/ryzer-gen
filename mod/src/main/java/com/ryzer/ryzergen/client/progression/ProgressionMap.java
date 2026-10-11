@@ -1,6 +1,7 @@
 package com.ryzer.ryzergen.client.progression;
 
 import com.ryzer.ryzergen.Preview;
+import com.ryzer.ryzergen.client.text.Term;
 import com.ryzer.ryzergen.material.OreType;
 import com.ryzer.ryzergen.registry.ModItems;
 import net.minecraft.world.item.Item;
@@ -33,21 +34,35 @@ public final class ProgressionMap {
         public Item item() {
             return icon.get().asItem();
         }
+
+        /** Each tier's big machine, drawn as a card two rows tall (the row under it is kept free). */
+        public boolean milestone() {
+            return MILESTONES.contains(id);
+        }
     }
+
+    /** The milestone of each tier: the machine that the tier builds towards. */
+    public static final java.util.Set<String> MILESTONES = java.util.Set.of("microreactor", "mega_drill", "station", "breeder",
+            "fusion", "swarm");
 
     /** Column headings, left to right. */
     public static final String[] COLUMNS = {"dig", "materials", "microreactor", "fuel_cycle", "fission", "breeder", "fusion", "swarm"};
     /** The first column that is still a preview: shown greyed as "more to come" with the preview off. */
-    public static final int FIRST_PREVIEW_COLUMN = 5;
+    public static final int FIRST_PREVIEW_COLUMN = 6;
 
     /**
-     * Cell colours for the spoiler grids, by letter, as each control screen colours its plan: the
-     * station's fuel green, moderator amber, control red, coolant blue; the breeder's fuel cyan (B)
-     * and blanket green (b).
+     * Cell colours for the spoiler grids, by letter, in their terms' colours as every core grid
+     * draws them: the station's fuel (F), moderator (M), control (R) and coolant (C); the breeder's
+     * fuel (B) and blanket (b).
      */
     public static final Map<Character, Integer> CELL_COLOURS = Map.of(
-            'F', 0xFF44D65E, 'M', 0xFFE8B030, 'R', 0xFFE0503C, 'C', 0xFF3A8CF0,
-            'B', 0xFF35C8F5, 'b', 0xFF44D65E);
+            'F', Term.FUEL.argb(), 'M', Term.MODERATOR.argb(), 'R', Term.CONTROL.argb(), 'C', Term.COOLANT.argb(),
+            'B', Term.FUEL.argb(), 'b', Term.BREEDING.argb());
+    /** Each kind of cell's glossary word, for the grids' key. */
+    public static final Map<Character, String> CELL_WORDS = Map.of(
+            'F', "fuel", 'M', "moderator", 'R', "control", 'C', "coolant", 'B', "fuel", 'b', "blanket");
+    /** The order the key lists them in, the same for every grid. */
+    public static final String CELL_ORDER = "FBMRCb";
 
     private static final Map<String, Node> NODES = new LinkedHashMap<>();
 
@@ -57,6 +72,11 @@ public final class ProgressionMap {
 
     private static void add(String id, Supplier<? extends ItemLike> icon, int column, int row, List<Grid> grids, String... inputs) {
         NODES.put(id, new Node(id, icon, column, row, List.of(inputs), column >= FIRST_PREVIEW_COLUMN, grids));
+    }
+
+    /** A step in an early column that only the preview uses, such as an ore for a preview recipe. */
+    private static void addPreview(String id, Supplier<? extends ItemLike> icon, int column, int row, String... inputs) {
+        NODES.put(id, new Node(id, icon, column, row, List.of(inputs), true, List.of()));
     }
 
     private static Supplier<ItemLike> drop(OreType ore) {
@@ -80,6 +100,9 @@ public final class ProgressionMap {
         add("fluorite", drop(OreType.FLUORITE), 0, 8);
         add("silver", drop(OreType.SILVER), 0, 9);
         add("salt", drop(OreType.SALT), 0, 10);
+        add("tungsten", drop(OreType.TUNGSTEN), 0, 11);
+        addPreview("aluminium", drop(OreType.ALUMINIUM), 0, 12);
+        add("monazite", drop(OreType.MONAZITE), 0, 13);
 
         // Tier 1 materials, from the fuel-burning alloy smelter and the blast furnace.
         add("alloy_smelter", ModItems.ALLOY_SMELTER, 1, 0, "iron", "coal");
@@ -93,9 +116,9 @@ public final class ProgressionMap {
         // Tier 1: the microreactor.
         add("triso", ModItems.TRISO_PELLETS, 2, 2, "uranium_ingot", "graphite", "silicon_carbide");
         add("fuel_core", ModItems.SEALED_FUEL_CORE, 2, 3, "triso", "steel", "graphite");
-        add("microreactor", ModItems.REACTOR_HEART, 2, 4, List.of(), "fuel_core", "steel", "lead_ingot", "basic_board");
-        add("intake_pump", ModItems.INTAKE_PUMP, 2, 5, "steel", "basic_board");
-        add("energy_cable", ModItems.ENERGY_CABLE, 2, 6, "copper", "redstone");
+        add("microreactor", ModItems.REACTOR_HEART, 2, 4, List.of(), "fuel_core", "steel", "lead_ingot", "graphite", "copper", "basic_board");
+        add("intake_pump", ModItems.INTAKE_PUMP, 2, 6, "steel", "basic_board");
+        add("energy_cable", ModItems.ENERGY_CABLE, 2, 7, "copper", "redstone");
 
         // Tier 2: the fuel cycle.
         add("electric_smelter", ModItems.ELECTRIC_ALLOY_SMELTER, 3, 0, "alloy_smelter", "steel", "basic_board");
@@ -106,6 +129,7 @@ public final class ProgressionMap {
         add("reprocessor", ModItems.REPROCESSOR, 3, 5, "core_cracker", "pool", "advanced_board", "lead_ingot", "fluorite");
         add("plutonium", ModItems.PLUTONIUM_INGOT, 3, 6, "reprocessor");
         add("fuel_fabricator", ModItems.FUEL_FABRICATOR, 3, 7, "advanced_board", "steel");
+        add("mega_drill", ModItems.MEGA_DRILL_CONTROLLER, 3, 8, "microreactor", "tungsten", "steel", "advanced_board");
 
         // Tier 3: fission.
         add("uranium_rod", ModItems.URANIUM_FUEL_ROD, 4, 0, "fuel_fabricator", "uranium_ingot", "steel");
@@ -119,7 +143,7 @@ public final class ProgressionMap {
         add("lithium_extractor", ModItems.LITHIUM_EXTRACTOR, 4, 6, "salt", "advanced_board");
         add("container_battery", ModItems.BATTERY_CONTROLLER, 4, 7, "lithium_extractor", "advanced_board");
 
-        // Tier 4: the breeder (preview).
+        // Tier 4: the breeder.
         add("electrorefiner", ModItems.ELECTROREFINER, 5, 0, "station", "advanced_board");
         add("transuranic", ModItems.TRANSURANIC_METAL, 5, 1, "electrorefiner", "mox_rod");
         add("sodium", ModItems.SODIUM_INGOT, 5, 2, "electrorefiner", "salt");
@@ -129,7 +153,10 @@ public final class ProgressionMap {
                 new Grid("breeder_economy", new String[] {"BBB", "BbBB", "BBbbb", "bbbb", "bbb"}, true),
                 new Grid("breeder_breeding", new String[] {"BbB", "bBbb", "BBbBB", "bbBb", "Bbb"}, true)),
                 "breeder_fuel", "sodium", "uranium_blanket", "station");
-        add("tritium", ModItems.IRRADIATED_TARGET_ROD, 5, 7, "breeder", "lithium_extractor");
+        addPreview("tritium", ModItems.IRRADIATED_TARGET_ROD, 5, 7, "breeder", "lithium_extractor", "aluminium");
+        // The thorium line: monazite gives thorium, the breeder's blanket turns it into U-233, a third station fuel.
+        add("monazite_processor", ModItems.MONAZITE_PROCESSOR, 5, 8, "monazite", "station", "advanced_board");
+        add("u233_rod", ModItems.U233_FUEL_ROD, 5, 9, "monazite_processor", "breeder", "fuel_fabricator");
 
         // Tier 5 and 6 (preview).
         add("fusion", ModItems.FUSION_PREVIEW, 6, 5, "tritium", "breeder");

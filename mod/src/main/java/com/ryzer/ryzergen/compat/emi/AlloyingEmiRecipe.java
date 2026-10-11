@@ -1,6 +1,7 @@
 package com.ryzer.ryzergen.compat.emi;
 
 import com.ryzer.ryzergen.recipe.AlloyingRecipe;
+import com.ryzer.ryzergen.client.text.RichText;
 import dev.emi.emi.api.recipe.BasicEmiRecipe;
 import dev.emi.emi.api.render.EmiTexture;
 import dev.emi.emi.api.stack.EmiIngredient;
@@ -35,7 +36,7 @@ public class AlloyingEmiRecipe extends BasicEmiRecipe {
         widgets.addSlot(outputs.get(0), 70, 4).large(true).recipeContext(this);
         widgets.addText(Component.translatable("emi.cooking.time", cookingTime / 20F), 38, 32, 0xFF404040, false);
         if (electricOnly) {
-            widgets.addText(Component.translatable("jei.ryzergen.alloying.electric_only"), 0, 43, 0xFFC0392B, false);
+            widgets.addText(RichText.trLight("jei.ryzergen.alloying.electric_only"), 0, 43, 0xFF606060, false);
         }
     }
 }

@@ -1,9 +1,4 @@
 {
-  "neoforge:conditions": [
-    {
-      "type": "ryzergen:preview"
-    }
-  ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {

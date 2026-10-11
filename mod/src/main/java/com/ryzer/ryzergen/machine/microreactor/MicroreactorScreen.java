@@ -4,6 +4,8 @@ import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.ARGB;
 import com.ryzer.ryzergen.client.GuiGauges;
 import com.ryzer.ryzergen.machine.RedstoneMode;
+import com.ryzer.ryzergen.client.text.RichText;
+import com.ryzer.ryzergen.client.SteadyStateTooltip;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -167,7 +169,7 @@ public class MicroreactorScreen extends AbstractContainerScreen<MicroreactorMenu
         graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, LABEL, false);
 
         Status status = menu.status();
-        Component statusText = Component.translatable("gui.ryzergen.microreactor.status." + status.name().toLowerCase());
+        Component statusText = RichText.tr("gui.ryzergen.microreactor.status." + status.name().toLowerCase());
         int statusColour = switch (status) {
             case ONLINE -> GOOD;
             case OFFLINE -> BAD;
@@ -178,11 +180,11 @@ public class MicroreactorScreen extends AbstractContainerScreen<MicroreactorMenu
         };
         graphics.drawString(font, statusText, SCREEN_X + (SCREEN_W - font.width(statusText)) / 2, 24, statusColour, false);
 
-        graphics.drawString(font, Component.translatable("gui.ryzergen.fe_per_tick", String.format("%,d", menu.output())),
+        graphics.drawString(font, RichText.tr("gui.ryzergen.fe_per_tick", String.format("%,d", menu.output())),
                 READOUT_X, 37, VALUE, false);
-        graphics.drawString(font, Component.translatable("gui.ryzergen.celsius", menu.temperature()), READOUT_X, 49, VALUE, false);
+        graphics.drawString(font, RichText.tr("gui.ryzergen.celsius", menu.temperature()), READOUT_X, 49, VALUE, false);
         Component fuel = status == Status.NO_CORE || status == Status.DEPLETED
-                ? Component.translatable("gui.ryzergen.microreactor.no_core")
+                ? RichText.tr("gui.ryzergen.microreactor.no_core")
                 : Component.literal(Math.round(menu.fuel() * 100) + "%");
         graphics.drawString(font, fuel, READOUT_X, 61, VALUE, false);
 
@@ -207,32 +209,36 @@ public class MicroreactorScreen extends AbstractContainerScreen<MicroreactorMenu
         super.render(graphics, mouseX, mouseY, partialTick);
         renderTooltip(graphics, mouseX, mouseY);
 
+        // The live output line: the steady-state streak behind it.
+        if (isOver(SCREEN_X, 36, SCREEN_W, 10, mouseX, mouseY)) {
+            graphics.renderComponentTooltip(font, SteadyStateTooltip.lines(menu.streak(), menu.bonus(), menu.nextMilestone()), mouseX, mouseY);
+        }
         if (isOver(TEMP_X - 1, GAUGE_Y - 1, 10, 62, mouseX, mouseY)) {
-            graphics.renderTooltip(font, Component.translatable("gui.ryzergen.microreactor.temperature",
+            graphics.renderTooltip(font, RichText.tr("gui.ryzergen.microreactor.temperature",
                     menu.temperature(), MAX_TEMPERATURE), mouseX, mouseY);
         } else if (isOver(ENERGY_X - 1, GAUGE_Y - 1, 10, 62, mouseX, mouseY)) {
-            graphics.renderTooltip(font, Component.translatable("gui.ryzergen.energy",
+            graphics.renderTooltip(font, RichText.tr("gui.ryzergen.energy",
                     String.format("%,d", menu.energy()), String.format("%,d", ENERGY_CAPACITY)), mouseX, mouseY);
         } else if (isOver(COOLANT_X - 1, GAUGE_Y - 1, 10, 62, mouseX, mouseY)) {
-            graphics.renderTooltip(font, Component.translatable("gui.ryzergen.microreactor.coolant",
+            graphics.renderTooltip(font, RichText.tr("gui.ryzergen.microreactor.coolant",
                     String.format("%,d", menu.coolant()), String.format("%,d", COOLANT_CAPACITY)), mouseX, mouseY);
         } else if (isOver(FUEL_X - 1, FUEL_Y - 1, 18, 6, mouseX, mouseY)) {
-            graphics.renderTooltip(font, Component.translatable("gui.ryzergen.microreactor.fuel",
+            graphics.renderTooltip(font, RichText.tr("gui.ryzergen.microreactor.fuel",
                     Math.round(menu.fuel() * 100)), mouseX, mouseY);
         } else if (isOver(POWER_X, BUTTON_Y, 16, 16, mouseX, mouseY)) {
             graphics.renderComponentTooltip(font, List.of(
-                    Component.translatable(menu.enabled() ? "gui.ryzergen.power.on" : "gui.ryzergen.power.off"),
-                    Component.translatable("gui.ryzergen.power.hint").withStyle(style -> style.withColor(0xFF9AA3AE))),
+                    RichText.tr(menu.enabled() ? "gui.ryzergen.power.on" : "gui.ryzergen.power.off"),
+                    RichText.tr("gui.ryzergen.microreactor.power.hint").withStyle(style -> style.withColor(0xFF9AA3AE))),
                     mouseX, mouseY);
         } else if (isOver(SCREEN_X, 71, SCREEN_W, 10, mouseX, mouseY)) {
             graphics.renderComponentTooltip(font, List.of(
-                    Component.translatable("gui.ryzergen.microreactor.efficiency"),
+                    RichText.tr("gui.ryzergen.microreactor.efficiency"),
                     hint("gui.ryzergen.microreactor.efficiency.hint", HINT)), mouseX, mouseY);
         } else if (isOver(DUMP_X, DUMP_Y, 16, 16, mouseX, mouseY)) {
             graphics.renderComponentTooltip(font, menu.dumpExcess()
-                    ? List.of(Component.translatable("gui.ryzergen.microreactor.dump.on"),
+                    ? List.of(RichText.tr("gui.ryzergen.microreactor.dump.on"),
                     hint("gui.ryzergen.microreactor.dump.on_hint", HINT), hint("gui.ryzergen.redstone.hint", HINT))
-                    : List.of(Component.translatable("gui.ryzergen.microreactor.dump.off"),
+                    : List.of(RichText.tr("gui.ryzergen.microreactor.dump.off"),
                     hint("gui.ryzergen.microreactor.dump.off_hint", HINT), hint("gui.ryzergen.redstone.hint", HINT)),
                     mouseX, mouseY);
         } else if (isOver(SAFETY_X, SAFETY_Y, SAFETY_W, SAFETY_H, mouseX, mouseY)) {
@@ -248,8 +254,8 @@ public class MicroreactorScreen extends AbstractContainerScreen<MicroreactorMenu
         } else if (isOver(REDSTONE_X, BUTTON_Y, 16, 16, mouseX, mouseY)) {
             RedstoneMode mode = menu.redstoneMode();
             graphics.renderComponentTooltip(font, List.of(
-                    Component.translatable("gui.ryzergen.redstone." + mode.name().toLowerCase()),
-                    Component.translatable("gui.ryzergen.redstone.hint").withStyle(style -> style.withColor(0xFF9AA3AE))),
+                    RichText.tr("gui.ryzergen.redstone." + mode.name().toLowerCase()),
+                    RichText.tr("gui.ryzergen.redstone.hint").withStyle(style -> style.withColor(0xFF9AA3AE))),
                     mouseX, mouseY);
         }
     }
@@ -275,7 +281,7 @@ public class MicroreactorScreen extends AbstractContainerScreen<MicroreactorMenu
     }
 
     private static Component hint(String key, int colour) {
-        return Component.translatable(key).withStyle(style -> style.withColor(colour));
+        return RichText.tr(key).withStyle(style -> style.withColor(colour));
     }
 
     private boolean press(int id) {
