@@ -91,7 +91,7 @@ Full roadmap and issue tracker on [GitHub](https://github.com/MultiRyzer/ryzer-g
 - FE energy throughout. Data-driven recipes and worldgen.
 - Automation friendly: single-block machines take pipes and cables on any side, and pipes only ever pull results, never ingredients, so AE2 and other storage mods can drive them directly. Multiblocks keep inputs and outputs on separate ports.
 - Every recipe asks for common tags (`c:ingots/uranium`, `c:dusts/lead`, ...), so other mods' materials just work.
-- Every ore's worldgen has a config toggle, so you can turn off ores another mod already supplies.
+- Every ore's worldgen has a config toggle (and one switch turns them all off), so you can turn off ores another mod already supplies. Every recipe asks for common tags, so other mods' uranium, lead, silver and the rest work in its place.
 - Toggles for radiation, mob radiation, meltdowns, explosion power and crater size, the announcer, the station's water use, fuel cooling and the round sun, plus output and capacity settings.
 - Built to stay light in big bases: joined pipes and cables share one network, rebuilt only where something changes, and only pipes that pull from something tick. Moving parts are drawn with plain block models, no animation library.
 - Two small client-side mixins, for the sky only (the round sun and the Dyson swarm's darkening). Nothing touches world generation or gameplay code.
