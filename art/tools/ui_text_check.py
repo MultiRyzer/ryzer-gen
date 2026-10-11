@@ -207,7 +207,7 @@ TOKEN = re.compile(r'\{([a-z_]+)\}|<([a-z]+)(-?)>(.*?)</\2\3>')
 WORD_TERMS = {'power': 'power', 'energy': 'power', 'heat': 'heat', 'meltdown': 'heat', 'coolant': 'coolant',
               'water': 'coolant', 'sodium': 'coolant', 'steam': 'steam', 'fuel': 'fuel', 'moderator': 'moderator',
               'control': 'control', 'radiation': 'radiation', 'speed': 'speed', 'blanket': 'breeding',
-              'target': 'breeding', 'tritium': 'breeding', 'time': 'time'}
+              'target': 'breeding', 'tritium': 'breeding', 'time': 'time', 'items': 'items'}
 
 
 def icon_widths():

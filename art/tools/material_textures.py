@@ -1,9 +1,11 @@
 """Generates the ore blocks, raw drops, gems and ingots.
 
 Built on vanilla textures, as most mods do, so they sit naturally in today's game:
-- Ores: vanilla stone or deepslate, with each mineral's own cluster shape drawn on top and shaded the
-  modern vanilla way (lit top and left edges, dark bottom and right, a highlight on top-left corners,
-  and a soft shadow cast onto the rock).
+- Ores: vanilla stone or deepslate, with each mineral painted in from crystal pieces of its own real
+  habit (pitchblende bubbles crusted with autunite, stepped galena cubes, wire silver, bauxite
+  pebbles, fluorite cubes, halite cubes, wolframite blades with scheelite, monazite prisms), placed in
+  clumps that wrap across the edges, the rock round them tinted by the host (11 Oct 2026, after
+  vanilla's modern ores; the earlier round blobs read as stickers).
 - Ingots, raw drops and gems: the vanilla shape and shading, gradient-mapped onto each material's own
   colour ramp. Vanilla's grey levels are sorted by brightness and each one takes the matching tone.
 
@@ -13,180 +15,143 @@ Run from the repo root after one Gradle build:
 """
 from pixelart import *  # noqa: F401,F403
 
-# Five tones per ore, dark to light: outline, shade, body, lit edge, highlight.
-ORE_TONES = {
-    # Pitchblende with its bright yellow-green secondary minerals.
-    'uranium': ['1c2a10', '3d6b1f', '6aa82e', 'a8e04a', 'e8ff9a'],
-    # Galena: heavy, dull blue-grey.
-    'lead': ['1f2130', '3d4260', '5d6590', '8a92b8', 'c5cae0'],
-    # Native silver: bright and warm white.
-    'silver': ['4a433b', '8c847a', 'c2bbb1', 'ece7e0', 'ffffff'],
-    # Bauxite, the aluminium ore: rusty red-brown nodules.
-    'aluminium': ['3d1a0e', '7a3a1c', 'b0602e', 'd98e52', 'f5c08a'],
-    # Fluorite: purple cubes that fluoresce cyan at the edges.
-    'fluorite': ['2a1247', '5a2a8f', '8a4ccc', 'b98af0', 'a8f0ff'],
-    # Halite: small pinkish-white cubes.
-    'salt': ['8a4f5c', 'c9828f', 'eab3bc', 'f8d9de', 'fff4f6'],
-    # Wolframite: near-black tabular crystals with a metallic sheen.
-    'tungsten': ['0f0d0c', '2b2522', '4a403a', '8a7c72', 'e0d6ce'],
-    # Monazite: small red-brown prisms.
-    'monazite': ['3a120a', '7a2a14', 'b04a22', 'dd7a3c', 'ffb070'],
+# The ores are painted from crystal pieces, each drawn once for a mineral habit and lit from the top
+# left: ' ' leaves what is below, '1' to '5' the mineral from its darkest to its glint, 'a' 'b' 'c' a
+# second mineral (dark to light). Each ore places its pieces by hand into a few clumps of mixed
+# sizes, all inside the block's outer ring of pixels: that ring stays plain rock, as on vanilla's
+# ores, so an ore block melts into the stone round it. The rock round every crystal takes its host's
+# hue at its own brightness (a ring a pixel out, and half as much a ring further), and the rock just
+# below and right of a crystal is shaded (ORE_SHADOW), as if the crystal stood proud of it.
+ORE_SHADOW = 0.3
+PIECES = {
+    # Rounded lumps, lit from the top left, a glint on the light side.
+    'ball4': [' 43 ', '4532', '3321', ' 21 '],
+    'ball3': ['54 ', '432', ' 21'],
+    'ball2': ['43', '21'],
+    'dot': ['3'],
+    'glint': ['4'],
+    # Cubes: a lit top face, the left face in body, the right in shade.
+    'cube4': ['5444', '4333', '4322', '3211'],
+    'cube3': ['544', '432', '321'],
+    'cube2': ['54', '31'],
+    # Galena's stepped cube: two cubes grown together.
+    'step': ['544  ', '4332 ', '43544', '32432', ' 1321'],
+    # Bladed crystals, two pixels thick, lit along the top edge.
+    'blade6': ['544443', '322221'],
+    'blade4': ['5443', '3221'],
+    'blade5d': ['54   ', '3443 ', ' 3244', '  321'],
+    'bladev': ['54', '43', '43', '32', '21'],
+    # Stubby prisms, a pointed end.
+    'prism': [' 5 ', '544', '433', '432', '321', ' 1 '],
+    'prism_s': ['54', '43', '32', '21'],
+    'prism_l': ['  54', ' 543', '5432', '4321', '321 '],
+    # Crust plates of the second mineral.
+    'crust3': ['cb ', 'bba', ' a '],
+    'crust2': ['cb', 'ba'],
+    'crust1': ['c'],
+    'flake': ['b'],
 }
 
-# Cluster shapes, one per mineral: '#' is ore, '.' is rock.
-ORE_SHAPES = {
-    # Metal nuggets.
-    'lead': [
-        '................',
-        '...##...........',
-        '..####......##..',
-        '..###......####.',
-        '...#.......###..',
-        '.............#..',
-        '......###.......',
-        '.....#####......',
-        '.....####.....#.',
-        '......##.....###',
-        '.............##.',
-        '..##............',
-        '.####......##...',
-        '.###......####..',
-        '..#........##...',
-        '................',
-    ],
-    'silver': [
-        '................',
-        '..#.............',
-        '.###.....##.....',
-        '.##.....####....',
-        '.........##.....',
-        '....##..........',
-        '...####.......#.',
-        '...###.......###',
-        '....#.........#.',
-        '..........##....',
-        '.........####...',
-        '.##......###....',
-        '####............',
-        '.##.......#.....',
-        '.........###....',
-        '..........#.....',
-    ],
-    # Tabular crystals.
-    'tungsten': [
-        '................',
-        '.####...........',
-        '.####.....###...',
-        '..........###...',
-        '...........##...',
-        '.....##.........',
-        '....####........',
-        '....####....##..',
-        '.....##....####.',
-        '...........####.',
-        '..##............',
-        '.####....###....',
-        '.####....####...',
-        '..##......##....',
-        '................',
-        '................',
-    ],
-    # Angular shards.
-    'uranium': [
-        '................',
-        '..#.........#...',
-        '..##.......##...',
-        '...##.....##....',
-        '...###...##.....',
-        '....##..........',
-        '................',
-        '.......#........',
-        '......###.......',
-        '.....#####......',
-        '......###..##...',
-        '.......#..###...',
-        '..##.......##...',
-        '.###............',
-        '..##............',
-        '................',
-    ],
-    # Cubes.
-    'fluorite': [
-        '................',
-        '.###............',
-        '.###.....##.....',
-        '.###....####....',
-        '........####....',
-        '.........##.....',
-        '...##...........',
-        '..####......###.',
-        '..####......###.',
-        '...##.......###.',
-        '.........#......',
-        '........###.....',
-        '.##.....###.....',
-        '.##......#......',
-        '................',
-        '................',
-    ],
-    # Many small cubes.
-    'salt': [
-        '................',
-        '..##.....##.....',
-        '..##.....##..#..',
-        '.............#..',
-        '.....##.........',
-        '.....##....##...',
-        '...........##...',
-        '.##.............',
-        '.##....##.......',
-        '.......##...##..',
-        '............##..',
-        '....##..........',
-        '....##....##....',
-        '..........##....',
-        '.##.............',
-        '.##.............',
-    ],
-    # Round nodules.
-    'aluminium': [
-        '................',
-        '..###...........',
-        '.#####......##..',
-        '.#####.....####.',
-        '..###......####.',
-        '............##..',
-        '.....###........',
-        '....#####.......',
-        '....#####...###.',
-        '.....###...#####',
-        '...........#####',
-        '.##.........###.',
-        '####............',
-        '####....###.....',
-        '.##....#####....',
-        '........###.....',
-    ],
-    # Small prisms.
-    'monazite': [
-        '................',
-        '.##.............',
-        '..##......#.....',
-        '...#.....###....',
-        '.........##.....',
-        '.....#..........',
-        '....###.....##..',
-        '.....###...###..',
-        '......#.....#...',
-        '................',
-        '.##.........#...',
-        '.###.......##...',
-        '..##......##....',
-        '..........#.....',
-        '....##..........',
-        '.....##.........',
-    ],
+
+# Each ore: its five mineral tones (dark to glint), a second mineral's three if it has one, the
+# host rock's tint and how strongly it takes, its pieces (name, x, y) and, for wire silver, wires
+# (paths of points, lit along them with tarnish beneath and right).
+ORES = {
+    # Pitchblende (black, greasy, in bubbly masses) crusted with autunite (lime-yellow plates).
+    'uranium': {
+        'tones': ['0c0e09', '1b2015', '2d3322', '4a5338', '9aa878'],
+        'second': ['5a8412', 'a6d630', 'eeff8a'],
+        'halo': '1e2a12', 'halo_amount': 0.25,
+        'pieces': [
+            ('ball4', 2, 3), ('ball3', 5, 5), ('ball2', 1, 7), ('crust3', 1, 2), ('crust2', 5, 3),
+            ('crust1', 7, 6), ('crust2', 4, 8), ('flake', 1, 6), ('ball4', 10, 10), ('ball3', 8, 12),
+            ('crust2', 9, 9), ('crust1', 13, 10), ('crust3', 12, 12), ('ball2', 11, 2),
+            ('crust1', 13, 3), ('crust1', 4, 13), ('dot', 5, 12),
+        ],
+    },
+    # Galena: stepped cubes, metallic blue-grey, bright glints on the lit corners.
+    'lead': {
+        'tones': ['191c25', '363e50', '5b667c', '96a2b8', 'eef3fa'],
+        'second': None,
+        'halo': '1c2130', 'halo_amount': 0.34,
+        'pieces': [
+            ('step', 1, 2), ('cube2', 5, 5), ('cube2', 1, 8), ('cube4', 10, 9), ('cube3', 12, 12),
+            ('cube2', 8, 12), ('cube3', 11, 1), ('cube2', 13, 4), ('cube2', 4, 12), ('glint', 6, 13),
+        ],
+    },
+    # Native silver: wires branching through the rock, bright where lit, black tarnish beneath.
+    'silver': {
+        'tones': ['262320', '68625a', 'a8a299', 'e0dbd2', 'ffffff'],
+        'second': None,
+        'halo': '2a2622', 'halo_amount': 0.26,
+        'wires': [
+            [(1, 4), (2, 4), (3, 5), (4, 5), (5, 6), (6, 6), (7, 7), (7, 8), (8, 9)],
+            [(4, 5), (4, 4), (5, 3), (5, 2), (6, 1)],
+            [(6, 6), (7, 5), (8, 5)],
+            [(9, 13), (10, 12), (11, 12), (12, 11), (12, 10), (13, 9)],
+            [(12, 11), (13, 12), (13, 13)],
+            [(10, 2), (11, 3), (12, 3)],
+            [(2, 13), (3, 12), (4, 12), (5, 11)],
+        ],
+        'pieces': [('ball2', 7, 8), ('glint', 9, 9)],
+    },
+    # Bauxite: round red-brown pisoliths, many sizes, in rusty rock.
+    'aluminium': {
+        'tones': ['2a1008', '58220e', '8a3c1a', 'b45e2e', 'e2986c'],
+        'second': None,
+        'halo': '6a2c14', 'halo_amount': 0.12,
+        'pieces': [
+            ('ball4', 1, 2), ('ball3', 5, 4), ('ball2', 2, 6), ('ball2', 6, 1), ('dot', 4, 7),
+            ('ball4', 10, 9), ('ball3', 12, 12), ('ball2', 8, 13), ('ball2', 13, 7), ('dot', 11, 14),
+            ('ball3', 11, 2), ('dot', 14, 4), ('ball2', 3, 11), ('dot', 6, 11),
+        ],
+    },
+    # Fluorite: purple cubes grown together, a cyan glint where it fluoresces.
+    'fluorite': {
+        'tones': ['1d0a35', '461e7c', '7638c0', 'a874ee', 'e8d8ff'],
+        'second': ['2a7f9c', '54cae8', 'bdf6ff'],
+        'halo': '2a1046', 'halo_amount': 0.15,
+        'pieces': [
+            ('cube4', 1, 2), ('cube3', 4, 5), ('cube2', 1, 6), ('crust1', 1, 2), ('crust1', 4, 5),
+            ('cube4', 10, 9), ('cube2', 8, 12), ('cube3', 12, 12), ('crust1', 10, 9), ('crust1', 12, 12),
+            ('cube2', 12, 2), ('crust1', 12, 2), ('cube2', 5, 12),
+        ],
+    },
+    # Halite: small pink-white cubes, clean, in loose groups.
+    'salt': {
+        'tones': ['7a4652', 'b27584', 'e0b0ba', 'f6dce2', 'ffffff'],
+        'second': None,
+        'halo': '8a5060', 'halo_amount': 0.2,
+        'pieces': [
+            ('cube3', 1, 1), ('cube2', 4, 3), ('cube2', 2, 5), ('glint', 5, 1), ('cube3', 10, 7),
+            ('cube2', 13, 6), ('cube2', 12, 10), ('cube2', 9, 11), ('cube2', 3, 11), ('cube3', 5, 12),
+            ('glint', 2, 14), ('cube2', 13, 13), ('glint', 14, 2),
+        ],
+    },
+    # Wolframite: black bladed crystals with a metallic edge, crossing; specks of pale scheelite.
+    'tungsten': {
+        'tones': ['0a0a0a', '1a1918', '33302d', '6c6762', 'e6e2dc'],
+        'second': ['a89a78', 'e2d6b0', 'fffaea'],
+        'halo': '141210', 'halo_amount': 0.32,
+        'pieces': [
+            ('blade6', 1, 3), ('blade5d', 3, 5), ('bladev', 7, 1), ('crust2', 6, 8), ('crust1', 1, 6),
+            ('blade6', 8, 11), ('blade4', 10, 8), ('bladev', 13, 10), ('crust3', 11, 12),
+            ('crust1', 9, 10), ('blade4', 11, 2), ('crust2', 2, 12), ('crust1', 4, 14),
+            ('crust1', 14, 6),
+        ],
+    },
+    # Monazite: honey-brown stubby prisms with a resinous shine, in small sprays.
+    'monazite': {
+        'tones': ['2e1a08', '583410', '885618', 'b47e2c', 'ecc278'],
+        'second': None,
+        'halo': '3a2410', 'halo_amount': 0.32,
+        'pieces': [
+            ('prism', 2, 2), ('prism_l', 4, 4), ('prism_s', 1, 6), ('prism', 11, 8), ('prism_s', 13, 10),
+            ('prism_l', 8, 10), ('prism_s', 12, 1), ('dot', 14, 3), ('prism_s', 3, 11), ('dot', 6, 14),
+        ],
+    },
 }
+
 
 # Colour ramps, dark to light, for gradient-mapping vanilla items.
 INGOT_RAMPS = {
@@ -217,12 +182,12 @@ NUGGET_RAMPS = {
     'plutonium_nugget': INGOT_RAMPS['plutonium_ingot'],
 }
 RAW_RAMPS = {
-    'raw_uranium': ['141a10', '24321a', '3b5226', '5b7a33', '86a84a', 'b8d86a', 'e2f5a0'],
+    'raw_uranium': ['0c0e09', '1b2015', '2d3322', '4a5338', '6f8a2a', 'a6d630', 'eeff8a'],
     'raw_lead': ['181a22', '2a2d3a', '41465a', '5d637d', '7f86a3', 'a7adc6', 'd0d4e6'],
     'raw_silver': ['2e2a25', '4f4943', '766f67', '9d958b', 'c3bcb2', 'e0dbd3', 'f8f5f0'],
-    'raw_aluminium': ['2b140c', '4a2414', '6e3a1f', '93552d', 'b9744a', 'd69a6c', 'efc39c'],
-    'raw_tungsten': ['120f0d', '231d19', '3a302a', '54463c', '716054', '917d6d', 'b39e8d'],
-    'raw_monazite': ['2e120a', '521f10', '7a3218', 'a44a22', 'c96a32', 'e39152', 'f5bd84'],
+    'raw_aluminium': ['2a1008', '421a0b', '58220e', '8a3c1a', 'b45e2e', 'cc7a4c', 'e2986c'],
+    'raw_tungsten': ['0a0a0a', '141413', '1a1918', '33302d', '4e4a46', '6c6762', 'b8b2aa'],
+    'raw_monazite': ['2e1a08', '42260c', '583410', '885618', 'b47e2c', 'd09e50', 'ecc278'],
 }
 GEM_RAMPS = {
     # Fluorite on the emerald's cut shape; salt on sugar's grains.
@@ -264,40 +229,59 @@ def gradient_map(tex, ramp):
     return tex
 
 
+def ore_layer(mineral):
+    """The mineral as a 16 x 16 grid of piece characters (None for rock), wrapping at the edges."""
+    spec = ORES[mineral]
+    grid = [[None] * 16 for _ in range(16)]
+    for name, x0, y0 in spec.get('pieces', []):
+        for dy, row in enumerate(PIECES[name]):
+            for dx, ch in enumerate(row):
+                if ch != ' ':
+                    grid[(y0 + dy) % 16][(x0 + dx) % 16] = ch
+    for path in spec.get('wires', []):
+        for i, (x, y) in enumerate(path):
+            tip = i == 0 or i == len(path) - 1
+            grid[y % 16][x % 16] = '5' if i == 0 else '3' if tip else '4'
+            if grid[(y + 1) % 16][(x + 1) % 16] is None:
+                grid[(y + 1) % 16][(x + 1) % 16] = '1'
+    return grid
+
+
+def tint(c, hue, amount):
+    """c moved towards hue's colour at c's own brightness, so a tint shifts the rock without darkening it."""
+    scale = luminance(c) / max(1.0, luminance(hue))
+    target = '%02x%02x%02x' % tuple(max(0, min(255, round(v * scale))) for v in rgb(hue))
+    return mix(c, target, amount)
+
+
 def ore(base, mineral):
-    """Draws a mineral's clusters over vanilla rock, with modern vanilla-style shading."""
+    """Paints a mineral's crystals into vanilla rock. The rock round them takes its host's hue and a
+    shadow below and right of each crystal, so they sit proud of the stone in the top-left light.
+    The outer ring of pixels stays plain rock, as vanilla's ores do, so a block blends into the
+    stone around it and a wall never shows its grid."""
+    spec = ORES[mineral]
     t = vanilla(base)
-    shape = ORE_SHAPES[mineral]
-    assert len(shape) == 16 and all(len(row) == 16 for row in shape), mineral
-    tones = ORE_TONES[mineral]
-    inside = lambda x, y: 0 <= x < 16 and 0 <= y < 16 and shape[y][x] == '#'
-    # Soft shadow cast onto the rock below and to the right of each cluster.
+    grid = ore_layer(mineral)
     for y in range(16):
         for x in range(16):
-            if not inside(x, y) and (inside(x - 1, y) or inside(x, y - 1)):
-                t.px[y][x] = darken(t.px[y][x], 0.35)
-    for y in range(16):
-        for x in range(16):
-            if not inside(x, y):
-                continue
-            up, left = not inside(x, y - 1), not inside(x - 1, y)
-            down, right = not inside(x, y + 1), not inside(x + 1, y)
-            if up and left:
-                tone = 4
-            elif down and right:
-                tone = 0
-            elif up or left:
-                tone = 3
-            elif down or right:
-                tone = 1
-            else:
-                tone = 2
-            t.px[y][x] = tones[tone]
+            ch = grid[y][x]
+            if ch is not None:
+                t.px[y][x] = spec['tones'][int(ch) - 1] if ch in '12345' else spec['second']['abc'.index(ch)]
+            elif 0 < x < 15 and 0 < y < 15:
+                near = min((max(abs(dx), abs(dy)) for dy in range(-2, 3) for dx in range(-2, 3)
+                            if grid[(y + dy) % 16][(x + dx) % 16] is not None), default=9)
+                amount = spec['halo_amount'] * (1 if near == 1 else 0.45 if near == 2 else 0)
+                if amount:
+                    t.px[y][x] = tint(t.px[y][x], spec['halo'], amount)
+                if grid[y - 1][x] is not None or grid[y][x - 1] is not None:
+                    t.px[y][x] = darken(t.px[y][x], ORE_SHADOW)
+                elif grid[y - 1][x - 1] is not None:
+                    t.px[y][x] = darken(t.px[y][x], ORE_SHADOW / 2)
     return t
 
 
 def main():
-    for mineral in ORE_SHAPES:
+    for mineral in ORES:
         publish(f'block/{mineral}_ore', ore('block/stone', mineral))
         publish(f'block/deepslate_{mineral}_ore', ore('block/deepslate', mineral))
     for name, ramp in INGOT_RAMPS.items():
