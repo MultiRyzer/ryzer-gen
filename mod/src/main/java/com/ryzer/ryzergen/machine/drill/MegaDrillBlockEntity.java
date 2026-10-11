@@ -738,6 +738,7 @@ public class MegaDrillBlockEntity extends BlockEntity implements MenuProvider, M
         }
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         int count = 0;
+        int boiled = 0;
         for (int dx = MegaDrillLayout.LOW; dx <= MegaDrillLayout.HIGH; dx++) {
             for (int dz = MegaDrillLayout.LOW; dz <= MegaDrillLayout.HIGH; dz++) {
                 pos.set(centre.getX() + dx, layer, centre.getZ() + dz);
@@ -765,7 +766,12 @@ public class MegaDrillBlockEntity extends BlockEntity implements MenuProvider, M
                 if (count++ % 8 == 0) {
                     level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, at, Block.getId(state));
                 }
-                level.setBlock(at, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+                // Water the beam meets boils away in a burst of steam.
+                if (state.getFluidState().isSourceOfType(Fluids.WATER)) {
+                    boil(level, at, boiled++);
+                }
+                // A full update, so water that a removed source or floor was holding up recedes or falls.
+                level.setBlock(at, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             }
         }
         double x = centre.getX() + 0.5;
@@ -774,6 +780,21 @@ public class MegaDrillBlockEntity extends BlockEntity implements MenuProvider, M
         level.sendParticles(ParticleTypes.LARGE_SMOKE, x, layer + 0.6, z, 20, 2.2, 0.4, 2.2, 0.02);
         sound(level, BlockPos.containing(x, layer + 0.5, z), ModSounds.MEGA_DRILL_BURST.get(), 3.0F, 1.0F);
         flushPending();
+    }
+
+    /**
+     * A water source boiling off under the beam: a puff of steam and bubbles from the block, and a
+     * fizz from the first few each burst (one sound a source would stack into a roar).
+     */
+    private static void boil(ServerLevel level, BlockPos at, int boiled) {
+        double x = at.getX() + 0.5;
+        double y = at.getY() + 0.6;
+        double z = at.getZ() + 0.5;
+        level.sendParticles(ParticleTypes.CLOUD, x, y, z, 4, 0.3, 0.2, 0.3, 0.04);
+        level.sendParticles(ParticleTypes.BUBBLE_POP, x, y, z, 6, 0.35, 0.15, 0.35, 0.02);
+        if (boiled < 3) {
+            level.playSound(null, at, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.2F, 0.8F + level.random.nextFloat() * 0.3F);
+        }
     }
 
     /** A deep bore cycle: ore from the head's table, up the shaft into the output. */

@@ -15,35 +15,41 @@ FOLDER = 'block/machine/alloy_smelter/'
 
 
 def firebrick():
-    """Firebrick, laid in courses four pixels high, each brick eight long and offset course to
-    course, with pale mortar joints. Lit along each brick's top edge, clean and even."""
+    """Firebrick laid in courses four pixels high, each brick eight long and offset course to course,
+    in recessed dark mortar. Each brick takes one of three tones (as fired brick varies), lit along
+    its top and shaded along its foot, so the wall reads as built of separate bricks."""
+    tones = [('R', 'r', 'O'), ('r', 'O', 'o'), ('R', 'r', 'r')]   # lit top, body, shaded foot
     t = Tex()
     for y in range(16):
         course = y // 4
+        shift = 4 if course % 2 else 0
         for x in range(16):
-            joint_x = (x + (4 if course % 2 else 0)) % 8 == 7
-            if y % 4 == 3 or joint_x:
-                k = 'J'
-            elif y % 4 == 0:
-                k = 'R'
-            else:
-                k = 'r'
-            t.set(x, y, k)
+            if y % 4 == 3 or (x + shift) % 8 == 7:
+                t.set(x, y, 'o')
+                continue
+            brick = ((x + shift) // 8 + course * 3) % len(tones)
+            lit, body, foot = tones[brick]
+            t.set(x, y, lit if y % 4 == 0 else foot if y % 4 == 2 else body)
     return t
 
 
 def fire_door(lit):
-    """The fire door, 7 x 4: a gunmetal frame round the firebox opening. Burning, the fire shows
-    through it, orange to white at its heart; out, the firebox is dark."""
+    """The fire door, 8 x 5: a gunmetal frame (lit along its top and left, shaded along its foot and
+    right) round a grate of two bars. Burning, the fire shows between the bars, orange at the top to
+    white hot on the bed; out, the firebox is dark with a last ember or two."""
     t = Tex()
-    t.rect(0, 0, 6, 3, 'u')
-    t.rect(0, 0, 6, 0, 's')
-    if lit:
-        t.rect(1, 1, 5, 2, 'X')
-        t.rect(2, 2, 4, 2, 'a')
-        t.set(3, 2, 'e')
-    else:
-        t.rect(1, 1, 5, 2, 'U')
+    t.rect(0, 0, 7, 4, 'u')
+    t.rect(0, 0, 7, 0, 's')
+    t.rect(0, 0, 0, 4, 's')
+    t.rect(7, 1, 7, 4, 'z')
+    t.rect(1, 4, 7, 4, 'z')
+    rows = ['X', 'a', 'e'] if lit else ['U', 'U', 'T']
+    for i, colour in enumerate(rows):
+        t.rect(1, 1 + i, 6, 1 + i, colour)
+    if not lit:
+        t.set(3, 3, 'O')
+    for bar in (2, 5):
+        t.rect(bar, 1, bar, 3, 'u')
     return t
 
 

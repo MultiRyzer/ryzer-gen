@@ -401,6 +401,7 @@
   "term.ryzergen.target": "Target rod",
   "term.ryzergen.tritium": "Tritium",
   "term.ryzergen.time": "Time",
+  "term.ryzergen.items": "Items",
   "tooltip.ryzergen.hold_shift": "Hold <k>Shift</k> for details",
   "tooltip.ryzergen.hot": "<heat>Hot</heat>: cool it in a <b>Spent Fuel Pool</b> first",
   "tooltip.ryzergen.wrench": "Tool",

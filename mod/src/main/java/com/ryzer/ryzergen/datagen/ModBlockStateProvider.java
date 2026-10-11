@@ -238,18 +238,21 @@ public class ModBlockStateProvider extends BlockStateProvider {
             builder.part().modelFile(plate).rotationX(x).rotationY(y).addModel()
                     .condition(CableBlock.SIDES.get(dir), CableSide.EXTRACT).end();
         }
-        // The item is the pipe itself, as in Pipez: a straight run with the band along it and the core
-        // texture on the ends, so every kind is easy to tell apart in the inventory.
+        // The item is a short length of the pipe itself, a block's segment between two flanges, so it
+        // sits square in a slot; the band along it and the core texture on its ends tell the kinds
+        // apart, with the icon of what it carries in the slot's corner (client/CableBadges).
         ModelFile straight = models().getBuilder(name + "_inventory").parent(models().getExistingFile(mcLoc("block/block")))
-                .texture("particle", cable).texture("cable", cable).texture("core", coreTexture)
-                .element().from(5, 5, 0).to(11, 11, 16)
+                .texture("particle", cable).texture("cable", cable).texture("core", coreTexture).texture("flange", flange)
+                .element().from(5, 5, 4).to(11, 11, 12)
                 .face(Direction.NORTH).texture("#core").uvs(5, 5, 11, 11).end()
                 .face(Direction.SOUTH).texture("#core").uvs(5, 5, 11, 11).end()
-                .face(Direction.EAST).texture("#cable").uvs(0, 5, 16, 11).end()
-                .face(Direction.WEST).texture("#cable").uvs(0, 5, 16, 11).end()
-                .face(Direction.UP).texture("#cable").uvs(0, 5, 16, 11).rotation(ModelBuilder.FaceRotation.CLOCKWISE_90).end()
-                .face(Direction.DOWN).texture("#cable").uvs(0, 5, 16, 11).rotation(ModelBuilder.FaceRotation.CLOCKWISE_90).end()
-                .end();
+                .face(Direction.EAST).texture("#cable").uvs(0, 5, 8, 11).end()
+                .face(Direction.WEST).texture("#cable").uvs(0, 5, 8, 11).end()
+                .face(Direction.UP).texture("#cable").uvs(0, 5, 8, 11).rotation(ModelBuilder.FaceRotation.CLOCKWISE_90).end()
+                .face(Direction.DOWN).texture("#cable").uvs(0, 5, 8, 11).rotation(ModelBuilder.FaceRotation.CLOCKWISE_90).end()
+                .end()
+                .element().from(4, 4, 3).to(12, 12, 4).textureAll("#flange").end()
+                .element().from(4, 4, 12).to(12, 12, 13).textureAll("#flange").end();
         itemModels().getBuilder(name).parent(straight);
     }
 
@@ -1091,8 +1094,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     /**
      * Alloy Smelter, facing north: tier 1, before any power, so a small fuel-fired furnace as early
-     * blast furnaces were. A firebrick hearth on the family skid, bound with two steel bands, a fire
-     * door that glows while it burns with an orange latch above it, and a stepped gunmetal hood rising
+     * blast furnaces were. A firebrick hearth on the family skid, bound with two steel bands and steel
+     * angle guards up its corners, a grated fire door that glows while it burns with an orange latch
+     * above it, and a stepped gunmetal hood rising
      * to a copper flue with a ring round it. The only brick machine, so it reads as the earliest.
      * Its own textures: art/tools/alloy_smelter_textures.py.
      */
@@ -1103,11 +1107,17 @@ public class ModBlockStateProvider extends BlockStateProvider {
         for (float y : new float[] {4, 8}) {
             boxes.add("metal", 1.75F, y, 1.75F, 14.25F, y + 1, 14.25F);
         }
-        BoxModel.Box door = boxes.add("metal", 4.5F, 3.5F, 1.5F, 11.5F, 7.5F, 2).decal(Direction.NORTH, lit ? "fire_door_on" : "fire_door");
+        // Steel angle guards up the hearth's four corners, binding it with the bands.
+        for (float x : new float[] {1.5F, 13.5F}) {
+            for (float z : new float[] {1.5F, 13.5F}) {
+                boxes.add("metal", x, 2, z, x + 1, 11, z + 1);
+            }
+        }
+        BoxModel.Box door = boxes.add("metal", 4, 3, 1.25F, 12, 8, 1.75F).decal(Direction.NORTH, lit ? "fire_door_on" : "fire_door");
         if (lit) {
             door.glow(Direction.NORTH);
         }
-        boxes.add("accent", 7, 7.75F, 1.25F, 9, 8.25F, 1.75F);
+        boxes.add("accent", 7, 8.25F, 1, 9, 8.75F, 1.5F);
         boxes.add("metal", 2.5F, 11, 2.5F, 13.5F, 12, 13.5F);
         boxes.add("metal", 4, 12, 4, 12, 13, 12);
         boxes.add("copper", 6, 13, 6, 10, 16, 10);

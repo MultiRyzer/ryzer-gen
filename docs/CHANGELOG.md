@@ -21,10 +21,14 @@ Player-facing changes, newest first. Paste each release's section into the Modri
 ### Changed
 - **Clearer text everywhere.** Tooltips, the progression map, the JEI and EMI pages and the machine screens now read at a glance. Key terms (Power, Heat, Coolant, Fuel, Radiation and more) are always one colour and carry a small icon, and numbers come first ("2,000 FE/t Heat"). Tooltips show what an item is and its numbers straight away, with how it works behind Shift, and no longer repeat what the progression map explains. The station's best layouts on the map show their power and rod count beside them, so you can tell them apart.
 - **Text says what things are for, not what goes into them** (JEI and EMI show recipes). The progression map's panels show what each step needs and what it leads to, and the core planners' tools say what each part does.
+- **New ore textures.** Each ore now shows its real mineral: black pitchblende crusted with lime autunite (uranium), stepped galena cubes (lead), wire silver, round bauxite pebbles (aluminium), purple fluorite cubes with a cyan glint, pink halite cubes (salt), black wolframite blades flecked with cream scheelite (tungsten) and honey-brown monazite prisms. The crystals catch the light and shade the rock beside them, and every block's edge is plain stone, so a vein blends into the cave wall as vanilla's ores do. Raw uranium, aluminium, tungsten and monazite are recoloured to match.
+- **The Alloy Smelter has new textures**: fired bricks in varied tones, steel guards on its corners and a grated fire door.
+- **Cables and pipes look like a short length of pipe in your inventory**, with the icon of what each carries in the corner of its slot: energy, items, liquids or gases.
 - **Control rods are violet** in the core grids and text (red stays for power), the breeder's fuel is green like the station's, and blankets are pink.
 - **The fission station's graphite moderator columns** are built like its other rods: three graphite bricks banded with steel, on an end fitting with a cap.
 
 ### Fixed
+- **Water the mega drill frees now behaves.** Flowing water held up by a block or source the drill removes recedes or falls instead of hanging in the shaft, and each water source the beam deletes boils off in a puff of steam.
 - **The Lithium Extractor's recipes show in JEI and EMI** again. It left the preview in 0.1.2, but the recipe viewers still hid it unless the preview was on.
 - **The wormhole no longer prints the outline of builds in front of it** into the bent sky, and the dark band of bent ground round it fills in solid.
 

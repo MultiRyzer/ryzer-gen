@@ -9,12 +9,18 @@
           "uv": [
             0.0,
             5.0,
-            16.0,
+            8.0,
             11.0
           ]
         },
         "east": {
-          "texture": "#cable"
+          "texture": "#cable",
+          "uv": [
+            0.0,
+            5.0,
+            8.0,
+            11.0
+          ]
         },
         "north": {
           "texture": "#core"
@@ -28,29 +34,100 @@
           "uv": [
             0.0,
             5.0,
-            16.0,
+            8.0,
             11.0
           ]
         },
         "west": {
-          "texture": "#cable"
+          "texture": "#cable",
+          "uv": [
+            0.0,
+            5.0,
+            8.0,
+            11.0
+          ]
         }
       },
       "from": [
         5,
         5,
-        0
+        4
       ],
       "to": [
         11,
         11,
-        16
+        12
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#flange"
+        },
+        "east": {
+          "texture": "#flange"
+        },
+        "north": {
+          "texture": "#flange"
+        },
+        "south": {
+          "texture": "#flange"
+        },
+        "up": {
+          "texture": "#flange"
+        },
+        "west": {
+          "texture": "#flange"
+        }
+      },
+      "from": [
+        4,
+        4,
+        3
+      ],
+      "to": [
+        12,
+        12,
+        4
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#flange"
+        },
+        "east": {
+          "texture": "#flange"
+        },
+        "north": {
+          "texture": "#flange"
+        },
+        "south": {
+          "texture": "#flange"
+        },
+        "up": {
+          "texture": "#flange"
+        },
+        "west": {
+          "texture": "#flange"
+        }
+      },
+      "from": [
+        4,
+        4,
+        12
+      ],
+      "to": [
+        12,
+        12,
+        13
       ]
     }
   ],
   "textures": {
     "cable": "ryzergen:block/fluid_pipe",
     "core": "ryzergen:block/fluid_pipe_core",
+    "flange": "ryzergen:block/fluid_pipe_flange",
     "particle": "ryzergen:block/fluid_pipe"
   }
 }

@@ -4,12 +4,13 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * The key terms of the mod's text, each always bold, always one colour and always with its icon
+ * The key terms of the mod's text, each always one colour and always with its icon
  * (a glyph of the {@code ryzergen:icons} font, art/tools/font_icons.py), so a player can tell at a
  * glance what a line is about. One colour per idea across tooltips, the progression map, the recipe
  * viewers and the screens, matching the gauges, ports and core grids: Power red as the energy gauge
  * and energy ports, Coolant blue as the coolant cells and fluid ports, Fuel green as the fuel cells,
- * Moderator amber, Control violet, Breeding pink (blankets and targets, what a reactor breeds).
+ * Moderator amber, Control violet, Breeding pink (blankets and targets, what a reactor breeds),
+ * Items a sandy orange (as the item ports).
  * Each has a bright shade for dark backgrounds (tooltips, the map, screen readouts) and a deep one
  * for light ones (the recipe viewers' pages).
  */
@@ -24,7 +25,9 @@ public enum Term {
     RADIATION(0xC6F03A, 0x6A9200),
     SPEED(0x35C8F5, 0x0A86B0),
     BREEDING(0xF06CB4, 0xC03282),
-    TIME(0xC8CDD3, 0x50565E);
+    TIME(0xC8CDD3, 0x50565E),
+    /** Items, as the orange item ports, a sandy shade so it never reads as Heat. */
+    ITEMS(0xE0B070, 0x8A6420);
 
     /** The words a lang line can insert with {@code {word}}: the glossary, one word per idea. */
     public static final Map<String, Term> WORDS = Map.ofEntries(
@@ -38,7 +41,8 @@ public enum Term {
             Map.entry("radiation", RADIATION),
             Map.entry("speed", SPEED),
             Map.entry("blanket", BREEDING), Map.entry("target", BREEDING), Map.entry("tritium", BREEDING),
-            Map.entry("time", TIME));
+            Map.entry("time", TIME),
+            Map.entry("items", ITEMS));
 
     /** The colour on a dark background, as 0xRRGGBB. */
     public final int dark;
