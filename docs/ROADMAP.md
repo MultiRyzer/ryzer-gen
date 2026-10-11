@@ -206,4 +206,6 @@ The utility reactor: fuel for the stations and the tritium that starts fusion. F
 - Sail launcher automation and receiver dish
 - Overworld sky ring, flare events, multiplayer shared swarm
 - Mod integrations (Mekanism; EMI and JEI are done)
+- Steam valve on the fission station: bleed part of its steam out of a port for other machines and mods, at the cost of turbine power (from player feedback, 11 Oct 2026; DESIGN.md section 5, heat used directly)
+- Create: a running reactor heats a Create boiler built on it, so its heat drives Create's steam engines, paid for out of its own power. Create's engines never take steam as a fluid (the boiler makes its own), so heat is the only way in; Create: New Age's reactor does the same. The Create: Turbines addon has its own steam system (not a fluid) and is too unsettled to build against yet (11 Oct 2026)
 - Beta once tier 4 (the breeder) lands; stable once the energy scale is settled

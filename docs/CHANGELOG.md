@@ -2,6 +2,11 @@
 
 Player-facing changes, newest first. Paste each release's section into the Modrinth and CurseForge changelog and the GitHub release notes.
 
+## 0.2.1-alpha (11 October 2026)
+
+### New
+- **One switch for all ore generation.** `generate_ores` in `ryzergen-common.toml` turns off every Ryzer Gen ore at once, for packs where other mods already supply them. Each ore still has its own switch too. Every recipe asks for common tags (`c:ingots/uranium`, `c:raw_materials/lead` and so on), so uranium, lead, silver and aluminium from other mods, such as Immersive Engineering, work in their place.
+
 ## 0.2.0-alpha (11 October 2026)
 
 ### New

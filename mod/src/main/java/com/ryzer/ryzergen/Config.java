@@ -10,10 +10,16 @@ import java.util.Map;
 public final class Config {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     private static final Map<OreType, ModConfigSpec.BooleanValue> ORE_GENERATION = new EnumMap<>(OreType.class);
+    private static final ModConfigSpec.BooleanValue ORES;
 
     static {
-        BUILDER.comment("World generation. Changes apply after a restart, and only to chunks generated after that.")
+        BUILDER.comment("World generation. Changes apply after a restart, and only to chunks generated after that.",
+                        "Every recipe asks for common tags (c:ingots/uranium, c:raw_materials/lead, ...), so ores and metals",
+                        "from other mods work in their place.")
                 .push("worldgen");
+        ORES = BUILDER
+                .comment("Generate this mod's ores at all. Off: none of them generate, whatever each ore's own switch says.")
+                .define("generate_ores", true);
         for (OreType ore : OreType.values()) {
             ORE_GENERATION.put(ore, BUILDER
                     .comment("Generate " + ore.id() + " ore in the Overworld. Turn off if another mod already supplies it.")
@@ -331,7 +337,7 @@ public final class Config {
 
     /** Unknown ore IDs (for example from a datapack typo) stay enabled rather than silently vanishing. */
     public static boolean isOreGenerationEnabled(String oreId) {
-        return OreType.byId(oreId).map(ore -> ORE_GENERATION.get(ore).get()).orElse(true);
+        return ORES.get() && OreType.byId(oreId).map(ore -> ORE_GENERATION.get(ore).get()).orElse(true);
     }
 
     private Config() {}
