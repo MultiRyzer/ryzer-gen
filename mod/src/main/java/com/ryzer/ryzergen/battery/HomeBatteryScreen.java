@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.battery;
 
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.GuiGauges;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -63,13 +64,13 @@ public class HomeBatteryScreen extends AbstractContainerScreen<HomeBatteryMenu> 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.drawString(font, title, titleLabelX, titleLabelY, LABEL, false);
-        graphics.drawString(font, Component.translatable("gui.ryzergen.battery.stored", compact(menu.energy())), READOUT_X, 25, VALUE, false);
-        graphics.drawString(font, Component.translatable("gui.ryzergen.battery.capacity", compact(menu.capacity())), READOUT_X, 37, DIM, false);
-        graphics.drawString(font, Component.translatable("gui.ryzergen.battery.in", compact(menu.in())), READOUT_X, 55, GOOD, false);
-        graphics.drawString(font, Component.translatable("gui.ryzergen.battery.out", compact(menu.out())), READOUT_X, 67, WARN, false);
+        graphics.drawString(font, RichText.tr("gui.ryzergen.battery.stored", compact(menu.energy())), READOUT_X, 25, VALUE, false);
+        graphics.drawString(font, RichText.tr("gui.ryzergen.battery.capacity", compact(menu.capacity())), READOUT_X, 37, DIM, false);
+        graphics.drawString(font, RichText.tr("gui.ryzergen.battery.in", compact(menu.in())), READOUT_X, 55, GOOD, false);
+        graphics.drawString(font, RichText.tr("gui.ryzergen.battery.out", compact(menu.out())), READOUT_X, 67, WARN, false);
         for (int bay = 0; bay < HomeBatteryBlockEntity.MAX_MODULES; bay++) {
             BatteryChemistry module = menu.module(bay);
-            Component name = Component.translatable("gui.ryzergen.battery.chemistry." + module.getSerializedName());
+            Component name = RichText.tr("gui.ryzergen.battery.chemistry." + module.getSerializedName());
             graphics.drawString(font, name, BAY_X + 7, bayY(bay) + 1, module == BatteryChemistry.EMPTY ? 0xFF4D545D : 0xFF1D2126, false);
         }
     }
@@ -91,12 +92,12 @@ public class HomeBatteryScreen extends AbstractContainerScreen<HomeBatteryMenu> 
         int mx = mouseX - leftPos;
         int my = mouseY - topPos;
         if (mx >= GAUGE_X - 1 && mx < GAUGE_X + 13 && my >= GAUGE_Y - 1 && my < GAUGE_Y + GAUGE_H + 1) {
-            graphics.renderTooltip(font, Component.translatable("gui.ryzergen.energy",
+            graphics.renderTooltip(font, RichText.tr("gui.ryzergen.energy",
                     String.format("%,d", menu.energy()), String.format("%,d", menu.capacity())), mouseX, mouseY);
         } else if (mx >= BAY_X - 1 && mx < BAY_X + 46 && my >= BAY_Y - 1 && my < bayY(0) + 11) {
             graphics.renderComponentTooltip(font, List.of(
-                    Component.translatable("gui.ryzergen.battery.modules_hint"),
-                    Component.translatable("gui.ryzergen.battery.remove_hint").withStyle(style -> style.withColor(0xFF9AA3AE))),
+                    RichText.tr("gui.ryzergen.battery.modules_hint"),
+                    RichText.tr("gui.ryzergen.battery.remove_hint").withStyle(style -> style.withColor(0xFF9AA3AE))),
                     mouseX, mouseY);
         }
     }

@@ -50,6 +50,8 @@ public class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.FUSION_PREVIEW.get());
         dropSelf(ModBlocks.SUN_GATE_PREVIEW.get());
         dropSelf(ModBlocks.MEGA_DRILL_PREVIEW.get());
+        dropSelf(ModBlocks.MEGA_DRILL_CONTROLLER.get());
+        dropSelf(ModBlocks.DRILL_FRAME.get());
         dropSelf(ModBlocks.STATION_CASING.get());
         dropSelf(ModBlocks.POOL_LINER.get());
         dropSelf(ModBlocks.POOL_CRANE.get());
@@ -66,6 +68,7 @@ public class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.FUEL_FABRICATOR.get());
         dropSelf(ModBlocks.LITHIUM_EXTRACTOR.get());
         dropSelf(ModBlocks.ELECTROREFINER.get());
+        dropSelf(ModBlocks.MONAZITE_PROCESSOR.get());
         add(ModBlocks.REPROCESSOR.get(), createSinglePropConditionTable(ModBlocks.REPROCESSOR.get(),
                 TallProcessingBlock.HALF, DoubleBlockHalf.LOWER));
         // The cask keeps its waste, like a shulker box keeps its contents.

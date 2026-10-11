@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "ryzergen:block/mega_drill_controller",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "ryzergen:block/mega_drill_controller"
+    },
+    "facing=south": {
+      "model": "ryzergen:block/mega_drill_controller",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "ryzergen:block/mega_drill_controller",
+      "y": 270
+    }
+  }
+}

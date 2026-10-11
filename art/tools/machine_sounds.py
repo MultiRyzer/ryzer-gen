@@ -1,4 +1,4 @@
-"""Builds the mod's sound loops from the recordings in art/sounds/source/ into
+"""Builds the mod's sound loops and one-shots from the recordings in art/sounds/source/ into
 mod/src/main/resources/assets/ryzergen/sounds/ (mono Ogg Vorbis).
 
 Each loop is cut from a steady stretch of its recording. Where the sound repeats (an alarm's
@@ -14,6 +14,8 @@ Sources, all from Pixabay (Pixabay Content License). Credit them on the mod page
     core_cracker        "Factory Grinding" by freesound_community
     reprocessor         "Basement Water Pump" by freesound_community
     fuel_fabricator     "Lowering Ramp" by freesound_community
+    mega_drill_fire     "Short Energy Beam Shot" by yodguard
+    mega_drill_burst    "Boulder Impact" by Dragon Studio
 
 Needs numpy and soundfile (pip install soundfile numpy). Run from the repo root:
     python art/tools/machine_sounds.py
@@ -39,6 +41,30 @@ LOOPS = {
     'reprocessor': ('reprocessor_basement_water_pump.mp3', 1.5, 13.0, 0.6, None, -21),
     'fuel_fabricator': ('fuel_fabricator_lowering_ramp.mp3', 0.25, 9.5, 0.4, None, -21),
 }
+# One-shots, played once each time: name: (source file, start s, length s, fade out s, peak dBFS,
+# playback rates). Each rate makes its own file (name, then name_x2 and so on): the mega drill's beam
+# plays faster with the drill's speed, further than the game's pitch can stretch one file (2x at most).
+ONE_SHOTS = {
+    # The beam leaving the emitter: the whole shot, its tail fading as the layer heats.
+    'mega_drill_fire': ('mega_drill_fire_energy_beam.mp3', 0.0, 3.0, 0.5, -3, (1, 2, 4)),
+    # A layer bursting: the boulder's impact and its rumble.
+    'mega_drill_burst': ('mega_drill_burst_boulder_impact.mp3', 0.0, 2.1, 0.4, -2, (1,)),
+}
+
+
+def one_shot(signal, rate, start, length, fade, peak_db, speed):
+    """A stretch of the recording, sped up by `speed` (shorter and higher, as a tape played faster),
+    its tail faded out, its peak set to `peak_db`."""
+    s = int(start * rate)
+    out = signal[s:s + int(length * rate)].copy()
+    if speed != 1:
+        at = np.arange(0, len(out) - 1, speed)
+        out = np.interp(at, np.arange(len(out)), out)
+    f = min(len(out), int(fade * rate / speed))
+    out[-f:] *= np.cos(np.linspace(0, np.pi / 2, f))
+    return out * (10 ** (peak_db / 20) / np.abs(out).max())
+
+
 def mono(path):
     data, rate = sf.read(path)
     return (data.mean(axis=1) if data.ndim > 1 else data), rate
@@ -84,6 +110,13 @@ def main():
         out = level(loop(signal, rate, start, n, fade), loudness)
         sf.write(os.path.join(OUT, name + '.ogg'), out, rate, format='OGG', subtype='VORBIS')
         print(f'{name}: {n / rate:.3f} s at {rate} Hz, seam match {match:.2f}')
+    for name, (source, start, length, fade, peak, speeds) in ONE_SHOTS.items():
+        signal, rate = mono(os.path.join(SOURCES, source))
+        for speed in speeds:
+            out = one_shot(signal, rate, start, length, fade, peak, speed)
+            file = name if speed == 1 else f'{name}_x{speed}'
+            sf.write(os.path.join(OUT, file + '.ogg'), out, rate, format='OGG', subtype='VORBIS')
+            print(f'{file}: {len(out) / rate:.3f} s at {rate} Hz')
 
 
 if __name__ == '__main__':

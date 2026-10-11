@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.cable;
 
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.GuiGauges;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.Direction;
@@ -167,7 +168,7 @@ public class CableScreen extends AbstractContainerScreen<CableMenu> {
             int y = rowY(row);
             if (!menu.feeds(dir)) {
                 // A machine that only takes from the network: nothing comes in here, so no fitting.
-                String note = Component.translatable("gui.ryzergen.cable.receives_only").getString();
+                String note = RichText.tr("gui.ryzergen.cable.receives_only").getString();
                 int noteX = ROW_X + ROW_W - 4 - font.width(note);
                 graphics.drawString(font, note, noteX, y + 7, DIM, false);
                 graphics.drawString(font, font.plainSubstrByWidth(sourceName(dir).getString(), noteX - ROW_X - BAR_X - 4),
@@ -176,21 +177,21 @@ public class CableScreen extends AbstractContainerScreen<CableMenu> {
             }
             int current = average(dir);
             // What came in: the limit is in the tooltip and the bar shows how close it is.
-            String value = Component.translatable(key("rate"), String.format("%,d", current)).getString();
+            String value = RichText.tr(key("rate"), String.format("%,d", current)).getString();
             int valueX = ROW_X + ROW_WELL_W - 4 - font.width(value);
             graphics.drawString(font, value, valueX, y + 3, current > 0 ? VALUE : DIM, false);
             String name = font.plainSubstrByWidth(sourceName(dir).getString(), valueX - ROW_X - BAR_X - 4);
             graphics.drawString(font, name, ROW_X + BAR_X, y + 3, NAME, false);
         }
         int footer = rowY(Math.max(sides.size(), 1));
-        graphics.drawString(font, Component.translatable(key("max"), String.format("%,d", menu.baseRate())),
+        graphics.drawString(font, RichText.tr(key("max"), String.format("%,d", menu.baseRate())),
                 ROW_X + 4, footer + 3, VALUE, false);
         // What the network reaches, amber when it reaches nothing. Batteries only exist on energy networks.
         int receivers = menu.receivers();
         int buffers = menu.buffers();
         Component network = buffers > 0
-                ? Component.translatable(key("network_buffers"), receivers, buffers)
-                : Component.translatable(key("network"), receivers);
+                ? RichText.tr(key("network_buffers"), receivers, buffers)
+                : RichText.tr(key("network"), receivers);
         graphics.drawString(font, network, ROW_X + 4, footer + 12, receivers + buffers > 0 ? NAME : 0xFFF0A030, false);
     }
 
@@ -204,11 +205,11 @@ public class CableScreen extends AbstractContainerScreen<CableMenu> {
         for (int row = 0; row < sides.size(); row++) {
             int y = rowY(row);
             Direction dir = sides.get(row);
-            String sideName = Component.translatable("gui.ryzergen.direction." + dir.getName()).getString();
+            String sideName = RichText.tr("gui.ryzergen.direction." + dir.getName()).getString();
             if (!menu.feeds(dir)) {
                 if (mx >= ROW_X && mx < ROW_X + ROW_W && my >= y && my < y + ROW_H) {
                     graphics.renderComponentTooltip(font, List.of(sourceName(dir),
-                            Component.translatable("gui.ryzergen.cable.receives_only_hint").withStyle(style -> style.withColor(HINT))),
+                            RichText.tr("gui.ryzergen.cable.receives_only_hint").withStyle(style -> style.withColor(HINT))),
                             mouseX, mouseY);
                 }
                 continue;
@@ -216,18 +217,18 @@ public class CableScreen extends AbstractContainerScreen<CableMenu> {
             if (mx >= ROW_X && mx < ROW_X + ROW_WELL_W && my >= y && my < y + ROW_H) {
                 List<Component> lines = new ArrayList<>();
                 lines.add(sourceName(dir));
-                lines.add(Component.translatable(menu.mode(dir) == CableSide.EXTRACT ? "gui.ryzergen.cable.side"
+                lines.add(RichText.tr(menu.mode(dir) == CableSide.EXTRACT ? "gui.ryzergen.cable.side"
                         : "gui.ryzergen.cable.side_joined", sideName).withStyle(style -> style.withColor(HINT)));
-                lines.add(Component.translatable("gui.ryzergen.cable.limit",
-                        Component.translatable(key("rate"), String.format("%,d", menu.maxRate(dir))))
+                lines.add(RichText.tr("gui.ryzergen.cable.limit",
+                        RichText.tr(key("rate"), String.format("%,d", menu.maxRate(dir))))
                         .withStyle(style -> style.withColor(VALUE)));
-                lines.add(Component.translatable(key("average")).withStyle(style -> style.withColor(HINT)));
+                lines.add(RichText.tr(key("average")).withStyle(style -> style.withColor(HINT)));
                 graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
             } else if (mx >= FITTING_X - 1 && mx < FITTING_X + 17 && my >= y + FITTING_DY - 1 && my < y + FITTING_DY + 17
                     && menu.upgrade(dir) == CableUpgrade.NONE && menu.getCarried().isEmpty()) {
                 graphics.renderComponentTooltip(font, List.of(
-                        Component.translatable("gui.ryzergen.cable.fitting_slot", sideName),
-                        Component.translatable("gui.ryzergen.cable.fitting_hint").withStyle(style -> style.withColor(HINT))),
+                        RichText.tr("gui.ryzergen.cable.fitting_slot", sideName),
+                        RichText.tr("gui.ryzergen.cable.fitting_hint").withStyle(style -> style.withColor(HINT))),
                         mouseX, mouseY);
             }
         }

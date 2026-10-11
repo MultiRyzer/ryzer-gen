@@ -1,14 +1,16 @@
-"""The mega drill's concept (design section 11c, option B), drawn as smooth quads and exported for
-the game's preview block (MegaDrillPreviewRenderer), before the real multiblock exists. Run:
+"""The mega drill's design (design section 11c, option B), drawn as smooth quads and exported for
+the game, which draws it round the real drill's pit and the creative preview's (MegaDrillRenderer).
+The real drill's block layout (machine/drill/MegaDrillLayout) follows it. Run:
     python art/tools/mega_drill_concept.py [OUT.png]
 
 One landmark tower that never moves, standing over the middle of a chunk on a 9 x 9 base (the
 user's references, 4 Oct 2026): angular, not round (squares with their corners cut off), and open at
 the foot so you see the laser going in. Bottom to top:
 - The base: a hazard-striped ring round a 6 x 6 molten pit glowing amber, and four sloped buttress
-  legs from the corners up under the deck, the space between them open.
-- The emitter: a graphite pyramid hung under the deck, its lens glowing, its beam straight down into
-  the pit.
+  legs from the corners up under the deck, the space between them open. In the middle of each side
+  a port console: energy, tips and water in on the east (the front's left), the output on the west.
+- The emitter: a pod hung in a yoke under the deck, like a searchlight, its beam leaving through a lit
+  aperture in its foot, straight down into the pit.
 - The deck: a cut-corner square platform in tread plate, its edge a graphite band with the light
   line, a yellow handrail round it with a gap for the ladder up from the ground, and the console
   against the column facing the ladder's top.
@@ -95,50 +97,74 @@ def ebox(mat, x1, y1, z1, x2, y2, z2, top=None, bottom=None, skip=(), v0=None, s
                        [(0, 0), (xb - xa, 0), (xb - xa, zb - za), (0, zb - za)], (0, up, 0))
 
 
-def bar(mat, path, hn, hb, b=(0, 1, 0), caps=True):
+def bar(mat, path, hn, hb, b=(0, 1, 0), caps=True, phase=0.0):
     """A square-cut bar along a path, mapped evenly: its texture runs on along it a pixel a pixel,
     cut every 16 pixels (Design.sweep stretches one picture over a whole run), and across it each
     face shows rows 0 to its own width, row 0 along its upper or outer edge. `b` gives the bar's
-    width direction (squared to the bar here); the faces across b are 2 hb wide, the others 2 hn."""
+    width direction (squared to the bar here); the faces across b are 2 hb wide, the others 2 hn.
+    A bend is a true mitre: each edge runs on to the plane halfway between the two runs, so the
+    bar keeps its full size round it. The texture is carried along each edge (u is the distance
+    along the bar's middle, shared by every edge at each bend), so it wraps round the bend
+    unbroken and no face folds back through another. `phase` shifts where the 16-pixel cuts fall."""
     def frame(t):
         w = norm(tuple(b[k] - dot(b, t) * t[k] for k in range(3)))
         return norm(cross(t, w)), w
 
-    marks = []          # (point, n, w, distance along the bar)
-    run = 0.0
+    segs = [norm(sub(path[i + 1], path[i])) for i in range(len(path) - 1)]
+    frames = [frame(t) for t in segs]
+    signs = ((1, 1), (1, -1), (-1, -1), (-1, 1))
+
+    def offset(p, fr, sn, sw):
+        n, w = fr
+        return tuple(p[k] + sn * hn * n[k] + sw * hb * w[k] for k in range(3))
+
+    # Each path point's four corners: square to the run at the ends, on the mitre plane at a bend.
+    verts = []
+    for j, p in enumerate(path):
+        if j == 0:
+            verts.append({c: offset(p, frames[0], *c) for c in signs})
+        elif j == len(path) - 1:
+            verts.append({c: offset(p, frames[-1], *c) for c in signs})
+        else:
+            t_in, m = segs[j - 1], norm(tuple(segs[j - 1][k] + segs[j][k] for k in range(3)))
+            corner = {}
+            for c in signs:
+                e = offset(p, frames[j - 1], *c)
+                s = -dot(sub(e, p), m) / dot(t_in, m)
+                corner[c] = tuple(e[k] + s * t_in[k] for k in range(3))
+            verts.append(corner)
+    us = [phase]
     for i in range(len(path) - 1):
-        p, q = path[i], path[i + 1]
-        length = math.dist(p, q)
-        t = norm(sub(q, p))
-        if i == 0:
-            marks.append((p, *frame(t), 0.0))
-        for m in range(int(run // 16) + 1, int((run + length) // 16) + 1):
-            cut = 16 * m - run
-            if 0.01 < cut < length - 0.01:
-                marks.append((tuple(p[k] + (q[k] - p[k]) * cut / length for k in range(3)), *frame(t), run + cut))
-        run += length
-        # At a corner the bar is squared to the mean of its two runs.
-        t2 = norm(sub(path[i + 2], q)) if i + 2 < len(path) else t
-        marks.append((q, *frame(norm(tuple(t[k] + t2[k] for k in range(3)))), run))
+        us.append(us[-1] + math.dist(path[i], path[i + 1]))
 
-    def at(mark, sn, sw):
-        pt, n, w, _ = mark
-        return tuple(pt[k] + sn * hn * n[k] + sw * hb * w[k] for k in range(3))
+    def edge(c, u):
+        for j in range(len(path) - 1):
+            if u < us[j + 1] or j == len(path) - 2:
+                f = (u - us[j]) / (us[j + 1] - us[j])
+                return tuple(verts[j][c][k] + (verts[j + 1][c][k] - verts[j][c][k]) * f for k in range(3)), j
 
-    for m0, m1 in zip(marks, marks[1:]):
-        block = math.floor(m0[3] / 16 + 1e-6) * 16
-        ua, ub = m0[3] - block, m1[3] - block
-        for (a0, a1), (b0, b1), width, side, sign in (((1, 1), (1, -1), 2 * hb, 1, 1), ((-1, 1), (-1, -1), 2 * hb, 1, -1),
-                                                      ((1, 1), (-1, 1), 2 * hn, 2, 1), ((1, -1), (-1, -1), 2 * hn, 2, -1)):
-            out = tuple(sign * (m0[side][k] + m1[side][k]) for k in range(3))
-            d.quad(mat, [at(m0, a0, a1), at(m1, a0, a1), at(m1, b0, b1), at(m0, b0, b1)],
-                   [(ua, 0), (ub, 0), (ub, min(16, width)), (ua, min(16, width))], out)
+    breaks = sorted(set([round(u, 6) for u in us]
+                        + [16.0 * m for m in range(int(us[0] // 16) + 1, int(us[-1] // 16) + 1) if us[0] + 0.01 < 16 * m < us[-1] - 0.01]))
+    for u0, u1 in zip(breaks, breaks[1:]):
+        if u1 - u0 < 1e-4:
+            continue
+        block = math.floor(u0 / 16 + 1e-6) * 16
+        ua, ub = u0 - block, u1 - block
+        for ca, cb, width, side, sign in (((1, 1), (1, -1), 2 * hb, 0, 1), ((-1, 1), (-1, -1), 2 * hb, 0, -1),
+                                          ((1, 1), (-1, 1), 2 * hn, 1, 1), ((1, -1), (-1, -1), 2 * hn, 1, -1)):
+            a0, seg = edge(ca, u0 + 1e-7)
+            a1, _ = edge(ca, u1 - 1e-7)
+            b0, _ = edge(cb, u0 + 1e-7)
+            b1, _ = edge(cb, u1 - 1e-7)
+            out = tuple(sign * v for v in frames[seg][side])
+            d.quad(mat, [a0, a1, b1, b0], [(ua, 0), (ub, 0), (ub, min(16, width)), (ua, min(16, width))], out)
     if caps:
-        for mark, sign in ((marks[0], -1), (marks[-1], 1)):
-            t = cross(mark[2], mark[1])
-            d.quad(mat, [at(mark, 1, 1), at(mark, 1, -1), at(mark, -1, -1), at(mark, -1, 1)],
+        for j, fr, sign in ((0, frames[0], -1), (len(path) - 1, frames[-1], 1)):
+            t = cross(fr[1], fr[0])
+            v = verts[j]
+            d.quad(mat, [v[(1, 1)], v[(1, -1)], v[(-1, -1)], v[(-1, 1)]],
                    [(0, 0), (min(16, 2 * hb), 0), (min(16, 2 * hb), min(16, 2 * hn)), (0, min(16, 2 * hn))],
-                   tuple(sign * v for v in t))
+                   tuple(sign * k for k in t))
 
 
 def plate(mat, face, x1, y1, z1, x2, y2, z2, decal=None):
@@ -229,7 +255,11 @@ lo, hi = C - PIT, C + PIT
 # The ring: a steel frame round the pit, standing on its legs' footings over the hole the drill
 # mines from the surface down: its edges a lit lip over hazard stripes inside and out, its top bar
 # grating, joists under it.
-ebox('drill_base', 0, 0, 0, SIZE, RING, SIZE, skip=('up', 'down'))
+ebox('drill_base', 0, 0, 0, SIZE, RING, SIZE, skip=('up', 'down', 'east', 'west'))
+# The ring's east and west faces stop at the port consoles, which stand in its middle cells.
+CONSOLE = (3 * B, 6 * B)
+for z1, z2 in ((0, CONSOLE[0]), (CONSOLE[1], SIZE)):
+    ebox('drill_base', 0, 0, z1, SIZE, RING, z2, skip=('up', 'down', 'north', 'south'))
 for x1, z1, x2, z2 in ((0, 0, SIZE, lo), (0, hi, SIZE, SIZE), (0, lo, lo, hi), (hi, lo, SIZE, hi)):
     d.box('drill_grating', x1, 0, z1, x2, RING, z2, skip=('north', 'south', 'east', 'west'))
     d.box('drill_underside', x1, 0, z1, x2, RING, z2, skip=('north', 'south', 'east', 'west', 'up'))
@@ -240,6 +270,15 @@ for xa, xb in zip(steps, steps[1:]):
     d.quad('drill_base', [(xb, RING, hi), (xa, RING, hi), (xa, 0, hi), (xb, 0, hi)], WALL, (0, 0, -1))
     d.quad('drill_base', [(lo, RING, xb), (lo, RING, xa), (lo, 0, xa), (lo, 0, xb)], WALL, (1, 0, 0))
     d.quad('drill_base', [(hi, RING, xa), (hi, RING, xb), (hi, 0, xb), (hi, 0, xa)], WALL, (-1, 0, 0))
+# The port consoles, a block deep in the middle three cells of the base's sides, their faces the
+# block's faces. As you face the front (north), inputs on your left (east): energy, tungsten tips and
+# water; on your right (west) the output for what the drill brings up, each port in its own cell,
+# drawn into its panel so it sits flush (drill/panel_port_*): red energy, orange items, blue water.
+ebox('drill_panel', 0, 0, CONSOLE[0], B, B, CONSOLE[1], top='drill_lid', skip=('down',),
+     panels={('west', 1, 0): 'drill_panel_port_items'})
+ebox('drill_panel', SIZE - B, 0, CONSOLE[0], SIZE, B, CONSOLE[1], top='drill_lid', skip=('down',),
+     panels={('east', 0, 0): 'drill_panel_port_water', ('east', 1, 0): 'drill_panel_port_items',
+             ('east', 2, 0): 'drill_panel_port_energy'})
 # In the pictures only: the layer being mined, as red-hot obsidian, tiled on the block grid (half
 # tiles at its edges) so the beam strikes the middle of one tile, white hot under it. In the game the
 # real ground is mined and the renderer draws the heat over it, and the beam down to it.
@@ -264,41 +303,90 @@ for sx, sz in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
     head = (C + sx * 36, C + sz * 36)
     out = (sx / math.sqrt(2), 0, sz / math.sqrt(2))
     across = (-out[2], 0, out[0])
-    bar('drill_leg', [(foot[0], RING, foot[1]), (foot[0], RING + 10, foot[1]), (head[0], DECK_Y, head[1])], 7, 7, across)
+    # Upright at both ends, so each meets the pad and the deck's underside flat (a bar's end is cut
+    # square to its run, which on the slope would leave one edge in the deck and the other hanging),
+    # mitred at its knees. Its plates are set so the top knee falls in the middle of one, which
+    # wraps round it rather than ending on it.
+    leg = [(foot[0], RING, foot[1]), (foot[0], RING + 10, foot[1]), (head[0], DECK_Y - 8, head[1]), (head[0], DECK_Y, head[1])]
+    knee = math.dist(leg[0], leg[1]) + math.dist(leg[1], leg[2])
+    bar('drill_leg', leg, 7, 7, across, phase=(8 - knee) % 16)
     # A foot pad, hazard striped round its edge, tread on top, an anchor bolt in each corner.
     ebox('drill_hazard', foot[0] - 11, RING, foot[1] - 11, foot[0] + 11, RING + 4, foot[1] + 11, top='drill_tread', skip=('down',))
     for ax in (-8, 8):
         for az in (-8, 8):
             ebox('drill_rod', foot[0] + ax - 1, RING + 4, foot[1] + az - 1, foot[0] + ax + 1, RING + 5, foot[1] + az + 1,
                  skip=('down',), v0=1)
-    # A hydraulic ram from the leg's foot pad up under the deck, straight alongside the leg in its
-    # plane: its barrel, then its rod.
-    p0 = (foot[0] + across[0] * 9.5, RING + 4, foot[1] + across[2] * 9.5)
-    p1 = (head[0] + across[0] * 9.5, DECK_Y, head[1] + across[2] * 9.5)
-    mid = tuple(p0[i] + (p1[i] - p0[i]) * 0.5 for i in range(3))
-    bar('drill_ram', [p0, mid], 2, 2)
-    bar('drill_rod', [mid, p1], 1.5, 1.5)
 
-# ---------------------------------------------------------------- the emitter and its beam
-EMIT = 22
-tip_y = DECK_Y - 26
-ebox('drill_band6', C - EMIT, DECK_Y - 6, C - EMIT, C + EMIT, DECK_Y, C + EMIT, bottom='drill_underside', skip=('up',))
-outline(C - EMIT, DECK_Y - 4, C - EMIT, C + EMIT, DECK_Y - 3, C + EMIT, 'glow')
-# The pyramid, its faces in two bands so each shows its texture at one texel a pixel: cooling rings
-# above, then the last block down to the tip, heat-tinted.
-base = [(C - EMIT + 3, DECK_Y - 6, C - EMIT + 3), (C + EMIT - 3, DECK_Y - 6, C - EMIT + 3),
-        (C + EMIT - 3, DECK_Y - 6, C + EMIT - 3), (C - EMIT + 3, DECK_Y - 6, C + EMIT - 3)]
-tip = (C, tip_y, C)
-slope = math.hypot(EMIT - 3, DECK_Y - 6 - tip_y)
-f = 1 - 16 / slope
-for k in range(4):
-    a, b = base[k], base[(k + 1) % 4]
-    a1, b1 = (tuple(p[i] + (tip[i] - p[i]) * f for i in range(3)) for p in (a, b))
-    out = ((a[0] + b[0]) / 2 - C, -0.7 * EMIT, (a[2] + b[2]) / 2 - C)
-    d.quad('drill_emitter_top', [a, b, b1, a1], [(0, 32 - slope), (16, 32 - slope), (16, 16), (0, 16)], out)
-    d.quad('drill_emitter', [a1, b1, tip, tip], [(0, 0), (16, 0), (8, 16), (8, 16)], out)
-d.box('glow', C - 2.5, tip_y - 2, C - 2.5, C + 2.5, tip_y + 1, C + 2.5)
-d.box('drill_beam', C - 1.2, 1, C - 1.2, C + 1.2, tip_y - 2, C + 1.2, skip=('up', 'down'))
+# The deck's girders: light steel joists in a square through the legs' heads, so each leg carries
+# the two that cross on it (they meet inside the leg). The ribbed decking spans between them.
+GIRDER = 36
+for k in (-1, 1):
+    bar('drill_joist', [(C - DECK_W + 2, DECK_Y - 2, C + k * GIRDER), (C + DECK_W - 2, DECK_Y - 2, C + k * GIRDER)], 2, 2)
+    bar('drill_joist', [(C + k * GIRDER, DECK_Y - 2, C - DECK_W + 2), (C + k * GIRDER, DECK_Y - 2, C + DECK_W - 2)], 2, 2)
+
+# ---------------------------------------------------------------- the emitter pod and its beam
+# The emitter (6 Oct 2026, the user's pick, replacing a pyramid with a lens on its tip): a pod hung
+# in a yoke under the deck, like a searchlight. A crossbar under the deck runs through its top;
+# from its ends two arms of the column's post steel hang down either side of the pod, which turns on
+# orange pivot bosses; the pod itself rises straight up to the deck, one unit. The pod
+# is a cut-corner box, two plates high: panels on its four faces, post steel on its corners, a light
+# line round it. Under it a short collar, and in the collar's foot the aperture: a lit ring round the
+# dark bore the beam leaves through (the renderer lights the bore as it charges).
+POD_W, POD_C = 12, 4            # the pod: half width 12 (its flat faces one plate wide) and corners cut 4
+POD = (30, 62)                  # its foot and top, two plates high, up to a band under the deck
+PIVOT_Y = 38
+ARM = (15, 20)                  # the arms, either side, from the pod's middle out
+YOKE_Y = DECK_Y - 10            # the crossbar's underside
+APERTURE_Y = 26                 # the collar's foot, where the beam leaves
+APERTURE_HALF = 5
+
+
+def pod_prism(y1, y2, w, c, flat, corner, top=None, bottom=None):
+    """A cut-corner prism with one texture on its flat faces (drawn whole: they are a plate wide) and
+    another on its cut corners (a narrow texture, drawn at the corner's width)."""
+    pts = corners(w, c)
+    for k in range(8):
+        (ax, az), (bx, bz) = pts[k], pts[(k + 1) % 8]
+        length = math.hypot(bx - ax, bz - az)
+        mx, mz = (ax + bx) / 2 - C, (az + bz) / 2 - C
+        mat = flat if k % 2 == 0 else corner
+        u = 16 if k % 2 == 0 else min(5, length)
+        # A plate a block high, from the top down.
+        for yt in range(int(y2), int(y1), -16):
+            yb = max(y1, yt - 16)
+            h = yt - yb
+            d.quad(mat, [(ax, yt, az), (bx, yt, bz), (bx, yb, bz), (ax, yb, az)],
+                   [(0, 16 - h), (u, 16 - h), (u, 16), (0, 16)], (mx, 0, mz))
+    for cap, y, up in ((top, y2, 1), (bottom, y1, -1)):
+        if cap is not None:
+            tiled_cap(cap, pts, y, up)
+
+
+# The crossbar the arms hang from, through the pod's top.
+ebox('drill_band6', C - ARM[1], YOKE_Y, C - 2.5, C + ARM[1], YOKE_Y + 6, C + 2.5, top='drill_trim', bottom='drill_trim')
+# The arms, square posts down either side of the pod, an orange pivot boss on each: through to the
+# pod on the inside, a cap on the outside.
+for sx in (-1, 1):
+    x1, x2 = sorted((C + sx * ARM[0], C + sx * ARM[1]))
+    ebox('drill_post', x1, POD[0] - 2, C - 2.5, x2, YOKE_Y, C + 2.5, skip=('up',), bottom='drill_trim', v0=0)
+    b1, b2 = sorted((C + sx * POD_W, C + sx * ARM[0]))
+    ebox('drill_accent', b1, PIVOT_Y - 3, C - 3, b2, PIVOT_Y + 3, C + 3, v0=0)
+    c1, c2 = sorted((C + sx * ARM[1], C + sx * (ARM[1] + 0.6)))
+    ebox('drill_accent', c1, PIVOT_Y - 2, C - 2, c2, PIVOT_Y + 2, C + 2, skip=(), v0=0)
+# The pod, rising straight up to the deck as one unit, a graphite band where it meets the deck, and
+# its light line round its lower plate.
+pod_prism(POD[0], POD[1], POD_W, POD_C, 'drill_panel', 'drill_post', bottom='drill_lid')
+prism('drill_band', POD[1], DECK_Y, POD_W, POD_C)
+prism('glow', POD[0] + 11, POD[0] + 12, POD_W + 0.3, POD_C)
+# The collar under the pod, and in its foot the aperture: a lit ring round the dark bore.
+prism('drill_band', APERTURE_Y, POD[0], 7, 2, bottom='drill_trim')
+ring = 1.5
+for x1, z1, x2, z2 in ((C - APERTURE_HALF, C - APERTURE_HALF, C + APERTURE_HALF, C - APERTURE_HALF + ring),
+                       (C - APERTURE_HALF, C + APERTURE_HALF - ring, C + APERTURE_HALF, C + APERTURE_HALF),
+                       (C - APERTURE_HALF, C - APERTURE_HALF + ring, C - APERTURE_HALF + ring, C + APERTURE_HALF - ring),
+                       (C + APERTURE_HALF - ring, C - APERTURE_HALF + ring, C + APERTURE_HALF, C + APERTURE_HALF - ring)):
+    d.box('glow', x1, APERTURE_Y - 0.3, z1, x2, APERTURE_Y, z2, skip=('up',))
+d.box('drill_beam', C - 1.2, 1, C - 1.2, C + 1.2, APERTURE_Y, C + 1.2, skip=('up', 'down'))
 
 # ---------------------------------------------------------------- the deck
 prism('drill_band8', DECK_Y, DECK_Y + 8, DECK_W, DECK_C, top='drill_tread', bottom='drill_underside', v0=8)
@@ -338,7 +426,7 @@ for k in range(3):
            [(4 * k, 0), (4 * k + 2, 0), (4 * k + 2, 2), (4 * k, 2)], (0, 1, 0))
 # ---------------------------------------------------------------- the column
 # Eight steel posts with a bolted splice plate over every joint, angle-steel X braces on its four
-# faces, the drive shaft inside (ribbed, a flange each block, a lit band you see through the
+# faces (back to back where they cross), the drive shaft inside (ribbed, a flange each block, a lit band you see through the
 # lattice), and a copper coolant duct up one side clamped at each joint.
 COL = (RY, RY + 6 * B)
 for x, z in corners(CW, CC):
@@ -346,16 +434,24 @@ for x, z in corners(CW, CC):
 for face, (ax, az, bx, bz) in (('north', (C - CW + CC, C - CW, C + CW - CC, C - CW)), ('south', (C - CW + CC, C + CW, C + CW - CC, C + CW)),
                                ('west', (C - CW, C - CW + CC, C - CW, C + CW - CC)), ('east', (C + CW, C - CW + CC, C + CW, C + CW - CC))):
     normal = {'north': (0, 0, -1), 'south': (0, 0, 1), 'west': (-1, 0, 0), 'east': (1, 0, 0)}[face]
+    # Each panel's X and its strut are bolted back to back, as a real tower's are, so no two bars
+    # pass through each other: the rising diagonal outermost, the strut in the middle, the falling
+    # diagonal behind it, each 2 pixels deep (the strut 1), all within the posts' depth.
+    def layer(points, depth):
+        return [(x + normal[0] * depth, y, z + normal[2] * depth) for x, y, z in points]
+
     for ya in range(int(COL[0]), int(COL[1]), 2 * B):
         yb = ya + 2 * B
-        for p0, p1 in (((ax, ya, az), (bx, yb, bz)), ((ax, yb, az), (bx, ya, bz))):
-            bar('drill_brace', [p0, p1], 2, 2, normal)
-        bar('drill_brace', [(ax, ya, az), (bx, ya, bz)], 2, 2, normal)
+        bar('drill_brace', layer([(ax, ya, az), (bx, yb, bz)], 1.6), 2, 1, normal)
+        bar('drill_brace', layer([(ax, yb, az), (bx, ya, bz)], -1.6), 2, 1, normal)
+        bar('drill_brace', [(ax, ya, az), (bx, ya, bz)], 2, 0.5, normal)
 ebox('drill_shaft', C - 8, COL[0], C - 8, C + 8, COL[1], C + 8, skip=('down', 'up'))
 ebox('drill_amber', C - 8.3, COL[0] + 40, C - 8.3, C + 8.3, COL[0] + 44, C + 8.3, skip=('up', 'down'))
-ebox('drill_duct', C + CW + 2, COL[0], C - 6, C + CW + 8, COL[1], C + 2, skip=('down', 'up'))
+# The duct stands clear of the braces (the outermost reaches 2.6 out from the face), its clamps too.
+DUCT = C + CW + 4
+ebox('drill_duct', DUCT, COL[0], C - 6, DUCT + 6, COL[1], C + 2, skip=('down', 'up'))
 for y in range(int(COL[0]) + B, int(COL[1]), B):
-    ebox('drill_accent', C + CW + 1.4, y - 1, C - 6.6, C + CW + 8.6, y + 1, C + 2.6, v0=0)
+    ebox('drill_accent', DUCT - 0.6, y - 1, C - 6.6, DUCT + 6.6, y + 1, C + 2.6, v0=0)
 
 # ---------------------------------------------------------------- the collar and the drive housing
 # Not a lantern: a heavy drive housing with louvred vents, generator pods bolted to its flanks, and
@@ -365,6 +461,10 @@ for y in range(int(COL[0]) + B, int(COL[1]), B):
 COLLAR = (COL[1], COL[1] + 12)
 prism('drill_collar', COLLAR[0], COLLAR[1], 40, 12, top='drill_tread', bottom='drill_underside', v0=4)
 prism('glow', COLLAR[0] + 7, COLLAR[0] + 8, 40.3, 12)
+# Knee braces carry the collar where it overhangs the column: one from each post, up and out
+# along the column's face, in the braces' angle steel, into the collar's underside.
+for (x, z), (ox, oz) in zip(corners(CW, CC), ((1, 0), (1, 0), (0, 1), (0, 1), (-1, 0), (-1, 0), (0, -1), (0, -1))):
+    bar('drill_brace', [(x, COLLAR[0] - 12, z), (x + ox * 12, COLLAR[0] + 2, z + oz * 12)], 2, 1, (-oz, 0, ox))
 HW = 2 * B              # the housing: 4 x 4 panels across, 2 high
 HOUSE = (COLLAR[1], COLLAR[1] + 2 * B)
 # The front's lower row carries the inspection hatch on the left and the stencil on the right,
@@ -407,10 +507,11 @@ for z in (C - 5, C, C + 5):
 ebox('drill_band', C - 8, ROOF, C - 8, C + 8, ROOF + 4, C + 8, top='drill_rotary', skip=('down',))
 # Two cooling fans on the roof's front corners (a block each, an orange hub cap), two exhaust stacks
 # at the back with an orange band.
+# The fans stand a pixel clear of the corner lamps and of the crown's A-frame.
 for sx in (-1, 1):
-    fx = C + sx * 20
-    ebox('drill_band', fx - 8, ROOF, C - 28, fx + 8, ROOF + 4, C - 12, top='drill_fan', skip=('down',))
-    ebox('drill_accent', fx - 1.5, ROOF + 4, C - 21.5, fx + 1.5, ROOF + 5, C - 18.5, skip=('down',), v0=0)
+    fx = C + sx * 18
+    ebox('drill_band', fx - 8, ROOF, C - 27, fx + 8, ROOF + 4, C - 11, top='drill_fan', skip=('down',))
+    ebox('drill_accent', fx - 1.5, ROOF + 4, C - 20.5, fx + 1.5, ROOF + 5, C - 17.5, skip=('down',), v0=0)
     ebox('drill_stack', fx - 4, ROOF, C + 12, fx + 4, ROOF + 16, C + 20, top='drill_stack_top', skip=('down',))
     ebox('drill_accent', fx - 4.4, ROOF + 10, C + 11.6, fx + 4.4, ROOF + 13, C + 20.4, skip=('up', 'down'), v0=0)
 # Warning lamps on the roof's corners.
@@ -422,10 +523,10 @@ for sx in (-1, 1):
 
 
 # ---------------------------------------------------------------- running and idle, export and pictures
-# Idle: the pit plain obsidian, the beam off, the lamps, window and light lines dim, the
-# firebrick and the emitter's tip cooled.
+# Idle: the pit plain obsidian, the beam off, the lamps, window, light lines and the aperture's
+# ring dim.
 IDLE = {'drill_hot_obsidian': 'obsidian', 'drill_hot_obsidian_core': 'obsidian', 'drill_amber': 'drill_amber_off', 'glow': 'glow_off', 'drill_window': 'drill_window_off',
-        'drill_lamps': 'drill_lamps_off', 'drill_emitter': 'drill_emitter_cold'}
+        'drill_lamps': 'drill_lamps_off'}
 # Drawn by the game itself, so left out of the export: the layer being mined and the beam.
 PICTURE_ONLY = ('drill_hot_obsidian', 'drill_hot_obsidian_core', 'drill_beam')
 RUNNING_ONLY = ('drill_beam',)

@@ -1,10 +1,10 @@
-"""Builds the reactor announcer's voice lines from Ryzer's recording (art/sounds/VOICE-SCRIPT.md).
+"""Builds the reactor announcer's voice lines (art/sounds/VOICE-SCRIPT.md) from one file per line.
 
-Reads one recording of every take and the label file Audacity exported with it, both in
-art/sounds/source/ (ignored by git), plus any lines recorded later on their own (SINGLES). Each label marks where a line starts; the line runs to the next
-label. For every line it:
+Each line is a file in art/sounds/source/voice/ (ignored by git) named after its words, as a voice
+generator exports it ("SCRAM. Emergency shutdown.mp3"); the words pick the sound it becomes. For
+every line it:
   1. trims the silence round it, keeping a short breath of room at each end,
-  2. gently lowers the room noise between words (a soft expander, not a gate that chops),
+  2. gently lowers the noise between words (a soft expander, not a gate that chops),
   3. gives it an emergency public-address character: a horn speaker's narrow range (little bass,
      the top rolled off), a touch of grit, light compression, then the echo of a large hard room
      (a reverb tail and a faint slapback off a far wall),
@@ -12,7 +12,7 @@ label. For every line it:
 Then it writes mono Ogg Vorbis to mod/src/main/resources/assets/ryzergen/sounds/voice/ and WAV
 previews (before and after) to art/sounds/voice_preview/ (ignored by git) to listen to.
 
-Needs numpy and soundfile. Run from the repo root:
+Needs numpy and soundfile (libsndfile 1.1 or later reads MP3). Run from the repo root:
     python art/tools/voice_lines.py
 """
 import glob
@@ -23,12 +23,11 @@ import numpy as np
 import soundfile as sf
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-SOURCES = os.path.join(ROOT, 'art', 'sounds', 'source')
-RECORDING = os.path.join(SOURCES, 'Voice Takes.wav')
+SOURCES = os.path.join(ROOT, 'art', 'sounds', 'source', 'voice')
 OUT = os.path.join(ROOT, 'mod', 'src', 'main', 'resources', 'assets', 'ryzergen', 'sounds', 'voice')
 PREVIEW = os.path.join(ROOT, 'art', 'sounds', 'voice_preview')
 
-# The label text, lower case with punctuation dropped, to the sound's name.
+# A line's words, lower case with punctuation dropped, to the sound's name.
 LINES = {
     'reactor online': 'reactor_online',
     'station online all systems nominal': 'station_online',
@@ -41,12 +40,13 @@ LINES = {
     'danger meltdown imminent evacuate': 'meltdown_risk',
     'warning flux tilt detected': 'flux_tilt',
     'safeties engaged controlled shutdown': 'controlled_shutdown',
-}
-
-# Lines recorded later, one take to a file (no label file needed): the file in art/sounds/source
-# and the sound's name.
-SINGLES = {
-    'Safetied Engaged, Controlled Shutdown.wav': 'controlled_shutdown',
+    'steady state reached': 'steady_state_1',
+    'steady state holding output rising': 'steady_state_2',
+    'peak steady state maximum output': 'steady_state_3',
+    'breeder online sodium loop nominal': 'breeder_online',
+    'warning sodium loop low': 'sodium_low',
+    'warning hot spot detected': 'hot_spot',
+    'alert sodium fire': 'sodium_fire',
 }
 
 TARGET_RMS_DB = -18.0      # loudness of the spoken part
@@ -56,20 +56,6 @@ HEAD_PAD, TAIL_PAD = 0.06, 0.18
 
 def db(x):
     return 10 ** (x / 20)
-
-
-def labels():
-    """(start seconds, text) for each label, from the newest label file in the source folder."""
-    files = sorted(glob.glob(os.path.join(SOURCES, '*abels*.txt')), key=os.path.getmtime)
-    if not files:
-        raise SystemExit('No Audacity label file in ' + SOURCES)
-    out = []
-    with open(files[-1], encoding='utf-8-sig') as fh:
-        for row in fh:
-            parts = row.rstrip('\r\n').split('\t')
-            if len(parts) >= 3 and parts[0].strip():
-                out.append((float(parts[0]), parts[2].strip()))
-    return sorted(out)
 
 
 def key(text):
@@ -169,53 +155,32 @@ def level(x):
 
 
 def main():
-    signal, rate = sf.read(RECORDING)
-    if signal.ndim > 1:
-        signal = signal.mean(axis=1)
-    marks = labels()
-    windows = 0.2
-    rms = [np.sqrt(np.mean(signal[i:i + int(windows * rate)] ** 2)) for i in range(0, len(signal) - int(windows * rate), int(windows * rate))]
-    floor_db = 20 * np.log10(max(min(rms), 1e-9))
-    print(f'room noise about {floor_db:.0f} dBFS')
     os.makedirs(OUT, exist_ok=True)
     os.makedirs(PREVIEW, exist_ok=True)
     made = set()
-
-    def build(name, segment, label):
-        raw = trim(segment, rate)
-        # The room can change during a session (a fan starting), so each line uses its own
-        # noise floor when that is louder than the recording's quietest stretch.
+    for path in sorted(glob.glob(os.path.join(SOURCES, '*'))):
+        words = os.path.splitext(os.path.basename(path))[0]
+        name = LINES.get(key(words))
+        if name is None:
+            print(f'skipped "{words}" (not in the script)')
+            continue
+        signal, rate = sf.read(path)
+        if signal.ndim > 1:
+            signal = signal.mean(axis=1)
+        raw = trim(signal, rate)
         env = envelope(raw, rate, 0.05)
-        local_db = 20 * np.log10(max(np.percentile(env, 10), 1e-9))
-        clean = expand(raw, rate, max(floor_db, local_db))
+        floor_db = 20 * np.log10(max(np.percentile(env, 10), 1e-9))
+        clean = expand(raw, rate, floor_db)
         done = level(room(compress(grit(speaker_eq(clean, rate)), rate), rate))
         done = trim(done, rate, -55)
         sf.write(os.path.join(OUT, name + '.ogg'), done, rate, format='OGG', subtype='VORBIS')
         sf.write(os.path.join(PREVIEW, name + '_dry.wav'), level(clean), rate)
         sf.write(os.path.join(PREVIEW, name + '.wav'), done, rate)
         made.add(name)
-        print(f'{name:20} {len(done) / rate:4.1f} s  from "{label}"')
-
-    for file, name in SINGLES.items():
-        path = os.path.join(SOURCES, file)
-        if os.path.exists(path):
-            single, single_rate = sf.read(path)
-            if single.ndim > 1:
-                single = single.mean(axis=1)
-            if single_rate != rate:
-                raise SystemExit(f'{file} is {single_rate} Hz; record at {rate} Hz like the rest')
-            build(name, single, file)
-
-    for i, (start, text) in enumerate(marks):
-        end = marks[i + 1][0] if i + 1 < len(marks) else len(signal) / rate
-        name = LINES.get(key(text))
-        if name is None:
-            print(f'skipped "{text}" (not in the script)')
-            continue
-        build(name, signal[int(start * rate):int(end * rate)], text)
+        print(f'{name:20} {len(done) / rate:4.1f} s  from "{words}"')
     missing = sorted(set(LINES.values()) - made)
     if missing:
-        print('still to record:', ', '.join(missing))
+        print('still to make:', ', '.join(missing))
 
 
 if __name__ == '__main__':

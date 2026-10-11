@@ -57,7 +57,7 @@ public class RyzerGenEmiPlugin implements EmiPlugin {
         for (RecipeViewerPages.Info info : RecipeViewerPages.info()) {
             List<EmiIngredient> shown = new java.util.ArrayList<>(info.items().stream().<EmiIngredient>map(EmiStack::of).toList());
             info.fluids().forEach(fluid -> shown.add(EmiStack.of(fluid)));
-            registry.addRecipe(new EmiInfoRecipe(shown, List.of(info.text()),
+            registry.addRecipe(new EmiInfoRecipe(shown, info.lines(),
                     ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "/info/" + info.id())));
         }
 

@@ -144,7 +144,7 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
         });
         inputs = MachineItemPort.of(items, 0, machine.inputs(), machine.inputs(), machine.slots());
         outputs = inputs;
-        water = new FluidTank(machine.waterCapacity(), stack -> stack.is(FluidTags.WATER)) {
+        water = new FluidTank(machine.waterCapacity(), stack -> stack.is(machine.inputTag())) {
             @Override
             protected void onContentsChanged() {
                 dirty = true;
@@ -418,7 +418,7 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
         if (dirty) {
             recipe = findRecipe(input(water.getFluid()));
             thirsty = recipe == null && machine.usesWater()
-                    && findRecipe(input(new FluidStack(Fluids.WATER, machine.waterCapacity()))) != null;
+                    && findRecipe(input(new FluidStack(machine.inputFluid(), machine.waterCapacity()))) != null;
             dirty = false;
         }
         boolean powered = level.hasNeighborSignal(pos) || (machine.tall() && level.hasNeighborSignal(pos.above()));

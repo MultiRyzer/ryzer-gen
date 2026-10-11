@@ -12,6 +12,7 @@ import com.ryzer.ryzergen.cable.FluidPipeBlockEntity;
 import com.ryzer.ryzergen.creative.CreativeSourceBlockEntity;
 import com.ryzer.ryzergen.machine.fission.StationCoreBlockEntity;
 import com.ryzer.ryzergen.machine.breeder.BreederCoreBlockEntity;
+import com.ryzer.ryzergen.machine.drill.MegaDrillBlockEntity;
 import com.ryzer.ryzergen.machine.processing.ProcessingBlockEntity;
 import com.ryzer.ryzergen.machine.processing.ProcessingMachine;
 import com.ryzer.ryzergen.machine.pump.IntakePumpBlockEntity;
@@ -66,6 +67,9 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FusionPreviewBlockEntity>> FUSION_PREVIEW =
             BLOCK_ENTITIES.register("fusion_preview",
                     () -> BlockEntityType.Builder.of(FusionPreviewBlockEntity::new, ModBlocks.FUSION_PREVIEW.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MegaDrillBlockEntity>> MEGA_DRILL =
+            BLOCK_ENTITIES.register("mega_drill",
+                    () -> BlockEntityType.Builder.of(MegaDrillBlockEntity::new, ModBlocks.MEGA_DRILL_CONTROLLER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MegaDrillPreviewBlockEntity>> MEGA_DRILL_PREVIEW =
             BLOCK_ENTITIES.register("mega_drill_preview",
                     () -> BlockEntityType.Builder.of(MegaDrillPreviewBlockEntity::new, ModBlocks.MEGA_DRILL_PREVIEW.get()).build(null));
@@ -114,6 +118,9 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ProcessingBlockEntity>> ELECTROREFINER =
             BLOCK_ENTITIES.register("electrorefiner", () -> BlockEntityType.Builder.of(
                     (pos, state) -> new ProcessingBlockEntity(ProcessingMachine.ELECTROREFINER, pos, state), ModBlocks.ELECTROREFINER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ProcessingBlockEntity>> MONAZITE_PROCESSOR =
+            BLOCK_ENTITIES.register("monazite_processor", () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new ProcessingBlockEntity(ProcessingMachine.MONAZITE_PROCESSOR, pos, state), ModBlocks.MONAZITE_PROCESSOR.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BatteryControllerBlockEntity>> BATTERY_CONTROLLER =
             BLOCK_ENTITIES.register("battery_controller",

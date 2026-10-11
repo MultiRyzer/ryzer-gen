@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.radiation;
 
 import com.ryzer.ryzergen.compat.accessories.AccessoriesCompat;
 import com.ryzer.ryzergen.registry.ModItems;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -40,11 +41,11 @@ public class DosimeterRingItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("item.ryzergen.dosimeter_ring.protection", Math.round(PROTECTION * 100))
-                .withStyle(ChatFormatting.DARK_AQUA));
+        tooltip.add(RichText.tr("item.ryzergen.dosimeter_ring.protection", Math.round(PROTECTION * 100))
+                .withStyle(ChatFormatting.GRAY));
         // The dose the ring has recorded: the player's own, as last sent to this client.
         if (context.level() != null && context.level().isClientSide) {
-            tooltip.add(Component.translatable("item.ryzergen.dosimeter_ring.dose", String.format("%.0f", RadiationClientState.dose()))
+            tooltip.add(RichText.tr("item.ryzergen.dosimeter_ring.dose", String.format("%.0f", RadiationClientState.dose()))
                     .withStyle(ChatFormatting.GRAY));
         }
     }

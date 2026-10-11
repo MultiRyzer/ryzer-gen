@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:circuits/advanced"
+    },
+    "H": {
+      "item": "ryzergen:drill_head_mk2"
+    },
+    "P": {
+      "tag": "c:ingots/plutonium"
+    }
+  },
+  "pattern": [
+    " A ",
+    "PHP",
+    " A "
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:drill_head_mk3"
+  }
+}

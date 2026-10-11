@@ -612,6 +612,7 @@ PROCESSING = {
     'fuel_fabricator': (3, 1, False),
     'lithium_extractor': (1, 1, True),
     'electrorefiner': (2, 3, True),   # its well holds the liquid sodium it melts
+    'monazite_processor': (1, 2, True),   # its well holds the liquid sodium it cracks monazite with
 }
 
 
@@ -657,6 +658,98 @@ def processing(inputs, outputs, water):
     return t
 
 
+def mega_drill():
+    """The formed mega drill's controls, 176 x 202: down the left the drill head, tungsten tip and
+    speed module slots (each marked faintly with what goes in it) over the power and redstone keys;
+    the readout screen (status, layer, speed); the sound switch in a tab on the right edge; under it the output (6 x 2, an orange rim
+    round it, as round every output) and the filter row (6, each marked with a funnel); the energy
+    and water wells on the right; the player's inventory below. Sprites right of the panel: keycaps
+    at 176,0 and 192,0, power keys (on, on hovered, off, off hovered) from 176,16. Keep in step with
+    MegaDrillMenu and MegaDrillScreen."""
+    t = Tex(SIZE)
+    panel(t, PANEL_W, 202)
+    recess(t, 4, 13, 168, 98, 'S', 'U', 'A')
+    for y in (16, 34, 52):
+        slot(t, 7, y)
+    # The head: a housing over a cone.
+    for x, y in ((14, 21), (15, 21), (16, 21), (17, 21), (13, 23), (14, 23), (15, 23), (16, 23), (17, 23), (18, 23),
+                 (14, 24), (15, 24), (16, 24), (17, 24), (15, 25), (16, 25), (15, 26), (16, 26)):
+        t.set(x, y, 'I')
+    t.rect(14, 22, 17, 22, 'I')
+    # The tip: a shank over a point.
+    for x, y in ((15, 39), (16, 39), (15, 40), (16, 40), (14, 41), (15, 41), (16, 41), (17, 41),
+                 (14, 42), (15, 42), (16, 42), (17, 42), (15, 43), (16, 43), (15, 44), (16, 44)):
+        t.set(x, y, 'I')
+    # Speed modules: the double chevron, as on the fuel cycle machines' upgrade slot.
+    for ox in (11, 15):
+        for dy in (-2, -1, 0, 1, 2):
+            t.set(ox + (2 - abs(dy)), 61 + dy, 'I')
+    screen(t, 27, 16, 108, 34)
+    for row in range(2):
+        for col in range(6):
+            slot(t, 27 + col * 18, 52 + row * 18)
+    t.rect(26, 51, 135, 51, 'X')
+    t.rect(26, 51, 26, 88, 'X')
+    t.rect(26, 88, 135, 88, 'Z')
+    t.rect(135, 51, 135, 88, 'Z')
+    for col in range(6):
+        x = 27 + col * 18
+        slot(t, x, 90)
+        # A funnel: what the filter lets through.
+        t.rect(x + 6, 96, x + 11, 96, 'I')
+        t.rect(x + 7, 97, x + 10, 97, 'I')
+        t.rect(x + 8, 98, x + 9, 100, 'I')
+    well(t, 138, 16, 10, 92)
+    well(t, 151, 16, 14, 92)
+    for row in range(3):
+        for col in range(9):
+            slot(t, 7 + col * 18, 122 + row * 18)
+    for col in range(9):
+        slot(t, 7 + col * 18, 180)
+    keycap(t, 176, 0, False)
+    keycap(t, 192, 0, True)
+    for i, (on, hover) in enumerate(((True, False), (True, True), (False, False), (False, True))):
+        power_key(t, 176 + i * 16, 16, on, hover)
+    # The sound switch's tab, drawn by the screen on the panel's right edge, and its keys.
+    side_tab(t, 176, 40, *SIDE_TAB_SIZE)
+    for i, (muted, hover) in enumerate(((False, False), (False, True), (True, False), (True, True))):
+        sound_key(t, 176 + i * 16, 72, muted, hover)
+    return t
+
+
+SPEAKER = [
+    '...#....',
+    '..##....',
+    '####....',
+    '####....',
+    '####....',
+    '####....',
+    '..##....',
+    '...#....',
+]
+
+
+def sound_key(t, x, y, muted, hover):
+    """The sound switch: a speaker on a keycap, cyan sound waves beside it while it sounds, a red
+    cross while it is muted."""
+    keycap(t, x, y, hover)
+    sx, sy = x + 3, y + 2
+    t.stamp(sx, sy, [row.replace('#', 'H') for row in SPEAKER])
+    if muted:
+        for i in range(4):
+            t.set(sx + 6 + i, sy + 2 + i, 'x')
+            t.set(sx + 9 - i, sy + 2 + i, 'x')
+    else:
+        for dy in (1, 6):
+            t.set(sx + 6, sy + dy, 'i')
+        for dy in (2, 3, 4, 5):
+            t.set(sx + 7, sy + dy, 'i')
+        for dy in (0, 7):
+            t.set(sx + 8, sy + dy, 'f')
+        for dy in range(1, 7):
+            t.set(sx + 9, sy + dy, 'f')
+
+
 def cable():
     """Cable panel on a 256 x 320 sheet: the header and the bay for six rows (drawn in code, each
     with its fitting slot), the footer row, then from y 188 the inventory section: the bay's bottom
@@ -687,6 +780,7 @@ def main():
     publish('gui/breeder_control', breeder_control())
     publish('gui/spent_fuel_pool', spent_fuel_pool())
     publish('gui/container_battery', container_battery())
+    publish('gui/mega_drill', mega_drill())
     for name, (inputs, outputs, water) in PROCESSING.items():
         publish('gui/' + name, processing(inputs, outputs, water))
 

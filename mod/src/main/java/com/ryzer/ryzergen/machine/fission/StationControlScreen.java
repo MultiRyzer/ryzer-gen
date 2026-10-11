@@ -1,10 +1,13 @@
 package com.ryzer.ryzergen.machine.fission;
 
-import com.ryzer.ryzergen.Preview;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.GuiGauges;
 import com.ryzer.ryzergen.machine.fission.StationReactor.Channel;
 import com.ryzer.ryzergen.registry.ModItems;
+import com.ryzer.ryzergen.client.text.Term;
+import com.ryzer.ryzergen.client.text.RichText;
+import com.ryzer.ryzergen.client.SteadyStateTooltip;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -61,12 +64,14 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
     private static final int KEY_HOVER_U = 16;
     private static final int POWER_U = 32;
     private static final int SPRITE_V = 224;
-    private static final Channel[] TOOLS = {Channel.FUEL, Channel.MODERATOR, Channel.CONTROL, Channel.COOLANT, Channel.TARGET};
-    /** Without the next-tier preview there are no target rods, so no target tool. */
-    private static final Channel[] BASE_TOOLS = {Channel.FUEL, Channel.MODERATOR, Channel.CONTROL, Channel.COOLANT};
+    /**
+     * The plans a player can pick. Target channels are retired (11 Oct 2026): lithium target rods breed
+     * in the breeder's blanket, so no target tool; one planned in an older world still works until cleared.
+     */
+    private static final Channel[] TOOLS = {Channel.FUEL, Channel.MODERATOR, Channel.CONTROL, Channel.COOLANT};
 
     private static Channel[] tools() {
-        return Preview.enabled() ? TOOLS : BASE_TOOLS;
+        return TOOLS;
     }
 
     /** The plan tool picked, or null to handle items normally. */
@@ -96,14 +101,14 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
         });
     }
 
-    /** Each plan's colour, used for its channels' frames and under its tool. */
+    /** Each plan's colour, its term's (as the text and the progression map draw it), used for its channels' frames and under its tool. */
     private static int colour(Channel channel) {
         return switch (channel) {
-            case FUEL -> 0xFF44D65E;
-            case MODERATOR -> 0xFFE8B030;
-            case CONTROL -> 0xFFE0503C;
-            case COOLANT -> 0xFF3A8CF0;
-            case TARGET -> 0xFFB27CF0;
+            case FUEL -> Term.FUEL.argb();
+            case MODERATOR -> Term.MODERATOR.argb();
+            case CONTROL -> Term.CONTROL.argb();
+            case COOLANT -> Term.COOLANT.argb();
+            case TARGET -> Term.BREEDING.argb();
             case EMPTY -> 0;
         };
     }
@@ -246,28 +251,28 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
             case FLUX_TILT, UNSTABLE, RUNAWAY -> flash ? BAD : WARN;
         };
         int seconds = menu.tiltSeconds();
-        text(graphics, Component.translatable("gui.ryzergen.station.status." + status.name().toLowerCase(Locale.ROOT),
+        text(graphics, RichText.tr("gui.ryzergen.station.status." + status.name().toLowerCase(Locale.ROOT),
                 String.format("%d:%02d", seconds / 60, seconds % 60)), 20, colour);
-        text(graphics, Component.translatable("gui.ryzergen.station.live", compact(menu.output()), menu.temperature()), 29,
+        text(graphics, RichText.tr("gui.ryzergen.station.live", compact(menu.output()), menu.temperature()), 29,
                 menu.temperature() >= StationRunner.HOT_TEMPERATURE ? BAD : VALUE);
         // The plan: what this layout gives once settled.
         StationReactor.Analysis plan = analysis();
         if (plan.fuelRods() == 0) {
-            text(graphics, Component.translatable("gui.ryzergen.station.plan_empty"), 42, DIM);
+            text(graphics, RichText.tr("gui.ryzergen.station.plan_empty"), 42, DIM);
             return;
         }
         if (!plan.holdsSteady()) {
-            text(graphics, Component.translatable("gui.ryzergen.station.too_hot"), 42, BAD);
-            text(graphics, Component.translatable("gui.ryzergen.station.stranded", compact(Math.round(plan.stranded()))), 51, DIM);
+            text(graphics, RichText.tr("gui.ryzergen.station.too_hot"), 42, BAD);
+            text(graphics, RichText.tr("gui.ryzergen.station.stranded", compact(Math.round(plan.stranded()))), 51, DIM);
             return;
         }
-        text(graphics, Component.translatable("gui.ryzergen.station.plan", compact(Math.round(plan.plannedOutput()))), 42, VALUE);
+        text(graphics, RichText.tr("gui.ryzergen.station.plan", compact(Math.round(plan.plannedOutput()))), 42, VALUE);
         float temperature = plan.settledTemperature();
-        text(graphics, Component.translatable("gui.ryzergen.station.plan_temperature",
+        text(graphics, RichText.tr("gui.ryzergen.station.plan_temperature",
                 Math.round(StationReactor.efficiency(temperature, plan.overdrive()) * 100), Math.round(temperature)), 51, VALUE);
-        text(graphics, Component.translatable("gui.ryzergen.station.rod_life", Math.round(plan.rodMinutes())), 60, VALUE);
+        text(graphics, RichText.tr("gui.ryzergen.station.rod_life", Math.round(plan.rodMinutes())), 60, VALUE);
         int rating = Math.round(plan.rating() * 100);
-        text(graphics, Component.translatable("gui.ryzergen.station.rating", rating), 69, rating >= 90 ? GOOD : rating >= 60 ? WARN : DIM);
+        text(graphics, RichText.tr("gui.ryzergen.station.rating", rating), 69, rating >= 90 ? GOOD : rating >= 60 ? WARN : DIM);
     }
 
     private void text(GuiGraphics graphics, Component text, int y, int colour) {
@@ -303,7 +308,7 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
     }
 
     private static Component tip(String key, int colour) {
-        return Component.translatable(key).withStyle(style -> style.withColor(colour));
+        return RichText.tr(key).withStyle(style -> style.withColor(colour));
     }
 
     @Override
@@ -318,22 +323,25 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
         for (int k = 0; k < tools().length; k++) {
             if (isOver(toolX(k), TOOL_Y, mouseX, mouseY)) {
                 graphics.renderComponentTooltip(font, List.of(
-                        Component.translatable("gui.ryzergen.station.tool." + tools()[k].name().toLowerCase(Locale.ROOT)),
-                        Component.translatable("gui.ryzergen.station.tool.hint").withStyle(style -> style.withColor(DIM)),
-                        Component.translatable("gui.ryzergen.station.tool.clear").withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
+                        RichText.tr("gui.ryzergen.station.tool." + tools()[k].name().toLowerCase(Locale.ROOT)),
+                        RichText.tr("gui.ryzergen.station.tool." + tools()[k].name().toLowerCase(Locale.ROOT) + ".what")
+                                .withStyle(ChatFormatting.GRAY)), mouseX, mouseY);
             }
+        }
+        if (isOver(TEXT_X, 29, 104, 9, mouseX, mouseY)) {
+            graphics.renderComponentTooltip(font, SteadyStateTooltip.lines(menu.streak(), menu.bonus(), menu.nextMilestone()), mouseX, mouseY);
         }
         int mx = mouseX - leftPos;
         int my = mouseY - topPos;
         if (isOver(POWER_X, KEYS_Y, mouseX, mouseY)) {
-            graphics.renderTooltip(font, Component.translatable(menu.enabled() ? "gui.ryzergen.station.power.on" : "gui.ryzergen.station.power.off"), mouseX, mouseY);
+            graphics.renderTooltip(font, RichText.tr(menu.enabled() ? "gui.ryzergen.station.power.on" : "gui.ryzergen.station.power.off"), mouseX, mouseY);
         } else if (isOver(REDSTONE_X, KEYS_Y, mouseX, mouseY)) {
             String mode = switch (menu.redstoneMode()) {
                 case IGNORED -> "gui.ryzergen.redstone.ignored";
                 case HIGH -> "gui.ryzergen.redstone.high";
                 case LOW -> "gui.ryzergen.redstone.low";
             };
-            graphics.renderTooltip(font, Component.translatable(mode), mouseX, mouseY);
+            graphics.renderTooltip(font, RichText.tr(mode), mouseX, mouseY);
         } else if (isOver(SAFETY_X, SAFETY_Y, SAFETY_W, SAFETY_H, mouseX, mouseY)) {
             List<Component> lines = menu.safeties()
                     ? List.of(tip("gui.ryzergen.station.safeties.armed", GOOD),
@@ -345,14 +353,14 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
                     tip("gui.ryzergen.station.safeties.arm_hint", DIM));
             graphics.renderTooltip(font, wrap(lines), mouseX, mouseY);
         } else if (mx >= TEXT_X && mx < TEXT_X + BAR_W && my >= 67 && my < 77) {
-            graphics.renderTooltip(font, Component.translatable("gui.ryzergen.station.rating.tip"), mouseX, mouseY);
+            graphics.renderTooltip(font, RichText.tr("gui.ryzergen.station.rating.tip"), mouseX, mouseY);
         } else if (mx >= BAR_X && mx < BAR_X + BAR_W) {
             Component tip = my >= HEAT_Y - 1 && my < HEAT_Y + 5
-                    ? Component.translatable("gui.ryzergen.station.heat", menu.temperature(), (int) StationRunner.SCRAM_TEMPERATURE)
+                    ? RichText.tr("gui.ryzergen.station.heat", menu.temperature(), (int) StationRunner.SCRAM_TEMPERATURE)
                     : my >= WATER_Y - 1 && my < WATER_Y + 5
-                    ? Component.translatable("gui.ryzergen.intake_pump.water", String.format("%,d", menu.water()), String.format("%,d", StationRunner.WATER_CAPACITY))
+                    ? RichText.tr("gui.ryzergen.intake_pump.water", String.format("%,d", menu.water()), String.format("%,d", StationRunner.WATER_CAPACITY))
                     : my >= ENERGY_Y - 1 && my < ENERGY_Y + 5
-                    ? Component.translatable("gui.ryzergen.energy", String.format("%,d", menu.energy()), String.format("%,d", StationRunner.ENERGY_CAPACITY))
+                    ? RichText.tr("gui.ryzergen.energy", String.format("%,d", menu.energy()), String.format("%,d", StationRunner.ENERGY_CAPACITY))
                     : null;
             if (tip != null) {
                 graphics.renderTooltip(font, tip, mouseX, mouseY);
@@ -386,59 +394,59 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
         }
         String key = "gui.ryzergen.station.channel.";
         switch (plan[channel]) {
-            case EMPTY -> lines.add(Component.translatable(key + "empty"));
+            case EMPTY -> lines.add(RichText.tr(key + "empty"));
             case FUEL -> {
                 if (analysis.heat()[channel] <= 0) {
-                    lines.add(Component.translatable(key + "fuel.waiting").withStyle(style -> style.withColor(colour(Channel.FUEL))));
+                    lines.add(RichText.tr(key + "fuel.waiting").withStyle(style -> style.withColor(colour(Channel.FUEL))));
                     break;
                 }
                 lines.add(rods[channel].getHoverName().copy().withStyle(style -> style.withColor(colour(Channel.FUEL))));
-                lines.add(Component.translatable(key + "fuel.heat", compact(Math.round(analysis.heat()[channel]))).withStyle(style -> style.withColor(VALUE)));
+                lines.add(RichText.tr(key + "fuel.heat", compact(Math.round(analysis.heat()[channel]))).withStyle(style -> style.withColor(VALUE)));
                 if (moderators > 0) {
-                    lines.add(Component.translatable(key + "fuel.moderators", moderators));
+                    lines.add(RichText.tr(key + "fuel.moderators", moderators));
                 }
                 if (fuel > 0) {
-                    lines.add(Component.translatable(key + "fuel.fuel", fuel));
+                    lines.add(RichText.tr(key + "fuel.fuel", fuel));
                 }
                 if (control > 0) {
-                    lines.add(Component.translatable(key + "fuel.control", control));
+                    lines.add(RichText.tr(key + "fuel.control", control));
                 }
                 if (targets > 0) {
-                    lines.add(Component.translatable(key + "fuel.target", targets));
+                    lines.add(RichText.tr(key + "fuel.target", targets));
                 }
-                lines.add(Component.translatable(key + "fuel.burn", Math.round(analysis.burn()[channel] * 100)));
+                lines.add(RichText.tr(key + "fuel.burn", Math.round(analysis.burn()[channel] * 100)));
                 lines.add(coolant > 0
-                        ? Component.translatable(key + "fuel.cooled", coolant).withStyle(style -> style.withColor(GOOD))
-                        : Component.translatable(key + "fuel.uncooled").withStyle(style -> style.withColor(BAD)));
+                        ? RichText.tr(key + "fuel.cooled", coolant).withStyle(style -> style.withColor(GOOD))
+                        : RichText.tr(key + "fuel.uncooled").withStyle(style -> style.withColor(BAD)));
             }
             case COOLANT -> {
-                lines.add(Component.translatable(key + "coolant").withStyle(style -> style.withColor(colour(Channel.COOLANT))));
+                lines.add(RichText.tr(key + "coolant").withStyle(style -> style.withColor(colour(Channel.COOLANT))));
                 float load = analysis.load()[channel];
                 int capacity = Math.round(analysis.capacity());
                 if (load <= 0) {
-                    lines.add(Component.translatable(key + "coolant.idle").withStyle(style -> style.withColor(DIM)));
+                    lines.add(RichText.tr(key + "coolant.idle").withStyle(style -> style.withColor(DIM)));
                 } else if (load > capacity + 1) {
-                    lines.add(Component.translatable(key + "coolant.load", compact(Math.round(load)), compact(capacity)).withStyle(style -> style.withColor(BAD)));
-                    lines.add(Component.translatable(key + "coolant.over").withStyle(style -> style.withColor(BAD)));
+                    lines.add(RichText.tr(key + "coolant.load", compact(Math.round(load)), compact(capacity)).withStyle(style -> style.withColor(BAD)));
+                    lines.add(RichText.tr(key + "coolant.over").withStyle(style -> style.withColor(BAD)));
                 } else {
-                    lines.add(Component.translatable(key + "coolant.load", compact(Math.round(load)), compact(capacity)).withStyle(style -> style.withColor(VALUE)));
+                    lines.add(RichText.tr(key + "coolant.load", compact(Math.round(load)), compact(capacity)).withStyle(style -> style.withColor(VALUE)));
                 }
             }
             case TARGET -> {
                 int colour = colour(Channel.TARGET);
                 if (rods[channel].isEmpty()) {
-                    lines.add(Component.translatable(key + "target.waiting").withStyle(style -> style.withColor(colour)));
+                    lines.add(RichText.tr(key + "target.waiting").withStyle(style -> style.withColor(colour)));
                 } else if (!Channel.TARGET.accepts(rods[channel])) {
                     lines.add(rods[channel].getHoverName().copy().withStyle(style -> style.withColor(colour)));
-                    lines.add(Component.translatable(key + "target.done").withStyle(style -> style.withColor(GOOD)));
+                    lines.add(RichText.tr(key + "target.done").withStyle(style -> style.withColor(GOOD)));
                 } else {
                     lines.add(rods[channel].getHoverName().copy().withStyle(style -> style.withColor(colour)));
                     float minutes = analysis.breedMinutes(channel);
                     lines.add(minutes > 0
-                            ? Component.translatable(key + "target.breeding", Math.max(1, Math.round(minutes * (1 - TargetRodItem.fraction(rods[channel])))))
+                            ? RichText.tr(key + "target.breeding", Math.max(1, Math.round(minutes * (1 - TargetRodItem.fraction(rods[channel])))))
                                     .withStyle(style -> style.withColor(VALUE))
-                            : Component.translatable(key + "target.idle").withStyle(style -> style.withColor(DIM)));
-                    lines.add(Component.translatable(key + "target.cost", fuel).withStyle(style -> style.withColor(DIM)));
+                            : RichText.tr(key + "target.idle").withStyle(style -> style.withColor(DIM)));
+                    lines.add(RichText.tr(key + "target.cost", fuel).withStyle(style -> style.withColor(DIM)));
                 }
             }
             case MODERATOR, CONTROL -> {
@@ -446,14 +454,13 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
                 int colour = colour(plan[channel]);
                 int touched = fuel;
                 if (rods[channel].isEmpty()) {
-                    lines.add(Component.translatable(key + name + ".waiting").withStyle(style -> style.withColor(colour)));
+                    lines.add(RichText.tr(key + name + ".waiting").withStyle(style -> style.withColor(colour)));
                 } else {
                     lines.add(rods[channel].getHoverName().copy().withStyle(style -> style.withColor(colour)));
-                    lines.add(Component.translatable(key + name, touched).withStyle(style -> style.withColor(touched > 0 ? VALUE : DIM)));
+                    lines.add(RichText.tr(key + name, touched).withStyle(style -> style.withColor(touched > 0 ? VALUE : DIM)));
                 }
             }
         }
-        lines.add(Component.translatable("gui.ryzergen.station.tool.clear").withStyle(style -> style.withColor(DIM)));
         return lines;
     }
 

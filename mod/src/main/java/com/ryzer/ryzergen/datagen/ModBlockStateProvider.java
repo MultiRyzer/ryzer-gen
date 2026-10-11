@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.datagen;
 
 import com.ryzer.ryzergen.battery.container.ContainerPartBlock;
 import com.ryzer.ryzergen.battery.container.ContainerLayout;
+import com.ryzer.ryzergen.machine.drill.MegaDrillPartBlock;
 import com.ryzer.ryzergen.machine.pool.PoolPartBlock;
 import com.ryzer.ryzergen.machine.pool.PoolLayout;
 import com.ryzer.ryzergen.storage.PressureTankBlock;
@@ -69,6 +70,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         fuelFabricator();
         lithiumExtractor();
         electrorefiner();
+        monaziteProcessor();
         wasteCask();
         stationParts();
         spentFuelPool();
@@ -549,6 +551,19 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 modLoc("block/drill/underside"), modLoc("block/drill/tread"));
         getVariantBuilder(ModBlocks.MEGA_DRILL_PREVIEW.get()).forAllStates(state -> ConfiguredModel.builder().modelFile(drillPreview).build());
         simpleBlockItem(ModBlocks.MEGA_DRILL_PREVIEW.get(), drillPreview);
+        // The mega drill's parts before it forms: the frame a braced graphite girder, the controller
+        // the console's controls in a panelled box, its screen facing the player. Formed, neither
+        // draws itself (the controller draws the whole drill), so one model serves every cell.
+        ModelFile drillFrame = models().cubeAll("drill_frame", modLoc("block/drill/girder"));
+        getVariantBuilder(ModBlocks.DRILL_FRAME.get()).forAllStatesExcept(state -> ConfiguredModel.builder()
+                .modelFile(drillFrame).build(), MegaDrillPartBlock.FACING, MegaDrillPartBlock.CELL, MegaDrillPartBlock.LIT);
+        simpleBlockItem(ModBlocks.DRILL_FRAME.get(), drillFrame);
+        ModelFile drillController = models().orientable("mega_drill_controller", modLoc("block/drill/panel"),
+                modLoc("block/drill/panel_screen"), modLoc("block/drill/lid"));
+        getVariantBuilder(ModBlocks.MEGA_DRILL_CONTROLLER.get()).forAllStatesExcept(state -> ConfiguredModel.builder()
+                .modelFile(drillController).rotationY(((int) state.getValue(MegaDrillPartBlock.FACING).toYRot() + 180) % 360)
+                .build(), MegaDrillPartBlock.CELL, MegaDrillPartBlock.LIT);
+        simpleBlockItem(ModBlocks.MEGA_DRILL_CONTROLLER.get(), drillController);
     }
 
     /** The machine family's shared textures (art/tools/machine_family.py). */
@@ -876,10 +891,59 @@ public class ModBlockStateProvider extends BlockStateProvider {
             }
         }
         topConnector(boxes, 15.25F, 16);
-        backConnector(boxes, 15.5F, 6);
+        backConnector(boxes, 15.5F);
         BlockModelBuilder model = boxModel(name);
         boxes.build(model, "cell", machineParts("electrorefiner"));
         return model;
+    }
+
+    /**
+     * Monazite Processor, facing north: acid digestion, then solvent extraction, as real rare earth
+     * plants work. The family cabinet with the lit screen and a light strip, a gunmetal worktop, and on
+     * it the digester: a rubber-lined vessel (two boxes, so it reads as rounded) with a sight window at
+     * the front onto the acid, dark while idle and glowing yellow-green while it digests, and the top
+     * connector on its lid. Either side at the front, a slim extraction column, copper banded, piped
+     * into the digester. Its own textures: art/tools/monazite_processor_textures.py.
+     */
+    private ModelFile monaziteProcessorModel(String name, boolean active) {
+        BoxModel boxes = new BoxModel();
+        boxes.add("skid", 0, 0, 0, 16, 2, 16);
+        boxes.add("cabinet", 1.5F, 2, 1.5F, 14.5F, 8, 15.5F).decal(Direction.NORTH, "lpanel_13x6")
+                .decal(Direction.SOUTH, "lpanel_13x6").decal(Direction.WEST, "lpanel_14x6").decal(Direction.EAST, "lpanel_14x6");
+        boxes.add("cabinet", 3.5F, 4.5F, 1.25F, 12.5F, 6.5F, 1.5F).decal(Direction.NORTH, "screen").glow(Direction.NORTH);
+        lampStrip(boxes, active, 2, 7, 1.25F, 14, 7.5F, 1.5F);
+        boxes.add("metal", 1, 8, 1, 15, 9, 15);
+        // The digester.
+        boxes.add("vessel", 4.5F, 9, 4, 11.5F, 14.5F, 13);
+        boxes.add("vessel", 4, 9, 4.5F, 12, 14.25F, 12.5F);
+        BoxModel.Box window = boxes.add("vessel", 6, 10.5F, 3.85F, 10, 12.5F, 4).decal(Direction.NORTH, active ? "window_on" : "window");
+        if (active) {
+            window.glow(Direction.NORTH);
+        }
+        boxes.add("lid", 4, 14.5F, 4, 12, 15.25F, 13);
+        // The extraction columns, banded in copper, each piped into the digester's flank.
+        for (float x : new float[] {1.5F, 12.5F}) {
+            boxes.add("column", x, 9, 2, x + 2, 15, 4);
+            boxes.add("copper", x - 0.1F, 10.5F, 1.9F, x + 2.1F, 11, 4.1F);
+            boxes.add("copper", x - 0.1F, 13, 1.9F, x + 2.1F, 13.5F, 4.1F);
+            boxes.add("accent", x + 0.25F, 15, 2.25F, x + 1.75F, 15.5F, 3.75F);
+            float from = x < 8 ? x + 2 : 12;
+            float to = x < 8 ? 4 : x;
+            boxes.add("copper", Math.min(from, to), 12, 4.5F, Math.max(from, to), 13, 5.5F);
+        }
+        topConnector(boxes, 15.25F, 16);
+        backConnector(boxes, 15.5F);
+        BlockModelBuilder model = boxModel(name);
+        boxes.build(model, "vessel", machineParts("monazite_processor"));
+        return model;
+    }
+
+    private void monaziteProcessor() {
+        Block block = ModBlocks.MONAZITE_PROCESSOR.get();
+        ModelFile off = monaziteProcessorModel("monazite_processor", false);
+        ModelFile on = monaziteProcessorModel("monazite_processor_on", true);
+        horizontalBlock(block, state -> state.getValue(ProcessingBlock.ACTIVE) ? on : off);
+        simpleBlockItem(block, off);
     }
 
     private void electrorefiner() {

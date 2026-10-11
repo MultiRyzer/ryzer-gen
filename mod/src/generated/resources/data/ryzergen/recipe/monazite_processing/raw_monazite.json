@@ -1,0 +1,24 @@
+{
+  "type": "ryzergen:monazite_processing",
+  "fluid": {
+    "amount": 100,
+    "tag": "c:sodium"
+  },
+  "inputs": [
+    {
+      "count": 1,
+      "tag": "c:raw_materials/monazite"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "ryzergen:thorium_ingot"
+    },
+    {
+      "count": 1,
+      "id": "ryzergen:yttrium_ingot"
+    }
+  ],
+  "time": 400
+}

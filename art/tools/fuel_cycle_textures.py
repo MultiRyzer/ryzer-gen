@@ -91,6 +91,12 @@ TEXTURES = {
     # The breeder's uranium blanket: uranium green on the fat assembly; bred, plutonium blue.
     'item/uranium_blanket': lambda: fuel_rod('n', '6', half=2.3),
     'item/bred_uranium_blanket': lambda: fuel_rod('G', 'g', half=2.3),
+    # The thorium line: U-233 rods ringed in teal; spent, dulled. The thorium blanket a dull grey
+    # on the fat assembly; bred, the U-233 teal.
+    'item/u233_fuel_rod': lambda: fuel_rod('t', '5'),
+    'item/spent_u233_rod': lambda: fuel_rod('5', 'D'),
+    'item/thorium_blanket': lambda: fuel_rod('L', 'm', half=2.3),
+    'item/bred_thorium_blanket': lambda: fuel_rod('t', '5', half=2.3),
 }
 
 

@@ -1,6 +1,7 @@
 package com.ryzer.ryzergen.machine.fission;
 
 import com.ryzer.ryzergen.registry.ModDataComponents;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -11,9 +12,9 @@ import net.minecraft.world.item.TooltipFlag;
 import java.util.List;
 
 /**
- * A lithium target rod (design section 10). In a target channel of the fission station's core,
- * neutrons from the fuel beside it turn its lithium into tritium; when it is done it becomes an
- * irradiated target rod, ready for tritium extraction. Like a fuel rod it carries its own progress,
+ * A lithium target rod (design section 10). In the breeder's blanket (and, in older worlds, a
+ * retired target channel of the fission station), neutrons from the fuel beside it turn its lithium
+ * into tritium; when it is done it becomes an irradiated target rod, ready for tritium extraction. Like a fuel rod it carries its own progress,
  * shown as a bar, so a rod taken out part-bred keeps it. Safe to carry (rule 10).
  */
 public class TargetRodItem extends Item {
@@ -43,7 +44,7 @@ public class TargetRodItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("item.ryzergen.lithium_target_rod.bred", Math.round(fraction(stack) * 100))
+        tooltip.add(RichText.tr("item.ryzergen.lithium_target_rod.bred", Math.round(fraction(stack) * 100))
                 .withStyle(ChatFormatting.GRAY));
     }
 }

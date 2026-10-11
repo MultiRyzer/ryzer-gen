@@ -3,12 +3,17 @@
 Each check is a lang key, worst-case values for its placeholders and the pixels the line has on
 screen (from where the text starts to the edge of its screen or well, less a 2 px margin). Text is
 measured with the game's own glyph widths, read from the Minecraft jar (nothing is copied). When a
-screen changes, update its checks here. Exits 1 if anything overflows.
+screen changes, update its checks here. Lines in the mod's markup are measured as the game draws
+them, icons at their own width. Exits 1 if anything
+overflows.
 """
 import json
 import os
+import re
 import sys
 import zipfile
+
+import font_icons
 
 from pixelart import ROOT, VANILLA_JAR, read_png
 
@@ -50,10 +55,17 @@ CHECKS = [
     ('gui.ryzergen.processing.status.redstone', [], 78),
     ('gui.ryzergen.processing.status.off', [], 78),
     ('gui.ryzergen.processing.status.underpowered', [], 78),
+    ('gui.ryzergen.processing.status.no_sodium', [], 78),
     # Reactor Fuel page in JEI and EMI (compat/*/Fuel*): 160 px wide, text from x 0.
     ('jei.ryzergen.fuel.microreactor', ['99,999'], 160),
     ('jei.ryzergen.fuel.station', ['99,999'], 160),
     ('jei.ryzergen.fuel.life', ['9999'], 160),
+    ('jei.ryzergen.fuel.assembly', ['99,999'], 160),
+    ('jei.ryzergen.fuel.blanket_uranium', [], 160),
+    ('jei.ryzergen.fuel.blanket_thorium', [], 160),
+    ('jei.ryzergen.fuel.blanket_slow', [], 160),
+    ('jei.ryzergen.fuel.target', [], 160),
+    ('jei.ryzergen.fuel.target_cost', [], 160),
     # Station control core (machine/fission/StationCoreScreen): screen x 66 to 170, text from x 70;
     # part counts start after a 10 px icon, at x 82.
     ('gui.ryzergen.station_core.building', [], 96),
@@ -103,6 +115,7 @@ CHECKS = [
     ('gui.ryzergen.breeder.status.online', [], 104),
     ('gui.ryzergen.breeder.status.overheat', [], 104),
     ('gui.ryzergen.breeder.status.scram', [], 104),
+    ('gui.ryzergen.breeder.status.sodium_fire', [], 104),
     ('gui.ryzergen.breeder.live', ['-99.9k', '650'], 104),
     ('gui.ryzergen.breeder.plan_empty', [], 104),
     ('gui.ryzergen.breeder.too_hot', [], 104),
@@ -113,6 +126,25 @@ CHECKS = [
     ('gui.ryzergen.breeder.plan_temperature', ['42', '550'], 104),
     ('gui.ryzergen.breeder.fuel_life', ['9999'], 104),
     ('gui.ryzergen.breeder.blankets', ['19'], 104),
+    # Mega drill (machine/drill/MegaDrillScreen): screen x 27 to 134, text from x 31.
+    ('gui.ryzergen.mega_drill.status.charging', [], 100),
+    ('gui.ryzergen.mega_drill.status.firing', [], 100),
+    ('gui.ryzergen.mega_drill.status.scanning', [], 100),
+    ('gui.ryzergen.mega_drill.status.no_head', [], 100),
+    ('gui.ryzergen.mega_drill.status.no_tip', [], 100),
+    ('gui.ryzergen.mega_drill.status.no_power', [], 100),
+    ('gui.ryzergen.mega_drill.status.no_water', [], 100),
+    ('gui.ryzergen.mega_drill.status.output_full', [], 100),
+    ('gui.ryzergen.mega_drill.status.redstone', [], 100),
+    ('gui.ryzergen.mega_drill.status.off', [], 100),
+    ('gui.ryzergen.mega_drill.status.unloaded', [], 100),
+    ('gui.ryzergen.mega_drill.status.finished', [], 100),
+    ('gui.ryzergen.mega_drill.layer', ['-2032'], 100),
+    ('gui.ryzergen.mega_drill.deep', ['-2032'], 100),
+    ('gui.ryzergen.mega_drill.status.boring', [], 100),
+    ('gui.ryzergen.mega_drill.speed', ['7'], 100),
+    ('gui.ryzergen.mega_drill.speed_none', [], 100),
+    ('container.ryzergen.mega_drill', [], 160),
     # Progression map (client/progression/ProgressionScreen): column headings in a 132-wide column
     # less its gap, and the spoiler button across the 210-wide panel less its margins.
     ('progression.ryzergen.column.dig', [], 120),
@@ -168,9 +200,66 @@ def width(text, widths):
     return sum(widths.get(ch, 6) for ch in text)
 
 
+# The mod's markup (client/text/RichText): key terms in colour with an icon before them, numbers
+# and key nouns in white, controls in brackets.
+TOKEN = re.compile(r'\{([a-z_]+)\}|<([a-z]+)(-?)>(.*?)</\2\3>')
+# Glossary words and the term (icon) each takes, as Term.WORDS.
+WORD_TERMS = {'power': 'power', 'energy': 'power', 'heat': 'heat', 'meltdown': 'heat', 'coolant': 'coolant',
+              'water': 'coolant', 'sodium': 'coolant', 'steam': 'steam', 'fuel': 'fuel', 'moderator': 'moderator',
+              'control': 'control', 'radiation': 'radiation', 'speed': 'speed', 'blanket': 'breeding',
+              'target': 'breeding', 'tritium': 'breeding', 'time': 'time'}
+
+
+def icon_widths():
+    """Advance of each icon in the mod's icons font: its inked width plus one."""
+    rows = read_png(open(os.path.join(ROOT, 'mod', 'src', 'main', 'resources', 'assets', 'ryzergen', 'textures',
+                                      'font', 'icons.png'), 'rb').read())
+    out = {}
+    for n, name in enumerate(font_icons.ICONS):
+        inked = 0
+        for x in range(8):
+            if any(rows[y][8 * n + x][3] for y in range(8)):
+                inked = x + 1
+        out[name] = inked + 1
+    return out
+
+
+def measure(text, lang, widths, icons):
+    """A marked-up line's width, and its text as it reads."""
+    def bold(t):
+        # Marked text is never bold (the game's fake bold smears small letters), so it is as wide as plain.
+        return width(t, widths)
+
+    total, plain, pos = 0, [], 0
+    for m in TOKEN.finditer(text):
+        total += width(text[pos:m.start()], widths)
+        plain.append(text[pos:m.start()])
+        if m.group(1):
+            word = lang.get('term.ryzergen.' + m.group(1), m.group(1))
+            total += icons[WORD_TERMS[m.group(1)]] + bold(word)
+            plain.append(word)
+        else:
+            tag, inner = m.group(2), m.group(4)
+            if tag in icons:
+                total += (0 if m.group(3) else icons[tag]) + bold(inner)
+            elif tag in ('n', 'b'):
+                total += bold(inner)
+            elif tag == 'k':
+                total += width('[]', widths) + bold(inner)
+                inner = '[' + inner + ']'
+            else:
+                total += width(inner, widths)
+            plain.append(inner)
+        pos = m.end()
+    total += width(text[pos:], widths)
+    plain.append(text[pos:])
+    return total, ''.join(plain)
+
+
 def main():
     lang = json.load(open(LANG, encoding='utf-8'))
     widths = glyph_widths()
+    icons = icon_widths()
     failed = 0
     for key, args, room in CHECKS:
         if key not in lang:
@@ -180,10 +269,10 @@ def main():
         text = lang[key].replace('%%', '%')
         for arg in args:
             text = text.replace('%s', arg, 1)
-        w = width(text, widths)
+        w, shown = measure(text, lang, widths, icons)
         ok = w <= room
         failed += not ok
-        print(f'{"ok      " if ok else "TOO LONG"} {w:3d}/{room:<3d} {text}')
+        print(f'{"ok      " if ok else "TOO LONG"} {w:3d}/{room:<3d} {shown}')
     sys.exit(1 if failed else 0)
 
 

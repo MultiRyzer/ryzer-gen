@@ -1,11 +1,13 @@
 package com.ryzer.ryzergen.storage;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import com.ryzer.ryzergen.registry.ModItems;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -135,7 +137,7 @@ public class WasteCaskBlock extends BaseEntityBlock {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         int stored = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).stream().mapToInt(ItemStack::getCount).sum();
-        tooltip.add(Component.translatable("tooltip.ryzergen.waste_cask.stored",
-                String.format("%,d", stored), String.format("%,d", WasteCaskBlockEntity.CAPACITY)).withStyle(style -> style.withColor(0xFF9AA3AE)));
+        tooltip.add(RichText.tr("tooltip.ryzergen.waste_cask.stored",
+                String.format("%,d", stored), String.format("%,d", WasteCaskBlockEntity.CAPACITY)).withStyle(ChatFormatting.GRAY));
     }
 }

@@ -3,6 +3,7 @@ package com.ryzer.ryzergen.machine.processing;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.GuiGauges;
 import com.ryzer.ryzergen.machine.processing.ProcessingBlockEntity.Status;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -85,7 +86,7 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
         GuiGauges.glass(graphics, leftPos + ENERGY_X, topPos + WELL_Y, 8, WELL_H);
         if (menu.machine().usesWater()) {
             GuiGauges.fluid(graphics, leftPos + WATER_X, topPos + WELL_Y, 10, WELL_H,
-                    menu.water() / (float) menu.machine().waterCapacity(), Fluids.WATER);
+                    menu.water() / (float) menu.machine().waterCapacity(), menu.machine().inputFluid());
             GuiGauges.glass(graphics, leftPos + WATER_X, topPos + WELL_Y, 10, WELL_H);
         } else if (menu.machine().hasTank()) {
             // The output tank takes the left well when there is no water to show.
@@ -138,8 +139,10 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
         };
         // Running, the line also shows the time left (the arrow's own tooltip is the recipe viewer's).
         Component line = status == Status.RUNNING && menu.ticksLeft() > 0
-                ? Component.translatable("gui.ryzergen.processing.status.running_time", clock(menu.ticksLeft()))
-                : Component.translatable("gui.ryzergen.processing.status." + status.name().toLowerCase(Locale.ROOT));
+                ? RichText.tr("gui.ryzergen.processing.status.running_time", clock(menu.ticksLeft()))
+                : status == Status.NO_WATER && menu.machine().inputFluid() != Fluids.WATER
+                ? RichText.tr("gui.ryzergen.processing.status.no_sodium")
+                : RichText.tr("gui.ryzergen.processing.status." + status.name().toLowerCase(Locale.ROOT));
         graphics.drawString(font, line, STATUS_X, STATUS_Y, colour, false);
     }
 
@@ -169,54 +172,55 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
         if (wellRow && mx >= ENERGY_X - 1 && mx < ENERGY_X + 9) {
             String draw = String.format("%,d", ProcessingBlockEntity.energyPerTick(menu.machine(), menu.modules()));
             List<Component> lines = new ArrayList<>(List.of(
-                    Component.translatable("gui.ryzergen.energy", String.format("%,d", menu.energy()),
+                    RichText.tr("gui.ryzergen.energy", String.format("%,d", menu.energy()),
                             String.format("%,d", ProcessingBlockEntity.capacity(menu.machine(), menu.modules()))),
-                    Component.translatable("gui.ryzergen.processing.uses", draw).withStyle(style -> style.withColor(DIM)),
-                    Component.translatable("gui.ryzergen.processing.speed", ProcessingBlockEntity.speed(menu.modules()))
+                    RichText.tr("gui.ryzergen.processing.uses", draw).withStyle(style -> style.withColor(DIM)),
+                    RichText.tr("gui.ryzergen.processing.speed", ProcessingBlockEntity.speed(menu.modules()))
                             .withStyle(style -> style.withColor(DIM))));
             if (menu.machine().gated()) {
-                lines.add(Component.translatable("gui.ryzergen.processing.gated", draw).withStyle(style -> style.withColor(WARN)));
+                lines.add(RichText.tr("gui.ryzergen.processing.gated", draw).withStyle(style -> style.withColor(WARN)));
             }
             graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
         } else if (mx >= STATUS_X && mx < STATUS_X + 78 && my >= STATUS_Y - 1 && my < STATUS_Y + 9 && menu.ticksLeft() > 0) {
             long cost = (long) menu.ticksLeft() * ProcessingBlockEntity.energyPerTick(menu.machine(), menu.modules());
             graphics.renderComponentTooltip(font, List.of(
-                    Component.translatable("gui.ryzergen.processing.time_left", duration(menu.ticksLeft())),
-                    Component.translatable("gui.ryzergen.processing.energy_left", String.format("%,d", cost))
+                    RichText.tr("gui.ryzergen.processing.time_left", duration(menu.ticksLeft())),
+                    RichText.tr("gui.ryzergen.processing.energy_left", String.format("%,d", cost))
                             .withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
         } else if (wellRow && menu.machine().usesWater() && mx >= WATER_X - 1 && mx < WATER_X + 11) {
-            graphics.renderTooltip(font, Component.translatable("gui.ryzergen.intake_pump.water",
+            graphics.renderTooltip(font, RichText.tr(menu.machine().inputFluid() == Fluids.WATER
+                            ? "gui.ryzergen.intake_pump.water" : "gui.ryzergen.processing.sodium",
                     String.format("%,d", menu.water()), String.format("%,d", menu.machine().waterCapacity())), mouseX, mouseY);
         } else if (wellRow && menu.machine().hasTank() && mx >= WATER_X - 1 && mx < WATER_X + 11) {
             Component held = menu.tank() > 0 ? menu.tankFluid().getFluidType().getDescription()
-                    : Component.translatable("gui.ryzergen.processing.tank.empty");
+                    : RichText.tr("gui.ryzergen.processing.tank.empty");
             graphics.renderComponentTooltip(font, List.of(
-                    Component.translatable("gui.ryzergen.processing.tank", held,
+                    RichText.tr("gui.ryzergen.processing.tank", held,
                             String.format("%,d", menu.tank()), String.format("%,d", menu.machine().tankCapacity())),
-                    Component.translatable("gui.ryzergen.processing.tank.hint").withStyle(style -> style.withColor(DIM))),
+                    RichText.tr("gui.ryzergen.processing.tank.hint").withStyle(style -> style.withColor(DIM))),
                     mouseX, mouseY);
         } else if (hoveredSlot != null && hoveredSlot.getSlotIndex() == menu.machine().upgradeSlot() && !hoveredSlot.hasItem()) {
             graphics.renderComponentTooltip(font, List.of(
-                    Component.translatable("gui.ryzergen.processing.upgrade_slot"),
-                    Component.translatable("gui.ryzergen.processing.upgrade_hint", ProcessingMachine.MAX_MODULES)
+                    RichText.tr("gui.ryzergen.processing.upgrade_slot"),
+                    RichText.tr("gui.ryzergen.processing.upgrade_hint", ProcessingMachine.MAX_MODULES)
                             .withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
         } else if (isOver(KEY_X, POWER_Y, mouseX, mouseY)) {
             graphics.renderComponentTooltip(font, List.of(
-                    Component.translatable(menu.enabled() ? "gui.ryzergen.processing.power.on" : "gui.ryzergen.processing.power.off"),
-                    Component.translatable("gui.ryzergen.power.hint").withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
+                    RichText.tr(menu.enabled() ? "gui.ryzergen.processing.power.on" : "gui.ryzergen.processing.power.off"),
+                    RichText.tr("gui.ryzergen.power.hint").withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
         } else if (isOver(AUTO_X, AUTO_Y, mouseX, mouseY)) {
             graphics.renderComponentTooltip(font, List.of(
-                    Component.translatable(menu.autoOutput() ? "gui.ryzergen.processing.auto_output.on" : "gui.ryzergen.processing.auto_output.off"),
-                    Component.translatable("gui.ryzergen.processing.auto_output.hint").withStyle(style -> style.withColor(DIM)),
-                    Component.translatable("gui.ryzergen.power.hint").withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
+                    RichText.tr(menu.autoOutput() ? "gui.ryzergen.processing.auto_output.on" : "gui.ryzergen.processing.auto_output.off"),
+                    RichText.tr("gui.ryzergen.processing.auto_output.hint").withStyle(style -> style.withColor(DIM)),
+                    RichText.tr("gui.ryzergen.power.hint").withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
         } else if (isOver(KEY_X, REDSTONE_Y, mouseX, mouseY)) {
             String mode = switch (menu.redstoneMode()) {
                 case IGNORED -> "gui.ryzergen.redstone.ignored";
                 case HIGH -> "gui.ryzergen.redstone.high";
                 case LOW -> "gui.ryzergen.redstone.low";
             };
-            graphics.renderComponentTooltip(font, List.of(Component.translatable(mode),
-                    Component.translatable("gui.ryzergen.redstone.hint").withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
+            graphics.renderComponentTooltip(font, List.of(RichText.tr(mode),
+                    RichText.tr("gui.ryzergen.redstone.hint").withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
         }
     }
 

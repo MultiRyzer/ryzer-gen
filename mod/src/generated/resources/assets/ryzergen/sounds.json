@@ -51,27 +51,7 @@
     "sounds": [
       {
         "attenuation_distance": 48,
-        "name": "random/explode1",
-        "pitch": 1.4,
-        "volume": 0.6
-      },
-      {
-        "attenuation_distance": 48,
-        "name": "random/explode2",
-        "pitch": 1.4,
-        "volume": 0.6
-      },
-      {
-        "attenuation_distance": 48,
-        "name": "random/explode3",
-        "pitch": 1.4,
-        "volume": 0.6
-      },
-      {
-        "attenuation_distance": 48,
-        "name": "random/explode4",
-        "pitch": 1.4,
-        "volume": 0.6
+        "name": "ryzergen:mega_drill_burst"
       }
     ],
     "subtitle": "subtitles.ryzergen.mega_drill_burst"
@@ -90,8 +70,25 @@
     "sounds": [
       {
         "attenuation_distance": 48,
-        "name": "mob/ghast/fireball4",
-        "pitch": 0.6
+        "name": "ryzergen:mega_drill_fire"
+      }
+    ],
+    "subtitle": "subtitles.ryzergen.mega_drill_fire"
+  },
+  "mega_drill_fire_x2": {
+    "sounds": [
+      {
+        "attenuation_distance": 48,
+        "name": "ryzergen:mega_drill_fire_x2"
+      }
+    ],
+    "subtitle": "subtitles.ryzergen.mega_drill_fire"
+  },
+  "mega_drill_fire_x4": {
+    "sounds": [
+      {
+        "attenuation_distance": 48,
+        "name": "ryzergen:mega_drill_fire_x4"
       }
     ],
     "subtitle": "subtitles.ryzergen.mega_drill_fire"
@@ -145,6 +142,12 @@
     ],
     "subtitle": "subtitles.ryzergen.station_hum"
   },
+  "voice_breeder_online": {
+    "sounds": [
+      "ryzergen:voice/breeder_online"
+    ],
+    "subtitle": "subtitles.ryzergen.voice_breeder_online"
+  },
   "voice_controlled_shutdown": {
     "sounds": [
       "ryzergen:voice/controlled_shutdown"
@@ -163,11 +166,23 @@
     ],
     "subtitle": "subtitles.ryzergen.voice_flux_tilt"
   },
+  "voice_hot_spot": {
+    "sounds": [
+      "ryzergen:voice/hot_spot"
+    ],
+    "subtitle": "subtitles.ryzergen.voice_hot_spot"
+  },
   "voice_meltdown_risk": {
     "sounds": [
       "ryzergen:voice/meltdown_risk"
     ],
     "subtitle": "subtitles.ryzergen.voice_meltdown_risk"
+  },
+  "voice_no_fuel": {
+    "sounds": [
+      "ryzergen:voice/no_fuel"
+    ],
+    "subtitle": "subtitles.ryzergen.voice_no_fuel"
   },
   "voice_overheat": {
     "sounds": [
@@ -199,10 +214,40 @@
     ],
     "subtitle": "subtitles.ryzergen.voice_scram"
   },
+  "voice_sodium_fire": {
+    "sounds": [
+      "ryzergen:voice/sodium_fire"
+    ],
+    "subtitle": "subtitles.ryzergen.voice_sodium_fire"
+  },
+  "voice_sodium_low": {
+    "sounds": [
+      "ryzergen:voice/sodium_low"
+    ],
+    "subtitle": "subtitles.ryzergen.voice_sodium_low"
+  },
   "voice_station_online": {
     "sounds": [
       "ryzergen:voice/station_online"
     ],
     "subtitle": "subtitles.ryzergen.voice_station_online"
+  },
+  "voice_steady_state_1": {
+    "sounds": [
+      "ryzergen:voice/steady_state_1"
+    ],
+    "subtitle": "subtitles.ryzergen.voice_steady_state_1"
+  },
+  "voice_steady_state_2": {
+    "sounds": [
+      "ryzergen:voice/steady_state_2"
+    ],
+    "subtitle": "subtitles.ryzergen.voice_steady_state_2"
+  },
+  "voice_steady_state_3": {
+    "sounds": [
+      "ryzergen:voice/steady_state_3"
+    ],
+    "subtitle": "subtitles.ryzergen.voice_steady_state_3"
   }
 }

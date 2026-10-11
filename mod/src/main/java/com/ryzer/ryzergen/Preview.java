@@ -9,10 +9,11 @@ import net.neoforged.neoforge.common.conditions.ICondition;
 import java.util.List;
 
 /**
- * Content from the next tier that is built but not finished yet (the breeder's fuel chain from
- * design section 9, tritium breeding from section 10, and the fusion and sun gate previews). The Lithium Extractor has left the preview: the
- * Container Battery's racks need its lithium. It stays registered so worlds keep their blocks and items, but while the preview
- * config is off its recipes do not load and it is left out of the creative tab and recipe viewers.
+ * Content from the next tier that is built but not finished yet: tritium breeding (lithium target
+ * rods, design section 10, for fusion) and the creative previews of fusion, the sun gate and the
+ * mega drill. The breeder and the thorium line left the preview with tier 4. Preview items stay
+ * registered so worlds keep their blocks and items, but while the preview config is off their
+ * recipes do not load and they are left out of the creative tab and recipe viewers.
  */
 public final class Preview {
     /** Recipes guarded by this load only with the preview on. */
@@ -26,10 +27,7 @@ public final class Preview {
 
     public static List<ItemLike> items() {
         return List.of(ModItems.LITHIUM_TARGET_ROD.get(), ModItems.IRRADIATED_TARGET_ROD.get(), ModItems.FUSION_PREVIEW.get(),
-                ModItems.SUN_GATE_PREVIEW.get(), ModItems.MEGA_DRILL_PREVIEW.get(), ModItems.ELECTROREFINER.get(), ModItems.SODIUM_INGOT.get(),
-                ModItems.TRANSURANIC_METAL.get(), ModItems.BREEDER_CORE.get(), ModItems.BREEDER_FRAME.get(),
-                ModItems.BREEDER_SHELL.get(), ModItems.BREEDER_FUEL.get(), ModItems.SPENT_BREEDER_FUEL.get(),
-                ModItems.URANIUM_BLANKET.get(), ModItems.BRED_URANIUM_BLANKET.get());
+                ModItems.SUN_GATE_PREVIEW.get(), ModItems.MEGA_DRILL_PREVIEW.get());
     }
 
     /** True for preview items while the preview is off, so they can be hidden. */

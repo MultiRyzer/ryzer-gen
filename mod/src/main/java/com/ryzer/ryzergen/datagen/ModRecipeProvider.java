@@ -557,9 +557,8 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('F', ModItems.SILVER_FITTINGS.get())
                 .unlockedBy("has_silver_fittings", has(ModItems.SILVER_FITTINGS.get()))
                 .save(output);
-        // Superconductor: yttrium (tier 5, from monazite) kept cold with blue ice. Until the mod makes
-        // yttrium this only loads when another mod provides it.
-        TagKey<Item> yttrium = ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ingots/yttrium"));
+        // Superconductor: yttrium (from monazite, in the Monazite Processor) kept cold with blue ice.
+        TagKey<Item> yttrium = ModTags.INGOTS_YTTRIUM;
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CRYOGENIC_FITTINGS.get())
                 .pattern("YIY")
                 .pattern("IFI")
@@ -568,7 +567,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('I', Items.BLUE_ICE)
                 .define('F', ModItems.BUSBAR_FITTINGS.get())
                 .unlockedBy("has_busbar_fittings", has(ModItems.BUSBAR_FITTINGS.get()))
-                .save(output.withConditions(new NotCondition(new TagEmptyCondition(yttrium))));
+                .save(output);
 
         // Cracking: TRISO has to be crushed open before it can be processed. The shell and packing
         // come back as graphite and steel.
@@ -629,7 +628,6 @@ public class ModRecipeProvider extends RecipeProvider {
                 List.of(new ItemStack(ModItems.LITHIUM_DUST.get())), 200);
 
         // Electrorefiner (design section 9): a molten salt cell for pyroprocessing, the breeder's way in.
-        // Unfinished until the breeder lands, so it loads only with the preview on.
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ELECTROREFINER.get())
                 .pattern("SCS")
                 .pattern("PKP")
@@ -640,15 +638,77 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('K', ModTags.INGOTS_GRAPHITE)
                 .define('A', ModTags.CIRCUITS_ADVANCED)
                 .unlockedBy("has_spent_mox_rod", has(ModItems.SPENT_MOX_ROD.get()))
-                .save(preview);
+                .save(output);
         // Spent MOX, dissolved in the salt bath: the transuranics and uranium plate out on the
         // cathodes, the fission products stay in the salt and leave as waste. A little salt tops up
         // the bath. Real basis: the electrorefiner at the heart of pyroprocessing.
-        machine(preview, "electrorefining/spent_mox_rod", MachineRecipe.Process.ELECTROREFINING,
+        machine(output, "electrorefining/spent_mox_rod", MachineRecipe.Process.ELECTROREFINING,
                 List.of(SizedIngredient.of(ModItems.SPENT_MOX_ROD.get(), 1), SizedIngredient.of(OreType.SALT.dropTag(), 1)), null,
                 List.of(new ItemStack(ModItems.TRANSURANIC_METAL.get()), new ItemStack(ModItems.INGOTS.get(OreType.URANIUM).get()),
                         new ItemStack(ModItems.FISSION_WASTE.get())), 600);
-        // Breeder reactor (design section 9), behind the preview while it is built. The frame and
+        // Mega drill (design section 11c). The frame is
+        // cheap structure (rule 3), many per craft: steel girders braced with iron. The cost is in the
+        // controller (advanced boards, tungsten, a redstone block for its logic) and the heads.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DRILL_FRAME.get(), 16)
+                .pattern("SIS")
+                .pattern("I I")
+                .pattern("SIS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.MEGA_DRILL_CONTROLLER.get())
+                .pattern("SAS")
+                .pattern("TRT")
+                .pattern("SAS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .define('T', OreType.TUNGSTEN.ingotTag())
+                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
+                .unlockedBy("has_advanced_control_board", has(ModTags.CIRCUITS_ADVANCED))
+                .save(output);
+        // The heads: a gyrotron (its diamond window lets the beam out) over a tungsten emitter. Each
+        // mark is built on the one before (rule 11): silicon carbide for the Mk II's hotter emitter,
+        // plutonium from the fission tier for the Mk III, which also wants fission power to run.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DRILL_HEAD_MK1.get())
+                .pattern("SAS")
+                .pattern("TDT")
+                .pattern(" T ")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .define('T', OreType.TUNGSTEN.ingotTag())
+                .define('D', Tags.Items.GEMS_DIAMOND)
+                .unlockedBy("has_mega_drill_controller", has(ModItems.MEGA_DRILL_CONTROLLER.get()))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DRILL_HEAD_MK2.get())
+                .pattern(" A ")
+                .pattern("CHC")
+                .pattern(" A ")
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .define('C', ModTags.GEMS_SILICON_CARBIDE)
+                .define('H', ModItems.DRILL_HEAD_MK1.get())
+                .unlockedBy("has_drill_head_mk1", has(ModItems.DRILL_HEAD_MK1.get()))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DRILL_HEAD_MK3.get())
+                .pattern(" A ")
+                .pattern("PHP")
+                .pattern(" A ")
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .define('P', ModTags.INGOTS_PLUTONIUM)
+                .define('H', ModItems.DRILL_HEAD_MK2.get())
+                .unlockedBy("has_drill_head_mk2", has(ModItems.DRILL_HEAD_MK2.get()))
+                .save(output);
+        // A tip: two tungsten ingots on a steel shank. It lasts about one pit, so the drill keeps
+        // needing the mines below (rule 14), and tungsten has a use.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.TUNGSTEN_TIP.get())
+                .pattern("S")
+                .pattern("T")
+                .pattern("T")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('T', OreType.TUNGSTEN.ingotTag())
+                .unlockedBy("has_tungsten_ingot", has(OreType.TUNGSTEN.ingotTag()))
+                .save(output);
+        // Breeder reactor (design section 9). The frame and
         // shell are cheap structure (rule 3), many per craft: steel girders and welded steel plate.
         // The cost is in the core: lead shielding round advanced boards, and transuranic metal, so
         // the Electrorefiner (and a MOX station feeding it) comes first.
@@ -659,7 +719,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('S', ModTags.INGOTS_STEEL)
                 .define('G', ModTags.INGOTS_GRAPHITE)
                 .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
-                .save(preview);
+                .save(output);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BREEDER_SHELL.get(), 16)
                 .pattern("SSS")
                 .pattern("SLS")
@@ -667,7 +727,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('S', ModTags.INGOTS_STEEL)
                 .define('L', OreType.LEAD.ingotTag())
                 .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
-                .save(preview);
+                .save(output);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BREEDER_CORE.get())
                 .pattern("LAL")
                 .pattern("TST")
@@ -677,41 +737,77 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('T', ModItems.TRANSURANIC_METAL.get())
                 .define('S', ModTags.INGOTS_STEEL)
                 .unlockedBy("has_transuranic_metal", has(ModItems.TRANSURANIC_METAL.get()))
-                .save(preview);
+                .save(output);
         // Salt alone splits into sodium (the chlorine is vented). Real basis: molten salt
         // electrolysis is how sodium is made.
-        machine(preview, "electrorefining/sodium", MachineRecipe.Process.ELECTROREFINING,
+        machine(output, "electrorefining/sodium", MachineRecipe.Process.ELECTROREFINING,
                 List.of(SizedIngredient.of(OreType.SALT.dropTag(), 2)), null,
                 List.of(new ItemStack(ModItems.SODIUM_INGOT.get())), 200);
         // Liquid sodium for the breeder's loop: an ingot melted in the cell's molten salt (sodium melts
         // at 98 C, the cell runs at about 500 C), into its tank. 250 mB an ingot, a generous fudge so
         // filling a loop is no grind (rule 3).
-        machineToFluid(preview, "electrorefining/liquid_sodium", MachineRecipe.Process.ELECTROREFINING,
+        machineToFluid(output, "electrorefining/liquid_sodium", MachineRecipe.Process.ELECTROREFINING,
                 List.of(SizedIngredient.of(ModTags.INGOTS_SODIUM, 1)), new FluidStack(ModFluids.SODIUM.get(), 250), 40);
         // Breeder fuel (design section 9): transuranic metal alloyed with uranium, clad in steel, as
         // real fast reactor metal fuel is (EBR-II's uranium-plutonium alloy pins in steel tubes; ours
         // leaves out the zirconium).
-        machine(preview, "fabricating/breeder_fuel", MachineRecipe.Process.FABRICATING,
+        machine(output, "fabricating/breeder_fuel", MachineRecipe.Process.FABRICATING,
                 List.of(SizedIngredient.of(ModItems.TRANSURANIC_METAL.get(), 1), SizedIngredient.of(OreType.URANIUM.ingotTag(), 1),
                         SizedIngredient.of(ModTags.INGOTS_STEEL, 2)), null,
                 List.of(new ItemStack(ModItems.BREEDER_FUEL.get())), 300);
         // The breeder's uranium blanket: uranium in a steel tube (real blankets use depleted uranium).
-        machine(preview, "fabricating/uranium_blanket", MachineRecipe.Process.FABRICATING,
+        machine(output, "fabricating/uranium_blanket", MachineRecipe.Process.FABRICATING,
                 List.of(SizedIngredient.of(OreType.URANIUM.ingotTag(), 2), SizedIngredient.of(ModTags.INGOTS_STEEL, 1)), null,
                 List.of(new ItemStack(ModItems.URANIUM_BLANKET.get())), 200);
         // Spent breeder fuel goes back into transuranic metal, but half of it: a fast core burns more
         // than it makes (only the blanket gains), so the breeder never fuels itself. The rest comes
         // from the MOX station's spent fuel, which keeps the station running beside it (design
         // section 9, pillar 6: roots run deep).
-        machine(preview, "electrorefining/spent_breeder_fuel", MachineRecipe.Process.ELECTROREFINING,
+        machine(output, "electrorefining/spent_breeder_fuel", MachineRecipe.Process.ELECTROREFINING,
                 List.of(SizedIngredient.of(ModItems.SPENT_BREEDER_FUEL.get(), 2), SizedIngredient.of(OreType.SALT.dropTag(), 1)), null,
                 List.of(new ItemStack(ModItems.TRANSURANIC_METAL.get()), new ItemStack(ModItems.INGOTS.get(OreType.URANIUM).get()),
                         new ItemStack(ModItems.FISSION_WASTE.get(), 2)), 600);
         // A bred uranium blanket: its plutonium for MOX rods (3 nuggets, as much as a spent uranium rod
         // gives the Reprocessor), and the uranium left in it.
-        machine(preview, "electrorefining/bred_uranium_blanket", MachineRecipe.Process.ELECTROREFINING,
+        machine(output, "electrorefining/bred_uranium_blanket", MachineRecipe.Process.ELECTROREFINING,
                 List.of(SizedIngredient.of(ModItems.BRED_URANIUM_BLANKET.get(), 1), SizedIngredient.of(OreType.SALT.dropTag(), 1)), null,
                 List.of(new ItemStack(ModItems.PLUTONIUM_NUGGET.get(), 3), new ItemStack(ModItems.INGOTS.get(OreType.URANIUM).get())), 600);
+
+        // The thorium line (design section 9). The Monazite Processor: cracked with sodium (real plants
+        // use hot caustic soda), then solvent extraction, 20 s at 2,000 FE/t (800,000 FE) and 100 mB
+        // of liquid sodium a raw monazite, for its thorium and yttrium.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.MONAZITE_PROCESSOR.get())
+                .pattern("SAS")
+                .pattern("GCG")
+                .pattern("SLS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .define('C', Items.CAULDRON)
+                .define('L', OreType.LEAD.ingotTag())
+                .unlockedBy("has_raw_monazite", has(OreType.MONAZITE.dropTag()))
+                .save(output);
+        machine(output, "monazite_processing/raw_monazite", MachineRecipe.Process.MONAZITE,
+                List.of(SizedIngredient.of(OreType.MONAZITE.dropTag(), 1)), SizedFluidIngredient.of(ModFluids.SODIUM_TAG, 100),
+                List.of(new ItemStack(ModItems.THORIUM_INGOT.get()), new ItemStack(ModItems.YTTRIUM_INGOT.get())), 400);
+        // Thorium in the breeder's blanket, as uranium is; bred, the Electrorefiner gives back its
+        // U-233 and the thorium left in it (part of what went in: roots run deep).
+        machine(output, "fabricating/thorium_blanket", MachineRecipe.Process.FABRICATING,
+                List.of(SizedIngredient.of(ModTags.INGOTS_THORIUM, 2), SizedIngredient.of(ModTags.INGOTS_STEEL, 1)), null,
+                List.of(new ItemStack(ModItems.THORIUM_BLANKET.get())), 200);
+        machine(output, "electrorefining/bred_thorium_blanket", MachineRecipe.Process.ELECTROREFINING,
+                List.of(SizedIngredient.of(ModItems.BRED_THORIUM_BLANKET.get(), 1), SizedIngredient.of(OreType.SALT.dropTag(), 1)), null,
+                List.of(new ItemStack(ModItems.URANIUM_233_INGOT.get()), new ItemStack(ModItems.THORIUM_INGOT.get())), 600);
+        // A U-233 rod: U-233 in thorium, clad in steel. Real thorium fuels mix the two.
+        machine(output, "fabricating/u233_fuel_rod", MachineRecipe.Process.FABRICATING,
+                List.of(SizedIngredient.of(ModTags.INGOTS_URANIUM_233, 1), SizedIngredient.of(ModTags.INGOTS_THORIUM, 1),
+                        SizedIngredient.of(ModTags.INGOTS_STEEL, 1)), null,
+                List.of(new ItemStack(ModItems.U233_FUEL_ROD.get())), 200);
+        // Spent, it gives back some thorium and waste, and no plutonium.
+        machine(output, "reprocessing/spent_u233_rod", MachineRecipe.Process.REPROCESSING,
+                List.of(SizedIngredient.of(ModItems.SPENT_U233_ROD.get(), 1), SizedIngredient.of(OreType.FLUORITE.dropTag(), 1)),
+                SizedFluidIngredient.of(Tags.Fluids.WATER, 250),
+                List.of(new ItemStack(ModItems.THORIUM_INGOT.get()), new ItemStack(ModItems.FISSION_WASTE.get())), 400);
     }
 
     private static void machine(RecipeOutput output, String name, MachineRecipe.Process process, List<SizedIngredient> inputs,

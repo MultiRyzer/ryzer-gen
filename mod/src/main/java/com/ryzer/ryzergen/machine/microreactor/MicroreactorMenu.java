@@ -75,6 +75,18 @@ public class MicroreactorMenu extends AbstractContainerMenu {
         return data.get(DATA_TEMPERATURE);
     }
 
+    public int streak() {
+        return data.get(DATA_STREAK);
+    }
+
+    public int bonus() {
+        return data.get(DATA_BONUS);
+    }
+
+    public int nextMilestone() {
+        return data.get(DATA_NEXT);
+    }
+
     public int output() {
         return data.get(DATA_OUTPUT);
     }

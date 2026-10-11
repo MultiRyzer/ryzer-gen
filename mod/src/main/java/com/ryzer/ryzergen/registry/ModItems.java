@@ -9,6 +9,8 @@ import com.ryzer.ryzergen.cable.FittingItem;
 import com.ryzer.ryzergen.item.WrenchItem;
 import com.ryzer.ryzergen.machine.SpeedModuleItem;
 import com.ryzer.ryzergen.machine.breeder.BreederFuelItem;
+import com.ryzer.ryzergen.machine.drill.DrillHeadItem;
+import com.ryzer.ryzergen.machine.drill.TungstenTipItem;
 import com.ryzer.ryzergen.machine.fission.FuelRodItem;
 import com.ryzer.ryzergen.machine.fission.TargetRodItem;
 import com.ryzer.ryzergen.machine.microreactor.FuelCoreItem;
@@ -38,6 +40,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> FUEL_FABRICATOR = ITEMS.registerSimpleBlockItem(ModBlocks.FUEL_FABRICATOR);
     public static final DeferredItem<BlockItem> LITHIUM_EXTRACTOR = ITEMS.registerSimpleBlockItem(ModBlocks.LITHIUM_EXTRACTOR);
     public static final DeferredItem<BlockItem> ELECTROREFINER = ITEMS.registerSimpleBlockItem(ModBlocks.ELECTROREFINER);
+    public static final DeferredItem<BlockItem> MONAZITE_PROCESSOR = ITEMS.registerSimpleBlockItem(ModBlocks.MONAZITE_PROCESSOR);
     public static final DeferredItem<BlockItem> WASTE_CASK = ITEMS.registerSimpleBlockItem(ModBlocks.WASTE_CASK);
     public static final DeferredItem<BlockItem> FLUID_TANK = ITEMS.registerSimpleBlockItem(ModBlocks.FLUID_TANK);
     public static final DeferredItem<BlockItem> STATION_CORE = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_CORE);
@@ -49,6 +52,17 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> FUSION_PREVIEW = ITEMS.registerSimpleBlockItem(ModBlocks.FUSION_PREVIEW);
     public static final DeferredItem<BlockItem> SUN_GATE_PREVIEW = ITEMS.registerSimpleBlockItem(ModBlocks.SUN_GATE_PREVIEW);
     public static final DeferredItem<BlockItem> MEGA_DRILL_PREVIEW = ITEMS.registerSimpleBlockItem(ModBlocks.MEGA_DRILL_PREVIEW);
+    public static final DeferredItem<BlockItem> MEGA_DRILL_CONTROLLER = ITEMS.registerSimpleBlockItem(ModBlocks.MEGA_DRILL_CONTROLLER);
+    public static final DeferredItem<BlockItem> DRILL_FRAME = ITEMS.registerSimpleBlockItem(ModBlocks.DRILL_FRAME);
+    /** The mega drill's heads (design section 11c), each crafted from the one before. */
+    public static final DeferredItem<DrillHeadItem> DRILL_HEAD_MK1 = ITEMS.registerItem("drill_head_mk1",
+            properties -> new DrillHeadItem(1, properties));
+    public static final DeferredItem<DrillHeadItem> DRILL_HEAD_MK2 = ITEMS.registerItem("drill_head_mk2",
+            properties -> new DrillHeadItem(2, properties));
+    public static final DeferredItem<DrillHeadItem> DRILL_HEAD_MK3 = ITEMS.registerItem("drill_head_mk3",
+            properties -> new DrillHeadItem(3, properties));
+    /** The mega drill's emitter tip: tungsten, worn a little each layer. */
+    public static final DeferredItem<TungstenTipItem> TUNGSTEN_TIP = ITEMS.registerItem("tungsten_tip", TungstenTipItem::new);
     public static final DeferredItem<BlockItem> STATION_CASING = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_CASING);
     public static final DeferredItem<BlockItem> POOL_CONTROLLER = ITEMS.registerSimpleBlockItem(ModBlocks.POOL_CONTROLLER);
     public static final DeferredItem<BlockItem> POOL_LINER = ITEMS.registerSimpleBlockItem(ModBlocks.POOL_LINER);
@@ -136,7 +150,26 @@ public final class ModItems {
     /** A bred uranium blanket, rich in plutonium, for the Electrorefiner. Safe to carry (rule 10). */
     public static final DeferredItem<Item> BRED_URANIUM_BLANKET = ITEMS.registerSimpleItem("bred_uranium_blanket",
             new Item.Properties().stacksTo(16));
-    /** Lithium in an aluminium and steel rod, bred into tritium in a target channel of the station's core. */
+    /**
+     * The thorium line (design section 9): monazite gives thorium (and yttrium); thorium in the
+     * breeder's blanket breeds uranium-233, which burns in the fission station. Safe to carry (rule 10).
+     */
+    public static final DeferredItem<Item> THORIUM_INGOT = ITEMS.registerSimpleItem("thorium_ingot");
+    /** Yttrium, from monazite: the cryogenic fittings now, fusion's magnets later. */
+    public static final DeferredItem<Item> YTTRIUM_INGOT = ITEMS.registerSimpleItem("yttrium_ingot");
+    public static final DeferredItem<Item> URANIUM_233_INGOT = ITEMS.registerSimpleItem("uranium_233_ingot");
+    /** Thorium in a steel tube, for the breeder's blanket: the fuel's spare neutrons breed it into U-233. */
+    public static final DeferredItem<TargetRodItem> THORIUM_BLANKET = ITEMS.registerItem("thorium_blanket", TargetRodItem::new,
+            new Item.Properties().stacksTo(16));
+    /** A bred thorium blanket, rich in U-233, for the Electrorefiner. */
+    public static final DeferredItem<Item> BRED_THORIUM_BLANKET = ITEMS.registerSimpleItem("bred_thorium_blanket",
+            new Item.Properties().stacksTo(16));
+    /** Fission reactor fuel: U-233 in thorium. Hotter than uranium and longer lived, but no plutonium when spent. */
+    public static final DeferredItem<FuelRodItem> U233_FUEL_ROD = ITEMS.registerItem("u233_fuel_rod", FuelRodItem::new,
+            new Item.Properties().stacksTo(16));
+    public static final DeferredItem<Item> SPENT_U233_ROD = ITEMS.registerSimpleItem("spent_u233_rod",
+            new Item.Properties().stacksTo(16));
+    /** Lithium in an aluminium and steel rod, bred into tritium in the breeder's blanket. */
     public static final DeferredItem<TargetRodItem> LITHIUM_TARGET_ROD = ITEMS.registerItem("lithium_target_rod", TargetRodItem::new,
             new Item.Properties().stacksTo(16));
     /** A bred target rod, full of tritium, ready for extraction. Safe to carry (rule 10). */

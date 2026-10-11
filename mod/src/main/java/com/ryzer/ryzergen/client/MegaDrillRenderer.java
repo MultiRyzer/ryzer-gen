@@ -4,9 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.ryzer.ryzergen.RyzerGen;
-import com.ryzer.ryzergen.machine.drill.MegaDrillPreviewBlock;
-import com.ryzer.ryzergen.machine.drill.MegaDrillPreviewBlockEntity;
-import com.ryzer.ryzergen.machine.drill.MegaDrillPreviewBlockEntity.Phase;
+import com.ryzer.ryzergen.machine.drill.DrillPhase;
+import com.ryzer.ryzergen.machine.drill.MegaDrillLayout;
+import com.ryzer.ryzergen.machine.drill.MegaDrillView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -22,23 +22,24 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Draws the mega drill's concept design (art/tools/mega_drill_concept.py) round its preview block,
- * and its cycle. The body goes the fission station's way: a GPU mesh built once, or the plain draw
- * while a shader pack is on. What changes when it runs (the lamps, the light lines) comes from the
- * design's 'on' or 'off' group, by the block's redstone signal. Then, from the phase the block entity
- * syncs: the charge running down the drive shaft's ribs from the top, the lens swelling as it
- * arrives, the beam shooting down to the layer being mined, and the heat over that layer, drawn over
+ * Draws the mega drill's design (art/tools/mega_drill_concept.py) and its cycle, for the creative
+ * preview and the real drill's controller alike (each a {@link MegaDrillView}); everything is drawn
+ * round the pit's middle, wherever the block itself is. The body goes the fission station's way: a
+ * GPU mesh built once, or the plain draw while a shader pack is on. What changes when it runs (the
+ * lamps, the light lines) comes from the design's 'on' or 'off' group. Then, from the phase the block
+ * entity syncs: the charge running down the drive shaft's ribs from the top, the emitter pod's bore
+ * lighting as it arrives, the beam shooting down to the layer being mined, and the heat over that layer, drawn over
  * every block's own model (HeatDecal) so any block, modded ones too, turns red hot: a tint that
  * reddens and darkens it, then glowing cracks that widen through four stages until it bursts.
  */
-public class MegaDrillPreviewRenderer implements BlockEntityRenderer<MegaDrillPreviewBlockEntity> {
+public class MegaDrillRenderer<T extends BlockEntity & MegaDrillView> implements BlockEntityRenderer<T> {
     /** Half the design's footprint, in blocks (it is 9 across, centred on the middle block). */
     private static final float HALF = 4.5F;
     private static final float HEIGHT = 16;
@@ -50,9 +51,11 @@ public class MegaDrillPreviewRenderer implements BlockEntityRenderer<MegaDrillPr
     /** The shaft's two ribs on each face lie this far either side of its middle. */
     private static final float RIB_IN = 2;
     private static final float RIB_OUT = 4;
-    private static final float LENS_Y = 37.5F;
-    private static final float BEAM_TOP = 36;
-    /** The share of the charge spent running down the shaft; the rest swells the lens. */
+    /** The aperture in the emitter pod's foot (APERTURE_Y in the concept), and the bore inside its ring. */
+    private static final float APERTURE_Y = 26;
+    private static final float BORE_HALF = 3.5F;
+    private static final float BEAM_TOP = APERTURE_Y - 0.3F;
+    /** The share of the charge spent running down the shaft; the rest lights the aperture's bore. */
     private static final float SHAFT_SHARE = 0.8F;
     /** Ticks the beam takes to reach the ground once it fires. */
     private static final float SHOOT_TICKS = 4;
@@ -69,31 +72,38 @@ public class MegaDrillPreviewRenderer implements BlockEntityRenderer<MegaDrillPr
         }
     }
 
-    public MegaDrillPreviewRenderer(BlockEntityRendererProvider.Context context) {
+    public MegaDrillRenderer(BlockEntityRendererProvider.Context context) {
     }
 
     @Override
-    public void render(MegaDrillPreviewBlockEntity preview, float partialTick, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
-        Direction facing = preview.getBlockState().getValue(MegaDrillPreviewBlock.FACING);
-        boolean running = preview.getBlockState().getValue(MegaDrillPreviewBlock.POWERED);
+    public void render(T drill, float partialTick, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
+        if (!drill.drillShown()) {
+            return;
+        }
+        Direction facing = drill.drillFacing();
+        boolean running = drill.drillRunning();
+        BlockPos centre = drill.drillCentre();
+        BlockPos offset = centre.subtract(drill.getBlockPos());
+        pose.pushPose();
+        pose.translate(offset.getX(), offset.getY(), offset.getZ());
         var body = StationGeometry.group(StationGeometry.MEGA_DRILL, "static");
         if (!StationMesh.shadersInUse()) {
-            StationMesh mesh = preview.clientMesh instanceof StationMesh cached && cached.matches(light, facing) ? cached : null;
+            StationMesh mesh = drill.drillMesh() instanceof StationMesh cached && cached.matches(light, facing) ? cached : null;
             if (mesh == null) {
-                if (preview.clientMesh instanceof StationMesh old) {
+                if (drill.drillMesh() instanceof StationMesh old) {
                     old.close();
                 }
                 PoseStack local = new PoseStack();
                 place(local, facing);
                 mesh = StationMesh.build(body, local, light, facing);
-                preview.clientMesh = mesh;
+                drill.drillMesh(mesh);
             }
             mesh.draw(pose.last().pose());
         }
-        Level level = preview.getLevel();
+        Level level = drill.getLevel();
         long time = level == null ? 0 : level.getGameTime();
-        Phase phase = running ? preview.phase() : Phase.IDLE;
-        float progress = preview.progress(time, partialTick);
+        DrillPhase phase = running ? drill.drillPhase() : DrillPhase.IDLE;
+        float progress = drill.drillProgress(time, partialTick);
 
         pose.pushPose();
         place(pose, facing);
@@ -102,27 +112,28 @@ public class MegaDrillPreviewRenderer implements BlockEntityRenderer<MegaDrillPr
             StationRenderer.draw(cutout, pose, body, light);
         }
         StationRenderer.draw(cutout, pose, StationGeometry.group(StationGeometry.MEGA_DRILL, running ? "on" : "off"), light);
-        float shaft = phase == Phase.CHARGING ? Math.min(1, progress / SHAFT_SHARE) : phase == Phase.FIRING ? 1 : 0;
+        float shaft = phase == DrillPhase.CHARGING ? Math.min(1, progress / SHAFT_SHARE) : phase == DrillPhase.FIRING ? 1 : 0;
         if (shaft > 0) {
             StationRenderer.draw(cutout, pose, charge(shaft), light);
         }
-        float lens = phase == Phase.CHARGING ? Math.max(0, (progress - SHAFT_SHARE) / (1 - SHAFT_SHARE))
-                : phase == Phase.FIRING ? 0.85F + 0.15F * Mth.sin((time + partialTick) * 1.7F) : 0;
+        // The bore lights from its middle out, flush in the aperture's ring, then flickers as it fires.
+        float lens = phase == DrillPhase.CHARGING ? Math.max(0, (progress - SHAFT_SHARE) / (1 - SHAFT_SHARE))
+                : phase == DrillPhase.FIRING ? 0.9F + 0.1F * Mth.sin((time + partialTick) * 1.7F) : 0;
         if (lens > 0) {
-            float s = 2.6F + 1.6F * lens;
-            StationRenderer.draw(cutout, pose, StationGeometry.box(C - s, LENS_Y - s * 0.6F, C - s, C + s, LENS_Y + s * 0.6F, C + s,
+            float s = 0.8F + (BORE_HALF - 0.8F) * lens;
+            StationRenderer.draw(cutout, pose, StationGeometry.box(C - s, APERTURE_Y - 0.25F, C - s, C + s, APERTURE_Y - 0.05F, C + s,
                     CHARGE_HEAD, true), light);
         }
         float bottom = 0;
-        if (phase == Phase.FIRING) {
-            float ground = (preview.layer() + 1 - preview.getBlockPos().getY()) * 16;
-            bottom = Mth.lerp(Math.min(1, preview.elapsed(time, partialTick) / SHOOT_TICKS), BEAM_TOP, ground);
+        if (phase == DrillPhase.FIRING) {
+            float ground = (drill.drillLayer() + 1 - centre.getY()) * 16;
+            bottom = Mth.lerp(Math.min(1, drill.drillElapsed(time, partialTick) / SHOOT_TICKS), BEAM_TOP, ground);
             StationRenderer.draw(cutout, pose, StationGeometry.box(C - 1.2F, bottom, C - 1.2F, C + 1.2F, BEAM_TOP, C + 1.2F, BEAM, true), light);
         }
         pose.popPose();
 
-        if (phase == Phase.FIRING && level != null) {
-            heat(preview, level, pose, buffers, progress);
+        if (phase == DrillPhase.FIRING && level != null) {
+            heat(drill, level, centre, pose, buffers, progress);
             // A soft halo round the beam, light added (drawn after the heat, which shares no buffer with it).
             pose.pushPose();
             place(pose, facing);
@@ -130,6 +141,7 @@ public class MegaDrillPreviewRenderer implements BlockEntityRenderer<MegaDrillPr
                     StationGeometry.box(C - 2.4F, bottom, C - 2.4F, C + 2.4F, BEAM_TOP, C + 2.4F, BEAM, true), light, 0xFF4A6A80);
             pose.popPose();
         }
+        pose.popPose();
     }
 
     /** The charge on the drive shaft's ribs, lit from the top down to `fraction` of the way, a white-hot head at its front. */
@@ -160,20 +172,18 @@ public class MegaDrillPreviewRenderer implements BlockEntityRenderer<MegaDrillPr
     /**
      * The heat over the layer being mined, `heat` from 0 (the beam just struck) to 1 (it bursts): first
      * every block's tint (multiplied into it, reddening and darkening it), then its glowing cracks (light
-     * added), each in its own pass, as the two use different buffers.
+     * added), each in its own pass, as the two use different buffers. The pose is at the pit's middle.
      */
-    private static void heat(MegaDrillPreviewBlockEntity preview, Level level, PoseStack pose, MultiBufferSource buffers, float heat) {
+    private static void heat(MegaDrillView drill, Level level, BlockPos origin, PoseStack pose, MultiBufferSource buffers, float heat) {
         if (heat < 0.02F) {
             return;
         }
-        BlockPos origin = preview.getBlockPos();
-        int y = preview.layer();
+        int y = drill.drillLayer();
         List<BlockPos> blocks = new ArrayList<>();
-        for (int dx = MegaDrillPreviewBlockEntity.LOW; dx <= MegaDrillPreviewBlockEntity.HIGH; dx++) {
-            for (int dz = MegaDrillPreviewBlockEntity.LOW; dz <= MegaDrillPreviewBlockEntity.HIGH; dz++) {
+        for (int dx = MegaDrillLayout.LOW; dx <= MegaDrillLayout.HIGH; dx++) {
+            for (int dz = MegaDrillLayout.LOW; dz <= MegaDrillLayout.HIGH; dz++) {
                 BlockPos at = new BlockPos(origin.getX() + dx, y, origin.getZ() + dz);
-                BlockState state = level.getBlockState(at);
-                if (!MegaDrillPreviewBlockEntity.footing(dx, dz) && !at.equals(origin) && state.getRenderShape() == RenderShape.MODEL) {
+                if (level.getBlockState(at).getRenderShape() == RenderShape.MODEL && drill.drillHeats(level, at, dx, dz)) {
                     blocks.add(at);
                 }
             }
@@ -202,7 +212,7 @@ public class MegaDrillPreviewRenderer implements BlockEntityRenderer<MegaDrillPr
         }
     }
 
-    /** The design faces north (the ladder at its low z); turn it about the block to the block's facing. */
+    /** The design faces north (the ladder at its low z); turn it about the pit's middle block to the drill's facing. */
     private static void place(PoseStack pose, Direction facing) {
         pose.translate(0.5, 0, 0.5);
         pose.mulPose(Axis.YP.rotationDegrees(180 - facing.toYRot()));
@@ -211,15 +221,15 @@ public class MegaDrillPreviewRenderer implements BlockEntityRenderer<MegaDrillPr
 
     /** The design, and down to the layer being mined. */
     @Override
-    public AABB getRenderBoundingBox(MegaDrillPreviewBlockEntity preview) {
-        var pos = preview.getBlockPos();
-        double low = Math.min(pos.getY(), preview.layer()) - 1;
-        return new AABB(pos.getX() + 0.5 - 8, low, pos.getZ() + 0.5 - 8,
-                pos.getX() + 0.5 + 9, pos.getY() + HEIGHT, pos.getZ() + 0.5 + 9);
+    public AABB getRenderBoundingBox(T drill) {
+        BlockPos centre = drill.drillCentre();
+        double low = Math.min(centre.getY(), drill.drillLayer()) - 1;
+        return new AABB(centre.getX() + 0.5 - 8, low, centre.getZ() + 0.5 - 8,
+                centre.getX() + 0.5 + 9, centre.getY() + HEIGHT, centre.getZ() + 0.5 + 9);
     }
 
     @Override
-    public boolean shouldRenderOffScreen(MegaDrillPreviewBlockEntity preview) {
+    public boolean shouldRenderOffScreen(T drill) {
         return true;
     }
 

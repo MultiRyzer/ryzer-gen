@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.compat.jei;
 
 import com.ryzer.ryzergen.recipe.AlloyingRecipe;
 import com.ryzer.ryzergen.registry.ModItems;
+import com.ryzer.ryzergen.client.text.RichText;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
@@ -74,8 +75,8 @@ public class AlloyingJeiCategory implements IRecipeCategory<RecipeHolder<Alloyin
         builder.addText(Component.translatable("gui.jei.category.smelting.time.seconds", cookingTime / 20F), getWidth() - 38, 10)
                 .setPosition(38, 32).setColor(0xFF808080);
         if (holder.value().electricOnly()) {
-            builder.addText(Component.translatable("jei.ryzergen.alloying.electric_only"), getWidth(), 10)
-                    .setPosition(0, 43).setColor(0xFFC0392B);
+            builder.addText(RichText.trLight("jei.ryzergen.alloying.electric_only"), getWidth(), 10)
+                    .setPosition(0, 43).setColor(0xFF606060);
         }
     }
 }

@@ -6,6 +6,8 @@ import com.ryzer.ryzergen.machine.pool.PoolPartBlock;
 import com.ryzer.ryzergen.machine.pool.PoolLook;
 import com.ryzer.ryzergen.machine.pool.PoolControllerBlock;
 import com.ryzer.ryzergen.machine.fusion.FusionPreviewBlock;
+import com.ryzer.ryzergen.machine.drill.MegaDrillControllerBlock;
+import com.ryzer.ryzergen.machine.drill.MegaDrillPartBlock;
 import com.ryzer.ryzergen.machine.drill.MegaDrillPreviewBlock;
 import com.ryzer.ryzergen.machine.sun.SunGatePreviewBlock;
 import com.ryzer.ryzergen.RyzerGen;
@@ -77,6 +79,8 @@ public final class ModBlocks {
             () -> new ProcessingBlock(ProcessingMachine.LITHIUM_EXTRACTOR, machineProperties()));
     public static final DeferredBlock<ProcessingBlock> ELECTROREFINER = BLOCKS.register("electrorefiner",
             () -> new ProcessingBlock(ProcessingMachine.ELECTROREFINER, machineProperties()));
+    public static final DeferredBlock<ProcessingBlock> MONAZITE_PROCESSOR = BLOCKS.register("monazite_processor",
+            () -> new ProcessingBlock(ProcessingMachine.MONAZITE_PROCESSOR, machineProperties()));
     public static final DeferredBlock<WasteCaskBlock> WASTE_CASK = BLOCKS.register("waste_cask",
             () -> new WasteCaskBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
     public static final DeferredBlock<PressureTankBlock> PRESSURE_TANK = BLOCKS.register("pressure_tank",
@@ -134,6 +138,12 @@ public final class ModBlocks {
     // Creative-only: draws the fusion reactor's concept design round itself (next-tier preview).
     public static final DeferredBlock<FusionPreviewBlock> FUSION_PREVIEW = BLOCKS.register("fusion_preview",
             () -> new FusionPreviewBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+    // Mega drill parts (design section 11c). Formed, they stop drawing themselves (the controller draws
+    // the drill) and collide as the design is drawn there; the base lights the ground while it runs.
+    public static final DeferredBlock<MegaDrillPartBlock> DRILL_FRAME = BLOCKS.register("drill_frame",
+            () -> new MegaDrillPartBlock(drillProperties()));
+    public static final DeferredBlock<MegaDrillControllerBlock> MEGA_DRILL_CONTROLLER = BLOCKS.register("mega_drill_controller",
+            () -> new MegaDrillControllerBlock(drillProperties()));
     // Creative-only: draws the mega drill's concept design round itself, running on a redstone signal.
     public static final DeferredBlock<MegaDrillPreviewBlock> MEGA_DRILL_PREVIEW = BLOCKS.register("mega_drill_preview",
             () -> new MegaDrillPreviewBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
@@ -169,6 +179,11 @@ public final class ModBlocks {
     private static BlockBehaviour.Properties containerProperties() {
         return BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).pushReaction(PushReaction.BLOCK)
                 .lightLevel(state -> state.getValue(ContainerPartBlock.INSTALLED) ? 6 : 0);
+    }
+
+    private static BlockBehaviour.Properties drillProperties() {
+        return BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
+                .lightLevel(state -> state.getValue(MegaDrillPartBlock.LIT) ? 15 : 0);
     }
 
     private static BlockBehaviour.Properties poolProperties() {

@@ -82,7 +82,7 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] Fitting item icons: redraw them as cards like the Speed Module (a graphite card with a clear symbol per tier), so they are easy to spot in a chest
 - [x] Geiger counter: a new item that gives the clicks and the HUD gauge, so they only run when you carry one (inventory, or an Accessories slot such as the belt). The dosimeter ring keeps its protection but goes quiet. Shift-right-click to mute the clicks but keep the gauge
 - [x] Dosimeter ring worn on the hand: dropped. Nothing shows on the hand, as with other mods' rings, and that is fine
-- [ ] Steady state (design section 5): a streak of fuel loads burned without downtime raises a reactor's output, up to 1.5x for the microreactor and 2x for the fission station (later tiers higher). Downtime past 5 seconds costs a quarter of the streak; standby, unloaded chunks and a stopped server only pause it. Shown on the reactor's screen, milestones called by the announcer (a new line to record) and an advancement per cap. Config: on/off, cap per tier, milestone scale
+- [x] Steady state (design section 5, 11 Oct 2026): a streak of fuel loads burned without downtime raises a reactor's output, up to 1.5x for the microreactor and 2x for the fission station (later tiers higher). Downtime past 5 seconds costs a quarter of the streak; standby, unloaded chunks and a stopped server only pause it. Shown on the reactor's screen, milestones called by the announcer (a new line to record) and an advancement per cap. Config: on/off, cap per tier, milestone scale
 - [ ] Meltdown waste: a meltdown (microreactor and up) leaves radioactive debris in and around its crater, such as corium (melted core) and contaminated rubble. It keeps the site radioactive and is hard to clear: it needs proper tools or a process to remove it, and it goes into Waste Casks rather than being broken like stone. Radiation from meltdowns is already allowed by design rule 10; the debris makes the site a lasting problem to deal with, not just a hole
 - [x] Reactor voice announcer (0.1.1): short spoken lines from the reactor's control system when something happens, made with Voicebox (MIT app; VoiceStudio does not run on AMD GPUs on Windows). First list: safeties off (overdrive on), safeties back on, SCRAM, overheat warning, flux tilt, coolant loss, meltdown imminent, out of fuel (only once the reactor has actually stopped, never on a routine swap by pipe), reactor and station online. No fuel-low warning: automated fuel is always running low. Each line its own sound event (packs can replace or silence them), subtitles on, played on the client near the machine and not repeated on a fast loop, and a config toggle to turn the voice off. Licences checked 28 Sep 2026: Qwen CustomVoice and Qwen3-TTS (Apache 2.0), Kokoro (Apache 2.0) and Chatterbox (MIT) are fine for a published mod; LuxTTS and HumeAI TADA are unchecked. Plan: a Qwen CustomVoice preset voice (Kokoro as the fallback), no cloning. OmniVoice (VoiceStudio's default) is CC-BY-NC, so never use it. Never clone a real person's voice, and record the engine, model and licence in `art/sounds/CREDITS.md`
 
@@ -146,9 +146,11 @@ The utility reactor: fuel for the stations and the tritium that starts fusion. F
 - [x] Working breeder ports (fuel and sodium in on the east, spent fuel, bred blankets and energy out on the west)
 - [x] Core and blanket, first pass: a 19-position hex core planned on a control screen, fast fuel, a closed sodium loop with pump flow and temperatures, SCRAM; uranium and lithium blankets; spent fuel and bred blankets out by port and refined in the Electrorefiner. Thorium to U-233 waits for monazite
 - [ ] Play-test the breeder's numbers (heat, breeding rates, loop, pumps)
-- [ ] Safety and failure (sodium fire, not a steam explosion), steady state, sounds and announcer, advancements, JEI and EMI pages
-- [ ] Retire the station's target channel; target rods go in the breeder's blanket
-- [ ] Monazite processing brought forward from milestone 4 for thorium (yttrium can wait)
+- [x] Safety and failure (11 Oct 2026): decay heat, pumps that stall without power (half the buffer kept for them), the sodium fire on loss of flow (inside the bund, 30 s, the loop lost; config toggle); the announcer's breeder lines; advancements (built, steady-state cap, sodium fire, hidden while a preview); a JEI and EMI page
+- [x] Retire the station's target channel; target rods go in the breeder's blanket (11 Oct 2026)
+- [x] The thorium line (11 Oct 2026, behind the preview): Monazite Processor (gated, 2,000 FE/t) for thorium and yttrium; thorium blankets breed U-233 in the breeder (half uranium's rate); the Electrorefiner gives U-233 and thorium back; U-233 rods, a third station fuel (2,500 FE/t heat, the hottest, for 1 hour; raised from 1,500 on 11 Oct 2026 so it beats MOX on heat); the station's fuels became one table
+- [ ] Monazite Processor: its own sound (it borrows the Reprocessor's pump) and a texture pass with the user
+- [x] Take tier 4 out of the preview (0.2.0-alpha, 11 Oct 2026; lithium target rods stay a preview until fusion)
 
 ## Milestone 4: Fission to fusion (design section 10)
 - [x] Lithium Extractor (salt and water to lithium)
@@ -186,9 +188,11 @@ The utility reactor: fuel for the stations and the tritium that starts fusion. F
 - [x] Concept refined with the user: drills as tall eight-sided towers (`art/concepts/melt_drill_mk3.png`) that sink layer by layer; a static mega drill as the fallback
 - [x] Option B drafted: one static mega drill over the chunk (`art/concepts/mega_drill.png`)
 - [x] Chosen: the mega drill (4 Oct 2026), an angular landmark tower over the chunk
-- [ ] Refine its look with the user; textures and effects
-- [ ] Build it: the multiblock (parts, ghost, auto-build), mining the chunk from 8 under its base, glazed cavity, filter, drill heads, speed modules, tips, coolant, config
-- [ ] The deep bore past bedrock, and its balance (open question 22)
+- [x] Refine its look with the user; textures and effects (hydraulic rams dropped 11 Oct 2026)
+- [x] Build it (6 Oct 2026, behind the preview): the multiblock (frame, controller, ghost outline, auto-build, collision and ladder), ports, a 7 x 7 shaft through its middle to the bottom of the world, glazed walls, filter, drill heads, speed modules, tips, coolant, config, a game test
+- [x] Play it, then take it out of the preview (11 Oct 2026)
+- [x] The deep bore past bedrock (6 Oct 2026): ore by head from loot tables, at 4 times the draw
+- [ ] Balance the deep bore in play, against ATM10's void miners
 - [ ] The quarry block and drills: four quarters to bedrock, fused rock walls, filter, drill marks, speed modules, tungsten tips, chunk loading, config
 - [ ] Benchmark its speed against ATM10's quarries
 
@@ -197,6 +201,7 @@ The utility reactor: fuel for the stations and the tritium that starts fusion. F
 - [ ] Open a step's recipes in JEI or EMI from its panel
 
 ## Later
+- Cable and pipe items: show a single cube of cable (one block's segment), not a whole straight run (6 Oct 2026)
 - Fusion
 - Sail launcher automation and receiver dish
 - Overworld sky ring, flare events, multiplayer shared swarm

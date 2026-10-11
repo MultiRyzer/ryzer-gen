@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.machine.breeder;
 
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.GuiGauges;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -74,23 +75,23 @@ public class BreederCoreScreen extends AbstractContainerScreen<BreederCoreMenu> 
             shortOfParts |= menu.stock(part) < menu.missing(part);
         }
         if (menu.formed()) {
-            status = Component.translatable("gui.ryzergen.station_core.formed");
+            status = RichText.tr("gui.ryzergen.station_core.formed");
             colour = GOOD;
         } else if (menu.blocked() > 0) {
-            status = Component.translatable("gui.ryzergen.station_core.blocked", menu.blocked());
+            status = RichText.tr("gui.ryzergen.station_core.blocked", menu.blocked());
             colour = BAD;
         } else if (shortOfParts) {
-            status = Component.translatable("gui.ryzergen.station_core.needs_parts");
+            status = RichText.tr("gui.ryzergen.station_core.needs_parts");
             colour = WARN;
         } else {
-            status = Component.translatable("gui.ryzergen.station_core.building");
+            status = RichText.tr("gui.ryzergen.station_core.building");
             colour = GOOD;
         }
         graphics.drawString(font, status, SCREEN_X + 4, 20, colour, false);
         for (int i = 0; i < BUILT.length; i++) {
             BreederPart part = BUILT[i];
             int placed = total(part) - menu.missing(part);
-            graphics.drawString(font, Component.translatable("gui.ryzergen.station_core.count", placed, total(part)),
+            graphics.drawString(font, RichText.tr("gui.ryzergen.station_core.count", placed, total(part)),
                     SCREEN_X + 16, ROW_Y + i * ROW_STEP, placed >= total(part) ? GOOD : VALUE, false);
         }
     }
@@ -106,7 +107,7 @@ public class BreederCoreScreen extends AbstractContainerScreen<BreederCoreMenu> 
             if (mx >= SCREEN_X + 2 && mx < SCREEN_X + 100 && my >= y && my < y + ROW_STEP) {
                 BreederPart part = BUILT[i];
                 graphics.renderComponentTooltip(font, List.of(part.block().getName(),
-                        Component.translatable("gui.ryzergen.station_core.stock", menu.stock(part), menu.missing(part))
+                        RichText.tr("gui.ryzergen.station_core.stock", menu.stock(part), menu.missing(part))
                                 .withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
             }
         }

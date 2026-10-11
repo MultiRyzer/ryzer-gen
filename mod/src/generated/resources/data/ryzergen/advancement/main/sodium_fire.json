@@ -1,0 +1,31 @@
+{
+  "parent": "ryzergen:main/breeder",
+  "criteria": {
+    "sodium_fire": {
+      "conditions": {
+        "milestone": "sodium_fire"
+      },
+      "trigger": "ryzergen:milestone"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.sodium_fire.description"
+    },
+    "frame": "challenge",
+    "hidden": true,
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:sodium_ingot"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.sodium_fire.title"
+    }
+  },
+  "requirements": [
+    [
+      "sodium_fire"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

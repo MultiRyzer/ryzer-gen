@@ -1,0 +1,23 @@
+{
+  "type": "ryzergen:fabricating",
+  "inputs": [
+    {
+      "count": 1,
+      "tag": "c:ingots/uranium_233"
+    },
+    {
+      "count": 1,
+      "tag": "c:ingots/thorium"
+    },
+    {
+      "count": 1,
+      "tag": "c:ingots/steel"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "ryzergen:u233_fuel_rod"
+    }
+  ]
+}

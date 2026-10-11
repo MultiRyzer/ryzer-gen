@@ -1,5 +1,7 @@
 package com.ryzer.ryzergen.datagen;
 
+import java.util.List;
+
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.registry.ModSounds;
 import net.minecraft.data.PackOutput;
@@ -26,21 +28,21 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         add(ModSounds.MICROREACTOR_HUM, definition()
                 .subtitle("subtitles.ryzergen.microreactor_hum")
                 .with(sound(ResourceLocation.withDefaultNamespace("block/beacon/ambient")).pitch(0.55F).volume(0.8F)));
-        // The mega drill, until it has recordings of its own: the beacon powering up, slowed, as the
-        // charge runs down the shaft; a ghast's fireball, deepened, as the beam fires; an explosion,
-        // pitched up and quieter, as a layer bursts.
+        // The mega drill: the beacon powering up, slowed, as the charge runs down the shaft; then our own
+        // recordings (art/tools/machine_sounds.py): an energy beam's shot as the beam fires, cut at three
+        // playback speeds so a faster drill's shot fits its shorter heating, and a boulder's impact as a
+        // layer bursts.
         add(ModSounds.MEGA_DRILL_CHARGE, definition()
                 .subtitle("subtitles.ryzergen.mega_drill_charge")
                 .with(sound(ResourceLocation.withDefaultNamespace("block/beacon/activate")).pitch(0.7F).attenuationDistance(48)));
-        add(ModSounds.MEGA_DRILL_FIRE, definition()
-                .subtitle("subtitles.ryzergen.mega_drill_fire")
-                .with(sound(ResourceLocation.withDefaultNamespace("mob/ghast/fireball4")).pitch(0.6F).attenuationDistance(48)));
+        for (var fire : List.of(ModSounds.MEGA_DRILL_FIRE, ModSounds.MEGA_DRILL_FIRE_X2, ModSounds.MEGA_DRILL_FIRE_X4)) {
+            add(fire, definition()
+                    .subtitle("subtitles.ryzergen.mega_drill_fire")
+                    .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, fire.getId().getPath())).attenuationDistance(48)));
+        }
         add(ModSounds.MEGA_DRILL_BURST, definition()
                 .subtitle("subtitles.ryzergen.mega_drill_burst")
-                .with(sound(ResourceLocation.withDefaultNamespace("random/explode1")).pitch(1.4F).volume(0.6F).attenuationDistance(48),
-                        sound(ResourceLocation.withDefaultNamespace("random/explode2")).pitch(1.4F).volume(0.6F).attenuationDistance(48),
-                        sound(ResourceLocation.withDefaultNamespace("random/explode3")).pitch(1.4F).volume(0.6F).attenuationDistance(48),
-                        sound(ResourceLocation.withDefaultNamespace("random/explode4")).pitch(1.4F).volume(0.6F).attenuationDistance(48)));
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "mega_drill_burst")).attenuationDistance(48)));
         // Our own recordings are cut into loops by art/tools/machine_sounds.py, which also credits them.
         // The coolant-loss alarm: sixteen beeps of a depressurisation alarm. The client loops it and
         // raises the pitch towards meltdown. Heard from 64 blocks, so a runaway core is hard to miss.
@@ -74,7 +76,7 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         add(ModSounds.ELECTROREFINER, definition()
                 .subtitle("subtitles.ryzergen.electrorefiner")
                 .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "station_hum")).volume(RECORDING_VOLUME * 0.5F).pitch(1.6F)));
-            // The reactor announcer: Ryzer's voice, cut by art/tools/voice_lines.py.
+            // The reactor announcer, processed by art/tools/voice_lines.py.
         add(ModSounds.VOICE_REACTOR_ONLINE, definition()
                 .subtitle("subtitles.ryzergen.voice_reactor_online")
                 .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/reactor_online"))));
@@ -105,5 +107,29 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         add(ModSounds.VOICE_MELTDOWN_RISK, definition()
                 .subtitle("subtitles.ryzergen.voice_meltdown_risk")
                 .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/meltdown_risk"))));
+        add(ModSounds.VOICE_NO_FUEL, definition()
+                .subtitle("subtitles.ryzergen.voice_no_fuel")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/no_fuel"))));
+        add(ModSounds.VOICE_STEADY_STATE_1, definition()
+                .subtitle("subtitles.ryzergen.voice_steady_state_1")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/steady_state_1"))));
+        add(ModSounds.VOICE_STEADY_STATE_2, definition()
+                .subtitle("subtitles.ryzergen.voice_steady_state_2")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/steady_state_2"))));
+        add(ModSounds.VOICE_STEADY_STATE_3, definition()
+                .subtitle("subtitles.ryzergen.voice_steady_state_3")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/steady_state_3"))));
+        add(ModSounds.VOICE_BREEDER_ONLINE, definition()
+                .subtitle("subtitles.ryzergen.voice_breeder_online")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/breeder_online"))));
+        add(ModSounds.VOICE_SODIUM_LOW, definition()
+                .subtitle("subtitles.ryzergen.voice_sodium_low")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/sodium_low"))));
+        add(ModSounds.VOICE_HOT_SPOT, definition()
+                .subtitle("subtitles.ryzergen.voice_hot_spot")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/hot_spot"))));
+        add(ModSounds.VOICE_SODIUM_FIRE, definition()
+                .subtitle("subtitles.ryzergen.voice_sodium_fire")
+                .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "voice/sodium_fire"))));
     }
 }

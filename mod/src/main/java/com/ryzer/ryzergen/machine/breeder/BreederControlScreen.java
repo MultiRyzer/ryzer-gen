@@ -5,6 +5,10 @@ import com.ryzer.ryzergen.client.GuiGauges;
 import com.ryzer.ryzergen.machine.breeder.BreederReactor.Position;
 import com.ryzer.ryzergen.machine.fission.TargetRodItem;
 import com.ryzer.ryzergen.registry.ModItems;
+import com.ryzer.ryzergen.client.text.Term;
+import com.ryzer.ryzergen.client.text.RichText;
+import com.ryzer.ryzergen.client.SteadyStateTooltip;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -56,7 +60,14 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
     private static final int KEY_HOVER_U = 16;
     private static final int POWER_U = 32;
     private static final int SPRITE_V = 224;
-    private static final Position[] TOOLS = {Position.FUEL, Position.CONTROL, Position.URANIUM, Position.LITHIUM};
+    /**
+     * The plans a player can pick: fuel and the three blankets. Control rods are retired from the
+     * breeder (11 Oct 2026): its SCRAM uses built-in shutdown rods, and a hot core is trimmed by
+     * spreading its fuel among blankets. One planned in an older world still works until cleared.
+     */
+    private static final Position[] ALL_TOOLS = {Position.FUEL, Position.URANIUM, Position.THORIUM, Position.LITHIUM};
+    /** Lithium targets (tritium for fusion) are still a preview, so their tool shows only with it on. */
+    private static final Position[] SHIPPED_TOOLS = {Position.FUEL, Position.URANIUM, Position.THORIUM};
 
     /** The plan tool picked, or null to handle items normally. */
     private @Nullable Position tool;
@@ -71,6 +82,10 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
         inventoryLabelY = BreederControlMenu.INVENTORY_Y - 11;
     }
 
+    private static Position[] tools() {
+        return com.ryzer.ryzergen.Preview.enabled() ? ALL_TOOLS : SHIPPED_TOOLS;
+    }
+
     private static int toolX(int index) {
         return 8 + index * 18;
     }
@@ -81,16 +96,22 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
             case CONTROL -> ModItems.CONTROL_ROD.get();
             case URANIUM -> ModItems.URANIUM_BLANKET.get();
             case LITHIUM -> ModItems.LITHIUM_TARGET_ROD.get();
+            case THORIUM -> ModItems.THORIUM_BLANKET.get();
         });
     }
 
-    /** Each plan's colour, used for its positions' frames and under its tool. */
+    /**
+     * Each plan's colour, its term's (as the text and the progression map draw it), used for its
+     * positions' frames and under its tool. Both blankets breed, so both are pink: the lithium
+     * target a paler pink, to tell them apart.
+     */
     private static int colour(Position position) {
         return switch (position) {
-            case FUEL -> 0xFF35C8F5;
-            case CONTROL -> 0xFFE0503C;
-            case URANIUM -> 0xFF44D65E;
-            case LITHIUM -> 0xFFB27CF0;
+            case FUEL -> Term.FUEL.argb();
+            case CONTROL -> Term.CONTROL.argb();
+            case URANIUM -> Term.BREEDING.argb();
+            case LITHIUM -> 0xFFF8B4DA;
+            case THORIUM -> 0xFFC07AA0;
             case EMPTY -> 0;
         };
     }
@@ -113,8 +134,8 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
             int y = topPos + BreederControlMenu.slotY(i);
             graphics.fill(x, y, x + 16, y + 16, fill(plan[i]));
         }
-        for (int k = 0; k < TOOLS.length; k++) {
-            Position position = TOOLS[k];
+        for (int k = 0; k < tools().length; k++) {
+            Position position = tools()[k];
             int x = leftPos + toolX(k);
             int y = topPos + TOOL_Y;
             graphics.blit(TEXTURE, x, y, isOver(toolX(k), TOOL_Y, mouseX, mouseY) ? KEY_HOVER_U : KEY_U, SPRITE_V, 16, 16);
@@ -199,15 +220,15 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
         int colour = switch (status) {
             case ONLINE -> GOOD;
             case WARMING, NO_FUEL, OFFLINE -> WARN;
-            case NO_SODIUM, OVERHEAT, SCRAM -> BAD;
+            case NO_SODIUM, OVERHEAT, SCRAM, SODIUM_FIRE -> BAD;
         };
-        text(graphics, Component.translatable("gui.ryzergen.breeder.status." + status.name().toLowerCase(Locale.ROOT)), 20, colour);
-        text(graphics, Component.translatable("gui.ryzergen.breeder.live", compact(menu.output()), menu.temperature()), 29,
+        text(graphics, RichText.tr("gui.ryzergen.breeder.status." + status.name().toLowerCase(Locale.ROOT)), 20, colour);
+        text(graphics, RichText.tr("gui.ryzergen.breeder.live", compact(menu.output()), menu.temperature()), 29,
                 menu.temperature() >= BreederRunner.HOT_TEMPERATURE ? BAD : VALUE);
         // The plan: what this layout gives once settled, at this flow.
         BreederReactor.Analysis plan = analysis();
         if (plan.fuel() == 0) {
-            text(graphics, Component.translatable("gui.ryzergen.breeder.plan_empty"), 42, DIM);
+            text(graphics, RichText.tr("gui.ryzergen.breeder.plan_empty"), 42, DIM);
             return;
         }
         if (!plan.holdsSteady()) {
@@ -215,25 +236,25 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
             for (int i = 0; i < BreederReactor.POSITIONS; i++) {
                 spots += plan.hotSpot(i) ? 1 : 0;
             }
-            text(graphics, Component.translatable("gui.ryzergen.breeder.hot_spots", spots), 42, BAD);
-            text(graphics, Component.translatable("gui.ryzergen.breeder.hot_spot_hint"), 51, DIM);
+            text(graphics, RichText.tr("gui.ryzergen.breeder.hot_spots", spots), 42, BAD);
+            text(graphics, RichText.tr("gui.ryzergen.breeder.hot_spot_hint"), 51, DIM);
             return;
         }
         float flowFraction = menu.flow() / 100F;
         float capacity = BreederReactor.capacity(flowFraction, BreederReactor.LOOP);
         if (plan.generation() > capacity + 0.5F) {
-            text(graphics, Component.translatable("gui.ryzergen.breeder.too_hot"), 42, BAD);
-            text(graphics, Component.translatable("gui.ryzergen.breeder.more_flow",
+            text(graphics, RichText.tr("gui.ryzergen.breeder.too_hot"), 42, BAD);
+            text(graphics, RichText.tr("gui.ryzergen.breeder.more_flow",
                     (int) Math.ceil(plan.generation() / BreederReactor.capacity(1, BreederReactor.LOOP) * 100)), 51, DIM);
             return;
         }
         float output = BreederReactor.plannedOutput(plan.generation(), flowFraction, BreederReactor.LOOP);
-        text(graphics, Component.translatable("gui.ryzergen.breeder.plan", compact(Math.round(output))), 42, VALUE);
+        text(graphics, RichText.tr("gui.ryzergen.breeder.plan", compact(Math.round(output))), 42, VALUE);
         float temperature = BreederReactor.settledTemperature(plan.generation(), capacity);
-        text(graphics, Component.translatable("gui.ryzergen.breeder.plan_temperature",
+        text(graphics, RichText.tr("gui.ryzergen.breeder.plan_temperature",
                 Math.round(BreederReactor.efficiency(temperature) * 100), Math.round(temperature)), 51, VALUE);
-        text(graphics, Component.translatable("gui.ryzergen.breeder.fuel_life", Math.round(plan.fuelMinutes())), 60, VALUE);
-        text(graphics, Component.translatable("gui.ryzergen.breeder.blankets", plan.blankets()), 69, plan.blankets() > 0 ? VALUE : DIM);
+        text(graphics, RichText.tr("gui.ryzergen.breeder.fuel_life", Math.round(plan.fuelMinutes())), 60, VALUE);
+        text(graphics, RichText.tr("gui.ryzergen.breeder.blankets", plan.blankets()), 69, plan.blankets() > 0 ? VALUE : DIM);
     }
 
     private void text(GuiGraphics graphics, Component text, int y, int colour) {
@@ -262,7 +283,7 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
     }
 
     private static Component tip(String key, int colour, Object... args) {
-        return Component.translatable(key, args).withStyle(style -> style.withColor(colour));
+        return RichText.tr(key, args).withStyle(style -> style.withColor(colour));
     }
 
     @Override
@@ -274,37 +295,40 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
         } else {
             renderTooltip(graphics, mouseX, mouseY);
         }
-        for (int k = 0; k < TOOLS.length; k++) {
+        for (int k = 0; k < tools().length; k++) {
             if (isOver(toolX(k), TOOL_Y, mouseX, mouseY)) {
                 graphics.renderComponentTooltip(font, List.of(
-                        Component.translatable("gui.ryzergen.breeder.tool." + TOOLS[k].name().toLowerCase(Locale.ROOT)),
-                        tip("gui.ryzergen.station.tool.hint", DIM),
-                        tip("gui.ryzergen.station.tool.clear", DIM)), mouseX, mouseY);
+                        RichText.tr("gui.ryzergen.breeder.tool." + tools()[k].name().toLowerCase(Locale.ROOT)),
+                        RichText.tr("gui.ryzergen.breeder.tool." + tools()[k].name().toLowerCase(Locale.ROOT) + ".what")
+                                .withStyle(ChatFormatting.GRAY)), mouseX, mouseY);
             }
+        }
+        if (isOver(TEXT_X, 29, 104, 9, mouseX, mouseY)) {
+            graphics.renderComponentTooltip(font, SteadyStateTooltip.lines(menu.streak(), menu.bonus(), menu.nextMilestone()), mouseX, mouseY);
         }
         int mx = mouseX - leftPos;
         int my = mouseY - topPos;
         if (isOver(POWER_X, KEYS_Y, mouseX, mouseY)) {
-            graphics.renderTooltip(font, Component.translatable(menu.enabled() ? "gui.ryzergen.station.power.on" : "gui.ryzergen.station.power.off"), mouseX, mouseY);
+            graphics.renderTooltip(font, RichText.tr(menu.enabled() ? "gui.ryzergen.station.power.on" : "gui.ryzergen.station.power.off"), mouseX, mouseY);
         } else if (isOver(REDSTONE_X, KEYS_Y, mouseX, mouseY)) {
             String mode = switch (menu.redstoneMode()) {
                 case IGNORED -> "gui.ryzergen.redstone.ignored";
                 case HIGH -> "gui.ryzergen.redstone.high";
                 case LOW -> "gui.ryzergen.redstone.low";
             };
-            graphics.renderTooltip(font, Component.translatable(mode), mouseX, mouseY);
+            graphics.renderTooltip(font, RichText.tr(mode), mouseX, mouseY);
         } else if (isOver(FLOW_DOWN_X, KEYS_Y, FLOW_UP_X + 16 - FLOW_DOWN_X, 16, mouseX, mouseY)) {
             graphics.renderComponentTooltip(font, List.of(
-                    Component.translatable("gui.ryzergen.breeder.flow", menu.flow()),
+                    RichText.tr("gui.ryzergen.breeder.flow", menu.flow()),
                     tip("gui.ryzergen.breeder.flow.pumps", DIM, compact(menu.pumping())),
                     tip("gui.ryzergen.breeder.flow.hint", DIM)), mouseX, mouseY);
         } else if (mx >= BAR_X && mx < BAR_X + BAR_W) {
             Component tip = my >= HEAT_Y - 1 && my < HEAT_Y + 5
-                    ? Component.translatable("gui.ryzergen.station.heat", menu.temperature(), (int) BreederRunner.SCRAM_TEMPERATURE)
+                    ? RichText.tr("gui.ryzergen.station.heat", menu.temperature(), (int) BreederRunner.SCRAM_TEMPERATURE)
                     : my >= SODIUM_Y - 1 && my < SODIUM_Y + 5
-                    ? Component.translatable("gui.ryzergen.breeder.sodium", String.format("%,d", menu.sodium()), String.format("%,d", BreederReactor.LOOP))
+                    ? RichText.tr("gui.ryzergen.breeder.sodium", String.format("%,d", menu.sodium()), String.format("%,d", BreederReactor.LOOP))
                     : my >= ENERGY_Y - 1 && my < ENERGY_Y + 5
-                    ? Component.translatable("gui.ryzergen.energy", String.format("%,d", menu.energy()), String.format("%,d", BreederRunner.ENERGY_CAPACITY))
+                    ? RichText.tr("gui.ryzergen.energy", String.format("%,d", menu.energy()), String.format("%,d", BreederRunner.ENERGY_CAPACITY))
                     : null;
             if (tip != null) {
                 graphics.renderTooltip(font, tip, mouseX, mouseY);
@@ -329,7 +353,7 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
         String key = "gui.ryzergen.breeder.position.";
         int colour = colour(plan[position]);
         switch (plan[position]) {
-            case EMPTY -> lines.add(Component.translatable(key + "empty"));
+            case EMPTY -> lines.add(RichText.tr(key + "empty"));
             case FUEL -> {
                 if (analysis.heat()[position] <= 0) {
                     lines.add(tip(key + "fuel.waiting", colour));
@@ -341,12 +365,12 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
                     lines.add(tip(key + "fuel.hot_spot", BAD, compact(Math.round(BreederReactor.hotSpot()))));
                 }
                 if (fuel > 0) {
-                    lines.add(Component.translatable(key + "fuel.fuel", fuel));
+                    lines.add(RichText.tr(key + "fuel.fuel", fuel));
                 }
                 if (control > 0) {
-                    lines.add(Component.translatable(key + "fuel.control", control));
+                    lines.add(RichText.tr(key + "fuel.control", control));
                 }
-                lines.add(Component.translatable(key + "fuel.burn", Math.round(analysis.burn()[position] * 100)));
+                lines.add(RichText.tr(key + "fuel.burn", Math.round(analysis.burn()[position] * 100)));
             }
             case CONTROL -> {
                 if (items[position].isEmpty()) {
@@ -356,7 +380,7 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
                     lines.add(tip(key + "control", fuel > 0 ? VALUE : DIM, fuel));
                 }
             }
-            case URANIUM, LITHIUM -> {
+            case URANIUM, LITHIUM, THORIUM -> {
                 String name = plan[position].name().toLowerCase(Locale.ROOT);
                 if (items[position].isEmpty()) {
                     lines.add(tip(key + name + ".waiting", colour));
@@ -372,7 +396,6 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
                 }
             }
         }
-        lines.add(tip("gui.ryzergen.station.tool.clear", DIM));
         return lines;
     }
 
@@ -388,9 +411,9 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
             return true;
         }
         if (button == 0) {
-            for (int k = 0; k < TOOLS.length; k++) {
+            for (int k = 0; k < tools().length; k++) {
                 if (isOver(toolX(k), TOOL_Y, mouseX, mouseY)) {
-                    tool = tool == TOOLS[k] ? null : TOOLS[k];
+                    tool = tool == tools()[k] ? null : tools()[k];
                     click();
                     return true;
                 }

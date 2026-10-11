@@ -1,6 +1,7 @@
 package com.ryzer.ryzergen.client;
 
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.client.text.RichText;
 import com.ryzer.ryzergen.machine.pool.HotFuel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -16,27 +17,24 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * Item tooltips, as Mekanism and many other mods do them: a short summary always shows under the
- * name, and the details show while Shift is held ("Hold Shift for details" otherwise). All of it
- * comes from the lang file, so giving an item details needs no code:
+ * Item tooltips, all from the lang file, so giving an item its text needs no code. Under the name:
  * <ul>
- *   <li>{@code tooltip.ryzergen.<id>}: the summary line</li>
- *   <li>{@code tooltip.ryzergen.<id>.details.1}, {@code .2} and on: the detail lines</li>
+ *   <li>{@code tooltip.ryzergen.<id>}: its role, a few words ("Fission station fuel")</li>
+ *   <li>{@code tooltip.ryzergen.<id>.stat.1}, {@code .2} and on: its stat lines, always shown,
+ *   number first ({@code <n>2,000</n> FE/t {heat}})</li>
+ *   <li>{@code tooltip.ryzergen.<id>.details.1} and on: how it works and its real basis, while
+ *   Shift is held ("Hold Shift for details" otherwise)</li>
  * </ul>
- * Lines are grey, with colour for what matters, marked in the lang text:
- * {@code <v>} values (cyan), {@code <g>} benefits (green), {@code <w>} cautions (gold),
- * {@code <r>} dangers (red), {@code <k>} keys and controls (yellow), and {@code <i>} a note, such as
- * a real-world basis (dark grey italic). Items still add their own live readouts (fuel left,
- * charge, dose), which sit between the summary and the details.
+ * Lines are grey with the mod's markup ({@link RichText}): key terms bold in their colours with
+ * their icons, numbers bold white. Items still add their own live readouts (fuel left, charge,
+ * dose), which sit between the stats and the details.
  */
 @EventBusSubscriber(modid = RyzerGen.MOD_ID, value = Dist.CLIENT)
 public final class ItemDetails {
-    private static final Pattern TAG = Pattern.compile("<([vgwrki])>(.*?)</\\1>");
     private static final String HOLD_SHIFT = "tooltip.ryzergen.hold_shift";
+    private static final int ROLE = 0x80868E;
 
     private ItemDetails() {}
 
@@ -49,13 +47,22 @@ public final class ItemDetails {
         Language language = Language.getInstance();
         String key = "tooltip.ryzergen." + id.getPath();
         List<Component> tooltip = event.getToolTip();
-        if (language.has(key) && !tooltip.isEmpty()) {
-            tooltip.add(1, line(language.getOrDefault(key)));
+        if (tooltip.isEmpty()) {
+            return;
         }
+        List<Component> head = new ArrayList<>();
         // Spent fuel fresh from a reactor says so first: nothing will process it until it cools.
-        if (HotFuel.isHot(event.getItemStack()) && !tooltip.isEmpty()) {
-            tooltip.add(1, line(language.getOrDefault("tooltip.ryzergen.hot")));
+        if (HotFuel.isHot(event.getItemStack())) {
+            head.add(line(language.getOrDefault("tooltip.ryzergen.hot")));
         }
+        if (language.has(key)) {
+            // The role reads as a category under the name, a step dimmer than the stats.
+            head.add(RichText.parse(language.getOrDefault(key)).withColor(ROLE));
+        }
+        for (int n = 1; language.has(key + ".stat." + n); n++) {
+            head.add(line(language.getOrDefault(key + ".stat." + n)));
+        }
+        tooltip.addAll(1, head);
         if (!language.has(key + ".details.1")) {
             return;
         }
@@ -78,30 +85,8 @@ public final class ItemDetails {
         tooltip.addAll(at, details);
     }
 
-    /** A grey line with its marked parts coloured. */
+    /** A grey line with its marked parts styled. */
     private static MutableComponent line(String text) {
-        MutableComponent line = Component.empty().withStyle(ChatFormatting.GRAY);
-        Matcher matcher = TAG.matcher(text);
-        int from = 0;
-        while (matcher.find()) {
-            if (matcher.start() > from) {
-                line.append(Component.literal(text.substring(from, matcher.start())));
-            }
-            MutableComponent part = Component.literal(matcher.group(2));
-            switch (matcher.group(1)) {
-                case "v" -> part.withStyle(ChatFormatting.AQUA);
-                case "g" -> part.withStyle(ChatFormatting.GREEN);
-                case "w" -> part.withStyle(ChatFormatting.GOLD);
-                case "r" -> part.withStyle(ChatFormatting.RED);
-                case "k" -> part.withStyle(ChatFormatting.YELLOW);
-                default -> part.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
-            }
-            line.append(part);
-            from = matcher.end();
-        }
-        if (from < text.length()) {
-            line.append(Component.literal(text.substring(from)));
-        }
-        return line;
+        return RichText.parse(text).withStyle(ChatFormatting.GRAY);
     }
 }

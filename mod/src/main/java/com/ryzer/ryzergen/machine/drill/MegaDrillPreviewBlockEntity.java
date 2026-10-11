@@ -3,6 +3,7 @@ package com.ryzer.ryzergen.machine.drill;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
 import com.ryzer.ryzergen.registry.ModSounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -13,7 +14,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -24,29 +25,27 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * The mega drill preview's cycle, run on the server: with a redstone signal it charges (the light runs
  * down the drive shaft), fires (the beam heats the layer it strikes), and the whole layer bursts at
- * once; then it steps down a layer and charges again. It mines the 16 x 16 round the block from the
+ * once; then it steps down a layer and charges again. It mines the 7 x 7 under the base's opening from the
  * ground it stands on down to bedrock, leaving a 2 x 2 footing under each of its four feet, and throws
- * the drops away (a creative test; the real drill will keep them). Clients get only the phase, when it
- * began and how long it lasts, and draw everything else from those (MegaDrillPreviewRenderer).
+ * the drops away (a creative test; the real drill, MegaDrillBlockEntity, keeps them). Clients get only
+ * the phase, when it began and how long it lasts, and draw everything else from those (MegaDrillRenderer).
  */
-public class MegaDrillPreviewBlockEntity extends BlockEntity {
-    public enum Phase { IDLE, CHARGING, FIRING, DONE }
-
+public class MegaDrillPreviewBlockEntity extends BlockEntity implements MegaDrillView {
     /** Ticks to charge, and to heat a layer until it bursts, at 1x; the speed setting divides both. */
     public static final int CHARGE_TICKS = 100;
     public static final int HEAT_TICKS = 80;
     /** The area mined, from the block: 7 blocks one way and 8 the other on each axis, 16 across. */
-    public static final int LOW = -7;
-    public static final int HIGH = 8;
+    public static final int LOW = MegaDrillLayout.LOW;
+    public static final int HIGH = MegaDrillLayout.HIGH;
     private static final int UNSET = Integer.MIN_VALUE;
 
-    private Phase phase = Phase.IDLE;
+    private DrillPhase phase = DrillPhase.IDLE;
     private long phaseStart;
     private int phaseLength = 1;
     private int layer = UNSET;
     private int speed = 1;
     /** The client's GPU mesh of the design's body (a StationMesh), closed when the block goes. */
-    public Object clientMesh;
+    private Object clientMesh;
 
     public MegaDrillPreviewBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.MEGA_DRILL_PREVIEW.get(), pos, state);
@@ -54,10 +53,10 @@ public class MegaDrillPreviewBlockEntity extends BlockEntity {
 
     /** The legs' footings: a 2 x 2 under each foot pad, at the 9 x 9 base's corners, never mined. */
     public static boolean footing(int dx, int dz) {
-        return Math.abs(dx) >= 3 && Math.abs(dx) <= 4 && Math.abs(dz) >= 3 && Math.abs(dz) <= 4;
+        return MegaDrillLayout.footing(dx, dz);
     }
 
-    public Phase phase() {
+    public DrillPhase phase() {
         return phase;
     }
 
@@ -84,12 +83,12 @@ public class MegaDrillPreviewBlockEntity extends BlockEntity {
     }
 
     /** Whether the position (in the area, on the layer) holds a block the beam bursts. */
-    private boolean bursts(Level level, BlockPos pos, int dx, int dz) {
+    private boolean bursts(BlockGetter level, BlockPos pos, int dx, int dz) {
         if (footing(dx, dz) || (dx == 0 && dz == 0 && pos.getY() == worldPosition.getY())) {
             return false;
         }
         BlockState state = level.getBlockState(pos);
-        return !state.isAir() && state.getDestroySpeed(level, pos) >= 0;
+        return !state.isAir() && !(state.getBlock() instanceof MegaDrillPartBlock) && state.getDestroySpeed(level, pos) >= 0;
     }
 
     /** Moves down past layers with nothing to burst; false once it is below the world. */
@@ -108,7 +107,7 @@ public class MegaDrillPreviewBlockEntity extends BlockEntity {
         return false;
     }
 
-    private void enter(Level level, Phase next, int length) {
+    private void enter(Level level, DrillPhase next, int length) {
         phase = next;
         phaseStart = level.getGameTime();
         phaseLength = Math.max(1, length);
@@ -118,17 +117,17 @@ public class MegaDrillPreviewBlockEntity extends BlockEntity {
 
     private void charge(Level level) {
         if (!findWork(level)) {
-            enter(level, Phase.DONE, 1);
+            enter(level, DrillPhase.DONE, 1);
             return;
         }
-        enter(level, Phase.CHARGING, CHARGE_TICKS / speed);
+        enter(level, DrillPhase.CHARGING, CHARGE_TICKS / speed);
         level.playSound(null, worldPosition, ModSounds.MEGA_DRILL_CHARGE.get(), SoundSource.BLOCKS, 1.5F, 1.0F);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, MegaDrillPreviewBlockEntity drill) {
         if (!state.getValue(MegaDrillPreviewBlock.POWERED)) {
-            if (drill.phase != Phase.IDLE) {
-                drill.enter(level, Phase.IDLE, 1);
+            if (drill.phase != DrillPhase.IDLE) {
+                drill.enter(level, DrillPhase.IDLE, 1);
             }
             return;
         }
@@ -142,8 +141,8 @@ public class MegaDrillPreviewBlockEntity extends BlockEntity {
             }
             case CHARGING -> {
                 if (now - drill.phaseStart >= drill.phaseLength) {
-                    drill.enter(level, Phase.FIRING, HEAT_TICKS / drill.speed);
-                    level.playSound(null, pos, ModSounds.MEGA_DRILL_FIRE.get(), SoundSource.BLOCKS, 2.0F, 1.0F);
+                    drill.enter(level, DrillPhase.FIRING, HEAT_TICKS / drill.speed);
+                    MegaDrillBlockEntity.playFire(level, pos, drill.speed);
                 }
             }
             case FIRING -> {
@@ -177,38 +176,71 @@ public class MegaDrillPreviewBlockEntity extends BlockEntity {
         }
         double x = worldPosition.getX() + 1.0;
         double z = worldPosition.getZ() + 1.0;
-        level.sendParticles(ParticleTypes.LAVA, x, layer + 0.6, z, 60, 4.5, 0.2, 4.5, 0);
-        level.sendParticles(ParticleTypes.LARGE_SMOKE, x, layer + 0.6, z, 40, 4.5, 0.4, 4.5, 0.02);
+        level.sendParticles(ParticleTypes.LAVA, x, layer + 0.6, z, 30, 2.2, 0.2, 2.2, 0);
+        level.sendParticles(ParticleTypes.LARGE_SMOKE, x, layer + 0.6, z, 20, 2.2, 0.4, 2.2, 0.02);
         level.playSound(null, x, layer + 0.5, z, ModSounds.MEGA_DRILL_BURST.get(), SoundSource.BLOCKS, 3.0F, 1.0F);
     }
 
-    /** Sparks at the lens as the charge arrives; once it fires, lava spits where the beam strikes and smoke rises off the layer. */
+    /** Sparks at the lens as the charge arrives; once it fires, lava spits and smoke rises off the layer. */
     public static void clientTick(Level level, BlockPos pos, BlockState state, MegaDrillPreviewBlockEntity drill) {
-        if (!state.getValue(MegaDrillPreviewBlock.POWERED)) {
-            return;
+        if (state.getValue(MegaDrillPreviewBlock.POWERED)) {
+            MegaDrillBlockEntity.effects(level, drill, pos, drill.layer());
         }
-        RandomSource random = level.random;
-        double cx = pos.getX() + 0.5;
-        double cz = pos.getZ() + 0.5;
-        float p = drill.progress(level.getGameTime(), 0);
-        if (drill.phase == Phase.CHARGING && p > 0.8F) {
-            double lens = pos.getY() + 36 / 16.0;
-            level.addParticle(ParticleTypes.ELECTRIC_SPARK, cx + random.nextGaussian() * 0.15, lens, cz + random.nextGaussian() * 0.15,
-                    random.nextGaussian() * 0.05, -0.05, random.nextGaussian() * 0.05);
-        }
-        if (drill.phase == Phase.FIRING) {
-            double y = drill.layer + 1.02;
-            if (random.nextFloat() < 0.6F) {
-                level.addParticle(ParticleTypes.LAVA, cx, y, cz, 0, 0, 0);
-            }
-            level.addParticle(ParticleTypes.SMOKE, cx + random.nextGaussian() * 0.2, y, cz + random.nextGaussian() * 0.2, 0, 0.05, 0);
-            int rising = (int) (p * 5);
-            for (int i = 0; i < rising; i++) {
-                double x = pos.getX() + LOW + random.nextDouble() * 16;
-                double z = pos.getZ() + LOW + random.nextDouble() * 16;
-                level.addParticle(p > 0.6F && random.nextFloat() < 0.15F ? ParticleTypes.LAVA : ParticleTypes.SMOKE, x, y, z, 0, 0.04, 0);
-            }
-        }
+    }
+
+    @Override
+    public boolean drillShown() {
+        return true;
+    }
+
+    @Override
+    public Direction drillFacing() {
+        return getBlockState().getValue(MegaDrillPreviewBlock.FACING);
+    }
+
+    @Override
+    public boolean drillRunning() {
+        return getBlockState().getValue(MegaDrillPreviewBlock.POWERED);
+    }
+
+    @Override
+    public DrillPhase drillPhase() {
+        return phase;
+    }
+
+    @Override
+    public float drillProgress(long gameTime, float partialTick) {
+        return progress(gameTime, partialTick);
+    }
+
+    @Override
+    public float drillElapsed(long gameTime, float partialTick) {
+        return elapsed(gameTime, partialTick);
+    }
+
+    @Override
+    public int drillLayer() {
+        return layer();
+    }
+
+    @Override
+    public BlockPos drillCentre() {
+        return worldPosition;
+    }
+
+    @Override
+    public boolean drillHeats(BlockGetter level, BlockPos pos, int dx, int dz) {
+        return !pos.equals(worldPosition) && bursts(level, pos, dx, dz);
+    }
+
+    @Override
+    public Object drillMesh() {
+        return clientMesh;
+    }
+
+    @Override
+    public void drillMesh(Object mesh) {
+        clientMesh = mesh;
     }
 
     @Override
@@ -232,7 +264,7 @@ public class MegaDrillPreviewBlockEntity extends BlockEntity {
     }
 
     private void load(CompoundTag tag) {
-        phase = Phase.values()[Mth.clamp(tag.getInt("phase"), 0, Phase.values().length - 1)];
+        phase = DrillPhase.byId(tag.getInt("phase"));
         phaseStart = tag.getLong("phaseStart");
         phaseLength = Math.max(1, tag.getInt("phaseLength"));
         layer = tag.contains("layer") ? tag.getInt("layer") : UNSET;

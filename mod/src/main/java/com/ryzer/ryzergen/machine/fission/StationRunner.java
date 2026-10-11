@@ -10,6 +10,7 @@ import com.ryzer.ryzergen.radiation.RadiationSources;
 import com.ryzer.ryzergen.registry.ModDataComponents;
 import com.ryzer.ryzergen.registry.ModItems;
 import com.ryzer.ryzergen.registry.ModTriggers;
+import com.ryzer.ryzergen.machine.SteadyState;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -231,6 +232,9 @@ public class StationRunner {
     Status status = Status.OFFLINE;
     /** The control system's voice, and what it last knew, to speak only on a change. Not saved. */
     private final Announcer announcer = new Announcer();
+    final SteadyState steady = new SteadyState();
+    /** One load of every fuel channel: about 30 minutes of running. */
+    private static final float LOAD_TICKS = 36_000;
     private @Nullable Boolean announcedSafeties;
     private @Nullable Boolean announcedScram;
     /** The current SCRAM came from the player re-arming the safeties: a controlled shutdown. Not saved. */
@@ -442,7 +446,7 @@ public class StationRunner {
         // nothing.)
         float efficiency = StationReactor.efficiency(temperature, overdrive);
         efficiencyPermille = removed > 0 && !scrammed ? Math.round(efficiency * 1000) : 0;
-        output = scrammed ? 0 : Math.round(removed * efficiency);
+        output = scrammed ? 0 : Math.round(removed * efficiency * steady.bonus(SteadyState.Tier.STATION));
         if (output > 0) {
             energy.generate(output);
         }
@@ -476,6 +480,11 @@ public class StationRunner {
                 : overdrive ? Status.OVERDRIVE
                 : Status.ONLINE;
         announce(level, centre, before);
+        // The steady-state streak: running with every planned fuel channel live builds it; a stop,
+        // or a channel left spent or empty, is downtime.
+        boolean steadyRunning = generation > 0 && !scrammed && !fuelGap();
+        int milestone = steady.tick(steadyRunning ? SteadyState.State.RUNNING : SteadyState.State.DOWN, steadyRunning ? 1 / LOAD_TICKS : 0);
+        SteadyState.reached(level, centre, announcer, milestone, Milestone.STATION_STEADY);
         // Nearby clients follow the alarm closely, so it can speed up as the core heats.
         if (status != before || (status.critical() && level.getGameTime() % 5 == 0)) {
             changed.run();
@@ -534,6 +543,7 @@ public class StationRunner {
      * which leaves a strong radiation site. Only reachable with the safeties off and meltdowns on.
      */
     private void meltdown(ServerLevel level, BlockPos core, Direction facing, Vec3 centre) {
+        steady.reset();
         for (int i = 0; i < StationReactor.CHANNELS; i++) {
             channels.setStackInSlot(i, ItemStack.EMPTY);
         }
@@ -693,6 +703,7 @@ public class StationRunner {
         tag.putInt("tilt_ticks", tiltTicks);
         tag.putBoolean("unstable", unstable);
         tag.putInt("status", status.ordinal());
+        steady.save(tag);
     }
 
     void load(CompoundTag tag, HolderLookup.Provider registries) {
@@ -712,5 +723,6 @@ public class StationRunner {
         unstable = tag.getBoolean("unstable");
         int id = tag.getInt("status");
         status = id >= 0 && id < Status.values().length ? Status.values()[id] : Status.OFFLINE;
+        steady.load(tag);
     }
 }

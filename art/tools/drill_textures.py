@@ -12,7 +12,8 @@ squeezed out of shape.
   block.
 - Narrow parts drawn at their width: post (5 wide: a steel leg with a bolted splice plate over
   each block's joint), brace (4 wide angle steel, riveted), leg (the buttress legs, 14 wide, a
-  groove down the middle and a bolted plate joint every block), ram and rod (3 and 4 wide),
+  groove down the middle and a bolted plate joint every block), joist (4 wide, the deck's
+  girders, light steel like the legs), rod (3 wide),
   rail and rail_post, stack (8 wide, sooted under its lip) and stack_top, pulley, duct (the
   copper coolant duct, a joint each block).
 - Bands drawn at their height (rows 16 - h to 15) with patterns that repeat every 4 or 8 pixels,
@@ -22,7 +23,7 @@ squeezed out of shape.
   plain graphite rather than nothing.
 - Patterns that repeat every 8 pixels, laid from the world grid so any cut shows them evenly:
   grating (bar grating round the pit), tread (diamond plate for decks and roofs), underside
-  (joists), hazard (45 degree stripes, the same read either way round).
+  (ribbed steel decking, seen from below), hazard (45 degree stripes, the same read either way round).
 - Small hardware: accent (orange clamps, bands and hubs, lit along the top), trim (graphite for
   edges a pixel thin).
 - Decals at their exact size, drawn in the top left corner of their sheet: window (6 x 10),
@@ -34,6 +35,10 @@ squeezed out of shape.
   game adds over any block's own model as the layer being mined heats, over heat_tint, a plain white
   sheet the renderer colours to redden and darken the block. One overlay for every block, modded
   ones too.
+- The real drill (machine/drill): girder (drill frame as a block before the drill forms),
+  panel_screen (the controller's face, the console's screen in a panel), and the port consoles'
+  panels with their ports drawn in, flush (panel_port_energy, _water, _items). Its items: the
+  drill heads Mk I to III and the tungsten tip (item/).
 - The sinking towers' (melt_drill_concept.py): casing, pot, vent, frame, skirt, ring, warning.
 - melt and beam (animated, lit): the molten pit, dark crust drifting slowly over glowing melt,
   and the laser beam, a bright core flickering along its length. crust is the pit while idle.
@@ -125,6 +130,65 @@ def panel_stencil():
                 if bit == '1':
                     t.set(x0 + x, 6 + y, 'S')
         x0 += len(GLYPHS[ch][0]) + 1
+    return t
+
+
+def panel_screen():
+    """The controller's face before the drill forms (it is the console's controls in a box): the
+    panel with a dark screen in its inset, a depth gauge and readout lines in cyan, and the three
+    status lights under it."""
+    t = panel()
+    t.rect(3, 3, 12, 9, 'T')
+    t.rect(4, 4, 11, 8, 'K')
+    t.rect(5, 5, 5, 7, 'f')
+    t.rect(5, 6, 5, 7, 'i')
+    t.rect(7, 5, 10, 5, 'i')
+    t.rect(7, 7, 9, 7, 'f')
+    t.set(11, 4, 'n')
+    for x, colour in ((4, 'n'), (7, 'a'), (10, 'x')):
+        t.rect(x, 11, x + 1, 11, colour)
+        t.rect(x, 12, x + 1, 12, 'J')
+    return t
+
+
+# The ports' rings, as the microreactor's port decals draw them: red energy, blue water, orange items.
+PORT_RINGS = {'energy': 'x', 'water': 'i', 'items': 'X'}
+
+
+def panel_port(ring):
+    """A port console's panel with its port drawn in (the station's way, not a decal stuck over
+    it): the house's 10 x 10 flange round an 8 x 8 socket, centred in the plate, its ring in the
+    colour of what it carries. The console's face is the block's face, so the port sits flush."""
+    t = panel()
+    rows_ = ['bbbbbbbbbb',
+             'bTTTTTTTTU',
+             'bT' + ring * 6 + 'TU',
+             'bT' + ring + 'UUUU' + ring + 'TU',
+             'bT' + ring + 'USSU' + ring + 'TU',
+             'bT' + ring + 'USSU' + ring + 'TU',
+             'bT' + ring + 'UUUU' + ring + 'TU',
+             'bT' + ring * 6 + 'TU',
+             'bTTTTTTTTU',
+             'UUUUUUUUUU']
+    t.stamp(3, 3, rows_)
+    return t
+
+
+def girder():
+    """Drill frame as a block, before the drill forms: a graphite square frame (the lid's bevel and
+    corner screws) round a dark inside, an angle-steel X brace across it, riveted at the cross."""
+    t = lid()
+    t.rect(3, 3, 12, 12, 'U')
+    for i in range(10):
+        for x, y in ((3 + i, 3 + i), (12 - i, 3 + i)):
+            if y + 1 <= 12:
+                t.set(x, y + 1, 'T')
+    for i in range(10):
+        for x, y in ((3 + i, 3 + i), (12 - i, 3 + i)):
+            t.set(x, y, 'l')
+    for x, y in ((7, 7), (8, 7), (7, 8), (8, 8)):
+        t.set(x, y, 'M')
+    t.set(7, 7, 'L')
     return t
 
 
@@ -296,18 +360,19 @@ def leg():
     return t
 
 
-def ram():
-    """The hydraulic rams' barrels, 4 wide (rows 0 to 3): graphite, lit along the top, a gland ring
-    every block."""
+def joist():
+    """The girders under the deck, 4 wide (rows 0 to 3), along u: light steel like the legs they
+    frame into, lit along one edge and shaded along the other, a bolt every 8 pixels."""
     t = Tex()
-    rows(t, ['b', 'S', 'S', 'U'] + ['S'] * 12)
-    for x in (14, 15):
-        rows(t, ['M', 'b', 'b', 'T'], x, x)
+    rows(t, ['A', 'E', 'E', 'I'] + ['E'] * 12)
+    for x in range(4, 16, 8):
+        t.set(x, 1, 'I')
+        t.set(x, 2, 'J')
     return t
 
 
 def rod():
-    """The rams' rods, 3 wide (rows 0 to 2): polished steel, bright along the top."""
+    """Rods and bolts, 3 wide (rows 0 to 2): polished steel, bright along the top."""
     t = Tex()
     rows(t, ['H', 'L', 'm'] + ['m'] * 13)
     return t
@@ -503,13 +568,15 @@ def tread():
 
 
 def underside():
-    """The undersides of the deck and the collar: graphite between joists a block apart."""
+    """The undersides of the deck, the collar and the roofs: ribbed steel decking, as a real steel
+    floor is seen from below, repeating every 8 pixels across and the same all along. Each rib's
+    flat (4 wide, lit down its middle) is centred on the 8-pixel line and the profile is the same
+    either way round, so a deck centred on a block or on a block's middle shows it the same at
+    both edges."""
     t = Tex()
-    t.rect(0, 0, 15, 15, 'T')
-    t.rect(0, 0, 15, 1, 'S')
-    t.rect(0, 0, 1, 15, 'S')
-    t.rect(0, 2, 15, 2, 'U')
-    t.rect(2, 0, 2, 15, 'U')
+    profile = ['b', 'S', 'T', 'U', 'U', 'T', 'S', 'b']
+    for x in range(16):
+        t.rect(x, 0, x, 15, profile[x % 8])
     return t
 
 
@@ -860,7 +927,7 @@ TEXTURES = {
     'post': post,
     'brace': brace,
     'leg': leg,
-    'ram': ram,
+    'joist': joist,
     'rod': rod,
     'rail': rail,
     'rail_post': rail_post,
@@ -889,6 +956,12 @@ TEXTURES = {
     'emitter_cold': lambda: emitter(cold=True),
     'emitter_top': emitter_top,
     'crust': crust,
+    # the real drill's blocks before it forms, and its port consoles
+    'girder': girder,
+    'panel_screen': panel_screen,
+    'panel_port_energy': lambda: panel_port(PORT_RINGS['energy']),
+    'panel_port_water': lambda: panel_port(PORT_RINGS['water']),
+    'panel_port_items': lambda: panel_port(PORT_RINGS['items']),
     # the sinking towers'
     'casing': casing,
     'pot': pot,
@@ -913,6 +986,71 @@ LIT = {
 NAMES = list(TEXTURES) + list(LIT) + ['melt', 'beam', 'hot_obsidian', 'hot_obsidian_core']
 
 
+# ---------------------------------------------------------------- items
+def head_item(mark):
+    """A drill head (Mk I, II or III): the gyrotron's graphite housing, its mark shown by one to
+    three green pips and a band (steel, copper, then cyan), a gunmetal cooling flange, and under it
+    the emitter's cone, heat-tinted from graphite through bronze to a glowing orange tip, as on the
+    drill itself."""
+    from machine_textures import shape_item
+    housing = {(x, y) for x in range(4, 12) for y in range(1, 6)}
+    flange = {(x, y) for x in range(2, 14) for y in (6, 7)}
+    cone = set()
+    widths = ((3, 12), (4, 11), (4, 11), (5, 10), (6, 9), (7, 8), (7, 8))
+    for y, (x0, x1) in zip(range(8, 15), widths):
+        cone |= {(x, y) for x in range(x0, x1 + 1)}
+    t = shape_item(housing | flange | cone, 'S', 'b', 'T', highlight='M')
+    for x, y in flange:
+        t.set(x, y, 's' if y == 6 else 'z')
+    t.set(2, 6, 'L')
+    for x in range(3, 13, 2):
+        t.set(x, 7, 'U')
+    # The cone: cooling rings in graphite, then heat-tinted down to the glowing tip; each row lit
+    # on its left and shaded on its right.
+    ramp = {8: ('b', 'S', 'T'), 9: ('S', 'T', 'U'), 10: ('r', 'O', 'o'), 11: ('R', 'r', 'O'),
+            12: ('e', 'X', 'Z'), 13: ('e', 'X', 'Z'), 14: ('W', 'e', 'X')}
+    for y in range(8, 15):
+        xs = sorted(x for x, yy in cone if yy == y)
+        lit, body, shade = ramp[y]
+        for x in xs:
+            t.set(x, y, lit if x == xs[0] else shade if x == xs[-1] else body)
+    band = {1: 'L', 2: 'R', 3: 'i'}[mark]
+    t.rect(4, 4, 11, 4, band)
+    for i in range(3):
+        t.set(6 + 2 * i, 2, 'n' if i < mark else 'U')
+    return t
+
+
+def tip_item():
+    """A tungsten tip: a threaded gunmetal shank and a pale grey refractory cone pointing down, lit
+    down its left side, its point blued by the heat."""
+    from machine_textures import shape_item
+    shank = {(x, y) for x in range(5, 11) for y in range(1, 6)}
+    cone = set()
+    for y, (x0, x1) in zip(range(6, 15), ((4, 11), (4, 11), (5, 10), (5, 10), (6, 9), (6, 9), (7, 8), (7, 8), (7, 7))):
+        cone |= {(x, y) for x in range(x0, x1 + 1)}
+    t = shape_item(shank | cone, 'h', 'H', 'l', highlight='A')
+    for y in range(1, 6):
+        for x in range(5, 11):
+            t.set(x, y, ('s' if x < 8 else 'u') if y % 2 else 'z')
+    for x, y in cone:
+        if (x - 1, y) not in cone:
+            t.set(x, y, 'H')
+        elif (x + 1, y) not in cone:
+            t.set(x, y, 'l')
+    for x, y in ((7, 12), (8, 12), (7, 13), (8, 13), (7, 14)):
+        t.set(x, y, 'G' if y < 14 else 'g')
+    return t
+
+
+ITEMS = {
+    'item/drill_head_mk1': lambda: head_item(1),
+    'item/drill_head_mk2': lambda: head_item(2),
+    'item/drill_head_mk3': lambda: head_item(3),
+    'item/tungsten_tip': tip_item,
+}
+
+
 def main():
     for name, fn in TEXTURES.items():
         publish_finished(FOLDER + name, fn())
@@ -930,6 +1068,8 @@ def main():
     for root in (ART_TEXTURES, MOD_TEXTURES):
         write_png(os.path.join(root, 'effect', 'heat_tint.png'), [[(255, 255, 255, 255)] * 16 for _ in range(16)])
     publish_animated(FOLDER + 'beam', beam(), 2)
+    for name, fn in ITEMS.items():
+        publish_finished(name, fn())
 
 
 if __name__ == '__main__':

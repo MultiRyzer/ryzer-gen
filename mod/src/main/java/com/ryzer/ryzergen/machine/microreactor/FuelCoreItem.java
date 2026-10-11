@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.machine.microreactor;
 
 import com.ryzer.ryzergen.Config;
 import com.ryzer.ryzergen.registry.ModDataComponents;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -33,7 +34,7 @@ public class FuelCoreItem extends Item {
         return fuelLeft(stack) / (float) fuelLife();
     }
 
-    private static int fuelLife() {
+    public static int fuelLife() {
         return Math.max(1, Config.get(Config.MICROREACTOR_FUEL_LIFE));
     }
 
@@ -54,7 +55,7 @@ public class FuelCoreItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("item.ryzergen.sealed_fuel_core.fuel", Math.round(fraction(stack) * 100))
+        tooltip.add(RichText.tr("item.ryzergen.sealed_fuel_core.fuel", Math.round(fraction(stack) * 100))
                 .withStyle(ChatFormatting.GRAY));
     }
 }

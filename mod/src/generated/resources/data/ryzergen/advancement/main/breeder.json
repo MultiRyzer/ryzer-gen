@@ -1,0 +1,30 @@
+{
+  "parent": "ryzergen:main/station",
+  "criteria": {
+    "breeder_formed": {
+      "conditions": {
+        "milestone": "breeder_formed"
+      },
+      "trigger": "ryzergen:milestone"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.breeder.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:breeder_core"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.breeder.title"
+    }
+  },
+  "requirements": [
+    [
+      "breeder_formed"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

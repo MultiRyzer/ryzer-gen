@@ -33,7 +33,8 @@ public final class DataGenerators {
         generator.addProvider(event.includeServer(),
                 new ModDamageTypeTagsProvider(output, datapackEntries.getRegistryProvider(), existingFiles));
         generator.addProvider(event.includeServer(), new LootTableProvider(output, Set.of(),
-                List.of(new LootTableProvider.SubProviderEntry(ModBlockLootProvider::new, LootContextParamSets.BLOCK)), lookup));
+                List.of(new LootTableProvider.SubProviderEntry(ModBlockLootProvider::new, LootContextParamSets.BLOCK),
+                        new LootTableProvider.SubProviderEntry(ModDeepBoreLootProvider::new, LootContextParamSets.EMPTY)), lookup));
         ModBlockTagsProvider blockTags = generator.addProvider(event.includeServer(),
                 new ModBlockTagsProvider(output, lookup, existingFiles));
         generator.addProvider(event.includeServer(),

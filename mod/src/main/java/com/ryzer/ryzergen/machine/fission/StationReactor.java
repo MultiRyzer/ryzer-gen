@@ -5,6 +5,7 @@ import com.ryzer.ryzergen.Config;
 import com.ryzer.ryzergen.registry.ModDataComponents;
 import com.ryzer.ryzergen.registry.ModItems;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -31,7 +32,8 @@ import net.minecraft.world.item.ItemStack;
  * instead of 40%. About half as much power again, from the same layout.
  *
  * <p>MOX: each rod makes twice a uranium rod's heat, and the coolant carries more in step, up to
- * twice as much in an all-MOX core (scaled by the share of MOX rods). So a MOX core plays exactly
+ * twice as much in an all-MOX core (scaled by the core's average heat per rod; U-233, the third
+ * fuel, makes two and a half times a uranium rod's heat but lasts only an hour). So a MOX core plays exactly
  * like the same uranium core at double the power: same best layouts, same temperatures. Real basis:
  * plutonium-bearing fuel runs at a higher power density, and hotter fuel drives more heat into the
  * water (heat flux rises with the temperature difference). The factor of two is a game fudge, so
@@ -48,11 +50,56 @@ public final class StationReactor {
     /** Thermal FE per tick a fuel rod makes on its own. MOX runs twice as hot. */
     public static final float URANIUM_HEAT = 1000;
     public static final float MOX_HEAT = 2000;
-    /** How much more heat each coolant channel carries in an all-MOX core (1 = twice as much). */
-    private static final float MOX_COOLING = 1;
+    public static final float U233_HEAT = 2500;
     /** Ticks a rod lasts burning at 100%: uranium burns fast (and its spent rods breed plutonium), MOX lasts. */
     public static final int URANIUM_LIFE = 36_000;
     public static final int MOX_LIFE = 144_000;
+    public static final int U233_LIFE = 72_000;
+
+    /**
+     * The fuels a station burns: each rod, the spent rod it becomes, its heat and its life. The
+     * coolant carries more in step with a rod's heat, so every fuel plays the same layouts.
+     */
+    public enum Fuel {
+        URANIUM(URANIUM_HEAT, URANIUM_LIFE),
+        MOX(MOX_HEAT, MOX_LIFE),
+        /** U-233 in thorium (the thorium line, design section 9): no plutonium when spent. */
+        U233(U233_HEAT, U233_LIFE);
+
+        public final float heat;
+        public final int life;
+
+        Fuel(float heat, int life) {
+            this.heat = heat;
+            this.life = life;
+        }
+
+        public Item rod() {
+            return switch (this) {
+                case URANIUM -> ModItems.URANIUM_FUEL_ROD.get();
+                case MOX -> ModItems.MOX_FUEL_ROD.get();
+                case U233 -> ModItems.U233_FUEL_ROD.get();
+            };
+        }
+
+        public Item spent() {
+            return switch (this) {
+                case URANIUM -> ModItems.SPENT_URANIUM_ROD.get();
+                case MOX -> ModItems.SPENT_MOX_ROD.get();
+                case U233 -> ModItems.SPENT_U233_ROD.get();
+            };
+        }
+
+        /** The fuel a fresh rod is, or null. */
+        public static Fuel of(ItemStack stack) {
+            for (Fuel fuel : values()) {
+                if (stack.is(fuel.rod())) {
+                    return fuel;
+                }
+            }
+            return null;
+        }
+    }
     /** Thermal FE per tick one coolant channel can carry away. */
     public static final float COOLANT_CAPACITY = 3000;
     private static final float MODERATOR_BONUS = 0.4F;
@@ -76,13 +123,14 @@ public final class StationReactor {
     public static final float BEST_MOX = 16012;
     /** The temperatures those best layouts settle at, to scale them for overdrive. */
     private static final float BEST_URANIUM_TEMPERATURE = 544;
-    private static final float BEST_MOX_TEMPERATURE = 544;
     /** Overdrive: more heat and burn per rod, and more heat carried per coolant channel. */
     public static final float OVERDRIVE_HEAT = 1.3F;
 
     /** What a channel is planned to hold. Coolant channels are pipes of water; empty ones do nothing. */
     public enum Channel {
-        // New channel types go at the end: plans are saved by position in this list.
+        // New channel types go at the end: plans are saved by position in this list. TARGET is
+        // retired (target rods breed in the breeder now) and can no longer be planned, but stays so
+        // a station planned with one in an older world still loads and runs.
         EMPTY, FUEL, MODERATOR, CONTROL, COOLANT, TARGET;
 
         public static Channel byId(int id) {
@@ -107,10 +155,12 @@ public final class StationReactor {
      * with no coolant beside it, or more than a channel's capacity): any at all and the core cannot
      * hold steady. {@code working} is how many coolant channels carry heat, {@code capacity} how much
      * each can carry in this core. {@code breed} is, per target channel, the fuel heat beside it,
-     * which is how fast its lithium turns into tritium.
+     * which is how fast its lithium turns into tritium. {@code heatScale} is the fuel's average heat
+     * against uranium's (1 all uranium, 2 all MOX), {@code averageLife} its average life in ticks.
      */
     public record Analysis(float[] heat, float[] burn, float[] load, float[] breed, float generation, float stranded,
-                           int working, int coolants, int fuelRods, int moxRods, boolean overdrive, float capacity) {
+                           int working, int coolants, int fuelRods, float heatScale, float averageLife, boolean overdrive,
+                           float capacity) {
         /** Minutes a fresh target rod takes to breed in channel {@code i}, or 0 if nothing is breeding it. */
         public float breedMinutes(int i) {
             return breed[i] <= 0 ? 0 : TARGET_WORK * 1000F / breed[i] / 1200F;
@@ -144,7 +194,6 @@ public final class StationReactor {
             for (float b : burn) {
                 burnt += b;
             }
-            float averageLife = (moxRods * MOX_LIFE + (fuelRods - moxRods) * URANIUM_LIFE) / (float) fuelRods;
             return averageLife / (burnt / fuelRods) / 1200F;
         }
 
@@ -153,12 +202,11 @@ public final class StationReactor {
             if (fuelRods == 0) {
                 return 0;
             }
-            float mox = moxRods / (float) fuelRods;
-            float best = (BEST_URANIUM * (1 - mox) + BEST_MOX * mox) * multiplier();
+            // Every fuel plays the uranium layouts scaled by its heat (MOX's best is uranium's doubled).
+            float best = BEST_URANIUM * heatScale * multiplier();
             if (overdrive) {
                 // The same layout is best in overdrive (heat and cooling scale together), just stronger.
-                float settled = BEST_URANIUM_TEMPERATURE * (1 - mox) + BEST_MOX_TEMPERATURE * mox;
-                best *= OVERDRIVE_HEAT * efficiency(settled, true) / efficiency(settled, false);
+                best *= OVERDRIVE_HEAT * efficiency(BEST_URANIUM_TEMPERATURE, true) / efficiency(BEST_URANIUM_TEMPERATURE, false);
             }
             return Math.min(1, plannedOutput() / best);
         }
@@ -172,18 +220,23 @@ public final class StationReactor {
 
     /**
      * Thermal FE per tick one coolant channel can carry, after the config's output setting, in a
-     * core where {@code mox} (0 to 1) of the fuel rods are MOX.
+     * core whose fuel averages {@code heatScale} times a uranium rod's heat.
      */
-    public static float capacity(boolean overdrive, float mox) {
-        return COOLANT_CAPACITY * multiplier() * (overdrive ? OVERDRIVE_HEAT : 1) * (1 + MOX_COOLING * mox);
+    public static float capacity(boolean overdrive, float heatScale) {
+        return COOLANT_CAPACITY * multiplier() * (overdrive ? OVERDRIVE_HEAT : 1) * heatScale;
     }
 
     public static boolean isFreshFuel(ItemStack stack) {
-        return stack.is(ModItems.URANIUM_FUEL_ROD.get()) || stack.is(ModItems.MOX_FUEL_ROD.get());
+        return Fuel.of(stack) != null;
     }
 
     public static boolean isSpent(ItemStack stack) {
-        return stack.is(ModItems.SPENT_URANIUM_ROD.get()) || stack.is(ModItems.SPENT_MOX_ROD.get());
+        for (Fuel fuel : Fuel.values()) {
+            if (stack.is(fuel.spent())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Done with the core and ready to leave by the output port: a spent fuel rod or a bred target rod. */
@@ -192,7 +245,8 @@ public final class StationReactor {
     }
 
     public static int life(ItemStack rod) {
-        return rod.is(ModItems.MOX_FUEL_ROD.get()) ? MOX_LIFE : URANIUM_LIFE;
+        Fuel fuel = Fuel.of(rod);
+        return fuel == null ? URANIUM_LIFE : fuel.life;
     }
 
     /** Ticks of burn left in a rod (a fresh one has its full life). */
@@ -202,7 +256,8 @@ public final class StationReactor {
 
     /** The spent rod a fuel rod becomes. */
     public static ItemStack spentFor(ItemStack rod) {
-        return HotFuel.mark(new ItemStack(rod.is(ModItems.MOX_FUEL_ROD.get()) ? ModItems.SPENT_MOX_ROD.get() : ModItems.SPENT_URANIUM_ROD.get()));
+        Fuel fuel = Fuel.of(rod);
+        return HotFuel.mark(new ItemStack((fuel == null ? Fuel.URANIUM : fuel).spent()));
     }
 
     /**
@@ -216,7 +271,8 @@ public final class StationReactor {
         float[] load = new float[CHANNELS];
         float generation = 0;
         int fuelRods = 0;
-        int moxRods = 0;
+        float heatScale = 0;
+        float averageLife = 0;
         int coolants = 0;
         for (int i = 0; i < CHANNELS; i++) {
             if (types[i] == Channel.COOLANT) {
@@ -248,12 +304,13 @@ public final class StationReactor {
                     default -> { }
                 }
             }
-            boolean mox = rods[i].is(ModItems.MOX_FUEL_ROD.get());
-            heat[i] = (mox ? MOX_HEAT : URANIUM_HEAT) * Math.max(MIN_FACTOR, heatFactor) * multiplier() * boost;
+            Fuel fuel = Fuel.of(rods[i]);
+            heat[i] = fuel.heat * Math.max(MIN_FACTOR, heatFactor) * multiplier() * boost;
             burn[i] = Math.max(MIN_FACTOR, burnFactor) * boost;
             generation += heat[i];
             fuelRods++;
-            moxRods += mox ? 1 : 0;
+            heatScale += fuel.heat / URANIUM_HEAT;
+            averageLife += fuel.life;
         }
         // Each rod's heat goes, shared evenly, to the coolant channels beside it.
         float stranded = 0;
@@ -286,7 +343,9 @@ public final class StationReactor {
                 breed[i] += heat[n];
             }
         }
-        float capacity = capacity(overdrive, fuelRods == 0 ? 0 : moxRods / (float) fuelRods);
+        heatScale = fuelRods == 0 ? 1 : heatScale / fuelRods;
+        averageLife = fuelRods == 0 ? 0 : averageLife / fuelRods;
+        float capacity = capacity(overdrive, heatScale);
         int working = 0;
         for (int i = 0; i < CHANNELS; i++) {
             if (load[i] > 0) {
@@ -294,7 +353,8 @@ public final class StationReactor {
                 stranded += Math.max(0, load[i] - capacity);
             }
         }
-        return new Analysis(heat, burn, load, breed, generation, stranded, working, coolants, fuelRods, moxRods, overdrive, capacity);
+        return new Analysis(heat, burn, load, breed, generation, stranded, working, coolants, fuelRods, heatScale, averageLife,
+                overdrive, capacity);
     }
 
     /** The up to four channels beside channel {@code i}. */

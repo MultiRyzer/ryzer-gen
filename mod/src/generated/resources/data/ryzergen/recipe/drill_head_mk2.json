@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:circuits/advanced"
+    },
+    "C": {
+      "tag": "c:gems/silicon_carbide"
+    },
+    "H": {
+      "item": "ryzergen:drill_head_mk1"
+    }
+  },
+  "pattern": [
+    " A ",
+    "CHC",
+    " A "
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:drill_head_mk2"
+  }
+}

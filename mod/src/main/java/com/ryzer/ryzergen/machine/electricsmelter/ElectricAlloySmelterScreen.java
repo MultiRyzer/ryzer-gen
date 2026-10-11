@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.machine.electricsmelter;
 
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.GuiGauges;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -56,7 +57,7 @@ public class ElectricAlloySmelterScreen extends AbstractContainerScreen<Electric
         int mx = mouseX - leftPos;
         int my = mouseY - topPos;
         if (mx >= ENERGY_X - 1 && mx < ENERGY_X + 9 && my >= ENERGY_Y - 1 && my < ENERGY_Y + ENERGY_H + 1) {
-            graphics.renderTooltip(font, Component.translatable("gui.ryzergen.energy",
+            graphics.renderTooltip(font, RichText.tr("gui.ryzergen.energy",
                     String.format("%,d", menu.energy()), String.format("%,d", ENERGY_CAPACITY)), mouseX, mouseY);
         }
     }

@@ -3,6 +3,7 @@ package com.ryzer.ryzergen.machine.pump;
 import com.ryzer.ryzergen.Config;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.GuiGauges;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -74,12 +75,12 @@ public class IntakePumpScreen extends AbstractContainerScreen<IntakePumpMenu> {
             case NO_WATER, NO_POWER -> BAD;
         };
         String key = "gui.ryzergen.intake_pump.status." + status.name().toLowerCase(java.util.Locale.ROOT);
-        graphics.drawString(font, Component.translatable(key), READOUT_X + 4, 26, colour, false);
-        graphics.drawString(font, Component.translatable(menu.waterBelow() ? "gui.ryzergen.intake_pump.source.found"
+        graphics.drawString(font, RichText.tr(key), READOUT_X + 4, 26, colour, false);
+        graphics.drawString(font, RichText.tr(menu.waterBelow() ? "gui.ryzergen.intake_pump.source.found"
                 : "gui.ryzergen.intake_pump.source.missing"), READOUT_X + 4, 40, menu.waterBelow() ? VALUE : BAD, false);
-        graphics.drawString(font, Component.translatable("gui.ryzergen.intake_pump.rate", status == Status.PUMPING ? Config.get(Config.PUMP_RATE) : 0),
+        graphics.drawString(font, RichText.tr("gui.ryzergen.intake_pump.rate", status == Status.PUMPING ? Config.get(Config.PUMP_RATE) : 0),
                 READOUT_X + 4, 52, VALUE, false);
-        graphics.drawString(font, Component.translatable("gui.ryzergen.intake_pump.power", Config.get(Config.PUMP_ENERGY)),
+        graphics.drawString(font, RichText.tr("gui.ryzergen.intake_pump.power", Config.get(Config.PUMP_ENERGY)),
                 READOUT_X + 4, 64, DIM, false);
     }
 
@@ -94,10 +95,10 @@ public class IntakePumpScreen extends AbstractContainerScreen<IntakePumpMenu> {
         int my = mouseY - topPos;
         if (my >= GAUGE_Y - 1 && my < GAUGE_Y + GAUGE_H + 1) {
             if (mx >= ENERGY_X - 1 && mx < ENERGY_X + 9) {
-                graphics.renderTooltip(font, Component.translatable("gui.ryzergen.energy",
+                graphics.renderTooltip(font, RichText.tr("gui.ryzergen.energy",
                         String.format("%,d", menu.energy()), String.format("%,d", ENERGY_CAPACITY)), mouseX, mouseY);
             } else if (mx >= WATER_X - 1 && mx < WATER_X + 13) {
-                graphics.renderTooltip(font, Component.translatable("gui.ryzergen.intake_pump.water",
+                graphics.renderTooltip(font, RichText.tr("gui.ryzergen.intake_pump.water",
                         String.format("%,d", menu.water()), String.format("%,d", WATER_CAPACITY)), mouseX, mouseY);
             }
         }
@@ -107,8 +108,8 @@ public class IntakePumpScreen extends AbstractContainerScreen<IntakePumpMenu> {
                 case HIGH -> "gui.ryzergen.redstone.high";
                 case LOW -> "gui.ryzergen.redstone.low";
             };
-            graphics.renderComponentTooltip(font, List.of(Component.translatable(mode),
-                    Component.translatable("gui.ryzergen.redstone.hint").withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
+            graphics.renderComponentTooltip(font, List.of(RichText.tr(mode),
+                    RichText.tr("gui.ryzergen.redstone.hint").withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
         }
     }
 

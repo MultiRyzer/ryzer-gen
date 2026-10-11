@@ -2,6 +2,7 @@ package com.ryzer.ryzergen.battery.container;
 
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.GuiGauges;
+import com.ryzer.ryzergen.client.text.RichText;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.BlockPos;
@@ -80,14 +81,14 @@ public class ContainerScreen extends AbstractContainerScreen<ContainerMenu> {
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.drawString(font, title, titleLabelX, titleLabelY, LABEL, false);
-        graphics.drawString(font, Component.translatable("gui.ryzergen.battery.stored", compact(menu.energy())), READOUT_X, 26, VALUE, false);
-        graphics.drawString(font, Component.translatable("gui.ryzergen.battery.capacity", compact(menu.capacity())), READOUT_X, 37, DIM, false);
-        graphics.drawString(font, Component.translatable("gui.ryzergen.battery.in", compact(menu.in())), READOUT_X, 52, GOOD, false);
-        graphics.drawString(font, Component.translatable("gui.ryzergen.battery.out", compact(menu.out())), READOUT_X, 63, WARN, false);
+        graphics.drawString(font, RichText.tr("gui.ryzergen.battery.stored", compact(menu.energy())), READOUT_X, 26, VALUE, false);
+        graphics.drawString(font, RichText.tr("gui.ryzergen.battery.capacity", compact(menu.capacity())), READOUT_X, 37, DIM, false);
+        graphics.drawString(font, RichText.tr("gui.ryzergen.battery.in", compact(menu.in())), READOUT_X, 52, GOOD, false);
+        graphics.drawString(font, RichText.tr("gui.ryzergen.battery.out", compact(menu.out())), READOUT_X, 63, WARN, false);
         boolean cooled = menu.coolant() > 0;
-        graphics.drawString(font, Component.translatable(cooled ? "gui.ryzergen.container.cooled" : "gui.ryzergen.container.no_coolant"),
+        graphics.drawString(font, RichText.tr(cooled ? "gui.ryzergen.container.cooled" : "gui.ryzergen.container.no_coolant"),
                 READOUT_X, 78, cooled ? GOOD : WARN, false);
-        graphics.drawString(font, Component.translatable("gui.ryzergen.container.racks", menu.racks(), BatteryControllerBlockEntity.SLOTS),
+        graphics.drawString(font, RichText.tr("gui.ryzergen.container.racks", menu.racks(), BatteryControllerBlockEntity.SLOTS),
                 MAP_X, 59, LABEL, false);
     }
 
@@ -108,16 +109,16 @@ public class ContainerScreen extends AbstractContainerScreen<ContainerMenu> {
         int mx = mouseX - leftPos;
         int my = mouseY - topPos;
         if (mx >= CHARGE_X - 1 && mx < CHARGE_X + 13 && my >= GAUGE_Y - 1 && my < GAUGE_Y + GAUGE_H + 1) {
-            graphics.renderTooltip(font, Component.translatable("gui.ryzergen.energy",
+            graphics.renderTooltip(font, RichText.tr("gui.ryzergen.energy",
                     String.format("%,d", menu.energy()), String.format("%,d", menu.capacity())), mouseX, mouseY);
         } else if (mx >= COOLANT_X - 1 && mx < COOLANT_X + 9 && my >= GAUGE_Y - 1 && my < GAUGE_Y + GAUGE_H + 1) {
             graphics.renderComponentTooltip(font, List.of(
-                    Component.translatable("gui.ryzergen.container.coolant", String.format("%,d", menu.coolant()), String.format("%,d", COOLANT_CAPACITY)),
-                    Component.translatable("gui.ryzergen.container.coolant_hint").withStyle(style -> style.withColor(HINT))), mouseX, mouseY);
+                    RichText.tr("gui.ryzergen.container.coolant", String.format("%,d", menu.coolant()), String.format("%,d", COOLANT_CAPACITY)),
+                    RichText.tr("gui.ryzergen.container.coolant_hint").withStyle(style -> style.withColor(HINT))), mouseX, mouseY);
         } else if (mx >= MAP_X - 2 && mx < MAP_X + 43 && my >= MAP_Y - 2 && my < MAP_Y + 31) {
             graphics.renderComponentTooltip(font, List.of(
-                    Component.translatable("gui.ryzergen.container.racks_hint"),
-                    Component.translatable("gui.ryzergen.container.remove_hint").withStyle(style -> style.withColor(HINT))), mouseX, mouseY);
+                    RichText.tr("gui.ryzergen.container.racks_hint"),
+                    RichText.tr("gui.ryzergen.container.remove_hint").withStyle(style -> style.withColor(HINT))), mouseX, mouseY);
         }
     }
 }

@@ -206,6 +206,12 @@ INGOT_RAMPS = {
     # Transuranic metal: plutonium, americium and curium together, as the Electrorefiner plates them
     # out. A dark metal warming to amber at its edges, from the decay heat of the americium and curium.
     'transuranic_metal': ['120d10', '241a20', '3a2a32', '56404a', '7a5c62', 'a88478', 'e0b894'],
+    # Thorium: a dull grey metal that tarnishes dark, with a faint olive cast from its oxide.
+    'thorium_ingot': ['141612', '262a22', '3c4236', '575e4e', '767e6a', '9aa38c', 'c5ccb5'],
+    # Yttrium: a bright silver with a warm, pale gold sheen.
+    'yttrium_ingot': ['2f2a1f', '4f4834', '756c50', '9c9270', 'c2b994', 'e0d9bb', 'f8f4e2'],
+    # Uranium-233: uranium's green turned to teal, so it never reads as plain uranium.
+    'uranium_233_ingot': ['0f2a24', '184a3e', '24705c', '36a083', '56c9a4', '90e8c8', 'd0fff0'],
 }
 NUGGET_RAMPS = {
     'plutonium_nugget': INGOT_RAMPS['plutonium_ingot'],

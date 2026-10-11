@@ -15,7 +15,13 @@ public enum Milestone implements StringRepresentable {
     STATION_PERFECT("station_perfect"),
     STATION_MELTDOWN("station_meltdown"),
     POOL_FORMED("pool_formed"),
-    CONTAINER_FORMED("container_formed");
+    CONTAINER_FORMED("container_formed"),
+    /** A reactor reaching its tier's steady-state cap. */
+    MICROREACTOR_STEADY("microreactor_steady"),
+    STATION_STEADY("station_steady"),
+    BREEDER_FORMED("breeder_formed"),
+    BREEDER_STEADY("breeder_steady"),
+    SODIUM_FIRE("sodium_fire");
 
     public static final Codec<Milestone> CODEC = StringRepresentable.fromEnum(Milestone::values);
 
