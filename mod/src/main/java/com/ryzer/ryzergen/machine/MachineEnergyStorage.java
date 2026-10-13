@@ -8,6 +8,9 @@ import net.neoforged.neoforge.energy.EnergyStorage;
  */
 public class MachineEnergyStorage extends EnergyStorage {
     private final Runnable onChanged;
+    /** What arrived since the machine last took its intake, and in the interval before that. */
+    private int receivedNow;
+    private int receivedBefore;
 
     public MachineEnergyStorage(int capacity, int maxReceive, Runnable onChanged) {
         super(capacity, maxReceive, 0);
@@ -28,6 +31,7 @@ public class MachineEnergyStorage extends EnergyStorage {
     public int receiveEnergy(int toReceive, boolean simulate) {
         int received = super.receiveEnergy(toReceive, simulate);
         if (received > 0 && !simulate) {
+            receivedNow += received;
             onChanged.run();
         }
         return received;
@@ -41,6 +45,19 @@ public class MachineEnergyStorage extends EnergyStorage {
             energy = capacity;
             onChanged.run();
         }
+    }
+
+    /**
+     * What arrived over the last two ticks, for a gated machine, whose gate measures the supply it
+     * gets rather than what it has stored (so a trickle cannot bank up while it waits). Taken once a
+     * tick, before it spends: the two intervals between its ticks, whichever side of its tick the
+     * cables push on.
+     */
+    public int takeIntake() {
+        int total = receivedBefore + receivedNow;
+        receivedBefore = receivedNow;
+        receivedNow = 0;
+        return total;
     }
 
     /** Spends everything held (a gated machine short of its draw). */
