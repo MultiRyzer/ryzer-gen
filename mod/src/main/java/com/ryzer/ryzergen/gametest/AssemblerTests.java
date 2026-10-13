@@ -100,6 +100,21 @@ public final class AssemblerTests {
         });
     }
 
+    @GameTest(template = "mega_drill_floor", timeoutTicks = 300)
+    public static void takesWhatTheRecipeTakes(GameTestHelper helper) {
+        AssemblerBlockEntity cell = build(helper);
+        // Set with oak planks, fed birch: the sticks recipe takes any planks (the planks tag), so the
+        // buffer takes them and the cell makes sticks, as a pattern set with one mod's lead takes another's.
+        cell.setGhost(0, 0, new ItemStack(Items.OAK_PLANKS));
+        cell.setGhost(0, 3, new ItemStack(Items.OAK_PLANKS));
+        IItemHandler in = items(helper, AssemblerLayout.Port.ITEMS_IN);
+        IItemHandler out = items(helper, AssemblerLayout.Port.ITEMS_OUT);
+        helper.assertTrue(ItemHandlerHelper.insertItemStacked(in, new ItemStack(Items.BIRCH_PLANKS, 4), false).isEmpty(),
+                "the buffer takes planks the recipe allows");
+        helper.onEachTick(() -> energy(helper).receiveEnergy(1_000, false));
+        helper.succeedWhen(() -> helper.assertTrue(count(out, Items.STICK) == 8, "birch makes sticks (" + count(out, Items.STICK) + ")"));
+    }
+
     @GameTest(template = "mega_drill_floor", timeoutTicks = 200)
     public static void waitsForWhatItLacks(GameTestHelper helper) {
         AssemblerBlockEntity cell = build(helper);
