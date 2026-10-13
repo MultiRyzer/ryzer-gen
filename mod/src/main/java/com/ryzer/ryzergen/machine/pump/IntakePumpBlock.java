@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.pump;
 
+import com.ryzer.ryzergen.client.MachineMotion;
 import com.mojang.serialization.MapCodec;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -76,7 +77,9 @@ public class IntakePumpBlock extends BaseEntityBlock {
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.INTAKE_PUMP.get(), IntakePumpBlockEntity::serverTick);
+        return level.isClientSide
+                ? createTickerHelper(type, ModBlockEntities.INTAKE_PUMP.get(), (l, pos, s, pump) -> MachineMotion.tick(l, pos, s, pump, s.getValue(RUNNING)))
+                : createTickerHelper(type, ModBlockEntities.INTAKE_PUMP.get(), IntakePumpBlockEntity::serverTick);
     }
 
     @Override

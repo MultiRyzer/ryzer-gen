@@ -107,7 +107,7 @@
             "block_light": 15,
             "sky_light": 15
           },
-          "texture": "#screen",
+          "texture": "#screen_on",
           "uv": [
             0.0,
             0.0,
@@ -805,7 +805,7 @@
     "lpanel_14x6": "ryzergen:block/machine/family/lpanel_14x6",
     "metal": "ryzergen:block/machine/family/metal",
     "particle": "ryzergen:block/machine/monazite_processor/vessel",
-    "screen": "ryzergen:block/machine/family/screen",
+    "screen_on": "ryzergen:block/machine/family/screen_on",
     "skid": "ryzergen:block/machine/family/skid",
     "vessel": "ryzergen:block/machine/monazite_processor/vessel",
     "window_on": "ryzergen:block/machine/monazite_processor/window_on"

@@ -56,6 +56,14 @@ repositories {
         }
     }
     maven {
+        // FTB Ultimine (vein mining, as ATM10 ships) and FTB Library, for the dev client (dev_ultimine).
+        name = 'FTB'
+        url = 'https://maven.ftb.dev/releases'
+        content {
+            includeGroup 'dev.ftb.mods'
+        }
+    }
+    maven {
         // Forgified Fabric API base, which Accessories needs on NeoForge.
         name = 'Sinytra'
         url = 'https://maven.su5ed.dev/releases/'
@@ -168,15 +176,27 @@ dependencies {
     compileOnly "io.wispforest:accessories-neoforge:${accessories_version}"
     localRuntime "io.wispforest:accessories-neoforge:${accessories_version}"
 
-    // Other mods to test alongside (dev_mekanism, dev_pipez, dev_spark in gradle.properties).
+    // Other mods to test alongside (dev_mekanism, dev_pipez, dev_spark, dev_oritech in gradle.properties).
     if (project.dev_mekanism == 'true') {
         localRuntime "maven.modrinth:mekanism:${mekanism_version}"
     }
     if (project.dev_pipez == 'true') {
         localRuntime "maven.modrinth:pipez:${pipez_version}"
     }
+    if (project.dev_ultimine == 'true') {
+        // Without its transitive extras (FTB Ranks, EZ Crystals); Architectury comes from Modrinth.
+        localRuntime("dev.ftb.mods:ftb-ultimine-neoforge:${ultimine_version}") { transitive = false }
+        localRuntime("dev.ftb.mods:ftb-library-neoforge:${ftb_library_version}") { transitive = false }
+        localRuntime "maven.modrinth:architectury-api:${architectury_version}"
+    }
     if (project.dev_spark == 'true') {
         localRuntime "maven.modrinth:spark:${spark_version}"
+    }
+    if (project.dev_oritech == 'true') {
+        localRuntime "maven.modrinth:oritech:${oritech_version}"
+        localRuntime "maven.modrinth:geckolib:${geckolib_version}"
+        localRuntime "maven.modrinth:athena-ctm:${athena_version}"
+        localRuntime "maven.modrinth:architectury-api:${architectury_version}"
     }
 
     // Shaders in the dev client only (dev_shaders in gradle.properties): Iris, and Sodium, which it needs.

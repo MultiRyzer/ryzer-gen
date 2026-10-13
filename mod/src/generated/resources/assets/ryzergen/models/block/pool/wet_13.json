@@ -64,7 +64,7 @@
               "texture": "#liner"
             },
             "south": {
-              "texture": "#panel_14x13",
+              "texture": "#base_14x13",
               "uv": [
                 0.0,
                 0.0,
@@ -552,12 +552,12 @@
       "textures": {
         "band_11x2": "ryzergen:block/pool/band_11x2",
         "band_3x2": "ryzergen:block/pool/band_3x2",
+        "base_14x13": "ryzergen:block/pool/base_14x13",
         "bright": "ryzergen:block/machine/family/bright",
         "copper": "ryzergen:block/machine/family/copper",
         "hazard": "ryzergen:block/machine/family/hazard",
         "liner": "ryzergen:block/pool/liner",
         "metal": "ryzergen:block/machine/family/metal",
-        "panel_14x13": "ryzergen:block/pool/panel_14x13",
         "pipex_24x4": "ryzergen:block/pool/pipex_24x4",
         "pipex_5x4": "ryzergen:block/pool/pipex_5x4",
         "rack": "ryzergen:block/pool/rack",

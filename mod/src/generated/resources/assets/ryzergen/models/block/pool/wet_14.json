@@ -64,7 +64,7 @@
               "texture": "#liner"
             },
             "south": {
-              "texture": "#panel_14x13",
+              "texture": "#base_14x13",
               "uv": [
                 0.0,
                 0.0,
@@ -313,10 +313,10 @@
       ],
       "render_type": "minecraft:cutout",
       "textures": {
+        "base_14x13": "ryzergen:block/pool/base_14x13",
         "bright": "ryzergen:block/machine/family/bright",
         "hazard": "ryzergen:block/machine/family/hazard",
         "liner": "ryzergen:block/pool/liner",
-        "panel_14x13": "ryzergen:block/pool/panel_14x13",
         "pipex_24x4": "ryzergen:block/pool/pipex_24x4",
         "rack": "ryzergen:block/pool/rack",
         "rackside_60x10": "ryzergen:block/pool/rackside_60x10",

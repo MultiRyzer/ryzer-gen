@@ -107,7 +107,7 @@
             "block_light": 15,
             "sky_light": 15
           },
-          "texture": "#screen",
+          "texture": "#screen_on",
           "uv": [
             0.0,
             0.0,
@@ -745,7 +745,7 @@
     "metal": "ryzergen:block/machine/family/metal",
     "particle": "ryzergen:block/machine/family/cabinet",
     "rod": "ryzergen:block/machine/fuel_fabricator/rod",
-    "screen": "ryzergen:block/machine/family/screen",
+    "screen_on": "ryzergen:block/machine/family/screen_on",
     "skid": "ryzergen:block/machine/family/skid"
   }
 }

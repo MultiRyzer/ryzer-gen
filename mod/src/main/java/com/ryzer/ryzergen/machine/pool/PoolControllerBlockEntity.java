@@ -388,6 +388,7 @@ public class PoolControllerBlockEntity extends BlockEntity implements MenuProvid
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, PoolControllerBlockEntity controller) {
         PoolGhostPreview.track(controller);
+        controller.warm(state.getValue(PoolPartBlock.LOOK) != PoolLook.DRY);
         if (PoolPartBlock.isFormed(state) && state.getValue(PoolPartBlock.LOOK) != PoolLook.DRY) {
             controller.bubble(level);
         }
@@ -605,6 +606,32 @@ public class PoolControllerBlockEntity extends BlockEntity implements MenuProvid
     /** The rack slot the crane's current run serves. */
     public int craneSlot() {
         return craneSlot;
+    }
+
+    /** The water's temperature on the thermometer (client), 0 (cold) to 1 (boiling), easing. */
+    private float temperature;
+
+    /**
+     * Eases the water's temperature towards what the fuel in the racks heats it to: each rod adds
+     * what it has left to cool, so fresh rods heat it most and cooled ones hardly at all, rising
+     * steeply at first and levelling off towards boiling as the racks fill. Real basis: a pool's
+     * temperature follows the decay heat of the fuel in it, and a full pool of fresh fuel is what
+     * its cooling loop is sized for. Slow to change, as a pool of water is.
+     */
+    private void warm(boolean wet) {
+        float load = 0;
+        for (int slot = 0; slot < RACKS; slot++) {
+            if (rods[slot] >= 0) {
+                load += 1 - Math.min(1000, rods[slot]) / 1000F;
+            }
+        }
+        float target = wet ? 0.12F + 0.88F * (1 - (float) Math.exp(-load / 6)) : 0;
+        temperature += (target - temperature) * 0.01F;
+    }
+
+    /** The water's temperature on the thermometer, 0 to 1 (client). */
+    public float temperature() {
+        return temperature;
     }
 
     /** Each rack slot's cooling as players see it, 0 to 1000, or -1 when the slot is empty. */

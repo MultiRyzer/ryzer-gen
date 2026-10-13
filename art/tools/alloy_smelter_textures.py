@@ -33,7 +33,7 @@ def firebrick():
     return t
 
 
-def fire_door(lit):
+def fire_door(lit, frame=0):
     """The fire door, 8 x 5: a gunmetal frame (lit along its top and left, shaded along its foot and
     right) round a grate of two bars. Burning, the fire shows between the bars, orange at the top to
     white hot on the bed; out, the firebox is dark with a last ember or two."""
@@ -46,6 +46,12 @@ def fire_door(lit):
     rows = ['X', 'a', 'e'] if lit else ['U', 'U', 'T']
     for i, colour in enumerate(rows):
         t.rect(1, 1 + i, 6, 1 + i, colour)
+    if lit:
+        # The fire flickers: flame tips licking up into the top row, and a white-hot spot on the bed.
+        for x in range(1, 7):
+            if (x * 3 + frame * 5) % 7 < 2:
+                t.set(x, 1, 'a')
+        t.set(1 + (frame * 3) % 6, 3, 'W')
     if not lit:
         t.set(3, 3, 'O')
     for bar in (2, 5):
@@ -56,7 +62,6 @@ def fire_door(lit):
 TEXTURES = {
     'firebrick': firebrick,
     'fire_door': lambda: fire_door(False),
-    'fire_door_on': lambda: fire_door(True),
 }
 
 
@@ -65,6 +70,8 @@ def main():
     for name, fn in TEXTURES.items():
         # Lit textures stay crisp; the rest get the surface finish (pixelart.finish).
         (publish if name.endswith('_on') else publish_finished)(FOLDER + name, fn())
+    # Lit while it burns, and flickering.
+    publish_frames(FOLDER + 'fire_door_on', [fire_door(True, i) for i in range(7)], 2, True)
 
 
 if __name__ == '__main__':

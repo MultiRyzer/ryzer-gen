@@ -1,0 +1,235 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#metal"
+        },
+        "east": {
+          "texture": "#metal"
+        },
+        "north": {
+          "texture": "#metal"
+        },
+        "south": {
+          "texture": "#metal"
+        },
+        "up": {
+          "texture": "#metal"
+        },
+        "west": {
+          "texture": "#metal"
+        }
+      },
+      "from": [
+        7.5,
+        10.5,
+        6
+      ],
+      "to": [
+        8.5,
+        13,
+        7
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#metal"
+        },
+        "east": {
+          "texture": "#metal"
+        },
+        "north": {
+          "texture": "#metal"
+        },
+        "south": {
+          "texture": "#metal"
+        },
+        "up": {
+          "texture": "#metal"
+        },
+        "west": {
+          "texture": "#metal"
+        }
+      },
+      "from": [
+        5.5,
+        10.75,
+        6.1
+      ],
+      "to": [
+        10.5,
+        11.25,
+        6.9
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#metal"
+        },
+        "east": {
+          "texture": "#metal"
+        },
+        "north": {
+          "texture": "#metal"
+        },
+        "south": {
+          "texture": "#metal"
+        },
+        "up": {
+          "texture": "#metal"
+        },
+        "west": {
+          "texture": "#metal"
+        }
+      },
+      "from": [
+        7.6,
+        10.75,
+        4
+      ],
+      "to": [
+        8.4,
+        11.25,
+        9
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#basket"
+        },
+        "east": {
+          "texture": "#basket"
+        },
+        "north": {
+          "texture": "#basket"
+        },
+        "south": {
+          "texture": "#basket"
+        },
+        "up": {
+          "texture": "#basket"
+        },
+        "west": {
+          "texture": "#basket"
+        }
+      },
+      "from": [
+        5.25,
+        8.5,
+        5.75
+      ],
+      "to": [
+        6.75,
+        10.75,
+        7.25
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#basket"
+        },
+        "east": {
+          "texture": "#basket"
+        },
+        "north": {
+          "texture": "#basket"
+        },
+        "south": {
+          "texture": "#basket"
+        },
+        "up": {
+          "texture": "#basket"
+        },
+        "west": {
+          "texture": "#basket"
+        }
+      },
+      "from": [
+        9.25,
+        8.5,
+        5.75
+      ],
+      "to": [
+        10.75,
+        10.75,
+        7.25
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#basket"
+        },
+        "east": {
+          "texture": "#basket"
+        },
+        "north": {
+          "texture": "#basket"
+        },
+        "south": {
+          "texture": "#basket"
+        },
+        "up": {
+          "texture": "#basket"
+        },
+        "west": {
+          "texture": "#basket"
+        }
+      },
+      "from": [
+        7.25,
+        8.5,
+        3.75
+      ],
+      "to": [
+        8.75,
+        10.75,
+        5.25
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#basket"
+        },
+        "east": {
+          "texture": "#basket"
+        },
+        "north": {
+          "texture": "#basket"
+        },
+        "south": {
+          "texture": "#basket"
+        },
+        "up": {
+          "texture": "#basket"
+        },
+        "west": {
+          "texture": "#basket"
+        }
+      },
+      "from": [
+        7.25,
+        8.5,
+        7.75
+      ],
+      "to": [
+        8.75,
+        10.75,
+        9.25
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "basket": "ryzergen:block/machine/electrorefiner/basket",
+    "metal": "ryzergen:block/machine/family/metal",
+    "particle": "ryzergen:block/machine/electrorefiner/cell"
+  }
+}

@@ -14,7 +14,7 @@ import machine_family
 FOLDER = 'block/machine/lithium_extractor/'
 
 
-def brine():
+def brine(frame=None):
     """The basin's brine, seen from above: blue water with white salt crust round the edge and a
     few crystals floating. The basin spans the block inside its one-pixel rim."""
     t = Tex()
@@ -27,6 +27,16 @@ def brine():
     for x, y in ((5, 5), (10, 4), (4, 10), (11, 10), (8, 11)):
         t.set(x, y, 'A')
     t.rect(6, 7, 9, 8, 'G')
+    if frame is not None:
+        # Working: the brine stirs as it is pumped through the beds, ripples running across it
+        # (frame 0 to 7) and the floating crystals drifting.
+        for y in range(3, 13):
+            x = 3 + (y * 3 + frame * 2) % 10
+            if (y + frame) % 3 == 0:
+                t.set(x, y, 'V')
+        for x, y in ((5, 5), (10, 4), (4, 10), (11, 10), (8, 11)):
+            t.set(x, y, 'v')
+            t.set(3 + (x - 3 + frame // 2) % 10, y, 'A')
     return t
 
 
@@ -67,6 +77,8 @@ def main():
     for name, fn in TEXTURES.items():
         # Lit textures stay crisp; the rest get the surface finish (pixelart.finish).
         (publish if name.endswith('_on') else publish_finished)(FOLDER + name, fn())
+    # The brine while it works, stirred.
+    publish_frames(FOLDER + 'brine_on', [brine(i) for i in range(8)], 4, True)
 
 
 if __name__ == '__main__':

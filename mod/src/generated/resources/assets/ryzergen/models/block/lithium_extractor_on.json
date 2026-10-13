@@ -53,7 +53,7 @@
           "texture": "#basin"
         },
         "up": {
-          "texture": "#brine"
+          "texture": "#brine_on"
         },
         "west": {
           "texture": "#basin"
@@ -461,7 +461,7 @@
             "block_light": 15,
             "sky_light": 15
           },
-          "texture": "#screen",
+          "texture": "#screen_on",
           "uv": [
             0.0,
             0.0,
@@ -549,7 +549,7 @@
   ],
   "textures": {
     "basin": "ryzergen:block/machine/lithium_extractor/basin",
-    "brine": "ryzergen:block/machine/lithium_extractor/brine",
+    "brine_on": "ryzergen:block/machine/lithium_extractor/brine_on",
     "cabinet": "ryzergen:block/machine/family/cabinet",
     "column": "ryzergen:block/machine/lithium_extractor/column",
     "connector": "ryzergen:block/machine/family/connector",
@@ -558,7 +558,7 @@
     "lpanel_13x14": "ryzergen:block/machine/family/lpanel_13x14",
     "metal": "ryzergen:block/machine/family/metal",
     "particle": "ryzergen:block/machine/lithium_extractor/basin",
-    "screen": "ryzergen:block/machine/family/screen",
+    "screen_on": "ryzergen:block/machine/family/screen_on",
     "skid": "ryzergen:block/machine/family/skid"
   }
 }

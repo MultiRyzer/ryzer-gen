@@ -33,15 +33,16 @@ def column():
     return t
 
 
-def sight(lit):
+def sight(lit, frame=0):
     """A sight glass, 2 x 10: dark glass idle; working, the solution inside glows teal, with
     bubbles rising through it."""
     t = Tex()
     t.rect(0, 0, 1, 9, 'T')
     if lit:
         t.rect(0, 0, 1, 9, 't')
+        # Bubbles rising through it (frame 0 to 9, a pixel up each frame, wrapping round).
         for x, y in ((0, 2), (1, 5), (0, 7), (1, 1)):
-            t.set(x, y, 'C')
+            t.set(x, (y - frame) % 10, 'C')
     else:
         t.rect(0, 0, 0, 9, 'b')
     return t
@@ -63,7 +64,6 @@ TEXTURES = {
     'vessel': vessel,
     'column': column,
     'sight': lambda: sight(False),
-    'sight_on': lambda: sight(True),
     'label': label,
 }
 
@@ -73,6 +73,8 @@ def main():
     for name, fn in TEXTURES.items():
         # Lit textures stay crisp; the rest get the surface finish (pixelart.finish).
         (publish if name.endswith('_on') else publish_finished)(FOLDER + name, fn())
+    # Lit while it works, the bubbles rising.
+    publish_frames(FOLDER + 'sight_on', [sight(True, i) for i in range(10)], 2, False)
 
 
 if __name__ == '__main__':

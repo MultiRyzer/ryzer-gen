@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.alloysmelter;
 
+import com.ryzer.ryzergen.client.MachineMotion;
 import com.mojang.serialization.MapCodec;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -76,7 +77,9 @@ public class AlloySmelterBlock extends BaseEntityBlock {
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.ALLOY_SMELTER.get(), AlloySmelterBlockEntity::serverTick);
+        return level.isClientSide
+                ? createTickerHelper(type, ModBlockEntities.ALLOY_SMELTER.get(), (l, pos, s, smelter) -> MachineMotion.tick(l, pos, s, smelter, s.getValue(LIT)))
+                : createTickerHelper(type, ModBlockEntities.ALLOY_SMELTER.get(), AlloySmelterBlockEntity::serverTick);
     }
 
     @Override
