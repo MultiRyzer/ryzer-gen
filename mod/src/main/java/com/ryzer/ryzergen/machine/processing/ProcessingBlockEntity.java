@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.processing;
 
+import com.ryzer.ryzergen.machine.SoundSwitch;
 import com.ryzer.ryzergen.machine.AnimatedMachine;
 import com.ryzer.ryzergen.machine.MachineClock;
 import com.ryzer.ryzergen.machine.MachineClock.Look;
@@ -60,7 +61,15 @@ import java.util.function.Predicate;
  * energy and water in and fluid results out on any side. When two recipes match, the one using more ingredients wins, so a
  * fabricator holding uranium, steel and plutonium makes MOX rather than a plain uranium rod.
  */
-public class ProcessingBlockEntity extends BlockEntity implements MenuProvider, AnimatedMachine {
+public class ProcessingBlockEntity extends BlockEntity implements MenuProvider, AnimatedMachine, SoundSwitch.Holder {
+    /** Its sound switch (the speaker key on its screen): muted, its running sounds stop. */
+    private final SoundSwitch sound = new SoundSwitch(this);
+
+    @Override
+    public SoundSwitch sound() {
+        return sound;
+    }
+
     public static final int DATA_PROGRESS = 0;
     public static final int DATA_TOTAL = 1;
     public static final int DATA_ENERGY_LOW = 2;
@@ -274,7 +283,9 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider, 
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return clock.write();
+        CompoundTag tag = clock.write();
+        sound.save(tag);
+        return tag;
     }
 
     @Override
@@ -284,6 +295,7 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider, 
 
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        sound.load(tag);
         clock.read(tag);
     }
 
@@ -564,6 +576,7 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider, 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        sound.save(tag);
         tag.put("inventory", items.serializeNBT(registries));
         tag.putInt("energy", energy.getEnergyStored());
         if (machine.usesWater()) {
@@ -582,6 +595,7 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider, 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        sound.load(tag);
         // Copied slot by slot, so machines saved before the upgrade slot existed keep their items.
         ItemStackHandler saved = new ItemStackHandler();
         saved.deserializeNBT(registries, tag.getCompound("inventory"));

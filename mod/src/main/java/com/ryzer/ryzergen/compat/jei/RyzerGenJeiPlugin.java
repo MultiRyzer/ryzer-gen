@@ -120,7 +120,20 @@ public class RyzerGenJeiPlugin implements IModPlugin {
 
     /** Clicking the progress arrow in either smelter opens its recipes. */
     @Override
+    @SuppressWarnings("unchecked")
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
+        // Every machine's sound tab sticks out of its panel's right edge: keep JEI's item list off it.
+        registration.addGenericGuiContainerHandler(
+                (Class<? extends net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?>>) (Class<?>)
+                        net.minecraft.client.gui.screens.inventory.AbstractContainerScreen.class,
+                new IGuiContainerHandler<net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?>>() {
+                    @Override
+                    public List<net.minecraft.client.renderer.Rect2i> getGuiExtraAreas(
+                            net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> screen) {
+                        return screen instanceof com.ryzer.ryzergen.client.SoundTab.Host host
+                                ? List.of(com.ryzer.ryzergen.client.SoundTab.area(screen, host.soundTabY())) : List.of();
+                    }
+                });
         registration.addRecipeClickArea(AlloySmelterScreen.class, 79, 34, 24, 17, ALLOYING);
         registration.addRecipeClickArea(ElectricAlloySmelterScreen.class, 79, 34, 24, 17, ALLOYING);
         // The fuel cycle machines share one screen class, so the arrow opens the category of whichever machine it is.

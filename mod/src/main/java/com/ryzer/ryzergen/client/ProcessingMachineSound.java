@@ -47,7 +47,7 @@ public class ProcessingMachineSound extends AbstractTickableSoundInstance {
 
     @Override
     public void tick() {
-        if (machine.isRemoved() || !machine.getBlockState().getValue(ProcessingBlock.ACTIVE)) {
+        if (machine.isRemoved() || !machine.getBlockState().getValue(ProcessingBlock.ACTIVE) || machine.sound().muted()) {
             stop();
         }
     }
@@ -58,7 +58,7 @@ public class ProcessingMachineSound extends AbstractTickableSoundInstance {
      */
     public static void clientTick(Level level, BlockPos pos, BlockState state, ProcessingBlockEntity machine) {
         MachineMotion.tick(level, pos, state, machine, state.getValue(ProcessingBlock.ACTIVE));
-        if (!state.getValue(ProcessingBlock.ACTIVE)) {
+        if (!state.getValue(ProcessingBlock.ACTIVE) || machine.sound().muted()) {
             return;
         }
         // A sound just started can read as inactive for a moment, so only re-check now and then.

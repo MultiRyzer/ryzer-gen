@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "ryzergen:block/drill/pier_top",
+    "side": "ryzergen:block/drill/pier"
+  }
+}

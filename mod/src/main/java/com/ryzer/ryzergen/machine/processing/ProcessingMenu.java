@@ -1,5 +1,7 @@
 package com.ryzer.ryzergen.machine.processing;
 
+import net.minecraft.world.inventory.DataSlot;
+import com.ryzer.ryzergen.machine.SoundSwitch;
 import com.ryzer.ryzergen.machine.RedstoneMode;
 import com.ryzer.ryzergen.machine.processing.ProcessingBlockEntity.Status;
 import com.ryzer.ryzergen.registry.ModItems;
@@ -39,6 +41,8 @@ public class ProcessingMenu extends AbstractContainerMenu {
     private final ProcessingMachine machine;
     private final ContainerData data;
     private final ContainerLevelAccess access;
+    /** The machine's sound switch, for the screen's speaker key. */
+    private final DataSlot muted;
     private final int playerStart;
 
     /** Client side: contents and readings arrive from the server. */
@@ -71,6 +75,7 @@ public class ProcessingMenu extends AbstractContainerMenu {
             addSlot(new Slot(inventory, col, 8 + col * 18, 142));
         }
         addDataSlots(data);
+        muted = addDataSlot(SoundSwitch.slot(access));
     }
 
     /** Input slots sit in a row, centred on x 53 (the middle of the space left of the arrow). */
@@ -145,6 +150,9 @@ public class ProcessingMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
+        if (SoundSwitch.click(access, id)) {
+            return true;
+        }
         if (id != BUTTON_POWER && id != BUTTON_REDSTONE && id != BUTTON_AUTO_OUTPUT) {
             return false;
         }
@@ -202,5 +210,10 @@ public class ProcessingMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return stillValid(access, player, machine.block());
+    }
+
+    /** Whether the machine's sound is muted (its screen's speaker key). */
+    public boolean muted() {
+        return muted.get() != 0;
     }
 }

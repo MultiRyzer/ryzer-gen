@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.drill;
 
+import com.ryzer.ryzergen.machine.MachineClock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -35,6 +36,9 @@ public interface MegaDrillView {
 
     /** Whether the heat is drawn over this block of the layer: the blocks that will burst. */
     boolean drillHeats(BlockGetter level, BlockPos pos, int dx, int dz);
+
+    /** What it shows from outside (its look) and the clock its fans and lamps follow. */
+    MachineClock drillClock();
 
     /** The client's GPU mesh of the drill's body, kept with the block entity and closed with it. */
     Object drillMesh();

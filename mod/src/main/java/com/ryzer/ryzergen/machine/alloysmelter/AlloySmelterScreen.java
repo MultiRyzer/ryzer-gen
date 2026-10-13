@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.alloysmelter;
 
+import com.ryzer.ryzergen.client.SoundTab;
 import com.ryzer.ryzergen.RyzerGen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -8,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 
-public class AlloySmelterScreen extends AbstractContainerScreen<AlloySmelterMenu> {
+public class AlloySmelterScreen extends AbstractContainerScreen<AlloySmelterMenu> implements SoundTab.Host {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "textures/gui/alloy_smelter.png");
     private static final int LABEL = 0xFF2B3036;
@@ -30,6 +31,7 @@ public class AlloySmelterScreen extends AbstractContainerScreen<AlloySmelterMenu
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        SoundTab.render(graphics, leftPos, topPos, imageWidth, soundTabY(), menu.muted(), mouseX, mouseY);
         if (menu.isLit()) {
             // The flame burns down from the top as fuel runs out.
             int flame = Mth.ceil(menu.litProgress() * 13);
@@ -49,6 +51,21 @@ public class AlloySmelterScreen extends AbstractContainerScreen<AlloySmelterMenu
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
+        SoundTab.tooltip(graphics, font, leftPos, topPos, imageWidth, soundTabY(), menu.muted(), mouseX, mouseY);
         renderTooltip(graphics, mouseX, mouseY);
+    }
+
+    /** The sound switch's tab on the panel's right edge. */
+    @Override
+    public int soundTabY() {
+        return SoundTab.TOP;
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && SoundTab.click(menu, leftPos, topPos, imageWidth, soundTabY(), mouseX, mouseY)) {
+            return true;
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 }

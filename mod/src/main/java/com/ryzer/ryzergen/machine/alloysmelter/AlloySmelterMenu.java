@@ -1,5 +1,7 @@
 package com.ryzer.ryzergen.machine.alloysmelter;
 
+import net.minecraft.world.inventory.DataSlot;
+import com.ryzer.ryzergen.machine.SoundSwitch;
 import com.ryzer.ryzergen.registry.ModBlocks;
 import com.ryzer.ryzergen.registry.ModMenus;
 import com.ryzer.ryzergen.registry.ModRecipes;
@@ -27,6 +29,8 @@ public class AlloySmelterMenu extends AbstractContainerMenu {
 
     private final ContainerData data;
     private final ContainerLevelAccess access;
+    /** The machine's sound switch, for the screen's speaker key. */
+    private final DataSlot muted;
     private final Level level;
 
     /** Client side: contents and progress arrive from the server. */
@@ -55,6 +59,7 @@ public class AlloySmelterMenu extends AbstractContainerMenu {
             addSlot(new Slot(inventory, col, 8 + col * 18, 142));
         }
         addDataSlots(data);
+        muted = addDataSlot(SoundSwitch.slot(access));
     }
 
     public boolean isLit() {
@@ -118,5 +123,15 @@ public class AlloySmelterMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return stillValid(access, player, ModBlocks.ALLOY_SMELTER.get());
+    }
+
+    /** Whether the machine's sound is muted (its screen's speaker key). */
+    public boolean muted() {
+        return muted.get() != 0;
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        return SoundSwitch.click(access, id);
     }
 }

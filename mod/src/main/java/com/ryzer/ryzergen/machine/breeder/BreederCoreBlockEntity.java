@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.breeder;
 
+import com.ryzer.ryzergen.machine.SoundSwitch;
 import com.ryzer.ryzergen.client.BreederGhostPreview;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -40,7 +41,15 @@ import java.util.Map;
  * screen is the control screen, and while it runs its lights come on, the lantern and the ground
  * frame light the ground round it, and the beacon turns.
  */
-public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider {
+public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider, SoundSwitch.Holder {
+    /** Its sound switch (the speaker key on its screen): muted, its running sounds stop. */
+    private final SoundSwitch sound = new SoundSwitch(this);
+
+    @Override
+    public SoundSwitch sound() {
+        return sound;
+    }
+
     public static final int SLOTS = 9;
     /** Blocks placed per build step, and ticks between steps. */
     private static final int PER_STEP = 3;
@@ -174,6 +183,7 @@ public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider 
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BreederCoreBlockEntity core) {
         if (state.getValue(BreederPartBlock.FORMED)) {
+            core.runner.quiet = core.sound.muted();
             core.runner.tick((ServerLevel) level, pos, core.facing(), core.centre());
             if (core.dirty && level.getGameTime() % 10 == 0) {
                 core.dirty = false;
@@ -311,6 +321,7 @@ public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        sound.save(tag);
         tag.put("parts", parts.serializeNBT(registries));
         runner.save(tag, registries);
     }
@@ -318,6 +329,7 @@ public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        sound.load(tag);
         parts.deserializeNBT(registries, tag.getCompound("parts"));
         runner.load(tag, registries);
     }
@@ -327,6 +339,7 @@ public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider 
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = new CompoundTag();
         runner.save(tag, registries);
+        sound.save(tag);
         return tag;
     }
 
@@ -337,6 +350,7 @@ public class BreederCoreBlockEntity extends BlockEntity implements MenuProvider 
 
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        sound.load(tag);
         runner.load(tag, registries);
     }
 

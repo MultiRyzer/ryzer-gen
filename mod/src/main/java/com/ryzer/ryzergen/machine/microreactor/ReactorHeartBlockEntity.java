@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.microreactor;
 
+import com.ryzer.ryzergen.machine.SoundSwitch;
 import com.ryzer.ryzergen.machine.pool.HotFuel;
 import com.ryzer.ryzergen.cable.CableBlock;
 import com.ryzer.ryzergen.cable.CableSide;
@@ -75,7 +76,15 @@ import org.jetbrains.annotations.Nullable;
  * config allows meltdowns, explodes. Real basis: a loss-of-coolant accident with the automatic scram
  * disabled.
  */
-public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider {
+public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider, SoundSwitch.Holder {
+    /** Its sound switch (the speaker key on its screen): muted, its running sounds stop. */
+    private final SoundSwitch sound = new SoundSwitch(this);
+
+    @Override
+    public SoundSwitch sound() {
+        return sound;
+    }
+
     // Placeholder balance until the energy scale is settled (see OPEN-QUESTIONS.md).
     public static final int ENERGY_CAPACITY = 100_000;
     public static final int MAX_OUTPUT = 1_000;
@@ -766,6 +775,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         CompoundTag tag = new CompoundTag();
         tag.putInt("status", status.ordinal());
         tag.putInt("temperature", temperature);
+        sound.save(tag);
         return tag;
     }
 
@@ -781,6 +791,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
 
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        sound.load(tag);
         int id = tag.getInt("status");
         status = id >= 0 && id < Status.values().length ? Status.values()[id] : Status.OFFLINE;
         temperature = tag.getInt("temperature");
@@ -799,6 +810,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        sound.save(tag);
         tag.put("energy", energy.serializeNBT(registries));
         tag.put("coolant", coolant.writeToNBT(registries, new CompoundTag()));
         tag.put("steam", steam.writeToNBT(registries, new CompoundTag()));
@@ -814,6 +826,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        sound.load(tag);
         if (tag.contains("energy")) {
             energy.deserializeNBT(registries, tag.get("energy"));
         }

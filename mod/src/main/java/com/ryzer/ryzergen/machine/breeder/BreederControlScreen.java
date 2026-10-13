@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.breeder;
 
+import com.ryzer.ryzergen.client.SoundTab;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.GuiGauges;
 import com.ryzer.ryzergen.machine.breeder.BreederReactor.Position;
@@ -33,7 +34,7 @@ import java.util.Locale;
  * sodium and energy bars, the pumps' flow, and the power and redstone keys. Positions match
  * art/tools/gui_textures.py (breeder_control).
  */
-public class BreederControlScreen extends AbstractContainerScreen<BreederControlMenu> {
+public class BreederControlScreen extends AbstractContainerScreen<BreederControlMenu> implements SoundTab.Host {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "textures/gui/breeder_control.png");
     private static final int LABEL = 0xFF2B3036;
     private static final int VALUE = 0xFF35C8F5;
@@ -128,6 +129,7 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        SoundTab.render(graphics, leftPos, topPos, imageWidth, soundTabY(), menu.muted(), mouseX, mouseY);
         Position[] plan = menu.plan();
         for (int i = 0; i < BreederReactor.POSITIONS; i++) {
             int x = leftPos + BreederControlMenu.slotX(i);
@@ -289,6 +291,7 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
+        SoundTab.tooltip(graphics, font, leftPos, topPos, imageWidth, soundTabY(), menu.muted(), mouseX, mouseY);
         Slot hovered = getSlotUnderMouse();
         if (hovered != null && hovered.index < BreederReactor.POSITIONS && menu.getCarried().isEmpty()) {
             graphics.renderComponentTooltip(font, positionTooltip(hovered.getSlotIndex()), mouseX, mouseY);
@@ -401,6 +404,9 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && SoundTab.click(menu, leftPos, topPos, imageWidth, soundTabY(), mouseX, mouseY)) {
+            return true;
+        }
         Slot slot = getSlotUnderMouse();
         boolean position = slot != null && slot.index < BreederReactor.POSITIONS;
         if (button == 1 && position && menu.getCarried().isEmpty()) {
@@ -450,5 +456,11 @@ public class BreederControlScreen extends AbstractContainerScreen<BreederControl
             click();
         }
         return true;
+    }
+
+    /** The sound switch's tab on the panel's right edge. */
+    @Override
+    public int soundTabY() {
+        return SoundTab.TOP;
     }
 }

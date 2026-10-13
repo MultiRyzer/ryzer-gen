@@ -29,7 +29,7 @@ public class MicroreactorHumSound extends AbstractTickableSoundInstance {
 
     @Override
     public void tick() {
-        if (heart.isRemoved() || !heart.getBlockState().getValue(MicroreactorPartBlock.RUNNING)) {
+        if (heart.isRemoved() || !heart.getBlockState().getValue(MicroreactorPartBlock.RUNNING) || heart.sound().muted()) {
             stop();
         }
     }
@@ -40,7 +40,7 @@ public class MicroreactorHumSound extends AbstractTickableSoundInstance {
         if (!state.getValue(MicroreactorPartBlock.SLOT).isFormed()) {
             MicroreactorGhostPreview.track(heart);
         }
-        if (!state.getValue(MicroreactorPartBlock.RUNNING)) {
+        if (!state.getValue(MicroreactorPartBlock.RUNNING) || heart.sound().muted()) {
             return;
         }
         if (heart.clientHum instanceof MicroreactorHumSound hum && !hum.isStopped()

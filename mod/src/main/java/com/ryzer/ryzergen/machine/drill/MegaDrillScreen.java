@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.drill;
 
+import com.ryzer.ryzergen.client.SoundTab;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.GuiGauges;
 import com.ryzer.ryzergen.machine.drill.MegaDrillBlockEntity.Status;
@@ -27,7 +28,7 @@ import java.util.Locale;
  * filter row under it, and the energy and water gauges on the right. Positions match
  * art/tools/gui_textures.py (mega_drill).
  */
-public class MegaDrillScreen extends AbstractContainerScreen<MegaDrillMenu> {
+public class MegaDrillScreen extends AbstractContainerScreen<MegaDrillMenu> implements SoundTab.Host {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "textures/gui/mega_drill.png");
     private static final int LABEL = 0xFF2B3036;
     private static final int VALUE = 0xFF35C8F5;
@@ -201,5 +202,10 @@ public class MegaDrillScreen extends AbstractContainerScreen<MegaDrillMenu> {
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public int soundTabY() {
+        return TAB_Y;
     }
 }

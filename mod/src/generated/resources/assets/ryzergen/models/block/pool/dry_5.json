@@ -103,11 +103,11 @@
               "texture": "#liner"
             },
             "east": {
-              "texture": "#base_14x13",
+              "texture": "#base_13x13",
               "uv": [
                 0.0,
                 0.0,
-                14.0,
+                13.0,
                 13.0
               ]
             },
@@ -127,7 +127,7 @@
           "from": [
             13,
             2,
-            1
+            2
           ],
           "to": [
             14.5,
@@ -319,6 +319,7 @@
       ],
       "render_type": "minecraft:cutout",
       "textures": {
+        "base_13x13": "ryzergen:block/pool/base_13x13",
         "base_14x13": "ryzergen:block/pool/base_14x13",
         "hazard": "ryzergen:block/machine/family/hazard",
         "liner": "ryzergen:block/pool/liner",

@@ -3,6 +3,7 @@ package com.ryzer.ryzergen.machine.drill;
 import com.mojang.authlib.GameProfile;
 import com.ryzer.ryzergen.Config;
 import com.ryzer.ryzergen.client.MegaDrillGhostPreview;
+import com.ryzer.ryzergen.machine.MachineClock;
 import com.ryzer.ryzergen.machine.MachineEnergyStorage;
 import com.ryzer.ryzergen.machine.RedstoneMode;
 import com.ryzer.ryzergen.machine.SpeedModuleItem;
@@ -79,8 +80,9 @@ import java.util.UUID;
  * Once the shaft reaches the bottom it bores on into the deep crust (DeepBore): no more blocks break,
  * and each cycle brings up ore from a table set by the head, at several times the power.
  *
- * The four footings under the legs are never mined, so the drill ends up standing on four pillars
- * of the ground's own layers. On the base's level only loose things go (plants, snow, fluids), so
+ * The four footings under the legs are never mined out: as the drill goes down, each layer of them
+ * is cast into a support pier (what was there comes up like the rest), so the drill ends up standing
+ * on four steel-jacketed concrete piers. Real basis: rigs over deep shafts stand on piled footings. On the base's level only loose things go (plants, snow, fluids), so
  * the pipes and cables beside its ports are safe. A drill head sets the speed, speed modules add to
  * it, and the draw grows with the square of the speed. Clients get only the phase, when it began
  * and how long it lasts (MegaDrillRenderer draws the rest).
@@ -219,6 +221,8 @@ public class MegaDrillBlockEntity extends BlockEntity implements MenuProvider, M
     private boolean stalled;
     private int stallTicks;
     private int layer = UNSET;
+    /** The lowest layer the support piers reach so far (UNSET before the first). */
+    private int piersTo = UNSET;
     private int speed = 1;
     private boolean finished;
     /** Past bedrock: boring the deep crust for ore (DeepBore), the layer staying on the bottom one. */
@@ -555,9 +559,11 @@ public class MegaDrillBlockEntity extends BlockEntity implements MenuProvider, M
                         water.drain(cool, IFluidHandler.FluidAction.EXECUTE);
                         if (advance(level, deep ? Status.BORING : Status.FIRING)) {
                             if (deep) {
+                                castPiers(level, centre, level.getMinBuildHeight());
                                 bore(level, centre);
                             } else {
                                 burst(level, centre);
+                                castPiers(level, centre, layer);
                                 layer--;
                             }
                             wearTip(level);
@@ -569,6 +575,23 @@ public class MegaDrillBlockEntity extends BlockEntity implements MenuProvider, M
             }
         }
         light(level);
+        clock.show(level, worldPosition, getBlockState(), look(), Math.min(4, speed - 1));
+    }
+
+    /**
+     * What the drill shows from outside (its console's lamps, its fans): working while it runs,
+     * starved while it gets some power but not enough, waiting (standby) on a head, a tip, water or
+     * room for its output, and off when switched off or with no power at all.
+     */
+    private MachineClock.Look look() {
+        if (status.running()) {
+            return MachineClock.Look.WORKING;
+        }
+        return switch (status) {
+            case NO_POWER -> energy.getEnergyStored() > 0 ? MachineClock.Look.STARVED : MachineClock.Look.OFF;
+            case OFF, REDSTONE, UNLOADED -> MachineClock.Look.OFF;
+            default -> MachineClock.Look.STANDBY;
+        };
     }
 
     /** What stops the drill before it does anything this tick, if anything. */
@@ -630,6 +653,7 @@ public class MegaDrillBlockEntity extends BlockEntity implements MenuProvider, M
                 sound(level, centre, ModSounds.MEGA_DRILL_CHARGE.get(), 1.5F, 1.0F);
                 return;
             }
+            castPiers(level, centre, layer);
             layer--;
         }
         status = Status.SCANNING;
@@ -780,6 +804,54 @@ public class MegaDrillBlockEntity extends BlockEntity implements MenuProvider, M
         level.sendParticles(ParticleTypes.LARGE_SMOKE, x, layer + 0.6, z, 20, 2.2, 0.4, 2.2, 0.02);
         sound(level, BlockPos.containing(x, layer + 0.5, z), ModSounds.MEGA_DRILL_BURST.get(), 3.0F, 1.0F);
         flushPending();
+    }
+
+    /**
+     * Casts the support piers down to layer {@code to}: on each layer below the base, the footing
+     * cells under the legs become pier blocks. What was in them comes up like the rest of the layer
+     * (ore, and what the filter keeps), and gaps (a cave) are filled, so each pier is whole. A drill
+     * mined before the piers existed gets its piers on its next cycle.
+     */
+    private void castPiers(ServerLevel level, BlockPos centre, int to) {
+        int from = piersTo == UNSET ? centre.getY() : piersTo;
+        if (to >= from) {
+            return;
+        }
+        BlockState pier = ModBlocks.DRILL_PIER.get().defaultBlockState();
+        FakePlayer player = player(level);
+        ItemStack tool = new ItemStack(Items.DIAMOND_PICKAXE);
+        for (int y = from - 1; y >= to; y--) {
+            for (int dx = MegaDrillLayout.LOW; dx <= MegaDrillLayout.HIGH; dx++) {
+                for (int dz = MegaDrillLayout.LOW; dz <= MegaDrillLayout.HIGH; dz++) {
+                    if (!MegaDrillLayout.footing(dx, dz)) {
+                        continue;
+                    }
+                    BlockPos at = new BlockPos(centre.getX() + dx, y, centre.getZ() + dz);
+                    BlockState state = level.getBlockState(at);
+                    if (state.is(pier.getBlock()) || state.getDestroySpeed(level, at) < 0) {
+                        continue;
+                    }
+                    if (!state.isAir()) {
+                        if (NeoForge.EVENT_BUS.post(new BlockEvent.BreakEvent(level, at, state, player)).isCanceled()) {
+                            continue;
+                        }
+                        BlockEntity entity = state.hasBlockEntity() ? level.getBlockEntity(at) : null;
+                        if (entity != null) {
+                            takeContents(level, at);
+                        }
+                        boolean ore = state.is(Tags.Blocks.ORES);
+                        for (ItemStack drop : Block.getDrops(state, level, at, entity, player, tool)) {
+                            if (ore || keeps(drop)) {
+                                addPending(drop);
+                            }
+                        }
+                    }
+                    level.setBlock(at, pier, Block.UPDATE_ALL);
+                }
+            }
+        }
+        piersTo = to;
+        setChanged();
     }
 
     /**
@@ -1076,12 +1148,47 @@ public class MegaDrillBlockEntity extends BlockEntity implements MenuProvider, M
     /** The client's GPU mesh of the drill's body (a StationMesh), closed when the controller goes. */
     private Object clientMesh;
 
+    /** What it shows from outside (synced), and the client's clock its fans and lamps follow. */
+    private final MachineClock clock = new MachineClock();
+
     public static void clientTick(Level level, BlockPos pos, BlockState state, MegaDrillBlockEntity drill) {
         MegaDrillGhostPreview.track(drill);
-        if (!MegaDrillPartBlock.isFormed(state) || !state.getValue(MegaDrillPartBlock.LIT)) {
+        if (!MegaDrillPartBlock.isFormed(state)) {
+            return;
+        }
+        drill.clock.animate(state.getValue(MegaDrillPartBlock.LIT), FAN_IDLE);
+        if (!state.getValue(MegaDrillPartBlock.LIT)) {
             return;
         }
         effects(level, drill, drill.drillCentre(), drill.layer());
+        exhaust(level, drill, drill.drillCentre());
+    }
+
+    /** How fast the roof fans idle round on standby, against full speed while the drill runs. */
+    public static final float FAN_IDLE = 0.15F;
+    /** The exhaust stacks' tops on the drive housing's roof, in the design's pixels (mega_drill_concept.py). */
+    private static final float[][] STACKS = {{54, 236, 88}, {90, 236, 88}};
+
+    /** Smoke from the generators' exhaust stacks on the roof while the drill runs. Shared with the preview. */
+    public static void exhaust(Level level, MegaDrillView drill, BlockPos centre) {
+        RandomSource random = level.random;
+        for (float[] stack : STACKS) {
+            if (random.nextInt(3) != 0) {
+                continue;
+            }
+            // The design's pixels to the world, as MegaDrillRenderer places it: about the middle block, turned to the facing.
+            double turn = Math.toRadians(180 - drill.drillFacing().toYRot());
+            double dx = stack[0] / 16 - 4.5 + (random.nextDouble() - 0.5) * 0.3;
+            double dz = stack[2] / 16 - 4.5 + (random.nextDouble() - 0.5) * 0.3;
+            double x = centre.getX() + 0.5 + dx * Math.cos(turn) + dz * Math.sin(turn);
+            double z = centre.getZ() + 0.5 - dx * Math.sin(turn) + dz * Math.cos(turn);
+            level.addParticle(ParticleTypes.SMOKE, x, centre.getY() + stack[1] / 16, z, 0, 0.06, 0);
+        }
+    }
+
+    @Override
+    public MachineClock drillClock() {
+        return clock;
     }
 
     /**
@@ -1268,6 +1375,7 @@ public class MegaDrillBlockEntity extends BlockEntity implements MenuProvider, M
         tag.putInt("phase_done", phaseDone);
         tag.putBoolean("stalled", stalled);
         tag.putInt("layer", layer);
+        tag.putInt("piers_to", piersTo);
         tag.putBoolean("deep", deep);
     }
 
@@ -1278,13 +1386,14 @@ public class MegaDrillBlockEntity extends BlockEntity implements MenuProvider, M
         phaseDone = tag.getInt("phase_done");
         stalled = tag.getBoolean("stalled");
         layer = tag.contains("layer") ? tag.getInt("layer") : UNSET;
+        piersTo = tag.contains("piers_to") ? tag.getInt("piers_to") : UNSET;
         deep = tag.getBoolean("deep");
     }
 
-    /** Clients get only the cycle: the phase, when it began, how long it lasts and the layer. */
+    /** Clients get only the cycle (the phase, when it began, how long it lasts and the layer) and the look. */
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag tag = new CompoundTag();
+        CompoundTag tag = clock.write();
         saveCycle(tag);
         return tag;
     }
@@ -1297,6 +1406,7 @@ public class MegaDrillBlockEntity extends BlockEntity implements MenuProvider, M
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
         loadCycle(tag);
+        clock.read(tag);
     }
 
     @Override

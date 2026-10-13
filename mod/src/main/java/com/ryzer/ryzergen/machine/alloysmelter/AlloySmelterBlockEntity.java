@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.alloysmelter;
 
+import com.ryzer.ryzergen.machine.SoundSwitch;
 import com.ryzer.ryzergen.machine.AnimatedMachine;
 import com.ryzer.ryzergen.machine.MachineClock;
 import com.ryzer.ryzergen.machine.MachineItemPort;
@@ -34,7 +35,15 @@ import org.jetbrains.annotations.Nullable;
  * from the top, fuel in from the sides, and the output comes out of any side (only the output, so
  * a pipe set to extract never pulls ingredients or fuel).
  */
-public class AlloySmelterBlockEntity extends BlockEntity implements MenuProvider, AnimatedMachine {
+public class AlloySmelterBlockEntity extends BlockEntity implements MenuProvider, AnimatedMachine, SoundSwitch.Holder {
+    /** Its sound switch (the speaker key on its screen): muted, its running sounds stop. */
+    private final SoundSwitch sound = new SoundSwitch(this);
+
+    @Override
+    public SoundSwitch sound() {
+        return sound;
+    }
+
     /** The client's clock its moving parts follow (MachineMotion). */
     private final MachineClock clock = new MachineClock();
 
@@ -234,6 +243,7 @@ public class AlloySmelterBlockEntity extends BlockEntity implements MenuProvider
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        sound.save(tag);
         tag.put("inventory", items.serializeNBT(registries));
         tag.putInt("lit_time", litTime);
         tag.putInt("lit_duration", litDuration);
@@ -244,10 +254,35 @@ public class AlloySmelterBlockEntity extends BlockEntity implements MenuProvider
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        sound.load(tag);
         items.deserializeNBT(registries, tag.getCompound("inventory"));
         litTime = tag.getInt("lit_time");
         litDuration = tag.getInt("lit_duration");
         cookProgress = tag.getInt("cook_progress");
         cookTotal = tag.getInt("cook_total");
+    }
+
+    /** Clients get only its sound switch, as the fire's crackle plays there. */
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        sound.save(tag);
+        return tag;
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        sound.load(tag);
+    }
+
+    @Override
+    public void onDataPacket(net.minecraft.network.Connection connection,
+                             net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket packet, HolderLookup.Provider registries) {
+        sound.load(packet.getTag());
     }
 }

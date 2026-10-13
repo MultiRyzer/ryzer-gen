@@ -581,6 +581,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         // the console's controls in a panelled box, its screen facing the player. Formed, neither
         // draws itself (the controller draws the whole drill), so one model serves every cell.
         ModelFile drillFrame = models().cubeAll("drill_frame", modLoc("block/drill/girder"));
+        simpleBlock(ModBlocks.DRILL_PIER.get(), models().cubeColumn("drill_pier", modLoc("block/drill/pier"), modLoc("block/drill/pier_top")));
         getVariantBuilder(ModBlocks.DRILL_FRAME.get()).forAllStatesExcept(state -> ConfiguredModel.builder()
                 .modelFile(drillFrame).build(), MegaDrillPartBlock.FACING, MegaDrillPartBlock.CELL, MegaDrillPartBlock.LIT);
         simpleBlockItem(ModBlocks.DRILL_FRAME.get(), drillFrame);
@@ -911,7 +912,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
      * anode baskets on their hub and the cathode with its plated uranium, models of their own
      * (electrorefinerBasket, electrorefinerCathode) that MachineMotion turns and lifts; it also
      * lights the salt and the heater ring round the pot's foot with the cell's heat. On the lid: the
-     * drive head (the basket's drive, its top the charging port where a pipe meets it), the
+     * drive head (the basket's drive) with the top connector on it, the
      * cathode's gland, the off-gas stack, and two copper bus bars on insulators from the rectifier,
      * the west one into the drive head (the anode, through its shaft) and the east one to the
      * gland. A label plate on the west flank and the heater's terminal box on the east. Its own
@@ -953,12 +954,12 @@ public class ModBlockStateProvider extends BlockStateProvider {
         boxes.add("metal", 14, 9, 5, 14.75F, 11, 8);
         boxes.add("copper", 14.1F, 7.8F, 6.25F, 14.5F, 9, 6.75F);
         boxes.add("metal", 1.5F, rim, 1.5F, 14.5F, rim + 0.75F, 11.5F).decal(Direction.UP, "lid_plate");
-        // The drive head, its top the charging port: a pipe from above meets it there.
+        // The drive head, and on it the top connector, where a pipe from above meets it.
         boxes.add("metal", 5.5F, 13.75F, 5.5F, 10.5F, 15.5F, 10.5F);
-        boxes.add("metal", 5, 15.5F, 5, 11, 16, 11).decal(Direction.UP, "port");
+        topConnector(boxes, 15.5F, 16);
         // The off-gas stack under its rain cap, and the cathode's gland.
         boxes.add("copper", 3.5F, 13.75F, 2.75F, 4.5F, 15.25F, 3.75F);
-        boxes.add("metal", 3, 15.25F, 2.25F, 5, 15.75F, 4.25F);
+        boxes.add("metal", 3, 15.25F, 2.25F, 5, 15.75F, 4);
         boxes.add("bright", 10, 13.75F, 2.75F, 12, 14.25F, 4.75F);
         // The bus bars: up from the rectifier through insulators, forward along the lid's edges.
         for (float x : new float[] {1.75F, 13}) {
@@ -993,9 +994,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
      * through the lid and the gland to an orange crosshead, which MachineMotion lifts for harvest.
      */
     private static void electrorefinerCathode(BoxModel boxes) {
-        boxes.add("metal", 10.5F, 9.5F, 3.25F, 11.5F, 14.5F, 4.25F);
-        boxes.add("dendrite", 10.25F, 9, 3, 11.75F, 10.75F, 4.5F);
-        boxes.add("accent", 10, 14.25F, 3, 12, 14.75F, 4.5F);
+        boxes.add("metal", 10.5F, 9.5F, 3, 11.5F, 14.5F, 4);
+        boxes.add("dendrite", 10.25F, 9, 2.8F, 11.75F, 10.75F, 4.2F);
+        boxes.add("accent", 10, 14.25F, 2.75F, 12, 14.75F, 4);
     }
 
     /**

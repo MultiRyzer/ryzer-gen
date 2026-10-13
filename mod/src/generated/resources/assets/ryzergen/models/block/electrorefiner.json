@@ -898,12 +898,12 @@
         },
         "up": {
           "cullface": "up",
-          "texture": "#port",
+          "texture": "#connector",
           "uv": [
             0.0,
             0.0,
-            6.0,
-            6.0
+            8.0,
+            8.0
           ]
         },
         "west": {
@@ -911,14 +911,14 @@
         }
       },
       "from": [
-        5,
+        4,
         15.5,
-        5
+        4
       ],
       "to": [
-        11,
+        12,
         16,
-        11
+        12
       ]
     },
     {
@@ -982,7 +982,7 @@
       "to": [
         5,
         15.75,
-        4.25
+        4
       ]
     },
     {
@@ -1331,7 +1331,6 @@
     "lpanel_14x5": "ryzergen:block/machine/family/lpanel_14x5",
     "metal": "ryzergen:block/machine/family/metal",
     "particle": "ryzergen:block/machine/electrorefiner/cell",
-    "port": "ryzergen:block/machine/electrorefiner/port",
     "rectifier_top": "ryzergen:block/machine/electrorefiner/rectifier_top",
     "salt": "ryzergen:block/machine/electrorefiner/salt",
     "screen": "ryzergen:block/machine/family/screen",

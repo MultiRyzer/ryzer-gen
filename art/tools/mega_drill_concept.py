@@ -8,19 +8,23 @@ user's references, 4 Oct 2026): angular, not round (squares with their corners c
 the foot so you see the laser going in. Bottom to top:
 - The base: a hazard-striped ring round a 6 x 6 molten pit glowing amber, and four sloped buttress
   legs from the corners up under the deck, the space between them open. In the middle of each side
-  a port console: energy, tips and water in on the east (the front's left), the output on the west.
-- The emitter: a pod hung in a yoke under the deck, like a searchlight, its beam leaving through a lit
-  aperture in its foot, straight down into the pit.
+  a port console under a hooded housing: energy, tips and water in on the east (the front's left),
+  the output on the west. From each port a service line (the mod's own cable and pipes, in the
+  port's colour) runs up to the deck, over it and up the column into the collar; the output line
+  comes back down the west side (13 Oct 2026, so you see where everything goes).
+- The emitter: a pod hung under the deck, its beam leaving through a lit aperture in its foot,
+  straight down into the pit, and four floodlights round it aimed down into the pit.
 - The deck: a cut-corner square platform in tread plate, its edge a graphite band with the light
-  line, a yellow handrail round it with a gap for the ladder up from the ground, and the console
+  line, a yellow handrail round it with a gap for the ladder up from the ground, the console
   against the column facing the ladder's top.
 - The column: an open lattice, eight posts with big X braces on its four faces, the drive shaft
-  inside with an amber band, a square duct up one side.
+  inside with an amber band, the service lines up its east and west faces in orange brackets.
 - The collar: a wider cut-corner ring with vents and its light line.
 - The drive housing (reworked 4 Oct, as the round head looked like a lighthouse): a heavy box with
   louvred vents and an inspection hatch, generator pods with cooling fins bolted to its flanks, and
-  on its roof a rig's crown frame with its sheave block, square cooling fans, short exhaust stacks
-  and warning lamps on the corners.
+  on its roof a rig's crown frame with its sheave block and an aviation light on a mast, open
+  cooling fans whose blades turn, short exhaust stacks and beacons on the corners that sweep their
+  light round while it runs (the game moves the groups fan_0, fan_1, beacon, aviation and lamp_*).
 Every surface has its own texture (drill_textures.py), drawn for the part it goes on and mapped
 evenly: boxes cut into panels from their own corner (ebox), bars with their texture running on a
 pixel a pixel (bar, not Design.sweep, which stretches one picture over a whole run), and the
@@ -42,7 +46,9 @@ C = SIZE / 2
 TEXTURES = {'drill_' + name: 'ryzergen:block/drill/' + name for name in drill_textures.NAMES}
 TEXTURES['obsidian'] = 'minecraft:block/obsidian'
 TEXTURES.update({name: 'ryzergen:block/microreactor/' + name for name in ('glow', 'glow_off')})
-LIT = {'glow', 'drill_hot_obsidian', 'drill_hot_obsidian_core', 'drill_beam', 'drill_window', 'drill_screen', 'drill_amber', 'drill_lamps'}
+TEXTURES.update({name: 'ryzergen:block/station/' + name for name in (
+    'housing_slope', 'housing_cheek', 'hazard_upright', 'tag_coolant', 'tag_fuel', 'tag_energy')})
+LIT = {'drill_red_lamp', 'drill_flood', 'tag_coolant', 'tag_fuel', 'tag_energy', 'glow', 'drill_hot_obsidian', 'drill_hot_obsidian_core', 'drill_beam', 'drill_window', 'drill_screen', 'drill_amber', 'drill_lamps'}
 d = Design(C, TEXTURES, LIT)
 ALL = ('north', 'south', 'east', 'west', 'up', 'down')
 UV = [(0, 0), (16, 0), (16, 16), (0, 16)]
@@ -274,11 +280,51 @@ for xa, xb in zip(steps, steps[1:]):
 # block's faces. As you face the front (north), inputs on your left (east): energy, tungsten tips and
 # water; on your right (west) the output for what the drill brings up, each port in its own cell,
 # drawn into its panel so it sits flush (drill/panel_port_*): red energy, orange items, blue water.
-ebox('drill_panel', 0, 0, CONSOLE[0], B, B, CONSOLE[1], top='drill_lid', skip=('down',),
-     panels={('west', 1, 0): 'drill_panel_port_items'})
-ebox('drill_panel', SIZE - B, 0, CONSOLE[0], SIZE, B, CONSOLE[1], top='drill_lid', skip=('down',),
-     panels={('east', 0, 0): 'drill_panel_port_water', ('east', 1, 0): 'drill_panel_port_items',
-             ('east', 2, 0): 'drill_panel_port_energy'})
+# Each is housed as the fission station's ports are: a graphite hood sloping back over the ports
+# with a lit tag above each in its ring colour, and graphite cheeks with hazard stripes either end.
+TAGS = {'water': 'tag_coolant', 'items': 'tag_fuel', 'energy': 'tag_energy'}
+HOOD_BACK, HOOD_TOP = 12, 26
+SIDES = (('west', {1: 'items'}), ('east', {0: 'water', 1: 'items', 2: 'energy'}))
+
+
+def console(side, ports):
+    east = side == 'east'
+    inside = 'west' if east else 'east'
+    sx = 1 if east else -1
+
+    def px(x):
+        return SIZE - x if east else x
+
+    def box(mat, x1, y1, z1, x2, y2, z2, **kw):
+        a, b = sorted((px(x1), px(x2)))
+        ebox(mat, a, y1, z1, b, y2, z2, **kw)
+
+    box('drill_panel', 0, 0, CONSOLE[0], B, B, CONSOLE[1], skip=('down', 'up'), sides={inside: 'housing_cheek'},
+        panels={(side, cell, 0): 'drill_panel_port_' + kind for cell, kind in ports.items()})
+    # The hood, from the face's top edge back and up, and its back plate down to the body.
+    d.quad('housing_slope', [(px(HOOD_BACK), HOOD_TOP, CONSOLE[1]), (px(0), B, CONSOLE[1]), (px(0), B, CONSOLE[0]),
+                             (px(HOOD_BACK), HOOD_TOP, CONSOLE[0])],
+           [(0, 0), (0, 16), (16, 16), (16, 0)], (sx * 10, HOOD_BACK, 0))
+    box('housing_cheek', HOOD_BACK, B, CONSOLE[0], B, HOOD_TOP, CONSOLE[1], skip=('down',))
+    # Cheeks either end, standing proud and a little taller, hazard striped on their outer face.
+    for z1, z2 in ((CONSOLE[0] - 3, CONSOLE[0]), (CONSOLE[1], CONSOLE[1] + 3)):
+        box('housing_cheek', -0.5, 0, z1, B, HOOD_TOP + 2, z2, skip=('down',))
+        box('hazard_upright', -1, 0, z1, -0.5, HOOD_TOP + 2, z2, skip=('down', inside))
+    # A slim light bar on the hood above each port, in its ring colour. (A face's panels count from
+    # its top left as you look at it: the east face's from its south end.)
+    lift = 0.3
+    for cell, kind in ports.items():
+        z = CONSOLE[1] - (cell + 1) * B if east else CONSOLE[0] + cell * B
+        t0, t1 = 0.2, 0.33
+        xa, ya = HOOD_BACK * t1, B + (HOOD_TOP - B) * t1
+        xb, yb = HOOD_BACK * t0, B + (HOOD_TOP - B) * t0
+        d.quad(TAGS[kind], [(px(xa) + sx * lift, ya + lift, z + 14), (px(xb) + sx * lift, yb + lift, z + 14),
+                            (px(xb) + sx * lift, yb + lift, z + 2), (px(xa) + sx * lift, ya + lift, z + 2)],
+               [(0, 0), (0, 3), (12, 3), (12, 0)], (sx * 10, HOOD_BACK, 0))
+
+
+for side, ports in SIDES:
+    console(side, ports)
 # In the pictures only: the layer being mined, as red-hot obsidian, tiled on the block grid (half
 # tiles at its edges) so the beam strikes the middle of one tile, white hot under it. In the game the
 # real ground is mined and the renderer draws the heat over it, and the beam down to it.
@@ -317,26 +363,29 @@ for sx, sz in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
             ebox('drill_rod', foot[0] + ax - 1, RING + 4, foot[1] + az - 1, foot[0] + ax + 1, RING + 5, foot[1] + az + 1,
                  skip=('down',), v0=1)
 
-# The deck's girders: light steel joists in a square through the legs' heads, so each leg carries
-# the two that cross on it (they meet inside the leg). The ribbed decking spans between them.
+# The deck's girders: graphite angle steel in a square from leg head to leg head, each end buried in
+# its leg, so nothing runs on past the legs; the ribbed decking spans between them.
 GIRDER = 36
 for k in (-1, 1):
-    bar('drill_joist', [(C - DECK_W + 2, DECK_Y - 2, C + k * GIRDER), (C + DECK_W - 2, DECK_Y - 2, C + k * GIRDER)], 2, 2)
-    bar('drill_joist', [(C + k * GIRDER, DECK_Y - 2, C - DECK_W + 2), (C + k * GIRDER, DECK_Y - 2, C + DECK_W - 2)], 2, 2)
+    bar('drill_brace', [(C - GIRDER, DECK_Y - 2, C + k * GIRDER), (C + GIRDER, DECK_Y - 2, C + k * GIRDER)], 2, 2)
+    bar('drill_brace', [(C + k * GIRDER, DECK_Y - 2, C - GIRDER), (C + k * GIRDER, DECK_Y - 2, C + GIRDER)], 2, 2)
+
+# Floodlights hung under the deck between the legs and the pod, aimed down into the pit: a short
+# hanger, a graphite housing, and the lens on its underside, lit while the drill runs.
+for sx in (-1, 1):
+    for sz in (-1, 1):
+        fx, fz = C + sx * 26, C + sz * 26
+        ebox('drill_trim', fx - 0.6, DECK_Y - 4, fz - 0.6, fx + 0.6, DECK_Y, fz + 0.6, skip=('up',), v0=0)
+        ebox('drill_band', fx - 3, DECK_Y - 8, fz - 3, fx + 3, DECK_Y - 4, fz + 3, top='drill_trim', bottom='drill_flood')
 
 # ---------------------------------------------------------------- the emitter pod and its beam
 # The emitter (6 Oct 2026, the user's pick, replacing a pyramid with a lens on its tip): a pod hung
-# in a yoke under the deck, like a searchlight. A crossbar under the deck runs through its top;
-# from its ends two arms of the column's post steel hang down either side of the pod, which turns on
-# orange pivot bosses; the pod itself rises straight up to the deck, one unit. The pod
-# is a cut-corner box, two plates high: panels on its four faces, post steel on its corners, a light
+# straight from the deck, one unit (its yoke, a crossbar and two arms on pivot bosses, was taken
+# off on 12 Oct 2026 as too busy). The pod is a cut-corner box, two plates high: panels on its four faces, post steel on its corners, a light
 # line round it. Under it a short collar, and in the collar's foot the aperture: a lit ring round the
 # dark bore the beam leaves through (the renderer lights the bore as it charges).
 POD_W, POD_C = 12, 4            # the pod: half width 12 (its flat faces one plate wide) and corners cut 4
 POD = (30, 62)                  # its foot and top, two plates high, up to a band under the deck
-PIVOT_Y = 38
-ARM = (15, 20)                  # the arms, either side, from the pod's middle out
-YOKE_Y = DECK_Y - 10            # the crossbar's underside
 APERTURE_Y = 26                 # the collar's foot, where the beam leaves
 APERTURE_HALF = 5
 
@@ -362,17 +411,6 @@ def pod_prism(y1, y2, w, c, flat, corner, top=None, bottom=None):
             tiled_cap(cap, pts, y, up)
 
 
-# The crossbar the arms hang from, through the pod's top.
-ebox('drill_band6', C - ARM[1], YOKE_Y, C - 2.5, C + ARM[1], YOKE_Y + 6, C + 2.5, top='drill_trim', bottom='drill_trim')
-# The arms, square posts down either side of the pod, an orange pivot boss on each: through to the
-# pod on the inside, a cap on the outside.
-for sx in (-1, 1):
-    x1, x2 = sorted((C + sx * ARM[0], C + sx * ARM[1]))
-    ebox('drill_post', x1, POD[0] - 2, C - 2.5, x2, YOKE_Y, C + 2.5, skip=('up',), bottom='drill_trim', v0=0)
-    b1, b2 = sorted((C + sx * POD_W, C + sx * ARM[0]))
-    ebox('drill_accent', b1, PIVOT_Y - 3, C - 3, b2, PIVOT_Y + 3, C + 3, v0=0)
-    c1, c2 = sorted((C + sx * ARM[1], C + sx * (ARM[1] + 0.6)))
-    ebox('drill_accent', c1, PIVOT_Y - 2, C - 2, c2, PIVOT_Y + 2, C + 2, skip=(), v0=0)
 # The pod, rising straight up to the deck as one unit, a graphite band where it meets the deck, and
 # its light line round its lower plate.
 pod_prism(POD[0], POD[1], POD_W, POD_C, 'drill_panel', 'drill_post', bottom='drill_lid')
@@ -422,8 +460,12 @@ d.box('drill_trim', C - 8, RY + 12, CZ - 4.6, C + 8, RY + 21, CZ - 4, decals={'n
 for k in range(3):
     x0, y0, z0 = C - 7 + k * 6, RY + 8, CZ - 9
     ebox('drill_band', x0, y0, z0, x0 + 2, y0 + 0.6, z0 + 2, skip=('up', 'down'))
+    # Each lamp a group of its own, lit by the game for the drill's state: green working, amber
+    # waiting, red short of power (MegaDrillRenderer).
+    d.group = f'lamp_{k}'
     d.quad('drill_lamps', [(x0, y0 + 0.6, z0), (x0 + 2, y0 + 0.6, z0), (x0 + 2, y0 + 0.6, z0 + 2), (x0, y0 + 0.6, z0 + 2)],
            [(4 * k, 0), (4 * k + 2, 0), (4 * k + 2, 2), (4 * k, 2)], (0, 1, 0))
+    d.group = 'static'
 # ---------------------------------------------------------------- the column
 # Eight steel posts with a bolted splice plate over every joint, angle-steel X braces on its four
 # faces (back to back where they cross), the drive shaft inside (ribbed, a flange each block, a lit band you see through the
@@ -447,11 +489,32 @@ for face, (ax, az, bx, bz) in (('north', (C - CW + CC, C - CW, C + CW - CC, C - 
         bar('drill_brace', [(ax, ya, az), (bx, ya, bz)], 2, 0.5, normal)
 ebox('drill_shaft', C - 8, COL[0], C - 8, C + 8, COL[1], C + 8, skip=('down', 'up'))
 ebox('drill_amber', C - 8.3, COL[0] + 40, C - 8.3, C + 8.3, COL[0] + 44, C + 8.3, skip=('up', 'down'))
-# The duct stands clear of the braces (the outermost reaches 2.6 out from the face), its clamps too.
-DUCT = C + CW + 4
-ebox('drill_duct', DUCT, COL[0], C - 6, DUCT + 6, COL[1], C + 2, skip=('down', 'up'))
-for y in range(int(COL[0]) + B, int(COL[1]), B):
-    ebox('drill_accent', DUCT - 0.6, y - 1, C - 6.6, DUCT + 6.6, y + 1, C + 2.6, v0=0)
+# (The column's services, a line from each port, are drawn with the consoles' lines below.)
+
+# The service lines, so you see where everything goes, each as the mod's own pipe in its port's colour:
+# from the east console's three ports (water, tips, energy) straight up to the deck's underside, over
+# the deck to the column and up its east face side by side into the collar, power and tips to the
+# drive, water to cool it; and from the collar down the column's west face, over the deck and down
+# into the west console's output port, what the drill brings up. Each line rises from its port's
+# cell; they stand clear of the column's braces (2.6 out from its faces) and of the collar's knee
+# braces (on its posts, z 53 to 55 and 89 to 91), held in an orange bracket at every block.
+LINE_X = C + CW + 7                      # up the column's east face; the west face mirrors it
+RISE_X = SIZE - 14                       # up from the consoles, under the deck's edge
+LINES_IN = (('line_fluid', C + 12), ('line_items', C), ('line_energy', C - 12))
+LINE_OUT = ('line_items', C)
+for mat, z in LINES_IN:
+    bar('drill_' + mat, [(RISE_X, 26, z), (RISE_X, DECK_Y, z)], 2, 2, (0, 0, 1))
+    bar('drill_' + mat, [(RISE_X, RY + 1.5, z), (LINE_X, RY + 1.5, z), (LINE_X, COL[1], z)], 2, 2, (0, 0, 1))
+mat, z = LINE_OUT
+bar('drill_' + mat, [(SIZE - RISE_X, DECK_Y, z), (SIZE - RISE_X, 26, z)], 2, 2, (0, 0, 1))
+bar('drill_' + mat, [(SIZE - LINE_X, COL[1], z), (SIZE - LINE_X, RY + 1.5, z), (SIZE - RISE_X, RY + 1.5, z)], 2, 2, (0, 0, 1))
+# The brackets: across the three lines up the east face (back to the braces) and round the one on the
+# west, and one on each riser group under the deck.
+for y in range(int(RY) + B, int(COL[1]), B):
+    ebox('drill_accent', C + CW + 2.6, y - 1, C - 15, LINE_X + 2.6, y + 1, C + 15, v0=0)
+    ebox('drill_accent', SIZE - LINE_X - 2.6, y - 1, C - 3, SIZE - (C + CW + 2.6), y + 1, C + 3, v0=0)
+ebox('drill_accent', RISE_X - 2.6, 44, C - 15, RISE_X + 2.6, 46, C + 15, v0=0)
+ebox('drill_accent', SIZE - RISE_X - 2.6, 44, C - 3, SIZE - RISE_X + 2.6, 46, C + 3, v0=0)
 
 # ---------------------------------------------------------------- the collar and the drive housing
 # Not a lantern: a heavy drive housing with louvred vents, generator pods bolted to its flanks, and
@@ -481,13 +544,14 @@ for z, face, push in ((C - HW, 'north', -0.3), (C + HW, 'south', 0.3)):
     a1, a2 = sorted((z, z + push))
     plate('drill_vent', face, C - B, HOUSE[0] + B, a1, C + B, HOUSE[1], a2)
 d.box('drill_trim', C + B + 5, HOUSE[0] + 3, C - HW - 0.4, C + 2 * B - 5, HOUSE[0] + 13, C - HW, decals={'north': 'drill_window'}, skip=('south',))
-# Generator pods on the flanks: a block deep, two long, two high, on a graphite bracket, vents over
-# their upper row, the light line under their caps.
+# Generator pods on the flanks: half a block deep, so their faces stand flush over the collar's
+# edge and they sit on the collar rather than hanging past it; two long, two high, graphite end
+# plates, vents over their upper row, their light line level with the housing's so it runs on round.
 for sx in (-1, 1):
-    x1, x2 = sorted((C + sx * HW, C + sx * (HW + B)))
-    ebox('drill_panel', x1, HOUSE[0], C - B, x2, HOUSE[1], C + B, top='drill_lid', skip=('down',))
-    ebox('drill_band', x1 - 0.5, HOUSE[0] - 4, C - B - 0.5, x2 + 0.5, HOUSE[0], C + B + 0.5, top='drill_trim', bottom='drill_underside')
-    outline(x1, HOUSE[1] - 3, C - B, x2, HOUSE[1] - 2, C + B, 'glow')
+    x1, x2 = sorted((C + sx * HW, C + sx * 40))
+    ebox('drill_panel', x1, HOUSE[0], C - B, x2, HOUSE[1], C + B, top='drill_lid', skip=('down',),
+         sides={'north': 'drill_trim', 'south': 'drill_trim'})
+    outline(x1, HOUSE[1] - 1.5, C - B, x2, HOUSE[1] - 0.5, C + B, 'glow')
     fx = x2 if sx > 0 else x1
     a1, a2 = sorted((fx, fx + sx * 0.3))
     face = 'east' if sx > 0 else 'west'
@@ -505,27 +569,62 @@ ebox('drill_sheave', C - 4, ROOF + 16, C - 8, C + 4, ROOF + 24, C + 8, bottom='d
 for z in (C - 5, C, C + 5):
     ebox('drill_pulley', C - 4.5, ROOF + 17, z - 1.5, C + 4.5, ROOF + 23, z + 1.5, top='drill_trim', bottom='drill_trim')
 ebox('drill_band', C - 8, ROOF, C - 8, C + 8, ROOF + 4, C + 8, top='drill_rotary', skip=('down',))
+def fan_blades(cx, cz, y, angle):
+    """Four blades round a hub at (cx, cz), turned to angle degrees: in the game a part that turns
+    while the drill works (and idles round slowly on standby)."""
+    for k in range(4):
+        a = math.radians(angle + 90 * k)
+        ux, uz = math.cos(a), math.sin(a)
+        vx, vz = -uz, ux
+        r0, r1, w = 1.6, 6.6, 1.4
+        pts = [(cx + ux * r0 + vx * w, y, cz + uz * r0 + vz * w), (cx + ux * r1 + vx * w * 1.3, y, cz + uz * r1 + vz * w * 1.3),
+               (cx + ux * r1 - vx * w * 0.6, y, cz + uz * r1 - vz * w * 0.6), (cx + ux * r0 - vx * w, y, cz + uz * r0 - vz * w)]
+        d.quad('drill_blade', pts, [(0, 0), (5, 0), (5, 3), (0, 3)], (0, 1, 0))
+
+
 # Two cooling fans on the roof's front corners (a block each, an orange hub cap), two exhaust stacks
 # at the back with an orange band.
 # The fans stand a pixel clear of the corner lamps and of the crown's A-frame.
 for sx in (-1, 1):
     fx = C + sx * 18
-    ebox('drill_band', fx - 8, ROOF, C - 27, fx + 8, ROOF + 4, C - 11, top='drill_fan', skip=('down',))
-    ebox('drill_accent', fx - 1.5, ROOF + 4, C - 20.5, fx + 1.5, ROOF + 5, C - 17.5, skip=('down',), v0=0)
+    # An open shroud: a dark floor, a rim round it, the blades turning inside, a guard across the top.
+    ebox('drill_band', fx - 8, ROOF, C - 27, fx + 8, ROOF + 1.5, C - 11, top='drill_fan_well', skip=('down',))
+    for rx1, rz1, rx2, rz2 in ((fx - 8, C - 27, fx + 8, C - 26), (fx - 8, C - 12, fx + 8, C - 11),
+                               (fx - 8, C - 26, fx - 7, C - 12), (fx + 7, C - 26, fx + 8, C - 12)):
+        ebox('drill_band', rx1, ROOF + 1.5, rz1, rx2, ROOF + 4, rz2, top='drill_trim', skip=('down',))
+    # The blades and hub turn in the game (MegaDrillRenderer turns group fan_0 and fan_1 about the hub).
+    d.group = 'fan_0' if sx < 0 else 'fan_1'
+    fan_blades(fx, C - 19, ROOF + 2.8, 20 + sx * 15)
+    ebox('drill_accent', fx - 1.5, ROOF + 1.5, C - 20.5, fx + 1.5, ROOF + 3.2, C - 17.5, skip=('down',), v0=0)
+    d.group = 'static'
+    for gx1, gz1, gx2, gz2 in ((fx - 7, C - 19.3, fx + 7, C - 18.7), (fx - 0.3, C - 26, fx + 0.3, C - 12)):
+        ebox('drill_trim', gx1, ROOF + 3.6, gz1, gx2, ROOF + 4, gz2, v0=0)
     ebox('drill_stack', fx - 4, ROOF, C + 12, fx + 4, ROOF + 16, C + 20, top='drill_stack_top', skip=('down',))
     ebox('drill_accent', fx - 4.4, ROOF + 10, C + 11.6, fx + 4.4, ROOF + 13, C + 20.4, skip=('up', 'down'), v0=0)
 # Warning lamps on the roof's corners.
 for sx in (-1, 1):
     for sz in (-1, 1):
         lx, lz = C + sx * (HW - 3), C + sz * (HW - 3)
-        ebox('drill_band', lx - 2, ROOF, lz - 2, lx + 2, ROOF + 2, lz + 2, top='drill_trim', skip=('down',))
-        ebox('drill_amber', lx - 1.5, ROOF + 2, lz - 1.5, lx + 1.5, ROOF + 5, lz + 1.5, skip=('down',))
+        ebox('drill_band', lx - 2.5, ROOF, lz - 2.5, lx + 2.5, ROOF + 2, lz + 2.5, top='drill_trim', skip=('down',))
+        d.group = 'beacon'
+        ebox('drill_amber', lx - 2, ROOF + 2, lz - 2, lx + 2, ROOF + 6, lz + 2, skip=('down', 'up'))
+        d.group = 'static'
+        ebox('drill_trim', lx - 2.3, ROOF + 6, lz - 2.3, lx + 2.3, ROOF + 6.8, lz + 2.3, skip=('down',), v0=0)
+
+# The aviation light: a short mast on the crown beam's back end, a red lamp on top that blinks, as
+# a tall structure carries.
+ebox('drill_post', C - 0.8, ROOF + 32, C + 11.2, C + 0.8, ROOF + 42, C + 12.8, skip=('down',), v0=0)
+ebox('drill_band', C - 1.8, ROOF + 42, C + 10.2, C + 1.8, ROOF + 43, C + 13.8, top='drill_trim', skip=('down',))
+d.group = 'aviation'
+ebox('drill_red_lamp', C - 1.4, ROOF + 43, C + 10.6, C + 1.4, ROOF + 46, C + 13.4, skip=('down', 'up'))
+d.group = 'static'
+ebox('drill_trim', C - 1.7, ROOF + 46, C + 10.3, C + 1.7, ROOF + 46.6, C + 13.7, skip=('down',), v0=0)
 
 
 # ---------------------------------------------------------------- running and idle, export and pictures
 # Idle: the pit plain obsidian, the beam off, the lamps, window, light lines and the aperture's
 # ring dim.
-IDLE = {'drill_hot_obsidian': 'obsidian', 'drill_hot_obsidian_core': 'obsidian', 'drill_amber': 'drill_amber_off', 'glow': 'glow_off', 'drill_window': 'drill_window_off',
+IDLE = {'drill_flood': 'drill_flood_off', 'drill_hot_obsidian': 'obsidian', 'drill_hot_obsidian_core': 'obsidian', 'drill_amber': 'drill_amber_off', 'glow': 'glow_off', 'drill_window': 'drill_window_off',
         'drill_lamps': 'drill_lamps_off'}
 # Drawn by the game itself, so left out of the export: the layer being mined and the beam.
 PICTURE_ONLY = ('drill_hot_obsidian', 'drill_hot_obsidian_core', 'drill_beam')
@@ -542,10 +641,15 @@ def export():
     'static', what changes when it runs in 'on' (running) and 'off' (idle)."""
     running = d.quads
     d.quads = [q for q in running if q[0] not in PICTURE_ONLY]
-    changes = [q for q in d.quads if q[0] in IDLE or q[0] in RUNNING_ONLY]
-    d.quads = ([(t, v, n, 'static') for t, v, n, g in d.quads if t not in IDLE and t not in RUNNING_ONLY]
+    # The parts the game moves or lights by the drill's state keep their own groups (fan_0, fan_1,
+    # beacon, aviation, lamp_0 to 2); the rest is the body, split by what changes when it runs.
+    moving = [q for q in d.quads if q[3] != 'static']
+    body = [q for q in d.quads if q[3] == 'static']
+    changes = [q for q in body if q[0] in IDLE or q[0] in RUNNING_ONLY]
+    d.quads = ([(t, v, n, 'static') for t, v, n, g in body if t not in IDLE and t not in RUNNING_ONLY]
                + [(t, v, n, 'on') for t, v, n, g in changes]
-               + [(t, v, n, 'off') for t, v, n, g in idle(changes)])
+               + [(t, v, n, 'off') for t, v, n, g in idle(changes)]
+               + moving)
     d.export(GAME_DATA)
     d.quads = running
 

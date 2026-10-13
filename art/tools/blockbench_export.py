@@ -32,7 +32,7 @@ MACHINES = {
                   'back wall', 'west wall', 'east wall', 'frozen salt', 'sight glass',
                   'frame top', 'frame bottom', 'frame west', 'frame east',
                   'label plate', 'heater terminal box', 'heater conduit',
-                  'lid', 'drive head', 'charging port', 'off-gas stack', 'stack cap', 'cathode gland',
+                  'lid', 'drive head', 'top connector', 'off-gas stack', 'stack cap', 'cathode gland',
                   'west insulator', 'west riser', 'east insulator', 'east riser',
                   'west bus bar', 'west bus link', 'east bus bar', 'east bus link', 'back connector'],
         # How they are grouped in the outliner.
@@ -43,7 +43,7 @@ MACHINES = {
                      'back wall', 'west wall', 'east wall', 'frozen salt', 'sight glass',
                      'frame top', 'frame bottom', 'frame west', 'frame east',
                      'label plate', 'heater terminal box', 'heater conduit']),
-            ('lid', ['lid', 'drive head', 'charging port', 'off-gas stack', 'stack cap', 'cathode gland']),
+            ('lid', ['lid', 'drive head', 'top connector', 'off-gas stack', 'stack cap', 'cathode gland']),
             ('bus bars', ['west insulator', 'west riser', 'east insulator', 'east riser',
                           'west bus bar', 'west bus link', 'east bus bar', 'east bus link']),
             ('back connector', ['back connector']),

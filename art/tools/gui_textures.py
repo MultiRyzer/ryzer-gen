@@ -750,6 +750,17 @@ def sound_key(t, x, y, muted, hover):
             t.set(sx + 9, sy + dy, 'f')
 
 
+def sound_tab():
+    """The sound switch every machine's screen carries (client.SoundTab), on a 64 x 64 sheet: the tab
+    the screen draws on its panel's right edge at 0,0, then its keys from 0,32: sound, sound
+    hovered, muted, muted hovered."""
+    t = Tex(64, 64)
+    side_tab(t, 0, 0, *SIDE_TAB_SIZE)
+    for i, (muted, hover) in enumerate(((False, False), (False, True), (True, False), (True, True))):
+        sound_key(t, i * 16, 32, muted, hover)
+    return t
+
+
 def cable():
     """Cable panel on a 256 x 320 sheet: the header and the bay for six rows (drawn in code, each
     with its fitting slot), the footer row, then from y 188 the inventory section: the bay's bottom
@@ -781,6 +792,7 @@ def main():
     publish('gui/spent_fuel_pool', spent_fuel_pool())
     publish('gui/container_battery', container_battery())
     publish('gui/mega_drill', mega_drill())
+    publish('gui/sound_tab', sound_tab())
     for name, (inputs, outputs, water) in PROCESSING.items():
         publish('gui/' + name, processing(inputs, outputs, water))
 

@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.fission;
 
+import com.ryzer.ryzergen.machine.SoundSwitch;
 import com.ryzer.ryzergen.client.StationAlarmSound;
 import com.ryzer.ryzergen.client.StationHumSound;
 import com.ryzer.ryzergen.client.StationGhostPreview;
@@ -45,7 +46,15 @@ import java.util.Map;
  * ({@link StationRunner}): its panel becomes the station's controls and core grid, its ports take
  * water and fuel and give power, and it anchors the renderer, which shows the rods as loaded.
  */
-public class StationCoreBlockEntity extends BlockEntity implements MenuProvider {
+public class StationCoreBlockEntity extends BlockEntity implements MenuProvider, SoundSwitch.Holder {
+    /** Its sound switch (the speaker key on its screen): muted, its running sounds stop. */
+    private final SoundSwitch sound = new SoundSwitch(this);
+
+    @Override
+    public SoundSwitch sound() {
+        return sound;
+    }
+
     public static final int SLOTS = 9;
     /** Blocks placed per build step, and ticks between steps. */
     private static final int PER_STEP = 3;
@@ -413,6 +422,7 @@ public class StationCoreBlockEntity extends BlockEntity implements MenuProvider 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        sound.save(tag);
         tag.put("parts", parts.serializeNBT(registries));
         runner.save(tag, registries);
     }
@@ -420,6 +430,7 @@ public class StationCoreBlockEntity extends BlockEntity implements MenuProvider 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        sound.load(tag);
         parts.deserializeNBT(registries, tag.getCompound("parts"));
         runner.load(tag, registries);
     }
@@ -430,6 +441,7 @@ public class StationCoreBlockEntity extends BlockEntity implements MenuProvider 
         CompoundTag tag = new CompoundTag();
         runner.save(tag, registries);
         tag.putFloat("turbine", runner.turbine);
+        sound.save(tag);
         return tag;
     }
 
@@ -440,6 +452,7 @@ public class StationCoreBlockEntity extends BlockEntity implements MenuProvider 
 
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        sound.load(tag);
         runner.load(tag, registries);
         runner.turbine = tag.getFloat("turbine");
     }

@@ -273,6 +273,9 @@ public class BreederRunner {
     int pumping;
     int efficiencyPermille;
 
+    /** Set each tick by the core from its sound switch: muted, the fire's roar is not played. */
+    boolean quiet;
+
     BreederRunner(Runnable changed) {
         java.util.Arrays.fill(types, Position.EMPTY);
         this.changed = changed;
@@ -468,7 +471,7 @@ public class BreederRunner {
         if (level.getGameTime() % 5 == 0) {
             level.sendParticles(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, centre.x, core.getY() + 1, centre.z, 2, 2.5, 0.5, 2.5, 0.01);
         }
-        if (level.getGameTime() % 30 == 0) {
+        if (!quiet && level.getGameTime() % 30 == 0) {
             level.playSound(null, centre.x, core.getY() + 1, centre.z, SoundEvents.FIRE_AMBIENT, SoundSource.BLOCKS, 3.0F, 0.8F);
         }
     }
