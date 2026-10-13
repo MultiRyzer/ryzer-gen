@@ -52,6 +52,14 @@ public final class Announcer {
         }
     }
 
+    /** Its machine's sound switch is off: it keeps quiet, all but the meltdown warning. */
+    private boolean muted;
+
+    /** Set by its machine from its sound switch (SoundSwitch): muted, only a meltdown warning is spoken. */
+    public void mute(boolean muted) {
+        this.muted = muted;
+    }
+
     /** No line repeats sooner than this after it last played. */
     private static final long COOLDOWN = 20 * 20;
     /** Heard up to about this far away (vanilla scales the fade by volumes above 1). */
@@ -67,7 +75,7 @@ public final class Announcer {
 
     /** Says {@code line} at {@code at}, unless it spoke too recently or something more urgent is playing. */
     public void say(ServerLevel level, Vec3 at, Line line) {
-        if (!Config.ANNOUNCER_ENABLED.get()) {
+        if (!Config.ANNOUNCER_ENABLED.get() || muted && line != Line.MELTDOWN_RISK) {
             return;
         }
         long now = level.getGameTime();

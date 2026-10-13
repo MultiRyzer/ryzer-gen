@@ -40,7 +40,7 @@ public class StationAlarmSound extends AbstractTickableSoundInstance {
     @Override
     public void tick() {
         StationRunner.Status status = core.runner().status();
-        if (core.isRemoved() || !status.alarm()) {
+        if (core.isRemoved() || !sounds(core, status)) {
             stop();
             return;
         }
@@ -54,9 +54,17 @@ public class StationAlarmSound extends AbstractTickableSoundInstance {
         }
     }
 
+    /**
+     * Whether the alarm sounds: in any danger, or with the station's sound muted only while it is
+     * heading for meltdown (a muted station still warns of that).
+     */
+    private static boolean sounds(StationCoreBlockEntity core, StationRunner.Status status) {
+        return status.alarm() && (!core.sound().muted() || status.critical());
+    }
+
     /** Starts the alarm when the core reports danger and none is playing. */
     public static void update(StationCoreBlockEntity core) {
-        if (!core.runner().status().alarm()) {
+        if (!sounds(core, core.runner().status())) {
             return;
         }
         if (core.clientAlarm instanceof StationAlarmSound alarm && !alarm.isStopped()) {

@@ -372,7 +372,11 @@ public class StationRunner {
     }
 
     /** One tick. {@code centre} is the middle of the station, for radiation. */
+    /** Set each tick by the core from its sound switch: muted, the announcer speaks only of meltdown. */
+    boolean quiet;
+
     void tick(ServerLevel level, BlockPos core, Direction facing, Vec3 centre) {
+        announcer.mute(quiet);
         boolean overdrive = !safeties;
         StationReactor.Analysis analysis = StationReactor.analyse(types, rods(), overdrive);
         boolean allowed = enabled && redstoneMode.allows(level.hasNeighborSignal(core));

@@ -555,6 +555,7 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
 
     /** Speaks when something worth hearing has changed since the last tick. */
     private void announce(ServerLevel level, Vec3 at, Status before, boolean running) {
+        announcer.mute(sound.muted());
         if (announcedSafeties != null && announcedSafeties != safeties) {
             announcer.say(level, at, safeties ? Announcer.Line.SAFETIES_ON : Announcer.Line.SAFETIES_OFF);
         }
