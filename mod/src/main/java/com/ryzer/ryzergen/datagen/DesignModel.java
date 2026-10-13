@@ -222,6 +222,17 @@ final class DesignModel {
      * puts it in place. Drawn cutout; its faces must stay within a block either side of the origin.
      */
     void buildPart(BlockModelBuilder model, String state, float ox, float oy, float oz, String particle) {
+        buildPart(model, state, ox, oy, oz, particle, false);
+    }
+
+    /**
+     * As {@link #buildPart(BlockModelBuilder, String, float, float, float, String)}; with
+     * {@code ownUvs}, every material face maps its texture from the box's own top left (as a decal
+     * does, up to a whole texture), instead of by position. A part built about a joint has faces at
+     * negative positions, and the game's position UVs for those run off the texture onto its
+     * neighbours in the atlas (the Assembler's arm).
+     */
+    void buildPart(BlockModelBuilder model, String state, float ox, float oy, float oz, String particle, boolean ownUvs) {
         model.ao(false);
         model.renderType("cutout");
         model.texture("particle", texture(particle));
@@ -243,6 +254,10 @@ final class DesignModel {
                     face.uvs(uv[0] * scale, uv[1] * scale, uv[2] * scale, uv[3] * scale);
                 } else {
                     face.texture(use.apply(box.faces.getOrDefault(dir, box.material)));
+                    if (ownUvs) {
+                        float[] uv = decalUv(dir, box, box.from, box.to);
+                        face.uvs(Math.min(16, uv[0]), Math.min(16, uv[1]), Math.min(16, uv[2]), Math.min(16, uv[3]));
+                    }
                 }
                 if (box.glowing.contains(dir)) {
                     face.emissivity(15, 15);

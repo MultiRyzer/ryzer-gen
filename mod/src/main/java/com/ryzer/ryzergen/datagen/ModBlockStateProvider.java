@@ -1,5 +1,7 @@
 package com.ryzer.ryzergen.datagen;
 
+import com.ryzer.ryzergen.machine.assembler.AssemblerLayout;
+import com.ryzer.ryzergen.machine.assembler.AssemblerPartBlock;
 import com.ryzer.ryzergen.battery.container.ContainerPartBlock;
 import com.ryzer.ryzergen.battery.container.ContainerLayout;
 import com.ryzer.ryzergen.machine.drill.MegaDrillPartBlock;
@@ -74,6 +76,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         wasteCask();
         stationParts();
         spentFuelPool();
+        assembler();
         containerBattery();
         simpleBlockWithItem(ModBlocks.CREATIVE_BATTERY.get(), models().cubeBottomTop("creative_battery",
                 modLoc("block/creative_battery_side"), modLoc("block/creative_top"), modLoc("block/creative_top")));
@@ -146,6 +149,55 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 return ConfiguredModel.builder()
                         .modelFile(cell > 0 ? formed.get(state.getValue(PoolPartBlock.LOOK).getSerializedName() + "_" + cell) : single)
                         .rotationY(turns ? ((int) state.getValue(PoolPartBlock.FACING).toYRot() + 180) % 360 : 0)
+                        .build();
+            });
+            simpleBlockItem(block, single);
+        });
+    }
+
+    /**
+     * The Assembler's parts. Alone each shows its own faces (the controller's front carries the
+     * console); formed, each draws its cell of the open robot cell's design
+     * (art/tools/assembler_concept.py), idle or working, turned to face the way the controller does.
+     * The arm's six parts are whole models of their own, about their joints, which its renderer
+     * poses (AssemblerRenderer).
+     */
+    private void assembler() {
+        DesignModel design = DesignModel.load("assembler");
+        Map<String, ModelFile> formed = new HashMap<>();
+        Map<String, float[]> origins = Map.of(
+                "arm_turret", new float[] {24, 18.5F, 31}, "arm_upper", new float[] {24, 24, 31},
+                "arm_fore", new float[] {24, 39, 15}, "arm_tool", new float[] {24, 39, 13},
+                "arm_finger_west", new float[] {24, 39, 13}, "arm_finger_east", new float[] {24, 39, 13});
+        for (String look : design.stateNames()) {
+            if (look.startsWith("arm_")) {
+                float[] o = origins.get(look);
+                design.buildPart(models().getBuilder("block/assembler/" + look).parent(models().getExistingFile(mcLoc("block/block"))),
+                        look, o[0], o[1], o[2], "arm", true);
+                continue;
+            }
+            for (int index = 1; index <= AssemblerLayout.CELLS; index++) {
+                BlockPos cell = AssemblerLayout.cell(index);
+                BlockModelBuilder model = models().getBuilder("block/assembler/" + look + "_" + index)
+                        .parent(models().getExistingFile(mcLoc("block/block")));
+                design.build(model, look, cell.getX(), cell.getY(), cell.getZ(), "bay", models()::nested);
+                formed.put(look + "_" + index, model);
+            }
+        }
+        ModelFile frame = models().cubeAll("assembler_frame", modLoc("block/assembler/part_frame"));
+        ModelFile arm = models().cubeAll("assembler_arm", modLoc("block/assembler/part_arm"));
+        ModelFile controller = models().orientable("assembler_controller", modLoc("block/assembler/part_frame"),
+                modLoc("block/assembler/part_controller"), modLoc("block/assembler/part_frame"));
+        Map<Block, ModelFile> alone = Map.of(ModBlocks.ASSEMBLER_FRAME.get(), frame, ModBlocks.ASSEMBLER_ARM.get(), arm,
+                ModBlocks.ASSEMBLER_CONTROLLER.get(), controller);
+        alone.forEach((block, single) -> {
+            getVariantBuilder(block).forAllStates(state -> {
+                int cell = state.getValue(AssemblerPartBlock.CELL);
+                boolean turns = cell > 0 || block == ModBlocks.ASSEMBLER_CONTROLLER.get();
+                String look = state.getValue(AssemblerPartBlock.WORKING) ? "working" : "idle";
+                return ConfiguredModel.builder()
+                        .modelFile(cell > 0 ? formed.get(look + "_" + cell) : single)
+                        .rotationY(turns ? ((int) state.getValue(AssemblerPartBlock.FACING).toYRot() + 180) % 360 : 0)
                         .build();
             });
             simpleBlockItem(block, single);

@@ -56,6 +56,9 @@ public class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.POOL_LINER.get());
         dropSelf(ModBlocks.POOL_CRANE.get());
         dropSelf(ModBlocks.POOL_CONTROLLER.get());
+        dropSelf(ModBlocks.ASSEMBLER_FRAME.get());
+        dropSelf(ModBlocks.ASSEMBLER_ARM.get());
+        dropSelf(ModBlocks.ASSEMBLER_CONTROLLER.get());
         dropSelf(ModBlocks.CONTAINER_FRAME.get());
         dropSelf(ModBlocks.THERMAL_UNIT.get());
         dropSelf(ModBlocks.BATTERY_CONTROLLER.get());

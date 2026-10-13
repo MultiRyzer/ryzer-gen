@@ -3,6 +3,8 @@ package com.ryzer.ryzergen.registry;
 import com.ryzer.ryzergen.battery.container.ContainerPartBlock;
 import com.ryzer.ryzergen.battery.container.BatteryControllerBlock;
 import com.ryzer.ryzergen.machine.pool.PoolPartBlock;
+import com.ryzer.ryzergen.machine.assembler.AssemblerControllerBlock;
+import com.ryzer.ryzergen.machine.assembler.AssemblerPartBlock;
 import com.ryzer.ryzergen.machine.pool.PoolLook;
 import com.ryzer.ryzergen.machine.pool.PoolControllerBlock;
 import com.ryzer.ryzergen.machine.fusion.FusionPreviewBlock;
@@ -120,6 +122,13 @@ public final class ModBlocks {
             () -> new PoolPartBlock(poolProperties()));
     public static final DeferredBlock<PoolControllerBlock> POOL_CONTROLLER = BLOCKS.register("pool_controller",
             () -> new PoolControllerBlock(poolProperties()));
+    // Assembler parts (design section 14). Formed, they draw the open robot cell's combined model.
+    public static final DeferredBlock<AssemblerPartBlock> ASSEMBLER_FRAME = BLOCKS.register("assembler_frame",
+            () -> new AssemblerPartBlock(assemblerProperties()));
+    public static final DeferredBlock<AssemblerPartBlock> ASSEMBLER_ARM = BLOCKS.register("assembler_arm",
+            () -> new AssemblerPartBlock(assemblerProperties()));
+    public static final DeferredBlock<AssemblerControllerBlock> ASSEMBLER_CONTROLLER = BLOCKS.register("assembler_controller",
+            () -> new AssemblerControllerBlock(assemblerProperties()));
     // Container Battery parts (design section 12). Formed, they draw the container's combined
     // model; a slot with a rack in it lights up.
     public static final DeferredBlock<ContainerPartBlock> CONTAINER_FRAME = BLOCKS.register("container_frame",
@@ -188,6 +197,10 @@ public final class ModBlocks {
     private static BlockBehaviour.Properties drillProperties() {
         return BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
                 .lightLevel(state -> state.getValue(MegaDrillPartBlock.LIT) ? 15 : 0);
+    }
+
+    private static BlockBehaviour.Properties assemblerProperties() {
+        return BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).pushReaction(PushReaction.BLOCK).noOcclusion();
     }
 
     private static BlockBehaviour.Properties poolProperties() {

@@ -125,6 +125,10 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BatteryControllerBlockEntity>> BATTERY_CONTROLLER =
             BLOCK_ENTITIES.register("battery_controller",
                     () -> BlockEntityType.Builder.of(BatteryControllerBlockEntity::new, ModBlocks.BATTERY_CONTROLLER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.ryzer.ryzergen.machine.assembler.AssemblerBlockEntity>> ASSEMBLER =
+            BLOCK_ENTITIES.register("assembler",
+                    () -> BlockEntityType.Builder.of(com.ryzer.ryzergen.machine.assembler.AssemblerBlockEntity::new,
+                            ModBlocks.ASSEMBLER_CONTROLLER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PoolControllerBlockEntity>> POOL_CONTROLLER =
             BLOCK_ENTITIES.register("pool_controller",
                     () -> BlockEntityType.Builder.of(PoolControllerBlockEntity::new, ModBlocks.POOL_CONTROLLER.get()).build(null));

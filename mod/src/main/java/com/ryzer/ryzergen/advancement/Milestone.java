@@ -15,6 +15,7 @@ public enum Milestone implements StringRepresentable {
     STATION_PERFECT("station_perfect"),
     STATION_MELTDOWN("station_meltdown"),
     POOL_FORMED("pool_formed"),
+    ASSEMBLER_FORMED("assembler_formed"),
     CONTAINER_FORMED("container_formed"),
     /** A reactor reaching its tier's steady-state cap. */
     MICROREACTOR_STEADY("microreactor_steady"),

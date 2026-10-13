@@ -717,6 +717,68 @@ def mega_drill():
     return t
 
 
+def assembler():
+    """The formed Assembler's controls, 176 x 226: the pattern rack's nine patterns (3 x 3, chosen by
+    clicking; the screen draws each one's result and lights the chosen one) and the chosen pattern's
+    ghost grid, a small arrow to its result and the clear key under it, the energy well on the right;
+    under them the power and redstone keys, the speed module slot (marked with the double chevron)
+    and the readout; the buffer (5 x 2) and the output (3 x 2, an orange rim round it); the player's
+    inventory below. Sprites right of the panel: keycaps at 176,0 and 192,0, the clear key (plain
+    and hovered) at 208,0 and 224,0, power keys from 176,16, the sound tab at 176,40 and its keys
+    from 176,72. Keep in step with AssemblerMenu and AssemblerScreen."""
+    t = Tex(SIZE)
+    panel(t, PANEL_W, 226)
+    recess(t, 4, 13, 168, 119, 'S', 'U', 'A')
+    for row in range(3):
+        for col in range(3):
+            slot(t, 7 + col * 18, 16 + row * 18)
+            slot(t, 66 + col * 18, 16 + row * 18)
+    # The arrow from the grid to its result.
+    t.rect(123, 42, 128, 46, 'b')
+    for i in range(5):
+        t.rect(129 + i, 39 + i, 129 + i, 49 - i, 'b')
+    slot(t, 136, 34)
+    t.rect(135, 33, 154, 33, 'X')
+    t.rect(135, 33, 135, 52, 'X')
+    t.rect(135, 52, 154, 52, 'Z')
+    t.rect(154, 33, 154, 52, 'Z')
+    well(t, 158, 16, 10, 54)
+    # The speed module slot, marked with the double chevron, and the readout.
+    slot(t, 43, 72)
+    for ox in (47, 51):
+        for dy in (-2, -1, 0, 1, 2):
+            t.set(ox + (2 - abs(dy)), 81 + dy, 'I')
+    screen(t, 66, 72, 102, 18)
+    for row in range(2):
+        for col in range(5):
+            slot(t, 7 + col * 18, 93 + row * 18)
+        for col in range(3):
+            slot(t, 115 + col * 18, 93 + row * 18)
+    t.rect(114, 92, 169, 92, 'X')
+    t.rect(114, 92, 114, 129, 'X')
+    t.rect(114, 129, 169, 129, 'Z')
+    t.rect(169, 92, 169, 129, 'Z')
+    for row in range(3):
+        for col in range(9):
+            slot(t, 7 + col * 18, 144 + row * 18)
+    for col in range(9):
+        slot(t, 7 + col * 18, 202)
+    keycap(t, 176, 0, False)
+    keycap(t, 192, 0, True)
+    for i, hover in enumerate((False, True)):
+        x = 208 + i * 16
+        keycap(t, x, 0, hover)
+        for d in range(6):
+            t.set(x + 5 + d, 3 + d, 'x')
+            t.set(x + 10 - d, 3 + d, 'x')
+    for i, (on, hover) in enumerate(((True, False), (True, True), (False, False), (False, True))):
+        power_key(t, 176 + i * 16, 16, on, hover)
+    side_tab(t, 176, 40, *SIDE_TAB_SIZE)
+    for i, (muted, hover) in enumerate(((False, False), (False, True), (True, False), (True, True))):
+        sound_key(t, 176 + i * 16, 72, muted, hover)
+    return t
+
+
 SPEAKER = [
     '...#....',
     '..##....',
@@ -792,6 +854,7 @@ def main():
     publish('gui/spent_fuel_pool', spent_fuel_pool())
     publish('gui/container_battery', container_battery())
     publish('gui/mega_drill', mega_drill())
+    publish('gui/assembler', assembler())
     publish('gui/sound_tab', sound_tab())
     for name, (inputs, outputs, water) in PROCESSING.items():
         publish('gui/' + name, processing(inputs, outputs, water))

@@ -1,0 +1,29 @@
+{
+  "parent": "ryzergen:main/microreactor",
+  "criteria": {
+    "assembler_formed": {
+      "conditions": {
+        "milestone": "assembler_formed"
+      },
+      "trigger": "ryzergen:milestone"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.ryzergen.assembler.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "ryzergen:assembler_arm"
+    },
+    "title": {
+      "translate": "advancements.ryzergen.assembler.title"
+    }
+  },
+  "requirements": [
+    [
+      "assembler_formed"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

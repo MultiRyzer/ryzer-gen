@@ -25,7 +25,8 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 ModBlocks.CORE_CRACKER.get(), ModBlocks.REPROCESSOR.get(), ModBlocks.FUEL_FABRICATOR.get(), ModBlocks.WASTE_CASK.get(),
                 ModBlocks.LITHIUM_EXTRACTOR.get(), ModBlocks.ELECTROREFINER.get(), ModBlocks.MONAZITE_PROCESSOR.get(), ModBlocks.BREEDER_CORE.get(),
                 ModBlocks.BREEDER_FRAME.get(), ModBlocks.BREEDER_SHELL.get(), ModBlocks.MEGA_DRILL_CONTROLLER.get(),
-                ModBlocks.DRILL_FRAME.get(), ModBlocks.DRILL_PIER.get());
+                ModBlocks.DRILL_FRAME.get(), ModBlocks.DRILL_PIER.get(), ModBlocks.ASSEMBLER_FRAME.get(),
+                ModBlocks.ASSEMBLER_ARM.get(), ModBlocks.ASSEMBLER_CONTROLLER.get());
 
         for (OreType ore : OreType.values()) {
             Block stone = ModBlocks.STONE_ORES.get(ore).get();

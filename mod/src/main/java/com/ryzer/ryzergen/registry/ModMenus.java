@@ -73,6 +73,13 @@ public final class ModMenus {
     public static final DeferredHolder<MenuType<?>, MenuType<MegaDrillMenu>> MEGA_DRILL =
             MENUS.register("mega_drill", () -> new MenuType<>(MegaDrillMenu::new, FeatureFlags.DEFAULT_FLAGS));
 
+    public static final DeferredHolder<MenuType<?>, MenuType<com.ryzer.ryzergen.machine.assembler.AssemblerBuildMenu>> ASSEMBLER_BUILD =
+            MENUS.register("assembler_build", () -> new MenuType<>(com.ryzer.ryzergen.machine.assembler.AssemblerBuildMenu::new,
+                    FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<com.ryzer.ryzergen.machine.assembler.AssemblerMenu>> ASSEMBLER =
+            MENUS.register("assembler", () -> IMenuTypeExtension.create(com.ryzer.ryzergen.machine.assembler.AssemblerMenu::new));
+
     public static final DeferredHolder<MenuType<?>, MenuType<PoolBuildMenu>> POOL_BUILD =
             MENUS.register("pool_build", () -> new MenuType<>(PoolBuildMenu::new, FeatureFlags.DEFAULT_FLAGS));
 

@@ -99,6 +99,7 @@ public class ModAdvancementProvider extends AdvancementProvider {
         has(saver, formed, "electric_alloy_smelter", ModItems.ELECTRIC_ALLOY_SMELTER.get(), AdvancementType.TASK);
         AdvancementHolder battery = has(saver, formed, "home_battery", ModItems.HOME_BATTERY.get(), AdvancementType.TASK);
         milestone(saver, battery, "battery_full", ModItems.LEAD_ACID_MODULE.get(), Milestone.BATTERY_FULL, AdvancementType.GOAL, false);
+        milestone(saver, formed, "assembler", ModItems.ASSEMBLER_ARM.get(), Milestone.ASSEMBLER_FORMED, AdvancementType.TASK, false);
         milestone(saver, battery, "container_battery", ModItems.LFP_BATTERY_RACK.get(), Milestone.CONTAINER_FORMED, AdvancementType.GOAL, false);
     }
 

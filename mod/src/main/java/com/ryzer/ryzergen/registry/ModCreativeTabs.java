@@ -48,6 +48,7 @@ public final class ModCreativeTabs {
                         ModItems.ALLOY_SMELTER, ModItems.ELECTRIC_ALLOY_SMELTER, ModItems.INTAKE_PUMP,
                         ModItems.CORE_CRACKER, ModItems.REPROCESSOR, ModItems.FUEL_FABRICATOR, ModItems.LITHIUM_EXTRACTOR, ModItems.ELECTROREFINER, ModItems.MONAZITE_PROCESSOR,
                         ModItems.POOL_CONTROLLER, ModItems.POOL_LINER, ModItems.POOL_CRANE,
+                        ModItems.ASSEMBLER_CONTROLLER, ModItems.ASSEMBLER_FRAME, ModItems.ASSEMBLER_ARM,
                         ModItems.BATTERY_CONTROLLER, ModItems.CONTAINER_FRAME, ModItems.THERMAL_UNIT,
                         ModItems.STATION_CORE, ModItems.STATION_CASING, ModItems.STATION_GLASS, ModItems.TURBINE_ROTOR,
                         ModItems.BREEDER_CORE, ModItems.BREEDER_FRAME, ModItems.BREEDER_SHELL,

@@ -64,6 +64,8 @@ public final class ClientSetup {
         event.register(ModMenus.BREEDER_CONTROL.get(), BreederControlScreen::new);
         event.register(ModMenus.STATION_CONTROL.get(), StationControlScreen::new);
         event.register(ModMenus.POOL_BUILD.get(), PoolBuildScreen::new);
+        event.register(ModMenus.ASSEMBLER_BUILD.get(), com.ryzer.ryzergen.machine.assembler.AssemblerBuildScreen::new);
+        event.register(ModMenus.ASSEMBLER.get(), com.ryzer.ryzergen.machine.assembler.AssemblerScreen::new);
         event.register(ModMenus.MEGA_DRILL_BUILD.get(), MegaDrillBuildScreen::new);
         event.register(ModMenus.MEGA_DRILL.get(), MegaDrillScreen::new);
         event.register(ModMenus.POOL.get(), PoolScreen::new);
@@ -100,6 +102,7 @@ public final class ClientSetup {
         event.registerBlockEntityRenderer(ModBlockEntities.STATION_CORE.get(), StationRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.BREEDER_CORE.get(), BreederRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.POOL_CONTROLLER.get(), PoolRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.ASSEMBLER.get(), AssemblerRenderer::new);
         // The single-block machines' moving parts, glows and lamps, for those that have any (MachineMotion).
         for (ProcessingMachine machine : ProcessingMachine.values()) {
             if (!MachineMotion.of(machine.id()).isEmpty()) {
@@ -131,6 +134,9 @@ public final class ClientSetup {
             event.register(part);
         }
         for (ModelResourceLocation part : PoolRenderer.CRANE_PARTS) {
+            event.register(part);
+        }
+        for (ModelResourceLocation part : AssemblerRenderer.PARTS) {
             event.register(part);
         }
         for (CableUpgrade tier : CableUpgrade.values()) {
