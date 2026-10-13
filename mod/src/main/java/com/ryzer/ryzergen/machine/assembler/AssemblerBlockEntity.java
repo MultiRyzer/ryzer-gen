@@ -50,7 +50,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -199,6 +199,9 @@ public class AssemblerBlockEntity extends BlockEntity implements MenuProvider, S
     @SuppressWarnings("unchecked")
     private final RecipeHolder<CraftingRecipe>[] recipes = new RecipeHolder[PATTERNS];
     private final boolean[] looked = new boolean[PATTERNS];
+    /** For each pattern, which of its cells each item can fill (a bit a cell), worked out once per item. */
+    @SuppressWarnings("unchecked")
+    private final Map<Item, Integer>[] fitting = new Map[PATTERNS];
     /** Each pattern's result, worked out once (the screen and the rack show them every frame). */
     private final ItemStack[] results = new ItemStack[PATTERNS];
 
@@ -234,6 +237,9 @@ public class AssemblerBlockEntity extends BlockEntity implements MenuProvider, S
     private int droppedId = -1;
     /** Results riding the out-feed belt (client): each one once, from where the arm set it down into the hood. */
     private final List<Drop> drops = new ArrayList<>();
+    /** What the server laid on the bed this cycle (client), and for which cycle. */
+    private final ItemStack[] shown = new ItemStack[GRID];
+    private int shownCycle = -1;
 
     /** A result on the out-feed, and when the arm set it down. */
     public record Drop(ItemStack stack, long at) {}
@@ -276,6 +282,7 @@ public class AssemblerBlockEntity extends BlockEntity implements MenuProvider, S
             java.util.Arrays.fill(pattern, ItemStack.EMPTY);
         }
         java.util.Arrays.fill(bed, ItemStack.EMPTY);
+        java.util.Arrays.fill(shown, ItemStack.EMPTY);
     }
 
     /** Which buildable part an item is, or null. The controller itself is never stocked. */
@@ -336,6 +343,7 @@ public class AssemblerBlockEntity extends BlockEntity implements MenuProvider, S
         recipes[pattern] = null;
         looked[pattern] = false;
         results[pattern] = null;
+        fitting[pattern] = null;
         syncNeeded = true;
         setChanged();
     }
@@ -382,38 +390,92 @@ public class AssemblerBlockEntity extends BlockEntity implements MenuProvider, S
         return results[pattern];
     }
 
-    /** How many of each item one craft of a pattern takes. */
-    private Map<Item, Integer> needs(int pattern) {
-        Map<Item, Integer> needs = new LinkedHashMap<>();
-        for (ItemStack stack : patterns[pattern]) {
-            if (!stack.isEmpty()) {
-                needs.merge(stack.getItem(), 1, Integer::sum);
+    /**
+     * The cells of a pattern an item can fill, a bit a cell: the cells set with that item, and any
+     * other the recipe takes it in, found by putting it in the grid and asking the recipe. So a
+     * pattern set with one mod's lead takes any lead the recipe's tag (c:ingots/lead) allows.
+     */
+    private int cellsFor(int pattern, Item item) {
+        if (fitting[pattern] == null) {
+            fitting[pattern] = new HashMap<>();
+        }
+        Integer known = fitting[pattern].get(item);
+        if (known != null) {
+            return known;
+        }
+        int mask = 0;
+        RecipeHolder<CraftingRecipe> recipe = recipe(pattern);
+        for (int c = 0; c < GRID; c++) {
+            ItemStack ghost = patterns[pattern][c];
+            if (ghost.isEmpty()) {
+                continue;
+            }
+            if (ghost.is(item)) {
+                mask |= 1 << c;
+            } else if (recipe != null && level != null) {
+                List<ItemStack> items = new ArrayList<>(GRID);
+                for (int k = 0; k < GRID; k++) {
+                    items.add(k == c ? new ItemStack(item) : patterns[pattern][k].copyWithCount(1));
+                }
+                if (recipe.value().matches(CraftingInput.of(3, 3, items), level)) {
+                    mask |= 1 << c;
+                }
             }
         }
-        return needs;
+        fitting[pattern].put(item, mask);
+        return mask;
     }
 
     /** Whether any pattern uses an item, so the buffer takes it. */
     private boolean wanted(ItemStack stack) {
-        for (ItemStack[] pattern : patterns) {
-            for (ItemStack ghost : pattern) {
-                if (!ghost.isEmpty() && stack.is(ghost.getItem())) {
-                    return true;
-                }
+        for (int p = 0; p < PATTERNS; p++) {
+            if (!patternEmpty(p) && cellsFor(p, stack.getItem()) != 0) {
+                return true;
             }
         }
         return false;
     }
 
-    private int stocked(Item item) {
-        int count = 0;
+    /**
+     * Which buffer slot fills each cell of a pattern for {@code crafts} crafts, each cell from one
+     * slot (the item it was set with first, then any other that fits), or null if the buffer cannot.
+     * {@code lacking} collects the cells it cannot fill.
+     */
+    private int @Nullable [] plan(int pattern, int crafts, int[] lacking) {
+        int[] left = new int[BUFFER];
         for (int slot = 0; slot < BUFFER; slot++) {
-            ItemStack stack = buffer.getStackInSlot(slot);
-            if (stack.is(item)) {
-                count += stack.getCount();
-            }
+            left[slot] = buffer.getStackInSlot(slot).getCount();
         }
-        return count;
+        int[] plan = new int[GRID];
+        java.util.Arrays.fill(plan, -1);
+        boolean ok = true;
+        for (int c = 0; c < GRID; c++) {
+            ItemStack ghost = patterns[pattern][c];
+            if (ghost.isEmpty()) {
+                continue;
+            }
+            int pick = -1;
+            for (int pass = 0; pass < 2 && pick < 0; pass++) {
+                for (int slot = 0; slot < BUFFER && pick < 0; slot++) {
+                    ItemStack stack = buffer.getStackInSlot(slot);
+                    if (stack.isEmpty() || left[slot] < crafts) {
+                        continue;
+                    }
+                    boolean same = stack.is(ghost.getItem());
+                    if (pass == 0 ? same : !same && (cellsFor(pattern, stack.getItem()) & (1 << c)) != 0) {
+                        pick = slot;
+                    }
+                }
+            }
+            if (pick < 0) {
+                ok = false;
+                lacking[0] |= 1 << c;
+                continue;
+            }
+            left[pick] -= crafts;
+            plan[c] = pick;
+        }
+        return ok ? plan : null;
     }
 
     // ---------------------------------------------------------------- ports
@@ -672,20 +734,18 @@ public class AssemblerBlockEntity extends BlockEntity implements MenuProvider, S
                 continue;
             }
             anyPattern = true;
-            Map<Item, Integer> needs = needs(p);
             int can = speed;
-            for (Map.Entry<Item, Integer> need : needs.entrySet()) {
-                can = Math.min(can, stocked(need.getKey()) / need.getValue());
+            int[] plan = null;
+            int[] lacking = new int[1];
+            for (; can > 0 && plan == null; can--) {
+                lacking[0] = 0;
+                plan = plan(p, can, lacking);
             }
-            if (can <= 0) {
+            can++;
+            if (plan == null) {
                 if (firstShort < 0) {
                     firstShort = p;
-                    for (int c = 0; c < GRID; c++) {
-                        ItemStack ghost = patterns[p][c];
-                        if (!ghost.isEmpty() && stocked(ghost.getItem()) < needs.get(ghost.getItem())) {
-                            shortMask |= 1 << c;
-                        }
-                    }
+                    shortMask = lacking[0];
                 }
                 continue;
             }
@@ -698,7 +758,7 @@ public class AssemblerBlockEntity extends BlockEntity implements MenuProvider, S
                 status = Status.NO_POWER;
                 return;
             }
-            start(p, can);
+            start(p, can, plan);
             nextPattern = (p + 1) % PATTERNS;
             waiting = -1;
             missingMask = 0;
@@ -739,10 +799,9 @@ public class AssemblerBlockEntity extends BlockEntity implements MenuProvider, S
     }
 
     /** Starts a cycle: the ingredients for {@code crafts} leave the buffer for the bed. */
-    private void start(int pattern, int crafts) {
+    private void start(int pattern, int crafts, int[] plan) {
         for (int c = 0; c < GRID; c++) {
-            ItemStack ghost = patterns[pattern][c];
-            bed[c] = ghost.isEmpty() ? ItemStack.EMPTY : take(ghost.getItem(), crafts);
+            bed[c] = plan[c] < 0 ? ItemStack.EMPTY : buffer.extractItem(plan[c], crafts, false);
         }
         active = pattern;
         batch = crafts;
@@ -756,22 +815,6 @@ public class AssemblerBlockEntity extends BlockEntity implements MenuProvider, S
         status = Status.WORKING;
         syncNeeded = true;
         setChanged();
-    }
-
-    private ItemStack take(Item item, int count) {
-        ItemStack taken = ItemStack.EMPTY;
-        for (int slot = 0; slot < BUFFER && count > 0; slot++) {
-            if (buffer.getStackInSlot(slot).is(item)) {
-                ItemStack got = buffer.extractItem(slot, count, false);
-                count -= got.getCount();
-                if (taken.isEmpty()) {
-                    taken = got;
-                } else {
-                    taken.grow(got.getCount());
-                }
-            }
-        }
-        return taken;
     }
 
     /** Ends a cycle early (the cell broken, or its recipe gone): the parts on the bed go back. */
@@ -947,6 +990,11 @@ public class AssemblerBlockEntity extends BlockEntity implements MenuProvider, S
         return missingMask;
     }
 
+    /** What lies in a cell of the bed this cycle (client): the real item, or the pattern's own. */
+    public ItemStack laid(int cell) {
+        return shown[cell].isEmpty() && active >= 0 ? ghost(active, cell) : shown[cell];
+    }
+
     /** Results riding the out-feed (client). */
     public List<Drop> drops() {
         return drops;
@@ -984,6 +1032,7 @@ public class AssemblerBlockEntity extends BlockEntity implements MenuProvider, S
             recipes[p] = null;
             looked[p] = false;
             results[p] = null;
+            fitting[p] = null;
         }
     }
 
@@ -1076,6 +1125,12 @@ public class AssemblerBlockEntity extends BlockEntity implements MenuProvider, S
         if (!made.isEmpty()) {
             tag.put("result", made.get(0).save(registries));
         }
+        // What is really on the bed (another mod's lead, say), for the arm to carry.
+        ListTag onBed = new ListTag();
+        for (ItemStack stack : bed) {
+            onBed.add(stack.isEmpty() ? new CompoundTag() : (CompoundTag) stack.copyWithCount(1).save(registries));
+        }
+        tag.put("bed", onBed);
         tag.putInt("cycle", cycleId);
         return tag;
     }
@@ -1106,6 +1161,15 @@ public class AssemblerBlockEntity extends BlockEntity implements MenuProvider, S
         waiting = tag.getInt("waiting");
         missingMask = tag.getInt("missing");
         syncedResult = tag.contains("result") ? ItemStack.parseOptional(registries, tag.getCompound("result")) : ItemStack.EMPTY;
+        ListTag onBed = tag.getList("bed", Tag.TAG_COMPOUND);
+        for (int c = 0; c < GRID; c++) {
+            CompoundTag item = c < onBed.size() ? onBed.getCompound(c) : new CompoundTag();
+            // Once crafted the server's bed is empty; keep what was laid out until the next cycle.
+            if (!item.isEmpty() || newCycle != shownCycle) {
+                shown[c] = item.isEmpty() ? ItemStack.EMPTY : ItemStack.parseOptional(registries, item);
+            }
+        }
+        shownCycle = newCycle;
     }
 
     @Override

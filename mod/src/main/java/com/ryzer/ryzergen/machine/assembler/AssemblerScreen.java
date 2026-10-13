@@ -254,6 +254,7 @@ public class AssemblerScreen extends AbstractContainerScreen<AssemblerMenu> impl
             ItemStack ghost = cell.ghost(selected, grid);
             if (!ghost.isEmpty()) {
                 lines.add(ghost.getHoverName());
+                lines.add(RichText.tr("gui.ryzergen.assembler.grid.any").withStyle(style -> style.withColor(DIM)));
             }
             lines.add(RichText.tr("gui.ryzergen.assembler.grid.hint").withStyle(style -> style.withColor(DIM)));
         } else if (over(RESULT_X, RESULT_Y, 16, 16, mx, my) && cell != null && !cell.result(selected).isEmpty()) {

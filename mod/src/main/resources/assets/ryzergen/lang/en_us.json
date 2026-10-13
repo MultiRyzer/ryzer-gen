@@ -747,6 +747,7 @@
   "gui.ryzergen.assembler.pattern.none": "Pattern %s: no recipe",
   "gui.ryzergen.assembler.pattern.hint": "<k>Click</k> to edit it in the grid",
   "gui.ryzergen.assembler.grid.hint": "<k>Click</k> holding an item to set · <k>right-click</k> to clear",
+  "gui.ryzergen.assembler.grid.any": "Or any item the recipe takes here, such as another mod's",
   "gui.ryzergen.assembler.clear": "Clear pattern",
   "gui.ryzergen.assembler.clear.hint": "Empties the whole grid",
   "gui.ryzergen.assembler.uses": "<n>%s</n> FE/t {power} while the arm works",

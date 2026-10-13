@@ -180,7 +180,7 @@ public class AssemblerRenderer implements BlockEntityRenderer<AssemblerBlockEnti
                 .distanceToSqr(Vec3.atCenterOf(cell.getBlockPos())) < ITEM_RANGE * ITEM_RANGE;
         ItemStack held = ItemStack.EMPTY;
         if (items && at.holding() == 1) {
-            held = cell.ghost(active, at.holdingCell());
+            held = cell.laid(at.holdingCell());
         } else if (items && at.holding() == 2) {
             held = cell.syncedResult();
         }
@@ -192,7 +192,7 @@ public class AssemblerRenderer implements BlockEntityRenderer<AssemblerBlockEnti
             if (active >= 0 && t < n * T) {
                 for (int i = 0; i < n; i++) {
                     if (t >= (i + 1) * T) {
-                        flatItem(cell, pose, buffers, light, cell.ghost(active, order.get(i)), fixture(order.get(i)), 0.28F);
+                        flatItem(cell, pose, buffers, light, cell.laid(order.get(i)), fixture(order.get(i)), 0.28F);
                     }
                 }
             } else if (active >= 0 && at.holding() != 2 && t < n * T + 0.3F * T) {
@@ -299,7 +299,7 @@ public class AssemblerRenderer implements BlockEntityRenderer<AssemblerBlockEnti
                 }
                 float z = PICK_Z - BELT_SPEED * (arrives - t);
                 if (z > BELT_FRONT) {
-                    flatItem(cell, pose, buffers, light, cell.ghost(cell.active(), order.get(k)), new Vec3(IN_BELT_X, BELT_TOP + 0.5, z), 0.3F);
+                    flatItem(cell, pose, buffers, light, cell.laid(order.get(k)), new Vec3(IN_BELT_X, BELT_TOP + 0.5, z), 0.3F);
                 }
             }
         }
