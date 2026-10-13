@@ -1,0 +1,217 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#arm",
+          "uv": [
+            0.0,
+            0.0,
+            10.0,
+            10.0
+          ]
+        },
+        "east": {
+          "texture": "#arm",
+          "uv": [
+            0.0,
+            0.0,
+            10.0,
+            3.0
+          ]
+        },
+        "north": {
+          "texture": "#arm",
+          "uv": [
+            0.0,
+            0.0,
+            10.0,
+            3.0
+          ]
+        },
+        "south": {
+          "texture": "#arm",
+          "uv": [
+            0.0,
+            0.0,
+            10.0,
+            3.0
+          ]
+        },
+        "up": {
+          "texture": "#arm",
+          "uv": [
+            0.0,
+            0.0,
+            10.0,
+            10.0
+          ]
+        },
+        "west": {
+          "texture": "#arm",
+          "uv": [
+            0.0,
+            0.0,
+            10.0,
+            3.0
+          ]
+        }
+      },
+      "from": [
+        -5,
+        0,
+        -5
+      ],
+      "to": [
+        5,
+        3,
+        5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#trim",
+          "uv": [
+            0.0,
+            0.0,
+            7.0,
+            7.0
+          ]
+        },
+        "east": {
+          "texture": "#trim",
+          "uv": [
+            0.0,
+            0.0,
+            7.0,
+            4.5
+          ]
+        },
+        "north": {
+          "texture": "#trim",
+          "uv": [
+            0.0,
+            0.0,
+            7.0,
+            4.5
+          ]
+        },
+        "south": {
+          "texture": "#trim",
+          "uv": [
+            0.0,
+            0.0,
+            7.0,
+            4.5
+          ]
+        },
+        "up": {
+          "texture": "#trim",
+          "uv": [
+            0.0,
+            0.0,
+            7.0,
+            7.0
+          ]
+        },
+        "west": {
+          "texture": "#trim",
+          "uv": [
+            0.0,
+            0.0,
+            7.0,
+            4.5
+          ]
+        }
+      },
+      "from": [
+        -3.5,
+        3,
+        -3.5
+      ],
+      "to": [
+        3.5,
+        7.5,
+        3.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#metal",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            4.0
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "uv": [
+            0.0,
+            0.0,
+            4.0,
+            3.5
+          ]
+        },
+        "north": {
+          "texture": "#metal",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            3.5
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            3.5
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            4.0
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "uv": [
+            0.0,
+            0.0,
+            4.0,
+            3.5
+          ]
+        }
+      },
+      "from": [
+        3.5,
+        3.5,
+        -2
+      ],
+      "to": [
+        5.5,
+        7,
+        2
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "arm": "ryzergen:block/assembler/arm",
+    "metal": "ryzergen:block/machine/family/metal",
+    "particle": "ryzergen:block/assembler/arm",
+    "trim": "ryzergen:block/microreactor/steel_dark"
+  }
+}

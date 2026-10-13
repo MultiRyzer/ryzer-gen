@@ -65,6 +65,9 @@ public final class ModItems {
     public static final DeferredItem<TungstenTipItem> TUNGSTEN_TIP = ITEMS.registerItem("tungsten_tip", TungstenTipItem::new);
     public static final DeferredItem<BlockItem> STATION_CASING = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_CASING);
     public static final DeferredItem<BlockItem> POOL_CONTROLLER = ITEMS.registerSimpleBlockItem(ModBlocks.POOL_CONTROLLER);
+    public static final DeferredItem<BlockItem> ASSEMBLER_CONTROLLER = ITEMS.registerSimpleBlockItem(ModBlocks.ASSEMBLER_CONTROLLER);
+    public static final DeferredItem<BlockItem> ASSEMBLER_FRAME = ITEMS.registerSimpleBlockItem(ModBlocks.ASSEMBLER_FRAME);
+    public static final DeferredItem<BlockItem> ASSEMBLER_ARM = ITEMS.registerSimpleBlockItem(ModBlocks.ASSEMBLER_ARM);
     public static final DeferredItem<BlockItem> POOL_LINER = ITEMS.registerSimpleBlockItem(ModBlocks.POOL_LINER);
     public static final DeferredItem<BlockItem> POOL_CRANE = ITEMS.registerSimpleBlockItem(ModBlocks.POOL_CRANE);
     public static final DeferredItem<BlockItem> BATTERY_CONTROLLER = ITEMS.registerSimpleBlockItem(ModBlocks.BATTERY_CONTROLLER);

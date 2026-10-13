@@ -1,0 +1,107 @@
+{
+  "parent": "minecraft:block/block",
+  "children": {
+    "solid": {
+      "ambientocclusion": false,
+      "elements": [
+        {
+          "faces": {
+            "up": {
+              "texture": "#table"
+            }
+          },
+          "from": [
+            0,
+            0,
+            0
+          ],
+          "to": [
+            16,
+            0.5,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#metal"
+            },
+            "east": {
+              "cullface": "east",
+              "texture": "#metal"
+            },
+            "south": {
+              "texture": "#metal"
+            },
+            "up": {
+              "texture": "#bed",
+              "uv": [
+                0.0,
+                12.0,
+                16.0,
+                16.0
+              ]
+            },
+            "west": {
+              "cullface": "west",
+              "texture": "#metal"
+            }
+          },
+          "from": [
+            0,
+            0.5,
+            0
+          ],
+          "to": [
+            16,
+            2,
+            4
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "east": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            2,
+            0.5,
+            9
+          ],
+          "to": [
+            14,
+            2.5,
+            16
+          ]
+        }
+      ],
+      "render_type": "minecraft:cutout",
+      "textures": {
+        "bed": "ryzergen:block/assembler/bed",
+        "metal": "ryzergen:block/machine/family/metal",
+        "table": "ryzergen:block/assembler/table",
+        "trim": "ryzergen:block/microreactor/steel_dark"
+      }
+    }
+  },
+  "item_render_order": [
+    "solid"
+  ],
+  "loader": "neoforge:composite",
+  "textures": {
+    "particle": "ryzergen:block/assembler/bay"
+  }
+}

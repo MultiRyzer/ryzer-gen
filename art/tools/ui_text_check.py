@@ -145,6 +145,17 @@ CHECKS = [
     ('gui.ryzergen.mega_drill.speed', ['7'], 100),
     ('gui.ryzergen.mega_drill.speed_none', [], 100),
     ('container.ryzergen.mega_drill', [], 160),
+    ('gui.ryzergen.assembler.status.off', [], 100),
+    ('gui.ryzergen.assembler.status.redstone', [], 100),
+    ('gui.ryzergen.assembler.status.no_pattern', [], 100),
+    ('gui.ryzergen.assembler.status.starved', [], 100),
+    ('gui.ryzergen.assembler.status.output_full', [], 100),
+    ('gui.ryzergen.assembler.status.no_power', [], 100),
+    ('gui.ryzergen.assembler.status.working', [], 100),
+    ('gui.ryzergen.assembler.making', ['5'], 81),
+    ('gui.ryzergen.assembler.needs', [], 81),
+    ('gui.ryzergen.assembler.no_pattern', [], 96),
+    ('container.ryzergen.assembler', [], 60),
     # Progression map (client/progression/ProgressionScreen): column headings in a 132-wide column
     # less its gap, and the spoiler button across the 210-wide panel less its margins.
     ('progression.ryzergen.column.dig', [], 120),

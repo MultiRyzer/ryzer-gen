@@ -301,6 +301,20 @@ public final class Config {
         BUILDER.pop();
     }
 
+    public static final ModConfigSpec.IntValue ASSEMBLER_DRAW;
+    public static final ModConfigSpec.BooleanValue ASSEMBLER_SHOW_ITEMS;
+
+    static {
+        BUILDER.comment("Assembler: a robot cell that crafts any crafting-table recipe from its patterns.").push("assembler");
+        ASSEMBLER_DRAW = BUILDER
+                .comment("FE per tick while the arm works, at speed 1. It grows with the square of the speed (each speed module adds 1).")
+                .defineInRange("draw", 40, 0, 1_000_000);
+        ASSEMBLER_SHOW_ITEMS = BUILDER
+                .comment("Draw the real items on the belts, the bed and in the arm's grip. Off: the arm still moves, carrying nothing.")
+                .define("show_items", true);
+        BUILDER.pop();
+    }
+
     public static final ModConfigSpec.BooleanValue PREVIEW_CONTENT;
 
     static {

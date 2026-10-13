@@ -35,6 +35,15 @@ public class CableMenu extends AbstractContainerMenu {
     /** The fitting slot at the right end of each row (the item's position). */
     public static final int FITTING_X = ROW_X + ROW_W - 18;
     public static final int FITTING_DY = 3;
+    /**
+     * The item pipe's filter editor's buttons: a filter entry (side and slot, set from the item the
+     * player holds, cleared empty-handed), a side's mode (only these, or all but these), and its
+     * priority up or down.
+     */
+    public static final int BUTTON_FILTER = 100;
+    public static final int BUTTON_ONLY = 200;
+    public static final int BUTTON_PRIORITY_UP = 300;
+    public static final int BUTTON_PRIORITY_DOWN = 310;
 
     private final CableKind kind;
     private final BlockPos pos;
@@ -43,6 +52,8 @@ public class CableMenu extends AbstractContainerMenu {
     private final ContainerData data;
     private final ContainerLevelAccess access;
     private final int fittingSlots;
+    /** Client: the filter editor is open over the rows, so their fitting slots are put away. */
+    private boolean editing;
 
     /** Client side: the cable's position and its rows come with the open packet. */
     public CableMenu(CableKind kind, int containerId, Inventory inventory, RegistryFriendlyByteBuf buffer) {
@@ -74,6 +85,11 @@ public class CableMenu extends AbstractContainerMenu {
                 @Override
                 public int getMaxStackSize() {
                     return 1;
+                }
+
+                @Override
+                public boolean isActive() {
+                    return !editing;
                 }
             });
         }
@@ -173,6 +189,42 @@ public class CableMenu extends AbstractContainerMenu {
     /** Batteries (or any storage) on an energy network, which take the surplus and cover shortfalls. */
     public int buffers() {
         return data.get(DATA_BUFFERS);
+    }
+
+    /** Client: the screen opens or closes the filter editor over the rows. */
+    public void editing(boolean on) {
+        editing = on;
+    }
+
+    public static int filterButton(Direction side, int slot) {
+        return BUTTON_FILTER + side.get3DDataValue() * ItemPipeBlockEntity.FILTER_SLOTS + slot;
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        int slots = ItemPipeBlockEntity.FILTER_SLOTS;
+        boolean filter = id >= BUTTON_FILTER && id < BUTTON_FILTER + 6 * slots;
+        boolean only = id >= BUTTON_ONLY && id < BUTTON_ONLY + 6;
+        boolean up = id >= BUTTON_PRIORITY_UP && id < BUTTON_PRIORITY_UP + 6;
+        boolean down = id >= BUTTON_PRIORITY_DOWN && id < BUTTON_PRIORITY_DOWN + 6;
+        if (!filter && !only && !up && !down) {
+            return false;
+        }
+        ItemStack held = getCarried();
+        access.execute((level, blockPos) -> {
+            if (!(level.getBlockEntity(blockPos) instanceof ItemPipeBlockEntity pipe)) {
+                return;
+            }
+            if (filter) {
+                int k = id - BUTTON_FILTER;
+                pipe.setFilter(Direction.from3DDataValue(k / slots), k % slots, held);
+            } else if (only) {
+                pipe.toggleOnly(Direction.from3DDataValue(id - BUTTON_ONLY));
+            } else {
+                pipe.nudgePriority(Direction.from3DDataValue(id - (up ? BUTTON_PRIORITY_UP : BUTTON_PRIORITY_DOWN)), up ? 1 : -1);
+            }
+        });
+        return true;
     }
 
     @Override

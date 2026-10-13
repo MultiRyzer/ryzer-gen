@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:circuits/advanced"
+    },
+    "C": {
+      "tag": "c:ingots/copper"
+    },
+    "D": {
+      "tag": "c:dyes/orange"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "CPC",
+    "DAD",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:assembler_arm"
+  }
+}

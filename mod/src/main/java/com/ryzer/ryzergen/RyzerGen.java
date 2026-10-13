@@ -154,6 +154,14 @@ public class RyzerGen {
                 BatteryControllerBlockEntity.fluidAt(level, pos, state, side), ModBlocks.THERMAL_UNIT.get());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.BATTERY_CONTROLLER.get(),
                 BatteryControllerBlockEntity::partsFor);
+        // Assembler ports, on a formed cell's ends: energy and ingredients in, results out. The
+        // controller takes its parts by pipe while the cell is still to be built.
+        event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) ->
+                com.ryzer.ryzergen.machine.assembler.AssemblerBlockEntity.itemsAt(level, pos, state, side), ModBlocks.ASSEMBLER_FRAME.get());
+        event.registerBlock(Capabilities.EnergyStorage.BLOCK, (level, pos, state, be, side) ->
+                com.ryzer.ryzergen.machine.assembler.AssemblerBlockEntity.energyAt(level, pos, state, side), ModBlocks.ASSEMBLER_FRAME.get());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.ASSEMBLER.get(),
+                com.ryzer.ryzergen.machine.assembler.AssemblerBlockEntity::partsFor);
         // Spent Fuel Pool ports, on a formed pool's ends: hot fuel and water in, cooled fuel out.
         // The controller takes its parts by pipe while the pool is still to be built.
         event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) ->

@@ -1,0 +1,2849 @@
+{
+ "size": [
+  3,
+  3,
+  3
+ ],
+ "textures": {
+  "arm": {
+   "path": "ryzergen:block/assembler/arm",
+   "canvas": 16,
+   "translucent": false
+  },
+  "bay": {
+   "path": "ryzergen:block/assembler/bay",
+   "canvas": 16,
+   "translucent": false
+  },
+  "bed": {
+   "path": "ryzergen:block/assembler/bed",
+   "canvas": 16,
+   "translucent": false
+  },
+  "belt_in": {
+   "path": "ryzergen:block/assembler/belt_in",
+   "canvas": 16,
+   "translucent": false
+  },
+  "belt_in_on": {
+   "path": "ryzergen:block/assembler/belt_in_on",
+   "canvas": 16,
+   "translucent": false
+  },
+  "belt_out": {
+   "path": "ryzergen:block/assembler/belt_out",
+   "canvas": 16,
+   "translucent": false
+  },
+  "belt_out_on": {
+   "path": "ryzergen:block/assembler/belt_out_on",
+   "canvas": 16,
+   "translucent": false
+  },
+  "bright": {
+   "path": "ryzergen:block/machine/family/bright",
+   "canvas": 16,
+   "translucent": false
+  },
+  "console": {
+   "path": "ryzergen:block/assembler/console",
+   "canvas": 16,
+   "translucent": false
+  },
+  "conveyor": {
+   "path": "ryzergen:block/assembler/conveyor",
+   "canvas": 16,
+   "translucent": false
+  },
+  "copper": {
+   "path": "ryzergen:block/machine/family/copper",
+   "canvas": 16,
+   "translucent": false
+  },
+  "curtain_1x26": {
+   "path": "ryzergen:block/assembler/curtain_1x26",
+   "canvas": 32,
+   "translucent": false
+  },
+  "curtainon_1x26": {
+   "path": "ryzergen:block/assembler/curtainon_1x26",
+   "canvas": 32,
+   "translucent": false
+  },
+  "estop_14x13": {
+   "path": "ryzergen:block/assembler/estop_14x13",
+   "canvas": 16,
+   "translucent": false
+  },
+  "estop_cap": {
+   "path": "ryzergen:block/assembler/estop_cap",
+   "canvas": 16,
+   "translucent": false
+  },
+  "glow": {
+   "path": "ryzergen:block/microreactor/glow",
+   "canvas": 16,
+   "translucent": false
+  },
+  "glow_off": {
+   "path": "ryzergen:block/microreactor/glow_off",
+   "canvas": 16,
+   "translucent": false
+  },
+  "hatch_12x13": {
+   "path": "ryzergen:block/assembler/hatch_12x13",
+   "canvas": 16,
+   "translucent": false
+  },
+  "hatch_14x13": {
+   "path": "ryzergen:block/assembler/hatch_14x13",
+   "canvas": 16,
+   "translucent": false
+  },
+  "hatch_14x14": {
+   "path": "ryzergen:block/assembler/hatch_14x14",
+   "canvas": 16,
+   "translucent": false
+  },
+  "hoodfront_9x6": {
+   "path": "ryzergen:block/assembler/hoodfront_9x6",
+   "canvas": 16,
+   "translucent": false
+  },
+  "hoodmouth_9x6": {
+   "path": "ryzergen:block/assembler/hoodmouth_9x6",
+   "canvas": 16,
+   "translucent": false
+  },
+  "hoodside_5x6": {
+   "path": "ryzergen:block/assembler/hoodside_5x6",
+   "canvas": 16,
+   "translucent": false
+  },
+  "label_14x12": {
+   "path": "ryzergen:block/assembler/label_14x12",
+   "canvas": 16,
+   "translucent": false
+  },
+  "label_14x13": {
+   "path": "ryzergen:block/assembler/label_14x13",
+   "canvas": 16,
+   "translucent": false
+  },
+  "lamp_amber": {
+   "path": "ryzergen:block/assembler/lamp_amber",
+   "canvas": 16,
+   "translucent": false
+  },
+  "lamp_green": {
+   "path": "ryzergen:block/assembler/lamp_green",
+   "canvas": 16,
+   "translucent": false
+  },
+  "lamp_red": {
+   "path": "ryzergen:block/assembler/lamp_red",
+   "canvas": 16,
+   "translucent": false
+  },
+  "metal": {
+   "path": "ryzergen:block/machine/family/metal",
+   "canvas": 16,
+   "translucent": false
+  },
+  "paint": {
+   "path": "ryzergen:block/assembler/paint",
+   "canvas": 16,
+   "translucent": false
+  },
+  "patterns": {
+   "path": "ryzergen:block/assembler/patterns",
+   "canvas": 32,
+   "translucent": false
+  },
+  "plate_12x13": {
+   "path": "ryzergen:block/assembler/plate_12x13",
+   "canvas": 16,
+   "translucent": false
+  },
+  "plate_13x12": {
+   "path": "ryzergen:block/assembler/plate_13x12",
+   "canvas": 16,
+   "translucent": false
+  },
+  "plate_13x14": {
+   "path": "ryzergen:block/assembler/plate_13x14",
+   "canvas": 16,
+   "translucent": false
+  },
+  "plate_14x12": {
+   "path": "ryzergen:block/assembler/plate_14x12",
+   "canvas": 16,
+   "translucent": false
+  },
+  "plate_14x13": {
+   "path": "ryzergen:block/assembler/plate_14x13",
+   "canvas": 16,
+   "translucent": false
+  },
+  "plate_14x14": {
+   "path": "ryzergen:block/assembler/plate_14x14",
+   "canvas": 16,
+   "translucent": false
+  },
+  "port_energy": {
+   "path": "ryzergen:block/microreactor/port_energy",
+   "canvas": 16,
+   "translucent": false
+  },
+  "port_items": {
+   "path": "ryzergen:block/microreactor/port_fuel",
+   "canvas": 16,
+   "translucent": false
+  },
+  "post_2x28": {
+   "path": "ryzergen:block/assembler/post_2x28",
+   "canvas": 32,
+   "translucent": false
+  },
+  "skid": {
+   "path": "ryzergen:block/machine/family/skid",
+   "canvas": 16,
+   "translucent": false
+  },
+  "table": {
+   "path": "ryzergen:block/assembler/table",
+   "canvas": 16,
+   "translucent": false
+  },
+  "tape": {
+   "path": "ryzergen:block/assembler/tape",
+   "canvas": 16,
+   "translucent": false
+  },
+  "trim": {
+   "path": "ryzergen:block/microreactor/steel_dark",
+   "canvas": 16,
+   "translucent": false
+  },
+  "vent_12x13": {
+   "path": "ryzergen:block/assembler/vent_12x13",
+   "canvas": 16,
+   "translucent": false
+  },
+  "vent_13x14": {
+   "path": "ryzergen:block/assembler/vent_13x14",
+   "canvas": 16,
+   "translucent": false
+  },
+  "vent_14x13": {
+   "path": "ryzergen:block/assembler/vent_14x13",
+   "canvas": 16,
+   "translucent": false
+  }
+ },
+ "states": {
+  "idle": [
+   {
+    "material": "skid",
+    "from": [
+     0,
+     0,
+     0
+    ],
+    "to": [
+     48,
+     2,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3,
+     2,
+     3
+    ],
+    "to": [
+     45,
+     15,
+     45
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     2,
+     15,
+     2
+    ],
+    "to": [
+     46,
+     16.5,
+     46
+    ],
+    "faces": {
+     "up": "table"
+    }
+   },
+   {
+    "material": "tape",
+    "from": [
+     3,
+     16.5,
+     3
+    ],
+    "to": [
+     45,
+     16.6,
+     4
+    ]
+   },
+   {
+    "material": "tape",
+    "from": [
+     3,
+     16.5,
+     44
+    ],
+    "to": [
+     45,
+     16.6,
+     45
+    ]
+   },
+   {
+    "material": "tape",
+    "from": [
+     3,
+     16.5,
+     4
+    ],
+    "to": [
+     4,
+     16.6,
+     44
+    ]
+   },
+   {
+    "material": "tape",
+    "from": [
+     44,
+     16.5,
+     4
+    ],
+    "to": [
+     45,
+     16.6,
+     44
+    ]
+   },
+   {
+    "material": "bay",
+    "from": [
+     1,
+     2,
+     1.5
+    ],
+    "to": [
+     15,
+     15,
+     3
+    ],
+    "decals": {
+     "north": "label_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     1,
+     2,
+     45
+    ],
+    "to": [
+     15,
+     15,
+     46.5
+    ],
+    "decals": {
+     "south": "vent_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     17,
+     2,
+     1.5
+    ],
+    "to": [
+     31,
+     15,
+     3
+    ],
+    "decals": {
+     "north": "plate_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     17,
+     2,
+     45
+    ],
+    "to": [
+     31,
+     15,
+     46.5
+    ],
+    "decals": {
+     "south": "hatch_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     33,
+     2,
+     1.5
+    ],
+    "to": [
+     47,
+     15,
+     3
+    ],
+    "decals": {
+     "north": "estop_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     33,
+     2,
+     45
+    ],
+    "to": [
+     47,
+     15,
+     46.5
+    ],
+    "decals": {
+     "south": "vent_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     1.5,
+     2,
+     3
+    ],
+    "to": [
+     3,
+     15,
+     15
+    ],
+    "decals": {
+     "west": "hatch_12x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     1.5,
+     2,
+     17
+    ],
+    "to": [
+     3,
+     15,
+     31
+    ],
+    "decals": {
+     "west": "plate_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     1.5,
+     2,
+     33
+    ],
+    "to": [
+     3,
+     15,
+     45
+    ],
+    "decals": {
+     "west": "vent_12x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     45,
+     2,
+     3
+    ],
+    "to": [
+     46.5,
+     15,
+     15
+    ],
+    "decals": {
+     "east": "plate_12x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     45,
+     2,
+     17
+    ],
+    "to": [
+     46.5,
+     15,
+     31
+    ],
+    "decals": {
+     "east": "plate_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     45,
+     2,
+     33
+    ],
+    "to": [
+     46.5,
+     15,
+     45
+    ],
+    "decals": {
+     "east": "vent_12x13"
+    }
+   },
+   {
+    "material": "paint",
+    "from": [
+     38,
+     6,
+     0.75
+    ],
+    "to": [
+     42,
+     11,
+     1.5
+    ]
+   },
+   {
+    "material": "estop_cap",
+    "from": [
+     39,
+     7.5,
+     0
+    ],
+    "to": [
+     41,
+     9.5,
+     0.75
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     19,
+     4,
+     1
+    ],
+    "to": [
+     29,
+     13,
+     1.5
+    ],
+    "decals": {
+     "north": "console"
+    },
+    "glow": [
+     "north"
+    ]
+   },
+   {
+    "material": "glow_off",
+    "from": [
+     3,
+     15.5,
+     0.75
+    ],
+    "to": [
+     45,
+     16.25,
+     1
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     46.5,
+     3.5,
+     3
+    ],
+    "to": [
+     47,
+     13.5,
+     13
+    ],
+    "decals": {
+     "east": "port_energy"
+    }
+   },
+   {
+    "material": "metal",
+    "from": [
+     46.5,
+     3.5,
+     19
+    ],
+    "to": [
+     47,
+     13.5,
+     29
+    ],
+    "decals": {
+     "east": "port_items"
+    }
+   },
+   {
+    "material": "metal",
+    "from": [
+     1,
+     3.5,
+     19
+    ],
+    "to": [
+     1.5,
+     13.5,
+     29
+    ],
+    "decals": {
+     "west": "port_items"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     0
+    ],
+    "to": [
+     1,
+     15,
+     1
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     47
+    ],
+    "to": [
+     1,
+     15,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     47,
+     2,
+     0
+    ],
+    "to": [
+     48,
+     15,
+     1
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     47,
+     2,
+     47
+    ],
+    "to": [
+     48,
+     15,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     15,
+     2,
+     0
+    ],
+    "to": [
+     17,
+     15,
+     2
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     15,
+     2,
+     46
+    ],
+    "to": [
+     17,
+     15,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     15
+    ],
+    "to": [
+     2,
+     15,
+     17
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     46,
+     2,
+     15
+    ],
+    "to": [
+     48,
+     15,
+     17
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     31,
+     2,
+     0
+    ],
+    "to": [
+     33,
+     15,
+     2
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     31,
+     2,
+     46
+    ],
+    "to": [
+     33,
+     15,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     31
+    ],
+    "to": [
+     2,
+     15,
+     33
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     46,
+     2,
+     31
+    ],
+    "to": [
+     48,
+     15,
+     33
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     1,
+     15,
+     0.25
+    ],
+    "to": [
+     47,
+     17,
+     2
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     1,
+     15,
+     46
+    ],
+    "to": [
+     47,
+     17,
+     47.75
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0.25,
+     15,
+     1
+    ],
+    "to": [
+     2,
+     17,
+     47
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     46,
+     15,
+     1
+    ],
+    "to": [
+     47.75,
+     17,
+     47
+    ]
+   },
+   {
+    "material": "paint",
+    "from": [
+     0,
+     17,
+     0
+    ],
+    "to": [
+     2,
+     45,
+     2
+    ],
+    "decals": {
+     "north": "post_2x28",
+     "south": "post_2x28",
+     "west": "post_2x28",
+     "east": "post_2x28"
+    }
+   },
+   {
+    "material": "paint",
+    "from": [
+     0,
+     17,
+     46
+    ],
+    "to": [
+     2,
+     45,
+     48
+    ],
+    "decals": {
+     "north": "post_2x28",
+     "south": "post_2x28",
+     "west": "post_2x28",
+     "east": "post_2x28"
+    }
+   },
+   {
+    "material": "paint",
+    "from": [
+     46,
+     17,
+     0
+    ],
+    "to": [
+     48,
+     45,
+     2
+    ],
+    "decals": {
+     "north": "post_2x28",
+     "south": "post_2x28",
+     "west": "post_2x28",
+     "east": "post_2x28"
+    }
+   },
+   {
+    "material": "paint",
+    "from": [
+     46,
+     17,
+     46
+    ],
+    "to": [
+     48,
+     45,
+     48
+    ],
+    "decals": {
+     "north": "post_2x28",
+     "south": "post_2x28",
+     "west": "post_2x28",
+     "east": "post_2x28"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     2,
+     18,
+     0.5
+    ],
+    "to": [
+     2.25,
+     44,
+     1.5
+    ],
+    "decals": {
+     "east": "curtain_1x26"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     45.75,
+     18,
+     0.5
+    ],
+    "to": [
+     46,
+     44,
+     1.5
+    ],
+    "decals": {
+     "west": "curtain_1x26"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     45,
+     0
+    ],
+    "to": [
+     48,
+     47,
+     2
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     45,
+     46
+    ],
+    "to": [
+     48,
+     47,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     45,
+     2
+    ],
+    "to": [
+     2,
+     47,
+     46
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     46,
+     45,
+     2
+    ],
+    "to": [
+     48,
+     47,
+     46
+    ]
+   },
+   {
+    "material": "glow_off",
+    "from": [
+     2,
+     44.5,
+     1.5
+    ],
+    "to": [
+     46,
+     45,
+     1.75
+    ]
+   },
+   {
+    "material": "bay",
+    "from": [
+     2,
+     17,
+     45.5
+    ],
+    "to": [
+     15,
+     31,
+     47.5
+    ],
+    "decals": {
+     "north": "plate_13x14",
+     "south": "vent_13x14"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     17,
+     17,
+     45.5
+    ],
+    "to": [
+     31,
+     31,
+     47.5
+    ],
+    "decals": {
+     "north": "plate_14x14",
+     "south": "hatch_14x14"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     33,
+     17,
+     45.5
+    ],
+    "to": [
+     46,
+     31,
+     47.5
+    ],
+    "decals": {
+     "north": "plate_13x14",
+     "south": "vent_13x14"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     2,
+     33,
+     45.5
+    ],
+    "to": [
+     15,
+     45,
+     47.5
+    ],
+    "decals": {
+     "north": "plate_13x12",
+     "south": "plate_13x12"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     17,
+     33,
+     45.5
+    ],
+    "to": [
+     31,
+     45,
+     47.5
+    ],
+    "decals": {
+     "north": "plate_14x12",
+     "south": "label_14x12"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     33,
+     33,
+     45.5
+    ],
+    "to": [
+     46,
+     45,
+     47.5
+    ],
+    "decals": {
+     "north": "plate_13x12",
+     "south": "plate_13x12"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     15,
+     17,
+     45.25
+    ],
+    "to": [
+     17,
+     45,
+     47.75
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     31,
+     17,
+     45.25
+    ],
+    "to": [
+     33,
+     45,
+     47.75
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     2,
+     31,
+     45.25
+    ],
+    "to": [
+     46,
+     33,
+     47.75
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     16,
+     16.5,
+     4
+    ],
+    "to": [
+     32,
+     18,
+     20
+    ],
+    "decals": {
+     "up": "bed"
+    }
+   },
+   {
+    "material": "conveyor",
+    "from": [
+     35,
+     16.5,
+     6
+    ],
+    "to": [
+     43,
+     19,
+     40
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     35.5,
+     19,
+     6.5
+    ],
+    "to": [
+     42.5,
+     19.25,
+     39.5
+    ],
+    "faces": {
+     "up": "belt_in"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     34.5,
+     17.5,
+     39
+    ],
+    "to": [
+     43.5,
+     19,
+     40
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     34.5,
+     16.5,
+     5.5
+    ],
+    "to": [
+     43.5,
+     22.5,
+     10.5
+    ],
+    "decals": {
+     "south": "hoodmouth_9x6",
+     "north": "hoodfront_9x6",
+     "west": "hoodside_5x6",
+     "east": "hoodside_5x6"
+    }
+   },
+   {
+    "material": "conveyor",
+    "from": [
+     5,
+     16.5,
+     6
+    ],
+    "to": [
+     13,
+     19,
+     40
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     5.5,
+     19,
+     6.5
+    ],
+    "to": [
+     12.5,
+     19.25,
+     39.5
+    ],
+    "faces": {
+     "up": "belt_out"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     4.5,
+     17.5,
+     39
+    ],
+    "to": [
+     13.5,
+     19,
+     40
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     4.5,
+     16.5,
+     5.5
+    ],
+    "to": [
+     13.5,
+     22.5,
+     10.5
+    ],
+    "decals": {
+     "south": "hoodmouth_9x6",
+     "north": "hoodfront_9x6",
+     "west": "hoodside_5x6",
+     "east": "hoodside_5x6"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     18,
+     16.5,
+     25
+    ],
+    "to": [
+     30,
+     18.5,
+     37
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     9,
+     19,
+     43
+    ],
+    "to": [
+     39,
+     43,
+     45
+    ],
+    "decals": {
+     "north": "patterns"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     9,
+     16.5,
+     42.5
+    ],
+    "to": [
+     39,
+     19,
+     45.5
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     42.5,
+     16.5,
+     40.5
+    ],
+    "to": [
+     43.5,
+     33.5,
+     41.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     41.5,
+     33.5,
+     39.5
+    ],
+    "to": [
+     44.5,
+     34,
+     42.5
+    ]
+   },
+   {
+    "material": "lamp_red",
+    "from": [
+     41.75,
+     34,
+     39.75
+    ],
+    "to": [
+     44.25,
+     36,
+     42.25
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     41.5,
+     36,
+     39.5
+    ],
+    "to": [
+     44.5,
+     36.5,
+     42.5
+    ]
+   },
+   {
+    "material": "lamp_amber",
+    "from": [
+     41.75,
+     36.5,
+     39.75
+    ],
+    "to": [
+     44.25,
+     38.5,
+     42.25
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     41.5,
+     38.5,
+     39.5
+    ],
+    "to": [
+     44.5,
+     39,
+     42.5
+    ]
+   },
+   {
+    "material": "lamp_green",
+    "from": [
+     41.75,
+     39,
+     39.75
+    ],
+    "to": [
+     44.25,
+     41,
+     42.25
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     41.5,
+     41,
+     39.5
+    ],
+    "to": [
+     44.5,
+     42,
+     42.5
+    ]
+   }
+  ],
+  "working": [
+   {
+    "material": "skid",
+    "from": [
+     0,
+     0,
+     0
+    ],
+    "to": [
+     48,
+     2,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     3,
+     2,
+     3
+    ],
+    "to": [
+     45,
+     15,
+     45
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     2,
+     15,
+     2
+    ],
+    "to": [
+     46,
+     16.5,
+     46
+    ],
+    "faces": {
+     "up": "table"
+    }
+   },
+   {
+    "material": "tape",
+    "from": [
+     3,
+     16.5,
+     3
+    ],
+    "to": [
+     45,
+     16.6,
+     4
+    ]
+   },
+   {
+    "material": "tape",
+    "from": [
+     3,
+     16.5,
+     44
+    ],
+    "to": [
+     45,
+     16.6,
+     45
+    ]
+   },
+   {
+    "material": "tape",
+    "from": [
+     3,
+     16.5,
+     4
+    ],
+    "to": [
+     4,
+     16.6,
+     44
+    ]
+   },
+   {
+    "material": "tape",
+    "from": [
+     44,
+     16.5,
+     4
+    ],
+    "to": [
+     45,
+     16.6,
+     44
+    ]
+   },
+   {
+    "material": "bay",
+    "from": [
+     1,
+     2,
+     1.5
+    ],
+    "to": [
+     15,
+     15,
+     3
+    ],
+    "decals": {
+     "north": "label_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     1,
+     2,
+     45
+    ],
+    "to": [
+     15,
+     15,
+     46.5
+    ],
+    "decals": {
+     "south": "vent_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     17,
+     2,
+     1.5
+    ],
+    "to": [
+     31,
+     15,
+     3
+    ],
+    "decals": {
+     "north": "plate_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     17,
+     2,
+     45
+    ],
+    "to": [
+     31,
+     15,
+     46.5
+    ],
+    "decals": {
+     "south": "hatch_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     33,
+     2,
+     1.5
+    ],
+    "to": [
+     47,
+     15,
+     3
+    ],
+    "decals": {
+     "north": "estop_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     33,
+     2,
+     45
+    ],
+    "to": [
+     47,
+     15,
+     46.5
+    ],
+    "decals": {
+     "south": "vent_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     1.5,
+     2,
+     3
+    ],
+    "to": [
+     3,
+     15,
+     15
+    ],
+    "decals": {
+     "west": "hatch_12x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     1.5,
+     2,
+     17
+    ],
+    "to": [
+     3,
+     15,
+     31
+    ],
+    "decals": {
+     "west": "plate_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     1.5,
+     2,
+     33
+    ],
+    "to": [
+     3,
+     15,
+     45
+    ],
+    "decals": {
+     "west": "vent_12x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     45,
+     2,
+     3
+    ],
+    "to": [
+     46.5,
+     15,
+     15
+    ],
+    "decals": {
+     "east": "plate_12x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     45,
+     2,
+     17
+    ],
+    "to": [
+     46.5,
+     15,
+     31
+    ],
+    "decals": {
+     "east": "plate_14x13"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     45,
+     2,
+     33
+    ],
+    "to": [
+     46.5,
+     15,
+     45
+    ],
+    "decals": {
+     "east": "vent_12x13"
+    }
+   },
+   {
+    "material": "paint",
+    "from": [
+     38,
+     6,
+     0.75
+    ],
+    "to": [
+     42,
+     11,
+     1.5
+    ]
+   },
+   {
+    "material": "estop_cap",
+    "from": [
+     39,
+     7.5,
+     0
+    ],
+    "to": [
+     41,
+     9.5,
+     0.75
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     19,
+     4,
+     1
+    ],
+    "to": [
+     29,
+     13,
+     1.5
+    ],
+    "decals": {
+     "north": "console"
+    },
+    "glow": [
+     "north"
+    ]
+   },
+   {
+    "material": "glow",
+    "from": [
+     3,
+     15.5,
+     0.75
+    ],
+    "to": [
+     45,
+     16.25,
+     1
+    ],
+    "glow": [
+     "down",
+     "east",
+     "north",
+     "south",
+     "up",
+     "west"
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     46.5,
+     3.5,
+     3
+    ],
+    "to": [
+     47,
+     13.5,
+     13
+    ],
+    "decals": {
+     "east": "port_energy"
+    }
+   },
+   {
+    "material": "metal",
+    "from": [
+     46.5,
+     3.5,
+     19
+    ],
+    "to": [
+     47,
+     13.5,
+     29
+    ],
+    "decals": {
+     "east": "port_items"
+    }
+   },
+   {
+    "material": "metal",
+    "from": [
+     1,
+     3.5,
+     19
+    ],
+    "to": [
+     1.5,
+     13.5,
+     29
+    ],
+    "decals": {
+     "west": "port_items"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     0
+    ],
+    "to": [
+     1,
+     15,
+     1
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     47
+    ],
+    "to": [
+     1,
+     15,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     47,
+     2,
+     0
+    ],
+    "to": [
+     48,
+     15,
+     1
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     47,
+     2,
+     47
+    ],
+    "to": [
+     48,
+     15,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     15,
+     2,
+     0
+    ],
+    "to": [
+     17,
+     15,
+     2
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     15,
+     2,
+     46
+    ],
+    "to": [
+     17,
+     15,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     15
+    ],
+    "to": [
+     2,
+     15,
+     17
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     46,
+     2,
+     15
+    ],
+    "to": [
+     48,
+     15,
+     17
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     31,
+     2,
+     0
+    ],
+    "to": [
+     33,
+     15,
+     2
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     31,
+     2,
+     46
+    ],
+    "to": [
+     33,
+     15,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     2,
+     31
+    ],
+    "to": [
+     2,
+     15,
+     33
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     46,
+     2,
+     31
+    ],
+    "to": [
+     48,
+     15,
+     33
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     1,
+     15,
+     0.25
+    ],
+    "to": [
+     47,
+     17,
+     2
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     1,
+     15,
+     46
+    ],
+    "to": [
+     47,
+     17,
+     47.75
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0.25,
+     15,
+     1
+    ],
+    "to": [
+     2,
+     17,
+     47
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     46,
+     15,
+     1
+    ],
+    "to": [
+     47.75,
+     17,
+     47
+    ]
+   },
+   {
+    "material": "paint",
+    "from": [
+     0,
+     17,
+     0
+    ],
+    "to": [
+     2,
+     45,
+     2
+    ],
+    "decals": {
+     "north": "post_2x28",
+     "south": "post_2x28",
+     "west": "post_2x28",
+     "east": "post_2x28"
+    }
+   },
+   {
+    "material": "paint",
+    "from": [
+     0,
+     17,
+     46
+    ],
+    "to": [
+     2,
+     45,
+     48
+    ],
+    "decals": {
+     "north": "post_2x28",
+     "south": "post_2x28",
+     "west": "post_2x28",
+     "east": "post_2x28"
+    }
+   },
+   {
+    "material": "paint",
+    "from": [
+     46,
+     17,
+     0
+    ],
+    "to": [
+     48,
+     45,
+     2
+    ],
+    "decals": {
+     "north": "post_2x28",
+     "south": "post_2x28",
+     "west": "post_2x28",
+     "east": "post_2x28"
+    }
+   },
+   {
+    "material": "paint",
+    "from": [
+     46,
+     17,
+     46
+    ],
+    "to": [
+     48,
+     45,
+     48
+    ],
+    "decals": {
+     "north": "post_2x28",
+     "south": "post_2x28",
+     "west": "post_2x28",
+     "east": "post_2x28"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     2,
+     18,
+     0.5
+    ],
+    "to": [
+     2.25,
+     44,
+     1.5
+    ],
+    "decals": {
+     "east": "curtainon_1x26"
+    },
+    "glow": [
+     "east"
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     45.75,
+     18,
+     0.5
+    ],
+    "to": [
+     46,
+     44,
+     1.5
+    ],
+    "decals": {
+     "west": "curtainon_1x26"
+    },
+    "glow": [
+     "west"
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     45,
+     0
+    ],
+    "to": [
+     48,
+     47,
+     2
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     45,
+     46
+    ],
+    "to": [
+     48,
+     47,
+     48
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     0,
+     45,
+     2
+    ],
+    "to": [
+     2,
+     47,
+     46
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     46,
+     45,
+     2
+    ],
+    "to": [
+     48,
+     47,
+     46
+    ]
+   },
+   {
+    "material": "glow",
+    "from": [
+     2,
+     44.5,
+     1.5
+    ],
+    "to": [
+     46,
+     45,
+     1.75
+    ],
+    "glow": [
+     "down",
+     "east",
+     "north",
+     "south",
+     "up",
+     "west"
+    ]
+   },
+   {
+    "material": "bay",
+    "from": [
+     2,
+     17,
+     45.5
+    ],
+    "to": [
+     15,
+     31,
+     47.5
+    ],
+    "decals": {
+     "north": "plate_13x14",
+     "south": "vent_13x14"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     17,
+     17,
+     45.5
+    ],
+    "to": [
+     31,
+     31,
+     47.5
+    ],
+    "decals": {
+     "north": "plate_14x14",
+     "south": "hatch_14x14"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     33,
+     17,
+     45.5
+    ],
+    "to": [
+     46,
+     31,
+     47.5
+    ],
+    "decals": {
+     "north": "plate_13x14",
+     "south": "vent_13x14"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     2,
+     33,
+     45.5
+    ],
+    "to": [
+     15,
+     45,
+     47.5
+    ],
+    "decals": {
+     "north": "plate_13x12",
+     "south": "plate_13x12"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     17,
+     33,
+     45.5
+    ],
+    "to": [
+     31,
+     45,
+     47.5
+    ],
+    "decals": {
+     "north": "plate_14x12",
+     "south": "label_14x12"
+    }
+   },
+   {
+    "material": "bay",
+    "from": [
+     33,
+     33,
+     45.5
+    ],
+    "to": [
+     46,
+     45,
+     47.5
+    ],
+    "decals": {
+     "north": "plate_13x12",
+     "south": "plate_13x12"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     15,
+     17,
+     45.25
+    ],
+    "to": [
+     17,
+     45,
+     47.75
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     31,
+     17,
+     45.25
+    ],
+    "to": [
+     33,
+     45,
+     47.75
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     2,
+     31,
+     45.25
+    ],
+    "to": [
+     46,
+     33,
+     47.75
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     16,
+     16.5,
+     4
+    ],
+    "to": [
+     32,
+     18,
+     20
+    ],
+    "decals": {
+     "up": "bed"
+    }
+   },
+   {
+    "material": "conveyor",
+    "from": [
+     35,
+     16.5,
+     6
+    ],
+    "to": [
+     43,
+     19,
+     40
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     35.5,
+     19,
+     6.5
+    ],
+    "to": [
+     42.5,
+     19.25,
+     39.5
+    ],
+    "faces": {
+     "up": "belt_in_on"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     34.5,
+     17.5,
+     39
+    ],
+    "to": [
+     43.5,
+     19,
+     40
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     34.5,
+     16.5,
+     5.5
+    ],
+    "to": [
+     43.5,
+     22.5,
+     10.5
+    ],
+    "decals": {
+     "south": "hoodmouth_9x6",
+     "north": "hoodfront_9x6",
+     "west": "hoodside_5x6",
+     "east": "hoodside_5x6"
+    }
+   },
+   {
+    "material": "conveyor",
+    "from": [
+     5,
+     16.5,
+     6
+    ],
+    "to": [
+     13,
+     19,
+     40
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     5.5,
+     19,
+     6.5
+    ],
+    "to": [
+     12.5,
+     19.25,
+     39.5
+    ],
+    "faces": {
+     "up": "belt_out_on"
+    }
+   },
+   {
+    "material": "bright",
+    "from": [
+     4.5,
+     17.5,
+     39
+    ],
+    "to": [
+     13.5,
+     19,
+     40
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     4.5,
+     16.5,
+     5.5
+    ],
+    "to": [
+     13.5,
+     22.5,
+     10.5
+    ],
+    "decals": {
+     "south": "hoodmouth_9x6",
+     "north": "hoodfront_9x6",
+     "west": "hoodside_5x6",
+     "east": "hoodside_5x6"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     18,
+     16.5,
+     25
+    ],
+    "to": [
+     30,
+     18.5,
+     37
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     9,
+     19,
+     43
+    ],
+    "to": [
+     39,
+     43,
+     45
+    ],
+    "decals": {
+     "north": "patterns"
+    }
+   },
+   {
+    "material": "trim",
+    "from": [
+     9,
+     16.5,
+     42.5
+    ],
+    "to": [
+     39,
+     19,
+     45.5
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     42.5,
+     16.5,
+     40.5
+    ],
+    "to": [
+     43.5,
+     33.5,
+     41.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     41.5,
+     33.5,
+     39.5
+    ],
+    "to": [
+     44.5,
+     34,
+     42.5
+    ]
+   },
+   {
+    "material": "lamp_red",
+    "from": [
+     41.75,
+     34,
+     39.75
+    ],
+    "to": [
+     44.25,
+     36,
+     42.25
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     41.5,
+     36,
+     39.5
+    ],
+    "to": [
+     44.5,
+     36.5,
+     42.5
+    ]
+   },
+   {
+    "material": "lamp_amber",
+    "from": [
+     41.75,
+     36.5,
+     39.75
+    ],
+    "to": [
+     44.25,
+     38.5,
+     42.25
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     41.5,
+     38.5,
+     39.5
+    ],
+    "to": [
+     44.5,
+     39,
+     42.5
+    ]
+   },
+   {
+    "material": "lamp_green",
+    "from": [
+     41.75,
+     39,
+     39.75
+    ],
+    "to": [
+     44.25,
+     41,
+     42.25
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     41.5,
+     41,
+     39.5
+    ],
+    "to": [
+     44.5,
+     42,
+     42.5
+    ]
+   }
+  ],
+  "arm_turret": [
+   {
+    "material": "arm",
+    "from": [
+     19,
+     18.5,
+     26
+    ],
+    "to": [
+     29,
+     21.5,
+     36
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     20.5,
+     21.5,
+     27.5
+    ],
+    "to": [
+     27.5,
+     26,
+     34.5
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     27.5,
+     22,
+     29
+    ],
+    "to": [
+     29.5,
+     25.5,
+     33
+    ]
+   }
+  ],
+  "arm_upper": [
+   {
+    "material": "arm",
+    "from": [
+     22,
+     26,
+     29
+    ],
+    "to": [
+     26,
+     38,
+     33
+    ]
+   },
+   {
+    "material": "copper",
+    "from": [
+     26,
+     26,
+     30
+    ],
+    "to": [
+     26.5,
+     37,
+     32
+    ]
+   }
+  ],
+  "arm_fore": [
+   {
+    "material": "trim",
+    "from": [
+     21,
+     36.5,
+     28
+    ],
+    "to": [
+     27,
+     41.5,
+     34
+    ]
+   },
+   {
+    "material": "metal",
+    "from": [
+     27,
+     37.5,
+     29.5
+    ],
+    "to": [
+     28.5,
+     40.5,
+     32.5
+    ]
+   },
+   {
+    "material": "arm",
+    "from": [
+     22,
+     37.5,
+     15.5
+    ],
+    "to": [
+     26,
+     40.5,
+     28
+    ]
+   }
+  ],
+  "arm_tool": [
+   {
+    "material": "trim",
+    "from": [
+     21.5,
+     35,
+     10.5
+    ],
+    "to": [
+     26.5,
+     41,
+     15.5
+    ]
+   },
+   {
+    "material": "bright",
+    "from": [
+     22.5,
+     32,
+     11.5
+    ],
+    "to": [
+     25.5,
+     35,
+     14.5
+    ]
+   },
+   {
+    "material": "trim",
+    "from": [
+     21,
+     29,
+     11
+    ],
+    "to": [
+     27,
+     32,
+     15
+    ]
+   }
+  ],
+  "arm_finger_west": [
+   {
+    "material": "bright",
+    "from": [
+     21,
+     25,
+     12
+    ],
+    "to": [
+     22,
+     29,
+     14
+    ]
+   }
+  ],
+  "arm_finger_east": [
+   {
+    "material": "bright",
+    "from": [
+     26,
+     25,
+     12
+    ],
+    "to": [
+     27,
+     29,
+     14
+    ]
+   }
+  ]
+ }
+}

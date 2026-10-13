@@ -83,6 +83,9 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] Geiger counter: a new item that gives the clicks and the HUD gauge, so they only run when you carry one (inventory, or an Accessories slot such as the belt). The dosimeter ring keeps its protection but goes quiet. Shift-right-click to mute the clicks but keep the gauge
 - [x] Dosimeter ring worn on the hand: dropped. Nothing shows on the hand, as with other mods' rings, and that is fine
 - [x] Steady state (design section 5, 11 Oct 2026): a streak of fuel loads burned without downtime raises a reactor's output, up to 1.25x for the microreactor, 1.5x for the fission station and 1.75x for the breeder (a quarter more each tier, each below the next tier's power). Downtime past 5 seconds costs a quarter of the streak; standby, unloaded chunks and a stopped server only pause it. Shown on the reactor's screen, milestones called by the announcer (a new line to record) and an advancement per cap. Config: on/off, cap per tier, milestone scale
+- [x] Pipe filters (13 Oct 2026): a filter per pipe side, allow or deny, so an extract side pulls only chosen items (the Reprocessor's outputs split to their own lines)
+- [x] Pipe round-robin and priority (round-robin was already there): one pipe feeding several machines shares the work, and priorities send items to the most important target first
+- [ ] Redstone output from machines and reactors: a comparator reads status (no fuel, output full, overheating), for automatic SCRAMs and alarm lamps
 - [ ] Meltdown waste: a meltdown (microreactor and up) leaves radioactive debris in and around its crater, such as corium (melted core) and contaminated rubble. It keeps the site radioactive and is hard to clear: it needs proper tools or a process to remove it, and it goes into Waste Casks rather than being broken like stone. Radiation from meltdowns is already allowed by design rule 10; the debris makes the site a lasting problem to deal with, not just a hole
 - [x] Reactor voice announcer (0.1.1): short spoken lines from the reactor's control system when something happens, made with Voicebox (MIT app; VoiceStudio does not run on AMD GPUs on Windows). First list: safeties off (overdrive on), safeties back on, SCRAM, overheat warning, flux tilt, coolant loss, meltdown imminent, out of fuel (only once the reactor has actually stopped, never on a routine swap by pipe), reactor and station online. No fuel-low warning: automated fuel is always running low. Each line its own sound event (packs can replace or silence them), subtitles on, played on the client near the machine and not repeated on a fast loop, and a config toggle to turn the voice off. Licences checked 28 Sep 2026: Qwen CustomVoice and Qwen3-TTS (Apache 2.0), Kokoro (Apache 2.0) and Chatterbox (MIT) are fine for a published mod; LuxTTS and HumeAI TADA are unchecked. Plan: a Qwen CustomVoice preset voice (Kokoro as the fallback), no cloning. OmniVoice (VoiceStudio's default) is CC-BY-NC, so never use it. Never clone a real person's voice, and record the engine, model and licence in `art/sounds/CREDITS.md`
 
@@ -109,6 +112,8 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] Output port for spent rods (later waste); fuel rods keep their burn when taken out
 - [x] Overdrive: safeties off for about 50% more power, flux tilt countdown, unstable core, meltdown with config toggle
 - [ ] Better moderators than graphite (decided later)
+- [ ] Emergency core cooling (13 Oct 2026): a reserve water tank attached to the station's side, only working while formed. On a coolant loss it floods the core and holds it below meltdown for as long as its water lasts (a fuller or bigger tank lasts longer; base time a config value, about 60 to 90 s), with a countdown on the screen and an announcer line; dry, the core heats on and melts down as before. Must be refilled before it can save the core again. Real basis: an emergency core cooling system has only the water it holds
+- [ ] Core computer (13 Oct 2026): set a goal (longest-lasting rods, most power, fastest burn for breeding plutonium, coolest running) and it lays the core out to match, from the rods it actually has (in the station or linked storage), the in-game version of `art/tools/core_optimiser.py`. Re-laying a running core means a controlled shutdown, so changing goals costs downtime and streak. Gated by cost: an expensive recipe of later-tier parts (around the breeder, no piles of earlier ones, rule 6), so it arrives once the station's puzzle is understood (rule 3)
 - [x] Fuel rod recipes (the Fuel Fabricator, milestone 2)
 - [x] MOX rebalanced: twice uranium's heat and more coolant capacity, so a full MOX core makes double the power
 - [x] Spent MOX rods come out of the station (they wait for the tier 4 pyroprocessor)
@@ -199,6 +204,14 @@ The utility reactor: fuel for the stations and the tritium that starts fusion. F
 ## Progression map
 - [x] An in-game map of the whole production line (key Y): tier columns, arrows, steps lit as you reach them and the next ones pulsing, a panel per step with how it works and spoilers for the best setups (3 Oct 2026)
 - [ ] Open a step's recipes in JEI or EMI from its panel
+
+## Automation and retrofits (13 Oct 2026; pipe filters and redstone output are under Polish)
+- [x] The Assembler (14 Oct 2026): a 3 x 3 x 3 open robot cell that crafts any crafting-table recipe from nine patterns, the arm carrying the real items (DESIGN.md section 14)
+- [ ] Recipe viewer transfer: fill a pattern from a JEI or EMI recipe
+- [ ] Retrofit slots on the reactors, three each, one per later tier (DESIGN.md section 5, Retrofits)
+- [ ] The station's kits: uprated turbine, exotic alloy core liner, supercritical loop
+- [ ] The exotic alloy as an item, uncraftable until its source is settled (open question 24)
+- [ ] Microreactor and breeder kits
 
 ## Later
 - Cable and pipe items: show a single cube of cable (one block's segment), not a whole straight run (6 Oct 2026)

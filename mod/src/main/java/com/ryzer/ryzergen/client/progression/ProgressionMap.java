@@ -130,6 +130,7 @@ public final class ProgressionMap {
         add("plutonium", ModItems.PLUTONIUM_INGOT, 3, 6, "reprocessor");
         add("fuel_fabricator", ModItems.FUEL_FABRICATOR, 3, 7, "advanced_board", "steel");
         add("mega_drill", ModItems.MEGA_DRILL_CONTROLLER, 3, 8, "microreactor", "tungsten", "steel", "advanced_board");
+        add("assembler", ModItems.ASSEMBLER_CONTROLLER, 3, 10, "microreactor", "advanced_board", "steel");
 
         // Tier 3: fission.
         add("uranium_rod", ModItems.URANIUM_FUEL_ROD, 4, 0, "fuel_fabricator", "uranium_ingot", "steel");

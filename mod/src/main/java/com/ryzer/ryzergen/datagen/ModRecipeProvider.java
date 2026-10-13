@@ -219,6 +219,40 @@ public class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
                 .save(output);
 
+        // Assembler (design section 14), with the fuel cycle: advanced boards. The frame is cheap
+        // structure (rule 3), many per craft; the cost is in the controller (a crafter it takes
+        // over) and the arm.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ASSEMBLER_FRAME.get(), 16)
+                .pattern("SIS")
+                .pattern("I I")
+                .pattern("SIS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('I', Items.IRON_BARS)
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ASSEMBLER_CONTROLLER.get())
+                .pattern("SAS")
+                .pattern("GCG")
+                .pattern("SAS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .define('G', Tags.Items.GLASS_PANES)
+                .define('C', Items.CRAFTER)
+                .unlockedBy("has_advanced_board", has(ModTags.CIRCUITS_ADVANCED))
+                .save(output);
+        // The arm: pistons for its joints, copper for its motors, painted orange, a board to run it.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ASSEMBLER_ARM.get())
+                .pattern("CPC")
+                .pattern("DAD")
+                .pattern("SSS")
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('P', Items.PISTON)
+                .define('D', Tags.Items.DYES_ORANGE)
+                .define('A', ModTags.CIRCUITS_ADVANCED)
+                .define('S', ModTags.INGOTS_STEEL)
+                .unlockedBy("has_advanced_board", has(ModTags.CIRCUITS_ADVANCED))
+                .save(output);
+
         // Container Battery (design section 12). The frame is cheap structure (rule 3), many per
         // craft; the cost is in the controller (advanced boards: grid storage comes with fission),
         // the thermal unit and above all the LFP racks, which need lithium.

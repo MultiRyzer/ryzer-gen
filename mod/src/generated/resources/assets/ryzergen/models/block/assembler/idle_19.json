@@ -1,0 +1,205 @@
+{
+  "parent": "minecraft:block/block",
+  "children": {
+    "solid": {
+      "ambientocclusion": false,
+      "elements": [
+        {
+          "faces": {
+            "east": {
+              "texture": "#post_2x28",
+              "uv": [
+                0.0,
+                0.0,
+                1.0,
+                6.5
+              ]
+            },
+            "north": {
+              "cullface": "north",
+              "texture": "#post_2x28",
+              "uv": [
+                0.0,
+                0.0,
+                1.0,
+                6.5
+              ]
+            },
+            "south": {
+              "texture": "#post_2x28",
+              "uv": [
+                0.0,
+                0.0,
+                1.0,
+                6.5
+              ]
+            },
+            "up": {
+              "texture": "#paint"
+            },
+            "west": {
+              "cullface": "west",
+              "texture": "#post_2x28",
+              "uv": [
+                0.0,
+                0.0,
+                1.0,
+                6.5
+              ]
+            }
+          },
+          "from": [
+            0,
+            0,
+            0
+          ],
+          "to": [
+            2,
+            13,
+            2
+          ]
+        },
+        {
+          "faces": {
+            "east": {
+              "texture": "#curtain_1x26",
+              "uv": [
+                0.0,
+                0.0,
+                0.5,
+                6.0
+              ]
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            2,
+            0,
+            0.5
+          ],
+          "to": [
+            2.25,
+            12,
+            1.5
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "north": {
+              "cullface": "north",
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            },
+            "west": {
+              "cullface": "west",
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            13,
+            0
+          ],
+          "to": [
+            16,
+            15,
+            2
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "east": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            },
+            "west": {
+              "cullface": "west",
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            13,
+            2
+          ],
+          "to": [
+            2,
+            15,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#glow_off"
+            },
+            "north": {
+              "texture": "#glow_off"
+            },
+            "south": {
+              "texture": "#glow_off"
+            },
+            "up": {
+              "texture": "#glow_off"
+            },
+            "west": {
+              "texture": "#glow_off"
+            }
+          },
+          "from": [
+            2,
+            12.5,
+            1.5
+          ],
+          "to": [
+            16,
+            13,
+            1.75
+          ]
+        }
+      ],
+      "render_type": "minecraft:cutout",
+      "textures": {
+        "curtain_1x26": "ryzergen:block/assembler/curtain_1x26",
+        "glow_off": "ryzergen:block/microreactor/glow_off",
+        "paint": "ryzergen:block/assembler/paint",
+        "post_2x28": "ryzergen:block/assembler/post_2x28",
+        "trim": "ryzergen:block/microreactor/steel_dark"
+      }
+    }
+  },
+  "item_render_order": [
+    "solid"
+  ],
+  "loader": "neoforge:composite",
+  "textures": {
+    "particle": "ryzergen:block/assembler/bay"
+  }
+}

@@ -1,0 +1,300 @@
+{
+  "parent": "minecraft:block/block",
+  "children": {
+    "solid": {
+      "ambientocclusion": false,
+      "elements": [
+        {
+          "faces": {
+            "south": {
+              "texture": "#metal"
+            },
+            "up": {
+              "texture": "#table"
+            }
+          },
+          "from": [
+            0,
+            0,
+            0
+          ],
+          "to": [
+            16,
+            0.5,
+            14
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#tape"
+            },
+            "north": {
+              "texture": "#tape"
+            },
+            "south": {
+              "texture": "#tape"
+            },
+            "up": {
+              "texture": "#tape"
+            }
+          },
+          "from": [
+            0,
+            0.5,
+            12
+          ],
+          "to": [
+            16,
+            0.6000004,
+            13
+          ]
+        },
+        {
+          "faces": {
+            "north": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            0,
+            14
+          ],
+          "to": [
+            16,
+            1,
+            15.75
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#bay"
+            },
+            "east": {
+              "texture": "#bay"
+            },
+            "north": {
+              "texture": "#plate_14x14",
+              "uv": [
+                0.0,
+                0.0,
+                14.0,
+                14.0
+              ]
+            },
+            "south": {
+              "texture": "#hatch_14x14",
+              "uv": [
+                0.0,
+                0.0,
+                14.0,
+                14.0
+              ]
+            },
+            "up": {
+              "texture": "#bay"
+            },
+            "west": {
+              "texture": "#bay"
+            }
+          },
+          "from": [
+            1,
+            1,
+            13.5
+          ],
+          "to": [
+            15,
+            15,
+            15.5
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "east": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            1,
+            13.25
+          ],
+          "to": [
+            1,
+            16,
+            15.75
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            15,
+            1,
+            13.25
+          ],
+          "to": [
+            16,
+            16,
+            15.75
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            15,
+            13.25
+          ],
+          "to": [
+            16,
+            16,
+            15.75
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "east": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            2,
+            0.5,
+            0
+          ],
+          "to": [
+            14,
+            2.5,
+            5
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#patterns",
+              "uv": [
+                3.5,
+                5.5,
+                11.5,
+                12.0
+              ]
+            },
+            "south": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            3,
+            11
+          ],
+          "to": [
+            16,
+            16,
+            13
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#trim"
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "up": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            0,
+            0.5,
+            10.5
+          ],
+          "to": [
+            16,
+            3,
+            13.5
+          ]
+        }
+      ],
+      "render_type": "minecraft:cutout",
+      "textures": {
+        "bay": "ryzergen:block/assembler/bay",
+        "hatch_14x14": "ryzergen:block/assembler/hatch_14x14",
+        "metal": "ryzergen:block/machine/family/metal",
+        "patterns": "ryzergen:block/assembler/patterns",
+        "plate_14x14": "ryzergen:block/assembler/plate_14x14",
+        "table": "ryzergen:block/assembler/table",
+        "tape": "ryzergen:block/assembler/tape",
+        "trim": "ryzergen:block/microreactor/steel_dark"
+      }
+    }
+  },
+  "item_render_order": [
+    "solid"
+  ],
+  "loader": "neoforge:composite",
+  "textures": {
+    "particle": "ryzergen:block/assembler/bay"
+  }
+}

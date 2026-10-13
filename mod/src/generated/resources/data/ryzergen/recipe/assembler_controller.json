@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:circuits/advanced"
+    },
+    "C": {
+      "item": "minecraft:crafter"
+    },
+    "G": {
+      "tag": "c:glass_panes"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "SAS",
+    "GCG",
+    "SAS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:assembler_controller"
+  }
+}
