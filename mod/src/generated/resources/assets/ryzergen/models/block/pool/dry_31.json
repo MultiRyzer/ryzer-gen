@@ -60,11 +60,11 @@
               "texture": "#liner"
             },
             "west": {
-              "texture": "#panel_14x9",
+              "texture": "#panel_13x9",
               "uv": [
                 0.0,
                 0.0,
-                14.0,
+                13.0,
                 9.0
               ]
             }
@@ -72,7 +72,7 @@
           "from": [
             1.5,
             1,
-            1
+            2
           ],
           "to": [
             3,
@@ -618,6 +618,7 @@
         "glow_off": "ryzergen:block/microreactor/glow_off",
         "liner": "ryzergen:block/pool/liner",
         "paint": "ryzergen:block/pool/paint",
+        "panel_13x9": "ryzergen:block/pool/panel_13x9",
         "panel_14x9": "ryzergen:block/pool/panel_14x9",
         "rail_74x2": "ryzergen:block/pool/rail_74x2",
         "trim": "ryzergen:block/microreactor/steel_dark"

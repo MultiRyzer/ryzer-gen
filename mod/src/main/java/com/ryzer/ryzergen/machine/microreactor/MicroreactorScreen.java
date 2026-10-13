@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.microreactor;
 
+import com.ryzer.ryzergen.client.SoundTab;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.ARGB;
 import com.ryzer.ryzergen.client.GuiGauges;
@@ -28,7 +29,7 @@ import static com.ryzer.ryzergen.machine.microreactor.ReactorHeartBlockEntity.*;
  * The microreactor control panel. Positions match art/tools/gui_textures.py, which draws the
  * panel and the button sprites to the right of it. Gauge fills are drawn here, not from pixel art.
  */
-public class MicroreactorScreen extends AbstractContainerScreen<MicroreactorMenu> {
+public class MicroreactorScreen extends AbstractContainerScreen<MicroreactorMenu> implements SoundTab.Host {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "textures/gui/microreactor.png");
 
@@ -97,6 +98,7 @@ public class MicroreactorScreen extends AbstractContainerScreen<MicroreactorMenu
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        SoundTab.render(graphics, leftPos, topPos, imageWidth, soundTabY(), menu.muted(), mouseX, mouseY);
 
         float heat = Mth.clamp((menu.temperature() - AMBIENT_TEMPERATURE) / (float) (MAX_TEMPERATURE - AMBIENT_TEMPERATURE), 0, 1);
         int heatColour = heat < 0.5F
@@ -207,6 +209,7 @@ public class MicroreactorScreen extends AbstractContainerScreen<MicroreactorMenu
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
+        SoundTab.tooltip(graphics, font, leftPos, topPos, imageWidth, soundTabY(), menu.muted(), mouseX, mouseY);
         renderTooltip(graphics, mouseX, mouseY);
 
         // The live output line: the steady-state streak behind it.
@@ -262,6 +265,9 @@ public class MicroreactorScreen extends AbstractContainerScreen<MicroreactorMenu
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && SoundTab.click(menu, leftPos, topPos, imageWidth, soundTabY(), mouseX, mouseY)) {
+            return true;
+        }
         if (button == 0) {
             if (isOver(POWER_X, BUTTON_Y, 16, 16, mouseX, mouseY)) {
                 return press(MicroreactorMenu.BUTTON_POWER);
@@ -296,5 +302,11 @@ public class MicroreactorScreen extends AbstractContainerScreen<MicroreactorMenu
         double mx = mouseX - leftPos;
         double my = mouseY - topPos;
         return mx >= x && mx < x + w && my >= y && my < y + h;
+    }
+
+    /** The sound switch's tab on the panel's right edge. */
+    @Override
+    public int soundTabY() {
+        return SoundTab.TOP;
     }
 }

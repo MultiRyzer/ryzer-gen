@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.pool;
 
+import com.ryzer.ryzergen.client.SoundTab;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.GuiGauges;
 import com.ryzer.ryzergen.client.text.RichText;
@@ -20,7 +21,7 @@ import static com.ryzer.ryzergen.machine.pool.PoolControllerBlockEntity.*;
  * it is ready to lift out), the water gauge beside them, the output slots on the right, and a
  * status beside the title. Positions match art/tools/gui_textures.py (spent_fuel_pool).
  */
-public class PoolScreen extends AbstractContainerScreen<PoolMenu> {
+public class PoolScreen extends AbstractContainerScreen<PoolMenu> implements SoundTab.Host {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "textures/gui/spent_fuel_pool.png");
     private static final int LABEL = 0xFF2B3036;
     private static final int DIM = 0xFF9AA3AE;
@@ -44,6 +45,7 @@ public class PoolScreen extends AbstractContainerScreen<PoolMenu> {
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        SoundTab.render(graphics, leftPos, topPos, imageWidth, soundTabY(), menu.muted(), mouseX, mouseY);
         for (int rack = 0; rack < RACKS; rack++) {
             if (!menu.getSlot(rack).hasItem()) {
                 continue;
@@ -92,6 +94,7 @@ public class PoolScreen extends AbstractContainerScreen<PoolMenu> {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
+        SoundTab.tooltip(graphics, font, leftPos, topPos, imageWidth, soundTabY(), menu.muted(), mouseX, mouseY);
         renderTooltip(graphics, mouseX, mouseY);
         int mx = mouseX - leftPos;
         int my = mouseY - topPos;
@@ -117,5 +120,19 @@ public class PoolScreen extends AbstractContainerScreen<PoolMenu> {
                     .withStyle(style -> style.withColor(DIM)));
         }
         return lines;
+    }
+
+    /** The sound switch's tab on the panel's right edge. */
+    @Override
+    public int soundTabY() {
+        return SoundTab.TOP;
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && SoundTab.click(menu, leftPos, topPos, imageWidth, soundTabY(), mouseX, mouseY)) {
+            return true;
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 }

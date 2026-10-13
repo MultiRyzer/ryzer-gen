@@ -685,6 +685,8 @@ def design(state='active'):
     # Ends: full depth, so they frame the recess the cooling loop sits in.
     for x1, x2, side, inward in ((1.5, 3, 'west', 'east'), (LONG - 3, LONG - 1.5, 'east', 'west')):
         for a, b in bays(0, WIDE):
+            # The first starts behind the front's plates (z 1.5 to 3), which turn the corner.
+            a = max(a, 2)
             for r, row in enumerate(ROWS):
                 add('liner', x1, row[0], a, x2, row[1], b).decal(side, ('base_' if r == 0 else 'panel_') + size(a, b, row)) \
                     .face(inward, 'trim' if b > BACK - 2 else 'liner')

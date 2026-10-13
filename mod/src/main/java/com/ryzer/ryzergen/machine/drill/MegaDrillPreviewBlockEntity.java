@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.drill;
 
+import com.ryzer.ryzergen.machine.MachineClock;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
 import com.ryzer.ryzergen.registry.ModSounds;
 import net.minecraft.core.BlockPos;
@@ -183,9 +184,19 @@ public class MegaDrillPreviewBlockEntity extends BlockEntity implements MegaDril
 
     /** Sparks at the lens as the charge arrives; once it fires, lava spits and smoke rises off the layer. */
     public static void clientTick(Level level, BlockPos pos, BlockState state, MegaDrillPreviewBlockEntity drill) {
+        drill.clock.animate(state.getValue(MegaDrillPreviewBlock.POWERED), MegaDrillBlockEntity.FAN_IDLE);
         if (state.getValue(MegaDrillPreviewBlock.POWERED)) {
             MegaDrillBlockEntity.effects(level, drill, pos, drill.layer());
+            MegaDrillBlockEntity.exhaust(level, drill, pos);
         }
+    }
+
+    /** The client's clock its fans and lamps follow (the preview sends no look: it runs or it does not). */
+    private final MachineClock clock = new MachineClock();
+
+    @Override
+    public MachineClock drillClock() {
+        return clock;
     }
 
     @Override

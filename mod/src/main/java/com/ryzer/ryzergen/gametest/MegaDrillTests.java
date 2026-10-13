@@ -28,7 +28,7 @@ import net.neoforged.neoforge.items.IItemHandler;
  * places a controller on it and feeds it frame by pipe, so the drill builds and forms itself; then it
  * fits a Mk III head and four speed modules, keeps its ports fed (energy, water, a tip) and lets it mine
  * down to the bottom of the world and on into the deep bore. It passes once: the ore and the loot came
- * out of the output port, the footings still stand, the water in the wall set into obsidian, the tip
+ * out of the output port, the footings stand cast into support piers, the water in the wall set into obsidian, the tip
  * wore, and the deep bore has brought up at least two cycles' ore.
  */
 @GameTestHolder(RyzerGen.MOD_ID)
@@ -123,7 +123,7 @@ public final class MegaDrillTests {
             helper.assertTrue(mined[0] > 0, "the iron ore comes up as raw iron");
             helper.assertTrue(mined[1] == 3, "the chest's diamonds come up (" + mined[1] + ")");
             helper.assertBlockPresent(Blocks.AIR, ore);
-            helper.assertBlockPresent(Blocks.STONE, footing);
+            helper.assertBlockPresent(ModBlocks.DRILL_PIER.get(), footing);
             helper.assertBlockPresent(Blocks.OBSIDIAN, wall);
             ItemStack tip = drill.tools().getStackInSlot(MegaDrillBlockEntity.SLOT_TIP);
             helper.assertTrue(!tip.isEmpty() && tip.getDamageValue() > 0, "the tip wears");

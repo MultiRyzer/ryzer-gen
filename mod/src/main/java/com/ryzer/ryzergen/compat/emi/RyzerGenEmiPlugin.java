@@ -38,6 +38,14 @@ public class RyzerGenEmiPlugin implements EmiPlugin {
                 out.accept(new dev.emi.emi.api.widget.Bounds(screen.getGuiLeft() + com.ryzer.ryzergen.machine.processing.ProcessingScreen.TAB_X,
                         screen.getGuiTop() + com.ryzer.ryzergen.machine.processing.ProcessingScreen.TAB_Y,
                         com.ryzer.ryzergen.machine.processing.ProcessingScreen.TAB_W, com.ryzer.ryzergen.machine.processing.ProcessingScreen.TAB_H)));
+        // And every machine's sound tab.
+        registry.addGenericExclusionArea((screen, out) -> {
+            if (screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> container
+                    && screen instanceof com.ryzer.ryzergen.client.SoundTab.Host host) {
+                net.minecraft.client.renderer.Rect2i area = com.ryzer.ryzergen.client.SoundTab.area(container, host.soundTabY());
+                out.accept(new dev.emi.emi.api.widget.Bounds(area.getX(), area.getY(), area.getWidth(), area.getHeight()));
+            }
+        });
         registry.addCategory(ALLOYING);
         registry.addWorkstation(ALLOYING, ALLOY_SMELTER);
         registry.addWorkstation(ALLOYING, EmiStack.of(ModItems.ELECTRIC_ALLOY_SMELTER.get()));

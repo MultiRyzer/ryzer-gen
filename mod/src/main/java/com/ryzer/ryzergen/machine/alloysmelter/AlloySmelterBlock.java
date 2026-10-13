@@ -107,7 +107,8 @@ public class AlloySmelterBlock extends BaseEntityBlock {
         double x = pos.getX() + 0.5;
         double y = pos.getY();
         double z = pos.getZ() + 0.5;
-        if (random.nextDouble() < 0.1) {
+        boolean muted = level.getBlockEntity(pos) instanceof AlloySmelterBlockEntity smelter && smelter.sound().muted();
+        if (!muted && random.nextDouble() < 0.1) {
             level.playLocalSound(x, y, z, SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 1.0F, 1.0F, false);
         }
         Direction facing = state.getValue(FACING);

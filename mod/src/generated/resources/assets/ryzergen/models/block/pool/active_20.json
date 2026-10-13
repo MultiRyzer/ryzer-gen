@@ -48,11 +48,11 @@
               "texture": "#liner"
             },
             "east": {
-              "texture": "#panel_14x14",
+              "texture": "#panel_13x14",
               "uv": [
                 0.0,
                 0.0,
-                14.0,
+                13.0,
                 14.0
               ]
             },
@@ -72,7 +72,7 @@
           "from": [
             13,
             1,
-            1
+            2
           ],
           "to": [
             14.5,
@@ -386,6 +386,7 @@
         "glow": "ryzergen:block/microreactor/glow",
         "liner": "ryzergen:block/pool/liner",
         "metal": "ryzergen:block/machine/family/metal",
+        "panel_13x14": "ryzergen:block/pool/panel_13x14",
         "panel_14x14": "ryzergen:block/pool/panel_14x14",
         "port_fuel": "ryzergen:block/microreactor/port_fuel",
         "trefoil": "ryzergen:block/pool/trefoil",

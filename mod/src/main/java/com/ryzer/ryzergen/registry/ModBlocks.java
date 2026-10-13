@@ -142,6 +142,10 @@ public final class ModBlocks {
     // the drill) and collide as the design is drawn there; the base lights the ground while it runs.
     public static final DeferredBlock<MegaDrillPartBlock> DRILL_FRAME = BLOCKS.register("drill_frame",
             () -> new MegaDrillPartBlock(drillProperties()));
+    // The piers the drill leaves under its feet as it mines down (design section 11c). Never an item:
+    // they are cast from the ground it stands on, so breaking one gives nothing.
+    public static final DeferredBlock<Block> DRILL_PIER = BLOCKS.register("drill_pier",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noLootTable()));
     public static final DeferredBlock<MegaDrillControllerBlock> MEGA_DRILL_CONTROLLER = BLOCKS.register("mega_drill_controller",
             () -> new MegaDrillControllerBlock(drillProperties()));
     // Creative-only: draws the mega drill's concept design round itself, running on a redstone signal.

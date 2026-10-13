@@ -18,7 +18,6 @@ Surfaces, and where each maps:
     well            the dark well the pot sits in
     glass           the sight glass, 8 x 3, cut out: clear but for two glints
     lid_plate       the pot's lid, 13 x 10, bolted round its edge
-    port            the drive head's top, 6 x 6: the charging port, where a pipe meets it
     rectifier_top   the rectifier's top, 13 x 4, with its vent slots
     label           the label plate on the pot's west flank, 4 x 2
     basket          the anode baskets' perforated steel, by position
@@ -147,22 +146,6 @@ def lid_plate():
     return t
 
 
-def port():
-    """The drive head's top, 6 x 6: the charging port, the family connector's flange and socket
-    at the drive head's size, lit top and left."""
-    t = Tex()
-    t.rect(0, 0, 5, 5, 'S')
-    t.rect(0, 0, 5, 0, 'b')
-    t.rect(0, 0, 0, 5, 'b')
-    t.rect(5, 1, 5, 5, 'U')
-    t.rect(1, 5, 5, 5, 'U')
-    t.rect(1, 1, 4, 4, 'T')
-    t.rect(2, 2, 3, 3, 'U')
-    t.rect(1, 1, 4, 1, 'k')
-    t.rect(1, 1, 1, 4, 'k')
-    return t
-
-
 def rectifier_top():
     """The rectifier's top, 13 x 4 (its front edge under the lid's back): light casing with a lit
     front and west edge, shaded east and back, and four vent slots in the middle."""
@@ -222,13 +205,12 @@ CRISP = {
     'salt': salt,
     'heater': heater,
     'glass': glass,
-    'port': port,
     'label': label,
     'dendrite': dendrite,
 }
 # Retired: the old sight window, a lid that shadowed the family's name, and the readout and lamp,
 # now the family's screen and lamp.
-RETIRED = ('window', 'window_on', 'lid', 'readout', 'readout_on', 'lamp')
+RETIRED = ('window', 'window_on', 'lid', 'readout', 'readout_on', 'lamp', 'port')
 
 
 def main():

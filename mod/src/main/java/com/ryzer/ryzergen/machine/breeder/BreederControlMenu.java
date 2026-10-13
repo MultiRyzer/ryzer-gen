@@ -1,5 +1,7 @@
 package com.ryzer.ryzergen.machine.breeder;
 
+import net.minecraft.world.inventory.DataSlot;
+import com.ryzer.ryzergen.machine.SoundSwitch;
 import com.ryzer.ryzergen.machine.RedstoneMode;
 import com.ryzer.ryzergen.machine.breeder.BreederReactor.Position;
 import com.ryzer.ryzergen.registry.ModMenus;
@@ -58,6 +60,8 @@ public class BreederControlMenu extends AbstractContainerMenu {
     private final @Nullable BreederCoreBlockEntity core;
     private final ContainerData data;
     private final ContainerLevelAccess access;
+    /** The machine's sound switch, for the screen's speaker key. */
+    private final DataSlot muted;
 
     /** Client side: a stand-in store whose rules read the plan from the synced data. */
     public BreederControlMenu(int containerId, Inventory inventory) {
@@ -98,6 +102,7 @@ public class BreederControlMenu extends AbstractContainerMenu {
             addSlot(new Slot(inventory, col, INVENTORY_X + col * 18, INVENTORY_Y + 58));
         }
         addDataSlots(data);
+        muted = addDataSlot(SoundSwitch.slot(access));
     }
 
     /** Where a position sits on screen: hex rows, half a slot apart, matching gui_textures.py (breeder_control). */
@@ -246,6 +251,9 @@ public class BreederControlMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
+        if (SoundSwitch.click(access, id)) {
+            return true;
+        }
         if (core == null) {
             return false;
         }
@@ -320,5 +328,10 @@ public class BreederControlMenu extends AbstractContainerMenu {
     public boolean stillValid(Player player) {
         return access.evaluate((level, pos) -> level.getBlockState(pos).getBlock() instanceof BreederCoreBlock
                 && level.getBlockState(pos).getValue(BreederPartBlock.FORMED) && player.distanceToSqr(pos.getCenter()) < 20 * 20, true);
+    }
+
+    /** Whether the machine's sound is muted (its screen's speaker key). */
+    public boolean muted() {
+        return muted.get() != 0;
     }
 }

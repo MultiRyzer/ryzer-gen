@@ -63,7 +63,12 @@ public final class MachineClock {
      * eases towards its look's (a machine that does not send its look shows working while it works).
      */
     public void animate(boolean working) {
-        spin += ((working ? 1 : 0) - spin) * 0.05F;
+        animate(working, 0);
+    }
+
+    /** As {@link #animate(boolean)}, the parts idling round at {@code idle} of full speed on standby (the drill's fans). */
+    public void animate(boolean working, float idle) {
+        spin += ((working ? 1 : look == Look.STANDBY ? idle : 0) - spin) * 0.05F;
         float hot = switch (working ? Look.WORKING : look) {
             case OFF -> 0;
             case STANDBY -> 0.45F;

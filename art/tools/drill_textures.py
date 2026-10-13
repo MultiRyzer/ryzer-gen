@@ -174,6 +174,39 @@ def panel_port(ring):
     return t
 
 
+def pier():
+    """The support piers the drill leaves under its feet as it mines down, a block each, stacked:
+    a concrete column cast in a steel jacket, graphite angle steel down both edges, and a bolted
+    strap round its middle, so a stack reads as one pier banded every block."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'I')
+    for y in range(16):
+        t.set(0, y, 'b')
+        t.set(1, y, 'S')
+        t.set(14, y, 'T')
+        t.set(15, y, 'U')
+    rows(t, ['S', 'b', 'S', 'T'], x0=2, x1=13, y0=6)
+    for x in (4, 11):
+        t.set(x, 7, 'L')
+        t.set(x, 8, 'U')
+    for x, y in ((5, 2), (10, 3), (7, 12), (11, 13), (4, 14)):
+        t.set(x, y, 'J')
+    return t
+
+
+def pier_top():
+    """A pier's top: concrete inside its graphite jacket, four rebar ends."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'I')
+    t.rect(0, 0, 15, 1, 'S')
+    t.rect(0, 14, 15, 15, 'T')
+    t.rect(0, 0, 1, 15, 'S')
+    t.rect(14, 0, 15, 15, 'T')
+    for x, y in ((5, 5), (10, 5), (5, 10), (10, 10)):
+        t.set(x, y, 'O')
+    return t
+
+
 def girder():
     """Drill frame as a block, before the drill forms: a graphite square frame (the lid's bevel and
     corner screws) round a dark inside, an angle-steel X brace across it, riveted at the cross."""
@@ -427,6 +460,45 @@ def stack_top():
     return t
 
 
+def fan_well():
+    """A cooling fan's shroud from above, its blades taken out (they turn, drawn over it): a graphite
+    rim round a dark well."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'K')
+    t.rect(0, 0, 15, 0, 'M')
+    t.rect(0, 0, 0, 15, 'M')
+    t.rect(1, 1, 14, 1, 'b')
+    t.rect(1, 1, 1, 14, 'b')
+    t.rect(0, 15, 15, 15, 'T')
+    t.rect(15, 0, 15, 15, 'T')
+    t.rect(1, 14, 14, 14, 'S')
+    t.rect(14, 1, 14, 14, 'S')
+    return t
+
+
+def blade():
+    """A fan blade: pale steel, lit along its leading edge."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'h')
+    t.rect(0, 0, 15, 0, 'H')
+    t.rect(0, 15, 15, 15, 'L')
+    return t
+
+
+def line(fill, light, shade, lit, dim):
+    """A service line, used from row 0 across a bar 4 wide: the mod's own pipe at the drill's scale,
+    its body lit along one edge, its band (the port's ring colour) down the middle, a joint ring
+    every block."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, fill)
+    t.rect(0, 0, 15, 0, light)
+    t.rect(0, 1, 15, 1, lit)
+    t.rect(0, 2, 15, 2, dim)
+    t.rect(0, 3, 15, 3, shade)
+    t.rect(15, 0, 15, 3, shade)
+    return t
+
+
 def duct():
     """The coolant duct up the column, a block each (6 and 8 wide, so it changes only down its
     height bar its lit left edge): clean copper, a joint at the foot of each block under its clamp."""
@@ -646,6 +718,25 @@ def screen():
     t.rect(5, 6, 10, 6, 'i')
     t.set(12, 6, 'j')
     t.set(13, 2, 'n')
+    return t
+
+
+def red_lamp(off=False):
+    """The aviation light's lens: deep red, a bright core. Off, dark red."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, '8' if off else 'x')
+    if not off:
+        t.rect(5, 5, 10, 10, 'e')
+    return t
+
+
+def flood(off=False):
+    """A floodlight's face, from below: a warm white lens in a graphite rim. Off, a dark grey glass."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'S')
+    t.rect(1, 1, 14, 14, 'D' if off else 'e')
+    if not off:
+        t.rect(3, 3, 12, 12, 'W')
     return t
 
 
@@ -935,6 +1026,12 @@ TEXTURES = {
     'stack_top': stack_top,
     'pulley': pulley,
     'duct': duct,
+    'fan_well': fan_well,
+    'blade': blade,
+    # The service lines up the tower, as the mod's energy cable, item pipe and fluid pipe.
+    'line_energy': lambda: line('S', 'b', 'U', 'x', '8'),
+    'line_items': lambda: line('F', 'A', 'J', 'X', 'Z'),
+    'line_fluid': lambda: line('F', 'A', 'J', 'i', 'f'),
     # bands
     'band': band,
     'band6': band6,
@@ -958,6 +1055,8 @@ TEXTURES = {
     'crust': crust,
     # the real drill's blocks before it forms, and its port consoles
     'girder': girder,
+    'pier': pier,
+    'pier_top': pier_top,
     'panel_screen': panel_screen,
     'panel_port_energy': lambda: panel_port(PORT_RINGS['energy']),
     'panel_port_water': lambda: panel_port(PORT_RINGS['water']),
@@ -979,6 +1078,10 @@ LIT = {
     'lamps_off': lambda: lamps(off=True),
     'screen': screen,
     'window': window,
+    'red_lamp': red_lamp,
+    'red_lamp_off': lambda: red_lamp(off=True),
+    'flood': flood,
+    'flood_off': lambda: flood(off=True),
     'window_off': lambda: window(off=True),
     'charge': charge,
     'charge_head': lambda: charge(head=True),

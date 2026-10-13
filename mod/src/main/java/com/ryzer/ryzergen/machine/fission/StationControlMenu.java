@@ -1,5 +1,7 @@
 package com.ryzer.ryzergen.machine.fission;
 
+import net.minecraft.world.inventory.DataSlot;
+import com.ryzer.ryzergen.machine.SoundSwitch;
 import com.ryzer.ryzergen.advancement.Milestone;
 import com.ryzer.ryzergen.registry.ModTriggers;
 import net.minecraft.server.level.ServerPlayer;
@@ -65,6 +67,8 @@ public class StationControlMenu extends AbstractContainerMenu {
     private final @Nullable StationCoreBlockEntity core;
     private final ContainerData data;
     private final ContainerLevelAccess access;
+    /** The machine's sound switch, for the screen's speaker key. */
+    private final DataSlot muted;
 
     /** Client side: a stand-in store whose rules read the plan from the synced data. */
     public StationControlMenu(int containerId, Inventory inventory) {
@@ -105,6 +109,7 @@ public class StationControlMenu extends AbstractContainerMenu {
             addSlot(new Slot(inventory, col, INVENTORY_X + col * 18, INVENTORY_Y + 58));
         }
         addDataSlots(data);
+        muted = addDataSlot(SoundSwitch.slot(access));
     }
 
     /** Where a channel sits on screen: front row at the bottom, as the player at the front sees it. */
@@ -251,6 +256,9 @@ public class StationControlMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
+        if (SoundSwitch.click(access, id)) {
+            return true;
+        }
         if (core == null) {
             return false;
         }
@@ -328,5 +336,10 @@ public class StationControlMenu extends AbstractContainerMenu {
     public boolean stillValid(Player player) {
         return access.evaluate((level, pos) -> level.getBlockState(pos).getBlock() instanceof StationCoreBlock
                 && level.getBlockState(pos).getValue(StationPartBlock.FORMED) && player.distanceToSqr(pos.getCenter()) < 20 * 20, true);
+    }
+
+    /** Whether the machine's sound is muted (its screen's speaker key). */
+    public boolean muted() {
+        return muted.get() != 0;
     }
 }

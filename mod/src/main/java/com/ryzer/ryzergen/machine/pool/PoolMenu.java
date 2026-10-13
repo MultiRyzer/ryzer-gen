@@ -1,5 +1,7 @@
 package com.ryzer.ryzergen.machine.pool;
 
+import net.minecraft.world.inventory.DataSlot;
+import com.ryzer.ryzergen.machine.SoundSwitch;
 import com.ryzer.ryzergen.registry.ModMenus;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -24,6 +26,8 @@ import static com.ryzer.ryzergen.machine.pool.PoolControllerBlockEntity.*;
 public class PoolMenu extends AbstractContainerMenu {
     private final ContainerData data;
     private final ContainerLevelAccess access;
+    /** The machine's sound switch, for the screen's speaker key. */
+    private final DataSlot muted;
 
     public PoolMenu(int containerId, Inventory inventory) {
         this(containerId, inventory, new ItemStackHandler(RACKS) {
@@ -62,6 +66,7 @@ public class PoolMenu extends AbstractContainerMenu {
         }
         addInventory(this::addSlot, inventory);
         addDataSlots(data);
+        muted = addDataSlot(SoundSwitch.slot(access));
     }
 
     /** The player's inventory and hotbar, as every Ryzer Gen screen of this height has them. */
@@ -113,5 +118,15 @@ public class PoolMenu extends AbstractContainerMenu {
     public boolean stillValid(Player player) {
         return access.evaluate((level, pos) -> level.getBlockState(pos).getBlock() instanceof PoolControllerBlock
                 && player.canInteractWithBlock(pos, 8.0), true);
+    }
+
+    /** Whether the machine's sound is muted (its screen's speaker key). */
+    public boolean muted() {
+        return muted.get() != 0;
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        return SoundSwitch.click(access, id);
     }
 }

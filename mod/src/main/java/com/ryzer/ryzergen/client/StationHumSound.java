@@ -38,7 +38,7 @@ public class StationHumSound extends AbstractTickableSoundInstance {
 
     @Override
     public void tick() {
-        if (core.isRemoved() || !core.isFormed() || core.spin() < QUIET) {
+        if (core.isRemoved() || !core.isFormed() || core.spin() < QUIET || core.sound().muted()) {
             stop();
             return;
         }
@@ -47,7 +47,7 @@ public class StationHumSound extends AbstractTickableSoundInstance {
 
     /** Starts the hum when the rotor turns and none is playing. */
     public static void update(StationCoreBlockEntity core) {
-        if (core.spin() < QUIET) {
+        if (core.spin() < QUIET || core.sound().muted()) {
             return;
         }
         // A sound just started can read as inactive for a moment, so only re-check now and then.

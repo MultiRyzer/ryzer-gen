@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.processing;
 
+import com.ryzer.ryzergen.client.SoundTab;
 import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.client.GuiGauges;
 import com.ryzer.ryzergen.machine.processing.ProcessingBlockEntity.Status;
@@ -24,7 +25,7 @@ import java.util.Locale;
  * The fuel cycle machines' screen. Positions match art/tools/gui_textures.py (processing()), which
  * draws one texture per machine at textures/gui/&lt;machine&gt;.png.
  */
-public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
+public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> implements SoundTab.Host {
     private static final int LABEL = 0xFF2B3036;
     private static final int DIM = 0xFF9AA3AE;
     private static final int GOOD = 0xFF44D65E;
@@ -79,6 +80,7 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         graphics.blit(texture, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        SoundTab.render(graphics, leftPos, topPos, imageWidth, soundTabY(), menu.muted(), mouseX, mouseY);
         int arrow = Mth.ceil(menu.progress() * 24);
         graphics.blit(texture, leftPos + ARROW_X, topPos + ARROW_Y, 176, SPRITE_ARROW_V, arrow, 17);
         GuiGauges.glow(graphics, leftPos + ENERGY_X, topPos + WELL_Y, 8, WELL_H,
@@ -165,6 +167,7 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
+        SoundTab.tooltip(graphics, font, leftPos, topPos, imageWidth, soundTabY(), menu.muted(), mouseX, mouseY);
         renderTooltip(graphics, mouseX, mouseY);
         int mx = mouseX - leftPos;
         int my = mouseY - topPos;
@@ -226,6 +229,9 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && SoundTab.click(menu, leftPos, topPos, imageWidth, soundTabY(), mouseX, mouseY)) {
+            return true;
+        }
         if (button == 0 && minecraft != null && minecraft.gameMode != null) {
             int id = isOver(KEY_X, POWER_Y, mouseX, mouseY) ? ProcessingMenu.BUTTON_POWER
                     : isOver(KEY_X, REDSTONE_Y, mouseX, mouseY) ? ProcessingMenu.BUTTON_REDSTONE
@@ -237,5 +243,11 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    /** The sound switch's tab on the panel's right edge (under the auto output tab). */
+    @Override
+    public int soundTabY() {
+        return TAB_Y + TAB_H + 2;
     }
 }

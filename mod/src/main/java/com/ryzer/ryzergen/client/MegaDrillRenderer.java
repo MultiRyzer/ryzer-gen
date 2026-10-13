@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.ryzer.ryzergen.RyzerGen;
+import com.ryzer.ryzergen.machine.MachineClock;
 import com.ryzer.ryzergen.machine.drill.DrillPhase;
 import com.ryzer.ryzergen.machine.drill.MegaDrillLayout;
 import com.ryzer.ryzergen.machine.drill.MegaDrillView;
@@ -42,7 +43,8 @@ import java.util.List;
 public class MegaDrillRenderer<T extends BlockEntity & MegaDrillView> implements BlockEntityRenderer<T> {
     /** Half the design's footprint, in blocks (it is 9 across, centred on the middle block). */
     private static final float HALF = 4.5F;
-    private static final float HEIGHT = 16;
+    /** The design's height in blocks, to the aviation light on its crown. */
+    private static final float HEIGHT = 17;
     // The design's parts the cycle lights, in its pixels (see mega_drill_concept.py).
     private static final float C = 72;
     private static final float SHAFT_TOP = 168;
@@ -59,6 +61,14 @@ public class MegaDrillRenderer<T extends BlockEntity & MegaDrillView> implements
     private static final float SHAFT_SHARE = 0.8F;
     /** Ticks the beam takes to reach the ground once it fires. */
     private static final float SHOOT_TICKS = 4;
+    /** The roof fans' hubs (the design's fan_0 and fan_1), and how far they turn a beat of the clock. */
+    private static final float[] FAN_X = {54, 90};
+    private static final float FAN_Z = 53;
+    private static final float FAN_DEGREES = 24;
+    /** How fast the beacons' sweep goes round, in radians a tick. */
+    private static final float BEACON_TURN = 0.25F;
+    /** A lamp or lens unlit: its lit texture darkened to this. */
+    private static final float DIM = 0.22F;
 
     private static final ResourceLocation CHARGE = ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "block/drill/charge");
     private static final ResourceLocation CHARGE_HEAD = ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "block/drill/charge_head");
@@ -112,6 +122,7 @@ public class MegaDrillRenderer<T extends BlockEntity & MegaDrillView> implements
             StationRenderer.draw(cutout, pose, body, light);
         }
         StationRenderer.draw(cutout, pose, StationGeometry.group(StationGeometry.MEGA_DRILL, running ? "on" : "off"), light);
+        life(drill, running, time + partialTick, partialTick, pose, cutout, light);
         float shaft = phase == DrillPhase.CHARGING ? Math.min(1, progress / SHAFT_SHARE) : phase == DrillPhase.FIRING ? 1 : 0;
         if (shaft > 0) {
             StationRenderer.draw(cutout, pose, charge(shaft), light);
@@ -142,6 +153,53 @@ public class MegaDrillRenderer<T extends BlockEntity & MegaDrillView> implements
             pose.popPose();
         }
         pose.popPose();
+    }
+
+    /**
+     * What keeps the drill alive between shots, from the design's own groups: the roof fans turning
+     * with the drill's clock (up to speed while it runs, idling round on standby), the corner beacons
+     * sweeping their light round while it runs, the aviation light on the crown blinking, and the
+     * console's three lamps showing its look: green working, amber breathing while it waits, red
+     * blinking while it is short of power. The pose is the design's (place).
+     */
+    private static void life(MegaDrillView drill, boolean running, float time, float partialTick, PoseStack pose, VertexConsumer cutout, int light) {
+        MachineClock clock = drill.drillClock();
+        double beat = clock.beat(partialTick);
+        for (int k = 0; k < FAN_X.length; k++) {
+            float angle = (float) (beat * FAN_DEGREES % 360) * (k == 0 ? 1 : -1);
+            pose.pushPose();
+            pose.translate(FAN_X[k] / 16, 0, FAN_Z / 16);
+            pose.mulPose(Axis.YP.rotationDegrees(angle));
+            pose.translate(-FAN_X[k] / 16, 0, -FAN_Z / 16);
+            StationRenderer.draw(cutout, pose, StationGeometry.group(StationGeometry.MEGA_DRILL, "fan_" + k), light);
+            pose.popPose();
+        }
+        // Each beacon's sides catch the sweep as it comes round (one turn in about a second and a half).
+        float sweep = time * BEACON_TURN;
+        for (StationGeometry.Quad quad : StationGeometry.group(StationGeometry.MEGA_DRILL, "beacon")) {
+            float b = DIM;
+            if (running) {
+                float c = Mth.cos((float) Math.atan2(quad.normal()[2], quad.normal()[0]) - sweep);
+                b = 0.3F + 0.7F * c * c * c * (c > 0 ? 1 : 0);
+            }
+            StationRenderer.draw(cutout, pose, List.of(quad), light, grey(b));
+        }
+        boolean blink = time % 30 < 6;
+        StationRenderer.draw(cutout, pose, StationGeometry.group(StationGeometry.MEGA_DRILL, "aviation"), light, grey(blink ? 1 : DIM));
+        MachineClock.Look look = running ? MachineClock.Look.WORKING : clock.look();
+        float breathe = 0.35F + 0.65F * (0.5F + 0.5F * Mth.cos(time * Mth.TWO_PI / 50));
+        float[] lamps = {
+                look == MachineClock.Look.WORKING ? 1 : DIM,
+                look == MachineClock.Look.STANDBY ? breathe : DIM,
+                look == MachineClock.Look.STARVED && (int) (time / 5) % 2 == 0 ? 1 : DIM,
+        };
+        for (int k = 0; k < lamps.length; k++) {
+            StationRenderer.draw(cutout, pose, StationGeometry.group(StationGeometry.MEGA_DRILL, "lamp_" + k), light, grey(lamps[k]));
+        }
+    }
+
+    private static int grey(float b) {
+        return FastColor.ARGB32.colorFromFloat(1, b, b, b);
     }
 
     /** The charge on the drive shaft's ribs, lit from the top down to `fraction` of the way, a white-hot head at its front. */

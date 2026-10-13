@@ -1,5 +1,7 @@
 package com.ryzer.ryzergen.machine.microreactor;
 
+import net.minecraft.world.inventory.DataSlot;
+import com.ryzer.ryzergen.machine.SoundSwitch;
 import com.ryzer.ryzergen.advancement.Milestone;
 import com.ryzer.ryzergen.registry.ModTriggers;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,6 +38,8 @@ public class MicroreactorMenu extends AbstractContainerMenu {
     private final ReactorHeartBlockEntity heart;
     private final ContainerData data;
     private final ContainerLevelAccess access;
+    /** The machine's sound switch, for the screen's speaker key. */
+    private final DataSlot muted;
 
     /** Client side: the slot contents and readings arrive from the server. */
     public MicroreactorMenu(int containerId, Inventory inventory) {
@@ -61,6 +65,7 @@ public class MicroreactorMenu extends AbstractContainerMenu {
             addSlot(new Slot(inventory, col, 8 + col * 18, 164));
         }
         addDataSlots(data);
+        muted = addDataSlot(SoundSwitch.slot(access));
     }
 
     public int energy() {
@@ -124,6 +129,9 @@ public class MicroreactorMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
+        if (SoundSwitch.click(access, id)) {
+            return true;
+        }
         if (heart == null) {
             return false;
         }
@@ -182,5 +190,10 @@ public class MicroreactorMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return stillValid(access, player, ModBlocks.REACTOR_HEART.get());
+    }
+
+    /** Whether the machine's sound is muted (its screen's speaker key). */
+    public boolean muted() {
+        return muted.get() != 0;
     }
 }

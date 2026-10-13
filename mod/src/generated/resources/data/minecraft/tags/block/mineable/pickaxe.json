@@ -41,6 +41,7 @@
     "ryzergen:breeder_shell",
     "ryzergen:mega_drill_controller",
     "ryzergen:drill_frame",
+    "ryzergen:drill_pier",
     "ryzergen:uranium_ore",
     "ryzergen:deepslate_uranium_ore",
     "ryzergen:lead_ore",

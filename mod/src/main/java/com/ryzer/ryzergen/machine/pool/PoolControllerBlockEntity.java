@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.machine.pool;
 
+import com.ryzer.ryzergen.machine.SoundSwitch;
 import com.ryzer.ryzergen.registry.ModParticles;
 import com.ryzer.ryzergen.Config;
 import com.ryzer.ryzergen.client.PoolGhostPreview;
@@ -47,7 +48,15 @@ import java.util.List;
  * racks; decay heat boils the water off, more the more it holds; cooled fuel moves to the output
  * slots, which the output port pushes out and pipes can pull from.
  */
-public class PoolControllerBlockEntity extends BlockEntity implements MenuProvider {
+public class PoolControllerBlockEntity extends BlockEntity implements MenuProvider, SoundSwitch.Holder {
+    /** Its sound switch (the speaker key on its screen): muted, its running sounds stop. */
+    private final SoundSwitch sound = new SoundSwitch(this);
+
+    @Override
+    public SoundSwitch sound() {
+        return sound;
+    }
+
     public static final int PART_SLOTS = 9;
     public static final int RACKS = 18;
     public static final int OUTPUTS = 6;
@@ -448,7 +457,9 @@ public class PoolControllerBlockEntity extends BlockEntity implements MenuProvid
             if (ItemHandlerHelper.insertItemStacked(output, cooled, true).isEmpty()) {
                 ItemHandlerHelper.insertItemStacked(output, cooled, false);
                 racks.setStackInSlot(slot, ItemStack.EMPTY);
-                level.playSound(null, worldPosition, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 0.4F, 1.2F);
+                if (!sound.muted()) {
+                    level.playSound(null, worldPosition, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 0.4F, 1.2F);
+                }
                 // The crane lifts it out: players see it run to the rack and carry a rod to the output.
                 if (level.getGameTime() - craneLast >= CRANE_EVERY) {
                     craneLast = level.getGameTime();
@@ -643,6 +654,7 @@ public class PoolControllerBlockEntity extends BlockEntity implements MenuProvid
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = new CompoundTag();
         tag.putIntArray("rods", rods);
+        sound.save(tag);
         return tag;
     }
 
@@ -653,6 +665,7 @@ public class PoolControllerBlockEntity extends BlockEntity implements MenuProvid
 
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        sound.load(tag);
         int[] sent = tag.getIntArray("rods");
         System.arraycopy(sent, 0, rods, 0, Math.min(sent.length, RACKS));
     }
@@ -679,6 +692,7 @@ public class PoolControllerBlockEntity extends BlockEntity implements MenuProvid
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        sound.save(tag);
         tag.put("parts", parts.serializeNBT(registries));
         tag.put("racks", racks.serializeNBT(registries));
         tag.put("output", output.serializeNBT(registries));
@@ -690,6 +704,7 @@ public class PoolControllerBlockEntity extends BlockEntity implements MenuProvid
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        sound.load(tag);
         parts.deserializeNBT(registries, tag.getCompound("parts"));
         racks.deserializeNBT(registries, tag.getCompound("racks"));
         output.deserializeNBT(registries, tag.getCompound("output"));
