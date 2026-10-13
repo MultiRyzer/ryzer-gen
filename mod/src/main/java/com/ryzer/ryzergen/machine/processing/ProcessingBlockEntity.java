@@ -304,6 +304,11 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider, 
         handleUpdateTag(packet.getTag(), registries);
     }
 
+    /** Work done on the current job, in ticks of work. */
+    public int progress() {
+        return progress;
+    }
+
     /** Speed modules fitted, 0 to {@link ProcessingMachine#MAX_MODULES}. */
     public int modules() {
         return Math.min(ProcessingMachine.MAX_MODULES, items.getStackInSlot(machine.upgradeSlot()).getCount());
@@ -449,6 +454,9 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider, 
         boolean powered = level.hasNeighborSignal(pos) || (machine.tall() && level.hasNeighborSignal(pos.above()));
         Status before = status;
         boolean working = false;
+        // Taken every tick, so it always covers the last two, whatever the machine is doing.
+        int intake = energy.takeIntake();
+        int draw = energyPerTick(machine, modules());
         if (!enabled) {
             status = Status.OFF;
         } else if (!redstoneMode.allows(powered)) {
@@ -457,8 +465,8 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider, 
             status = thirsty ? Status.NO_WATER : Status.IDLE;
         } else if (!hasRoomFor(recipe)) {
             status = Status.OUTPUT_FULL;
-        } else if (!energy.consume(energyPerTick(machine, modules()))) {
-            status = machine.gated() && energy.getEnergyStored() > 0 ? Status.UNDERPOWERED : Status.NO_POWER;
+        } else if ((machine.gated() && intake < ProcessingMachine.GATED_BUFFER_TICKS * draw) || !energy.consume(draw)) {
+            status = machine.gated() && (energy.getEnergyStored() > 0 || intake > 0) ? Status.UNDERPOWERED : Status.NO_POWER;
             if (machine.gated()) {
                 // Short of the full draw: no progress, and what did arrive is spent anyway.
                 energy.drain();

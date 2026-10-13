@@ -21,11 +21,13 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
  * Electrorefiner, tier 4's, needs fission power (rule 7).
  *
  * <p>A gated machine (power is the price, design section 5) makes a key material for the next tier.
- * Its draw is also its minimum: its buffer holds only {@link #GATED_BUFFER_TICKS} ticks of it, and a
- * tick without the full draw makes no progress while the power it did get is spent anyway. Real
- * basis: a process that needs a threshold (a furnace's heat, a column's cold) gets nowhere below it
- * but still burns what it is given. So a trickle cannot bank up, and only the current tier's power
- * can run it.
+ * Its draw is also its minimum, and the gate measures the supply it gets, not what it has stored: it
+ * works a tick only when its full draw arrived over the last {@link #GATED_BUFFER_TICKS} ticks (its
+ * buffer holds that much, to ride out cable timing), and a tick short of it makes no progress while
+ * what it did get is spent anyway. Real basis: a process that needs a threshold (a furnace's heat, a
+ * column's cold) gets nowhere below it but still burns what it is given. So a trickle cannot bank up,
+ * not even while the machine is off or idle and then switched on (a redstone clock), and only the
+ * current tier's power can run it.
  */
 public enum ProcessingMachine {
     /** Crushes depleted fuel cores open: spent kernels out, graphite and steel back. */
