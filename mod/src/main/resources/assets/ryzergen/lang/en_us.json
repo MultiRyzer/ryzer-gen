@@ -226,7 +226,7 @@
   "gui.ryzergen.power.hint": "Starts or stops it",
   "gui.ryzergen.sound.on": "Sound: on",
   "gui.ryzergen.sound.off": "Sound: muted",
-  "gui.ryzergen.sound.hint": "Mutes its running sound. Alarms and warnings still sound",
+  "gui.ryzergen.sound.hint": "Mutes its sounds. Meltdown alarms still sound",
   "gui.ryzergen.microreactor.power.hint": "Stops or starts the reactor: a stop costs part of its steady-state streak",
   "gui.ryzergen.redstone.ignored": "Redstone: ignored",
   "gui.ryzergen.redstone.high": "Redstone: runs with a signal",

@@ -192,6 +192,7 @@ public class StationCoreBlockEntity extends BlockEntity implements MenuProvider,
     public static void serverTick(Level level, BlockPos pos, BlockState state, StationCoreBlockEntity core) {
         if (state.getValue(StationPartBlock.FORMED)) {
             double[] centre = core.centre();
+            core.runner.quiet = core.sound.muted();
             core.runner.tick((ServerLevel) level, pos, core.facing(), new net.minecraft.world.phys.Vec3(centre[0], pos.getY() + 3, centre[1]));
             // A meltdown takes the station apart; nothing left to light.
             if (!(level.getBlockEntity(pos) instanceof StationCoreBlockEntity)) {

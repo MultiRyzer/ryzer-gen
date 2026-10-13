@@ -273,7 +273,7 @@ public class BreederRunner {
     int pumping;
     int efficiencyPermille;
 
-    /** Set each tick by the core from its sound switch: muted, the fire's roar is not played. */
+    /** Set each tick by the core from its sound switch: muted, the fire's roar is not played and the announcer keeps quiet. */
     boolean quiet;
 
     BreederRunner(Runnable changed) {
@@ -345,6 +345,7 @@ public class BreederRunner {
 
     /** One tick. {@code centre} is the middle of the reactor, for radiation and the sodium fire. */
     void tick(ServerLevel level, BlockPos core, Direction facing, Vec3 centre) {
+        announcer.mute(quiet);
         BreederReactor.Analysis analysis = BreederReactor.analyse(types, items());
         boolean allowed = enabled && redstoneMode.allows(level.hasNeighborSignal(core));
         boolean filled = sodium.getFluidAmount() >= BreederReactor.LOOP;

@@ -9,9 +9,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
  * A machine's sound switch, the speaker key in a tab on its screen's right edge (client.SoundTab).
- * Muted, its running sounds stop (a working loop, a hum, a fire's roar); its alarms and spoken
- * warnings still sound, so a muted machine can still tell you something is wrong. Kept with the
- * block entity and saved with it, and sent to clients in its update tag, as the loops play there.
+ * Muted, it goes quiet (a working loop, a hum, a fire's roar, its announcer) but for meltdown
+ * alarms: the microreactor's coolant-loss alarm, the station's alarm once it heads for meltdown,
+ * and the spoken meltdown warning, so a muted reactor still warns before it melts down. Kept with
+ * the block entity and saved with it, and sent to clients in its update tag, as the loops play there.
  */
 public final class SoundSwitch {
     /** The menu button that toggles it, the same on every machine's menu and clear of their own. */
