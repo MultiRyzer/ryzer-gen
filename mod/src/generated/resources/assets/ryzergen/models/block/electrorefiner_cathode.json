@@ -1,0 +1,108 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#metal"
+        },
+        "east": {
+          "texture": "#metal"
+        },
+        "north": {
+          "texture": "#metal"
+        },
+        "south": {
+          "texture": "#metal"
+        },
+        "up": {
+          "texture": "#metal"
+        },
+        "west": {
+          "texture": "#metal"
+        }
+      },
+      "from": [
+        10.5,
+        9.5,
+        3.25
+      ],
+      "to": [
+        11.5,
+        14.5,
+        4.25
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#dendrite"
+        },
+        "east": {
+          "texture": "#dendrite"
+        },
+        "north": {
+          "texture": "#dendrite"
+        },
+        "south": {
+          "texture": "#dendrite"
+        },
+        "up": {
+          "texture": "#dendrite"
+        },
+        "west": {
+          "texture": "#dendrite"
+        }
+      },
+      "from": [
+        10.25,
+        9,
+        3
+      ],
+      "to": [
+        11.75,
+        10.75,
+        4.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#accent"
+        },
+        "east": {
+          "texture": "#accent"
+        },
+        "north": {
+          "texture": "#accent"
+        },
+        "south": {
+          "texture": "#accent"
+        },
+        "up": {
+          "texture": "#accent"
+        },
+        "west": {
+          "texture": "#accent"
+        }
+      },
+      "from": [
+        10,
+        14.25,
+        3
+      ],
+      "to": [
+        12,
+        14.75,
+        4.5
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "accent": "ryzergen:block/machine/family/accent",
+    "dendrite": "ryzergen:block/machine/electrorefiner/dendrite",
+    "metal": "ryzergen:block/machine/family/metal",
+    "particle": "ryzergen:block/machine/electrorefiner/cell"
+  }
+}

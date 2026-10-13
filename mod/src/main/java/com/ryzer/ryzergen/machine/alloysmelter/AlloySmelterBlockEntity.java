@@ -1,5 +1,7 @@
 package com.ryzer.ryzergen.machine.alloysmelter;
 
+import com.ryzer.ryzergen.machine.AnimatedMachine;
+import com.ryzer.ryzergen.machine.MachineClock;
 import com.ryzer.ryzergen.machine.MachineItemPort;
 import com.ryzer.ryzergen.recipe.AlloyingRecipe;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
@@ -32,7 +34,10 @@ import org.jetbrains.annotations.Nullable;
  * from the top, fuel in from the sides, and the output comes out of any side (only the output, so
  * a pipe set to extract never pulls ingredients or fuel).
  */
-public class AlloySmelterBlockEntity extends BlockEntity implements MenuProvider {
+public class AlloySmelterBlockEntity extends BlockEntity implements MenuProvider, AnimatedMachine {
+    /** The client's clock its moving parts follow (MachineMotion). */
+    private final MachineClock clock = new MachineClock();
+
     public static final int INPUT_A = 0;
     public static final int INPUT_B = 1;
     public static final int FUEL = 2;
@@ -204,6 +209,16 @@ public class AlloySmelterBlockEntity extends BlockEntity implements MenuProvider
         for (int slot = 0; slot < SLOTS; slot++) {
             Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), items.getStackInSlot(slot));
         }
+    }
+
+    @Override
+    public MachineClock clock() {
+        return clock;
+    }
+
+    @Override
+    public String motionId() {
+        return "alloy_smelter";
     }
 
     @Override

@@ -71,7 +71,7 @@
               "texture": "#liner"
             },
             "south": {
-              "texture": "#panel_12x13",
+              "texture": "#base_12x13",
               "uv": [
                 0.0,
                 0.0,
@@ -103,7 +103,7 @@
               "texture": "#liner"
             },
             "east": {
-              "texture": "#panel_14x13",
+              "texture": "#base_14x13",
               "uv": [
                 0.0,
                 0.0,
@@ -130,7 +130,7 @@
             1
           ],
           "to": [
-            15.5,
+            14.5,
             15,
             15
           ]
@@ -570,13 +570,13 @@
       ],
       "render_type": "minecraft:cutout",
       "textures": {
+        "base_12x13": "ryzergen:block/pool/base_12x13",
+        "base_14x13": "ryzergen:block/pool/base_14x13",
         "bright": "ryzergen:block/machine/family/bright",
         "copper": "ryzergen:block/machine/family/copper",
         "hazard": "ryzergen:block/machine/family/hazard",
         "liner": "ryzergen:block/pool/liner",
         "mitreup_4x4": "ryzergen:block/pool/mitreup_4x4",
-        "panel_12x13": "ryzergen:block/pool/panel_12x13",
-        "panel_14x13": "ryzergen:block/pool/panel_14x13",
         "pipex_24x4": "ryzergen:block/pool/pipex_24x4",
         "pipex_4x4": "ryzergen:block/pool/pipex_4x4",
         "pipey_4x14": "ryzergen:block/pool/pipey_4x14",

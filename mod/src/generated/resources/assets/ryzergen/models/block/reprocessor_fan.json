@@ -1,0 +1,107 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#metal"
+        },
+        "east": {
+          "texture": "#metal"
+        },
+        "north": {
+          "texture": "#metal"
+        },
+        "south": {
+          "texture": "#metal"
+        },
+        "up": {
+          "texture": "#metal"
+        },
+        "west": {
+          "texture": "#metal"
+        }
+      },
+      "from": [
+        0.1,
+        7.6,
+        6.6
+      ],
+      "to": [
+        0.5,
+        8.4,
+        9.4
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#metal"
+        },
+        "east": {
+          "texture": "#metal"
+        },
+        "north": {
+          "texture": "#metal"
+        },
+        "south": {
+          "texture": "#metal"
+        },
+        "up": {
+          "texture": "#metal"
+        },
+        "west": {
+          "texture": "#metal"
+        }
+      },
+      "from": [
+        0.15,
+        6.6,
+        7.6
+      ],
+      "to": [
+        0.45,
+        9.4,
+        8.4
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#accent"
+        },
+        "east": {
+          "texture": "#accent"
+        },
+        "north": {
+          "texture": "#accent"
+        },
+        "south": {
+          "texture": "#accent"
+        },
+        "up": {
+          "texture": "#accent"
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#accent"
+        }
+      },
+      "from": [
+        0,
+        7.5,
+        7.5
+      ],
+      "to": [
+        0.55,
+        8.5,
+        8.5
+      ]
+    }
+  ],
+  "textures": {
+    "accent": "ryzergen:block/machine/family/accent",
+    "metal": "ryzergen:block/machine/family/metal",
+    "particle": "ryzergen:block/machine/family/metal"
+  }
+}

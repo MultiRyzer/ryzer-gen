@@ -367,7 +367,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         BoxModel boxes = new BoxModel();
         boxes.add("skid", 0, 0, 0, 16, 2, 16);
         serviceFrame(boxes, 9, 2, "lpanel_13x12", 2);
-        boxes.add("cabinet", 3.5F, 10.5F, 8.5F, 12.5F, 12.5F, 9).decal(Direction.NORTH, "screen").glow(Direction.NORTH);
+        boxes.add("cabinet", 3.5F, 10.5F, 8.5F, 12.5F, 12.5F, 9).decal(Direction.NORTH, active ? "screen_on" : "screen").glow(Direction.NORTH);
         lampStrip(boxes, active, 2, 13.25F, 8.75F, 14, 13.75F, 9);
         boxes.add("cabinet", 14.5F, 5, 10, 15, 11, 14).decal(Direction.EAST, "vent");
         boxes.add("cabinet", 1, 5, 10, 1.5F, 11, 14).decal(Direction.WEST, "vent");
@@ -397,7 +397,23 @@ public class ModBlockStateProvider extends BlockStateProvider {
         return model;
     }
 
+    /**
+     * The Intake Pump's coupling, in the motor stool between pump and motor: the shaft and the two
+     * coupling halves, bolted, which MachineMotion turns about the shaft (x 8, z 8). Square, so it
+     * reads as turning.
+     */
+    private void intakePumpCoupling() {
+        BoxModel boxes = new BoxModel();
+        boxes.add("bright", 7.25F, 7.5F, 7.25F, 8.75F, 9.5F, 8.75F);
+        boxes.add("accent", 5.5F, 7.75F, 5.5F, 10.5F, 8.35F, 10.5F);
+        boxes.add("accent", 5.5F, 8.65F, 5.5F, 10.5F, 9.25F, 10.5F);
+        boxes.add("bright", 5.25F, 7.9F, 7.5F, 5.5F, 9.1F, 8.5F);
+        boxes.add("bright", 10.5F, 7.9F, 7.5F, 10.75F, 9.1F, 8.5F);
+        boxes.build(boxModel("intake_pump_coupling"), "bright", machineParts("intake_pump"));
+    }
+
     private void intakePump() {
+        intakePumpCoupling();
         Block block = ModBlocks.INTAKE_PUMP.get();
         ModelFile off = intakePumpModel("intake_pump", false);
         ModelFile on = intakePumpModel("intake_pump_on", true);
@@ -421,9 +437,16 @@ public class ModBlockStateProvider extends BlockStateProvider {
         boxes.add("metal", 2, 2, 3.5F, 14, 6.5F, 12.5F);
         lampStrip(boxes, running, 3, 5, 2.25F, 13, 5.5F, 2.5F);
         boxes.add("bright", 3.5F, 7, 3.5F, 12.5F, 7.5F, 12.5F);
+        // The motor stool: four legs up from the pump's flange, open between them so the coupling
+        // (intakePumpCoupling, turned by MachineMotion) shows as it turns.
+        for (float x : new float[] {4, 11}) {
+            for (float z : new float[] {4, 11}) {
+                boxes.add("metal", x, 7.5F, z, x + 1, 9.5F, z + 1);
+            }
+        }
         // The motor.
-        boxes.add("motor", 4, 7.5F, 4, 12, 14, 12);
-        boxes.add("motor", 3.5F, 7.5F, 4.75F, 12.5F, 13.75F, 11.25F);
+        boxes.add("motor", 4, 9.5F, 4, 12, 14, 12);
+        boxes.add("motor", 3.5F, 9.5F, 4.75F, 12.5F, 13.75F, 11.25F);
         boxes.add("fan_cover", 4.5F, 14, 4.5F, 11.5F, 15, 11.5F);
         // Water leaves by the top: the discharge flange a pipe meets, on a neck through the fan cover.
         topConnector(boxes, 15, 16);
@@ -571,7 +594,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     /** The machine family's shared textures (art/tools/machine_family.py). */
     private static final java.util.Set<String> FAMILY = java.util.Set.of(
-            "skid", "cabinet", "lid", "screen", "vent", "metal", "bright", "copper", "accent", "hazard", "connector");
+            "skid", "cabinet", "lid", "screen", "screen_on", "vent", "metal", "bright", "copper", "accent", "hazard", "connector");
 
     /*
      * Where pipes meet a single-block machine. Pipes and cables connect on any side (MachineItemPort),
@@ -675,7 +698,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         boxes.add("accent", 15, 6.75F, 7.25F, 15.4F, 8.25F, 8.75F);
         // Front: the panel with its screen and light strip, and the chute below.
         boxes.add("cabinet", 3.25F, 5.5F, 2.5F, 12.75F, 9, 3);
-        boxes.add("cabinet", 3.5F, 6.5F, 2.25F, 12.5F, 8.5F, 2.5F).decal(Direction.NORTH, "screen").glow(Direction.NORTH);
+        boxes.add("cabinet", 3.5F, 6.5F, 2.25F, 12.5F, 8.5F, 2.5F).decal(Direction.NORTH, active ? "screen_on" : "screen").glow(Direction.NORTH);
         lampStrip(boxes, active, 3.5F, 9.5F, 2.75F, 12.5F, 10, 3);
         boxes.add("metal", 5, 2, 1.5F, 11, 5, 3).decal(Direction.NORTH, "chute");
         boxes.add("accent", 5, 4.75F, 1.25F, 11, 5.25F, 1.5F);
@@ -756,12 +779,30 @@ public class ModBlockStateProvider extends BlockStateProvider {
         boxes.add("copper", 13, 25, 7.25F, 14.25F, 26.5F, 8.75F);
         boxes.add("bright", 12.9F, 24.75F, 7, 13.4F, 26.75F, 9);
         boxes.add("lid", 3.5F, 30, 3.5F, 12.5F, 31, 12.5F);
+        // The dissolver's side-entry agitator: its motor on the west flank on a bracket, its fan
+        // (reprocessorFan, turned by MachineMotion) on the motor's west end.
+        boxes.add("metal", 1, 5.5F, 6.5F, 2, 6, 9.5F);
+        boxes.add("metal", 0.75F, 6, 6, 2, 10, 10);
+        boxes.add("bright", 0.5F, 6.5F, 6.5F, 0.75F, 9.5F, 9.5F);
         topConnector(boxes, 31, 32);
         backConnector(boxes, 14);
         return boxes;
     }
 
+    /**
+     * The Reprocessor's agitator fan, on its motor's west end: two crossed blades that MachineMotion
+     * turns about the motor's axis (y 8, z 8).
+     */
+    private void reprocessorFan() {
+        BoxModel boxes = new BoxModel();
+        boxes.add("metal", 0.1F, 7.6F, 6.6F, 0.5F, 8.4F, 9.4F);
+        boxes.add("metal", 0.15F, 6.6F, 7.6F, 0.45F, 9.4F, 8.4F);
+        boxes.add("accent", 0, 7.5F, 7.5F, 0.55F, 8.5F, 8.5F);
+        boxes.build(boxModel("reprocessor_fan"), "metal", machineParts("reprocessor"));
+    }
+
     private void reprocessor() {
+        reprocessorFan();
         Block block = ModBlocks.REPROCESSOR.get();
         ModelFile[][] halves = new ModelFile[2][2];
         for (int lit = 0; lit < 2; lit++) {
@@ -800,7 +841,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         boxes.add("skid", 0, 0, 0, 16, 2, 16);
         boxes.add("cabinet", 1.5F, 2, 1.5F, 14.5F, 8, 15.5F).decal(Direction.NORTH, "lpanel_13x6")
                 .decal(Direction.SOUTH, "lpanel_13x6").decal(Direction.WEST, "lpanel_14x6").decal(Direction.EAST, "lpanel_14x6");
-        boxes.add("cabinet", 3.5F, 4.5F, 1.25F, 12.5F, 6.5F, 1.5F).decal(Direction.NORTH, "screen").glow(Direction.NORTH);
+        boxes.add("cabinet", 3.5F, 4.5F, 1.25F, 12.5F, 6.5F, 1.5F).decal(Direction.NORTH, active ? "screen_on" : "screen").glow(Direction.NORTH);
         lampStrip(boxes, active, 2, 7, 1.25F, 14, 7.5F, 1.5F);
         boxes.add("metal", 1, 8, 1, 15, 9, 15);
         serviceFrame(boxes, 11, 9, "lpanel_13x5", 9);
@@ -834,7 +875,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
     private ModelFile lithiumExtractorModel(String name, boolean active) {
         BoxModel boxes = new BoxModel();
         boxes.add("skid", 0, 0, 0, 16, 2, 16);
-        boxes.add("basin", 1.5F, 2, 1.5F, 14.5F, 5, 14.5F).face(Direction.UP, "brine");
+        boxes.add("basin", 1.5F, 2, 1.5F, 14.5F, 5, 14.5F).face(Direction.UP, active ? "brine_on" : "brine");
         serviceFrame(boxes, 12, 2, "lpanel_13x12", 5);
         // Unlit here: while it works, its renderer lights the sorbent beds in a glow that rises up
         // the columns and falls back.
@@ -845,7 +886,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         }
         // Control box.
         boxes.add("cabinet", 3.5F, 5, 1.25F, 12.5F, 9, 4.5F);
-        boxes.add("cabinet", 3.5F, 6.5F, 1, 12.5F, 8.5F, 1.25F).decal(Direction.NORTH, "screen").glow(Direction.NORTH);
+        boxes.add("cabinet", 3.5F, 6.5F, 1, 12.5F, 8.5F, 1.25F).decal(Direction.NORTH, active ? "screen_on" : "screen").glow(Direction.NORTH);
         lampStrip(boxes, active, 4, 5.5F, 1, 12, 6, 1.25F);
         BlockModelBuilder model = boxModel(name);
         boxes.build(model, "basin", machineParts("lithium_extractor"));
@@ -861,43 +902,100 @@ public class ModBlockStateProvider extends BlockStateProvider {
     }
 
     /**
-     * Electrorefiner, facing north: pyroprocessing, a sealed molten salt cell as fast reactor fuel
-     * plants plan it. The family cabinet with the lit screen and a light strip and a gunmetal
-     * worktop, and on it the cell: a gunmetal vessel (two boxes of different heights, so it reads
-     * as rounded), a hazard band round it, since it handles spent fuel, and at the front a small
-     * sight window onto the salt, glowing orange while the current runs. Its lid carries four
-     * electrodes in orange clamps at the corners and the top connector in the middle; the back
-     * connector sits on the cabinet. Its own textures: art/tools/electrorefiner_textures.py.
+     * Electrorefiner, facing north: pyroprocessing as Argonne ran it for EBR-II's fuel (the Mark-IV
+     * electrorefiner), a pot of molten salt that plates the uranium out of chopped spent fuel. On
+     * the skid (hazard striped: it handles spent fuel) the family cabinet with its readout and light
+     * strip, and over the cabinet's back the rectifier that gives the cell its current, vented on
+     * its flanks. On the gunmetal worktop the cell: a hollow pot, rounded at its corners, sunk in a
+     * dark heated well, with a framed sight glass in its front onto the salt. Inside, the four
+     * anode baskets on their hub and the cathode with its plated uranium, models of their own
+     * (electrorefinerBasket, electrorefinerCathode) that MachineMotion turns and lifts; it also
+     * lights the salt and the heater ring round the pot's foot with the cell's heat. On the lid: the
+     * drive head (the basket's drive, its top the charging port where a pipe meets it), the
+     * cathode's gland, the off-gas stack, and two copper bus bars on insulators from the rectifier,
+     * the west one into the drive head (the anode, through its shaft) and the east one to the
+     * gland. A label plate on the west flank and the heater's terminal box on the east. Its own
+     * textures: art/tools/electrorefiner_textures.py.
      */
-    private ModelFile electrorefinerModel(String name, boolean active) {
+    private BoxModel electrorefinerBoxes(boolean active) {
         BoxModel boxes = new BoxModel();
-        boxes.add("skid", 0, 0, 0, 16, 2, 16);
-        boxes.add("cabinet", 1.5F, 2, 1.5F, 14.5F, 8, 15.5F).decal(Direction.NORTH, "lpanel_13x6")
-                .decal(Direction.SOUTH, "lpanel_13x6").decal(Direction.WEST, "lpanel_14x6").decal(Direction.EAST, "lpanel_14x6");
-        boxes.add("cabinet", 3.5F, 4.5F, 1.25F, 12.5F, 6.5F, 1.5F).decal(Direction.NORTH, "screen").glow(Direction.NORTH);
-        lampStrip(boxes, active, 2, 7, 1.25F, 14, 7.5F, 1.5F);
-        boxes.add("metal", 1, 8, 1, 15, 9, 15);
-        // The cell.
-        boxes.add("cell", 3.5F, 9, 3.5F, 12.5F, 14.5F, 12.5F);
-        boxes.add("cell", 3, 9, 4, 13, 14.25F, 12);
-        boxes.add("hazard", 2.9F, 12.5F, 3.4F, 13.1F, 13.5F, 12.6F);
-        BoxModel.Box window = boxes.add("cell", 5, 10, 3.35F, 11, 12, 3.5F).decal(Direction.NORTH, active ? "window_on" : "window");
-        if (active) {
-            window.glow(Direction.NORTH);
+        boxes.add("skid", 0, 0, 0, 16, 2, 16).sides("hazard");
+        boxes.add("cabinet", 1.5F, 2, 1.5F, 14.5F, 7, 15.5F).decal(Direction.NORTH, "lpanel_13x5")
+                .decal(Direction.SOUTH, "lpanel_13x5").decal(Direction.WEST, "lpanel_14x5").decal(Direction.EAST, "lpanel_14x5");
+        boxes.add("cabinet", 3.5F, 3.5F, 1.25F, 12.5F, 5.5F, 1.5F).decal(Direction.NORTH, active ? "screen_on" : "screen")
+                .glow(Direction.NORTH);
+        lampStrip(boxes, active, 2, 6, 1.25F, 14, 6.5F, 1.5F);
+        boxes.add("cabinet", 1.5F, 7, 11.5F, 14.5F, 13, 15.5F).decal(Direction.SOUTH, "lpanel_13x6")
+                .decal(Direction.WEST, "vent").decal(Direction.EAST, "vent").decal(Direction.UP, "rectifier_top");
+        boxes.add("metal", 1, 7, 1, 15, 7.75F, 11.5F);
+        boxes.add("well", 1.5F, 7.75F, 1.5F, 14.5F, 7.8F, 11.5F);
+        // The pot, hollow: its walls round the cavity (x 2.75 to 13.25, z 2.75 to 10.25), lined
+        // inside, the front wall cut round the sight glass (x 4 to 12, y 9 to 12).
+        float foot = 7.75F;
+        float rim = 13;
+        boxes.add("cell", 2.5F, foot, 2, 4, rim, 2.75F);
+        boxes.add("cell", 12, foot, 2, 13.5F, rim, 2.75F);
+        boxes.add("cell", 4, foot, 2, 12, 9, 2.75F);
+        boxes.add("cell", 4, 12, 2, 12, rim, 2.75F);
+        boxes.add("cell", 2.5F, foot, 10.25F, 13.5F, rim, 11).face(Direction.NORTH, "lining");
+        boxes.add("cell", 2, foot, 2.5F, 2.75F, rim, 10.5F).face(Direction.EAST, "lining");
+        boxes.add("cell", 13.25F, foot, 2.5F, 14, rim, 10.5F).face(Direction.WEST, "lining");
+        // The salt, frozen to a pale crust while the cell is cold; the renderer draws it molten over this.
+        boxes.add("cell", 2.75F, foot, 2.75F, 13.25F, 9.25F, 10.25F).face(Direction.UP, "salt");
+        boxes.add("glass", 4, 9, 2.25F, 12, 12, 2.5F).decal(Direction.NORTH, "glass");
+        // The sight glass's frame.
+        boxes.add("bright", 3.5F, 12, 1.75F, 12.5F, 12.5F, 2);
+        boxes.add("bright", 3.5F, 8.5F, 1.75F, 12.5F, 9, 2);
+        boxes.add("bright", 3.5F, 9, 1.75F, 4, 12, 2);
+        boxes.add("bright", 12, 9, 1.75F, 12.5F, 12, 2);
+        // Label plate (west) and the heater's terminal box with its conduit down into the well (east).
+        boxes.add("bright", 1.75F, 9.5F, 4.5F, 2, 11.5F, 8.5F).decal(Direction.WEST, "label");
+        boxes.add("metal", 14, 9, 5, 14.75F, 11, 8);
+        boxes.add("copper", 14.1F, 7.8F, 6.25F, 14.5F, 9, 6.75F);
+        boxes.add("metal", 1.5F, rim, 1.5F, 14.5F, rim + 0.75F, 11.5F).decal(Direction.UP, "lid_plate");
+        // The drive head, its top the charging port: a pipe from above meets it there.
+        boxes.add("metal", 5.5F, 13.75F, 5.5F, 10.5F, 15.5F, 10.5F);
+        boxes.add("metal", 5, 15.5F, 5, 11, 16, 11).decal(Direction.UP, "port");
+        // The off-gas stack under its rain cap, and the cathode's gland.
+        boxes.add("copper", 3.5F, 13.75F, 2.75F, 4.5F, 15.25F, 3.75F);
+        boxes.add("metal", 3, 15.25F, 2.25F, 5, 15.75F, 4.25F);
+        boxes.add("bright", 10, 13.75F, 2.75F, 12, 14.25F, 4.75F);
+        // The bus bars: up from the rectifier through insulators, forward along the lid's edges.
+        for (float x : new float[] {1.75F, 13}) {
+            boxes.add("bright", x - 0.25F, 13, 12.75F, x + 1.5F, 13.25F, 14.25F);
+            boxes.add("copper", x, 13, 13, x + 1.25F, 13.75F, 14);
         }
-        boxes.add("lid", 3, 14.5F, 3, 13, 15.25F, 13);
-        // Electrodes down through the lid, clamped at the corners, clear of the connector's flange.
-        for (float x : new float[] {3.25F, 12}) {
-            for (float z : new float[] {3.25F, 12}) {
-                boxes.add("bright", x, 15.25F, z, x + 0.75F, 16, z + 0.75F);
-                boxes.add("accent", x - 0.1F, 15.25F, z - 0.1F, x + 0.85F, 15.6F, z + 0.85F);
-            }
-        }
-        topConnector(boxes, 15.25F, 16);
+        boxes.add("copper", 1.75F, 13.75F, 6.5F, 3, 14.5F, 14);
+        boxes.add("copper", 3, 13.75F, 6.5F, 5.5F, 14.5F, 7.5F);
+        boxes.add("copper", 13, 13.75F, 3.25F, 14.25F, 14.5F, 14);
+        boxes.add("copper", 12, 13.75F, 3.25F, 13, 14.25F, 4.25F);
         backConnector(boxes, 15.5F);
-        BlockModelBuilder model = boxModel(name);
-        boxes.build(model, "cell", machineParts("electrorefiner"));
-        return model;
+        return boxes;
+    }
+
+    /**
+     * The Electrorefiner's anode: four baskets of chopped fuel on a cross-shaped hub, dipping into
+     * the salt, on a shaft up into the drive head, about which MachineMotion turns it (x 8, z 6.5).
+     * Dark steel, so it stands out against the pale frozen crust and against the glowing salt.
+     * The hub's arms are a shade thinner than the shaft, so no faces share a plane.
+     */
+    private static void electrorefinerBasket(BoxModel boxes) {
+        boxes.add("metal", 7.5F, 10.5F, 6, 8.5F, 13, 7);
+        boxes.add("metal", 5.5F, 10.75F, 6.1F, 10.5F, 11.25F, 6.9F);
+        boxes.add("metal", 7.6F, 10.75F, 4, 8.4F, 11.25F, 9);
+        for (float[] at : new float[][] {{6, 6.5F}, {10, 6.5F}, {8, 4.5F}, {8, 8.5F}}) {
+            boxes.add("basket", at[0] - 0.75F, 8.5F, at[1] - 0.75F, at[0] + 0.75F, 10.75F, at[1] + 0.75F);
+        }
+    }
+
+    /**
+     * The Electrorefiner's cathode, down in the salt: a dark steel rod with its plated uranium, up
+     * through the lid and the gland to an orange crosshead, which MachineMotion lifts for harvest.
+     */
+    private static void electrorefinerCathode(BoxModel boxes) {
+        boxes.add("metal", 10.5F, 9.5F, 3.25F, 11.5F, 14.5F, 4.25F);
+        boxes.add("dendrite", 10.25F, 9, 3, 11.75F, 10.75F, 4.5F);
+        boxes.add("accent", 10, 14.25F, 3, 12, 14.75F, 4.5F);
     }
 
     /**
@@ -913,7 +1011,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         boxes.add("skid", 0, 0, 0, 16, 2, 16);
         boxes.add("cabinet", 1.5F, 2, 1.5F, 14.5F, 8, 15.5F).decal(Direction.NORTH, "lpanel_13x6")
                 .decal(Direction.SOUTH, "lpanel_13x6").decal(Direction.WEST, "lpanel_14x6").decal(Direction.EAST, "lpanel_14x6");
-        boxes.add("cabinet", 3.5F, 4.5F, 1.25F, 12.5F, 6.5F, 1.5F).decal(Direction.NORTH, "screen").glow(Direction.NORTH);
+        boxes.add("cabinet", 3.5F, 4.5F, 1.25F, 12.5F, 6.5F, 1.5F).decal(Direction.NORTH, active ? "screen_on" : "screen").glow(Direction.NORTH);
         lampStrip(boxes, active, 2, 7, 1.25F, 14, 7.5F, 1.5F);
         boxes.add("metal", 1, 8, 1, 15, 9, 15);
         // The digester.
@@ -951,10 +1049,28 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     private void electrorefiner() {
         Block block = ModBlocks.ELECTROREFINER.get();
-        ModelFile off = electrorefinerModel("electrorefiner", false);
-        ModelFile on = electrorefinerModel("electrorefiner_on", true);
+        ModelFile off = electrorefinerModel("electrorefiner", electrorefinerBoxes(false));
+        ModelFile on = electrorefinerModel("electrorefiner_on", electrorefinerBoxes(true));
         horizontalBlock(block, state -> state.getValue(ProcessingBlock.ACTIVE) ? on : off);
-        simpleBlockItem(block, off);
+        // The moving parts, drawn by the renderer, and the item, which shows them at rest.
+        BoxModel basket = new BoxModel();
+        electrorefinerBasket(basket);
+        electrorefinerModel("electrorefiner_basket", basket);
+        BoxModel cathode = new BoxModel();
+        electrorefinerCathode(cathode);
+        electrorefinerModel("electrorefiner_cathode", cathode);
+        BoxModel whole = electrorefinerBoxes(false);
+        electrorefinerBasket(whole);
+        electrorefinerCathode(whole);
+        simpleBlockItem(block, electrorefinerModel("electrorefiner_item", whole));
+    }
+
+    /** One of the Electrorefiner's models, cut out so its sight glass shows the cell inside. */
+    private ModelFile electrorefinerModel(String name, BoxModel boxes) {
+        BlockModelBuilder model = boxModel(name);
+        boxes.build(model, "cell", machineParts("electrorefiner"));
+        model.renderType("cutout");
+        return model;
     }
 
     /**

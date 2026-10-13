@@ -37,7 +37,7 @@
             1
           ],
           "to": [
-            15.5,
+            14.5,
             15,
             15
           ]
@@ -135,12 +135,112 @@
             16,
             16
           ]
+        },
+        {
+          "faces": {
+            "east": {
+              "texture": "#gaugewet_4x38",
+              "uv": [
+                0.0,
+                3.3333335,
+                1.3333334,
+                8.666667
+              ]
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            14.25,
+            0,
+            6
+          ],
+          "to": [
+            15.849998,
+            16,
+            10
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#bright"
+            },
+            "east": {
+              "cullface": "east",
+              "texture": "#bright"
+            },
+            "north": {
+              "texture": "#bright"
+            },
+            "south": {
+              "texture": "#bright"
+            },
+            "up": {
+              "texture": "#bright"
+            },
+            "west": {
+              "texture": "#bright"
+            }
+          },
+          "from": [
+            14,
+            6,
+            5.5
+          ],
+          "to": [
+            16,
+            7,
+            10.5
+          ]
+        },
+        {
+          "faces": {
+            "east": {
+              "texture": "#thermo_3x32",
+              "uv": [
+                0.0,
+                4.0,
+                1.5,
+                12.0
+              ]
+            },
+            "north": {
+              "texture": "#trim"
+            },
+            "south": {
+              "texture": "#trim"
+            },
+            "west": {
+              "texture": "#trim"
+            }
+          },
+          "from": [
+            14.25,
+            0,
+            11
+          ],
+          "to": [
+            15.849998,
+            16,
+            14
+          ]
         }
       ],
       "render_type": "minecraft:cutout",
       "textures": {
+        "bright": "ryzergen:block/machine/family/bright",
+        "gaugewet_4x38": "ryzergen:block/pool/gaugewet_4x38",
         "liner": "ryzergen:block/pool/liner",
         "panel_14x14": "ryzergen:block/pool/panel_14x14",
+        "thermo_3x32": "ryzergen:block/pool/thermo_3x32",
         "trim": "ryzergen:block/microreactor/steel_dark"
       }
     },

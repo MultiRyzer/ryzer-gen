@@ -61,13 +61,33 @@ def lid():
     return t
 
 
-def screen():
-    """A cabinet's readout, 9 x 2: a dark screen with one cyan power bar and a green status dot.
-    Always lit, as screens are in the house style."""
+def screen(frame=None):
+    """A cabinet's readout, 9 x 2, always lit, as screens are in the house style. Top row: the
+    machine's trace, a dim line, with a bright blip sweeping along it while it works; then a dark
+    spot for the status lamp (MachineMotion lights it: green working, amber waiting, red starved).
+    Bottom row: the load bar, short and dim while it waits, long and lit while it works, its length
+    shifting. screen_on is the working version, animated (frame 0 to 7)."""
     t = Tex()
     t.rect(0, 0, 8, 1, 'U')
-    t.rect(1, 1, 5, 1, 'i')
-    t.set(7, 0, 'n')
+    t.rect(0, 0, 5, 0, 'f')
+    if frame is None:
+        t.rect(1, 1, 2, 1, 'f')
+        return t
+    blip = 5 - frame
+    if 0 <= blip <= 5:
+        t.set(blip, 0, 'j')
+        if blip + 1 <= 5:
+            t.set(blip + 1, 0, 'i')
+    length = (5, 5, 6, 5, 4, 4, 5, 6)[frame]
+    t.rect(1, 1, length, 1, 'i')
+    t.set(length, 1, 'j')
+    return t
+
+
+def lamp():
+    """The status lamp: plain white, tinted by MachineMotion to the machine's look."""
+    t = Tex()
+    t.rect(0, 0, 15, 15, 'W')
     return t
 
 
@@ -161,8 +181,9 @@ def panel(w, h):
 
 # The panel sizes the machines' models use (lpanel_WxH in datagen): the service frame's roof
 # (13 x 14) and rear cabinet backs (13 x 12, the fuel fabricator's 13 x 5), the electric smelter's
-# cabinet sides, and the fuel fabricator's base cabinet (13 x 6 front and back, 14 x 6 sides).
-PANELS = [(13, 12), (6, 12), (13, 6), (13, 14), (13, 5), (14, 6)]
+# cabinet sides, the fuel fabricator's base cabinet (13 x 6 front and back, 14 x 6 sides), and the
+# electrorefiner's lower cabinet (13 x 5 front and back, 14 x 5 sides).
+PANELS = [(13, 12), (6, 12), (13, 6), (13, 14), (13, 5), (14, 6), (14, 5)]
 
 
 def letters_rows(rows):
@@ -185,11 +206,12 @@ TEXTURES = {
     'accent': accent,
     'hazard': hazard,
     'connector': connector,
+    'lamp': lamp,
 }
 
 
 # Always lit, so kept crisp; everything else gets the surface finish (pixelart.finish).
-PLAIN = {'screen', 'connector'}
+PLAIN = {'screen', 'connector', 'lamp'}
 
 
 def main():
@@ -197,6 +219,7 @@ def main():
         (publish if name in PLAIN else publish_finished)(FOLDER + name, fn())
     for w, h in PANELS:
         publish_finished(FOLDER + f'lpanel_{w}x{h}', panel(w, h))
+    publish_frames(FOLDER + 'screen_on', [screen(i) for i in range(8)], 3, False)
 
 
 if __name__ == '__main__':

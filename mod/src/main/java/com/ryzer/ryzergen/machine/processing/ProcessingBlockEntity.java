@@ -1,5 +1,8 @@
 package com.ryzer.ryzergen.machine.processing;
 
+import com.ryzer.ryzergen.machine.AnimatedMachine;
+import com.ryzer.ryzergen.machine.MachineClock;
+import com.ryzer.ryzergen.machine.MachineClock.Look;
 import com.ryzer.ryzergen.machine.MachineEnergyStorage;
 import com.ryzer.ryzergen.machine.MachineItemPort;
 import com.ryzer.ryzergen.machine.RedstoneMode;
@@ -11,7 +14,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
@@ -53,7 +60,7 @@ import java.util.function.Predicate;
  * energy and water in and fluid results out on any side. When two recipes match, the one using more ingredients wins, so a
  * fabricator holding uranium, steel and plutonium makes MOX rather than a plain uranium rod.
  */
-public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
+public class ProcessingBlockEntity extends BlockEntity implements MenuProvider, AnimatedMachine {
     public static final int DATA_PROGRESS = 0;
     public static final int DATA_TOTAL = 1;
     public static final int DATA_ENERGY_LOW = 2;
@@ -243,40 +250,46 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
         return machine;
     }
 
-    /** The client's view of moving parts (the Core Cracker's flywheels): their angle and speed. */
-    private float spin;
-    private float angle;
-    private float angleBefore;
+    /** What it shows from outside, and the client's clock its moving parts follow (MachineMotion). */
+    private final MachineClock clock = new MachineClock();
 
-    /** A slow count that runs with the machine, for moving parts with a long cycle of their own. */
-    private float beat;
-    private float beatBefore;
-
-    /** Turns the moving parts a tick, easing up to speed while the machine works and down after. */
-    public void turn(boolean working) {
-        spin += ((working ? 1 : 0) - spin) * 0.05F;
-        beatBefore = beat;
-        beat += spin;
-        angleBefore = angle;
-        angle = (angle + spin * 14) % 360;
-        if (angle < angleBefore) {
-            angleBefore -= 360;
-        }
+    @Override
+    public MachineClock clock() {
+        return clock;
     }
 
-    /** The moving parts' angle for this frame, in degrees. */
-    public float angle(float partialTick) {
-        return angleBefore + (angle - angleBefore) * partialTick;
+    @Override
+    public String motionId() {
+        return machine.id();
     }
 
-    /** The slow count for this frame: it rises by about one a tick while the machine works. */
-    public float beat(float partialTick) {
-        return beatBefore + (beat - beatBefore) * partialTick;
+    private Look lookFor(Status status) {
+        return switch (status) {
+            case RUNNING -> Look.WORKING;
+            case UNDERPOWERED -> Look.STARVED;
+            case IDLE, NO_WATER, OUTPUT_FULL -> energy.getEnergyStored() > 0 ? Look.STANDBY : Look.OFF;
+            case NO_POWER, REDSTONE, OFF -> Look.OFF;
+        };
     }
 
-    /** How fast the moving parts go, 0 (still) to 1 (working), easing between. */
-    public float spin() {
-        return spin;
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return clock.write();
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        clock.read(tag);
+    }
+
+    @Override
+    public void onDataPacket(Connection connection, ClientboundBlockEntityDataPacket packet, HolderLookup.Provider registries) {
+        handleUpdateTag(packet.getTag(), registries);
     }
 
     /** Speed modules fitted, 0 to {@link ProcessingMachine#MAX_MODULES}. */
@@ -454,6 +467,7 @@ public class ProcessingBlockEntity extends BlockEntity implements MenuProvider {
         if (working || status != before) {
             setChanged();
         }
+        clock.show(level, pos, state, lookFor(status), modules());
         if (working != state.getValue(ProcessingBlock.ACTIVE)) {
             level.setBlock(pos, state.setValue(ProcessingBlock.ACTIVE, working), Block.UPDATE_ALL);
             if (machine.tall()) {

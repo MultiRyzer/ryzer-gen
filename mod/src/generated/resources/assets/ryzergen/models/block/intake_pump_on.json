@@ -193,6 +193,134 @@
     {
       "faces": {
         "down": {
+          "texture": "#metal"
+        },
+        "east": {
+          "texture": "#metal"
+        },
+        "north": {
+          "texture": "#metal"
+        },
+        "south": {
+          "texture": "#metal"
+        },
+        "up": {
+          "texture": "#metal"
+        },
+        "west": {
+          "texture": "#metal"
+        }
+      },
+      "from": [
+        4,
+        7.5,
+        4
+      ],
+      "to": [
+        5,
+        9.5,
+        5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#metal"
+        },
+        "east": {
+          "texture": "#metal"
+        },
+        "north": {
+          "texture": "#metal"
+        },
+        "south": {
+          "texture": "#metal"
+        },
+        "up": {
+          "texture": "#metal"
+        },
+        "west": {
+          "texture": "#metal"
+        }
+      },
+      "from": [
+        4,
+        7.5,
+        11
+      ],
+      "to": [
+        5,
+        9.5,
+        12
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#metal"
+        },
+        "east": {
+          "texture": "#metal"
+        },
+        "north": {
+          "texture": "#metal"
+        },
+        "south": {
+          "texture": "#metal"
+        },
+        "up": {
+          "texture": "#metal"
+        },
+        "west": {
+          "texture": "#metal"
+        }
+      },
+      "from": [
+        11,
+        7.5,
+        4
+      ],
+      "to": [
+        12,
+        9.5,
+        5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#metal"
+        },
+        "east": {
+          "texture": "#metal"
+        },
+        "north": {
+          "texture": "#metal"
+        },
+        "south": {
+          "texture": "#metal"
+        },
+        "up": {
+          "texture": "#metal"
+        },
+        "west": {
+          "texture": "#metal"
+        }
+      },
+      "from": [
+        11,
+        7.5,
+        11
+      ],
+      "to": [
+        12,
+        9.5,
+        12
+      ]
+    },
+    {
+      "faces": {
+        "down": {
           "texture": "#motor"
         },
         "east": {
@@ -213,7 +341,7 @@
       },
       "from": [
         4,
-        7.5,
+        9.5,
         4
       ],
       "to": [
@@ -245,7 +373,7 @@
       },
       "from": [
         3.5,
-        7.5,
+        9.5,
         4.75
       ],
       "to": [

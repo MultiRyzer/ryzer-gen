@@ -146,6 +146,77 @@ def band(w, h):
     return rows(t)
 
 
+def base(w, h):
+    """A plinth plate at its exact size, for the heavy bottom course: gunmetal, lit along its top,
+    shaded at its foot, with a vertical stiffener rib every four pixels (a lit pixel, then its
+    shadow), as the base of a steel tank is ribbed."""
+    t = Tex(w, h)
+    t.rect(0, 0, w - 1, h - 1, 'u')
+    for x in range(2, w - 1, 4):
+        t.rect(x, 1, x, h - 2, 's')
+        t.rect(x + 1, 1, x + 1, h - 2, 'z')
+    t.rect(0, 0, w - 1, 0, 's')
+    t.rect(0, 0, 0, h - 1, 's')
+    t.rect(w - 1, 0, w - 1, h - 1, 'z')
+    t.rect(0, h - 1, w - 1, h - 1, 'T')
+    return rows(t)
+
+
+def gauge(w, h, wet):
+    """The level gauge's glass tube at its exact size (top down, its foot at y 4 on the pool): a graphite
+    frame either side, dark glass, and, while the pool holds water, water up to its level (y 38)
+    with an orange float on top, a scale mark every four pixels down the frame."""
+    t = Tex(w, h)
+    t.rect(0, 0, w - 1, h - 1, 'T')
+    level = h - (38 - 4)
+    if wet:
+        t.rect(1, level, w - 2, h - 1, 'v')
+        t.rect(1, level + 1, 1, h - 1, 'V')
+        t.rect(1, level, w - 2, level, 'X')
+    else:
+        t.rect(1, h - 2, w - 2, h - 2, 'X')
+    t.rect(0, 0, 0, h - 1, 'b')
+    t.rect(w - 1, 0, w - 1, h - 1, 'S')
+    for y in range(2, h, 4):
+        t.set(0, y, 'H')
+    return rows(t)
+
+
+def thermo(w, h):
+    """The thermometer's tube at its exact size (top down, its foot at y 8 on the pool): graphite
+    either side of a dark glass bore with a scale mark every four pixels, and the red bulb at its
+    foot. The red column up the bore is drawn by the controller's renderer (PoolRenderer), to the
+    water's temperature, from y 10 up to 38."""
+    t = Tex(w, h)
+    t.rect(0, 0, w - 1, h - 1, 'T')
+    t.rect(1, 0, w - 2, h - 1, 'U')
+    t.rect(0, 0, 0, h - 1, 'b')
+    t.rect(w - 1, 0, w - 1, h - 1, 'S')
+    for y in range(2, h - 2, 4):
+        t.set(w - 1, y, 'H')
+    t.rect(0, h - 2, w - 1, h - 1, 'x')
+    t.set(0, h - 2, '8')
+    return rows(t)
+
+
+def monitor():
+    """The area radiation monitor, 8 x 8: a light case with a lit edge, a dark readout with a green
+    trace (all's well), a speaker grille and a yellow label strip at its foot."""
+    t = Tex(8, 8)
+    t.rect(0, 0, 7, 7, 'E')
+    t.rect(0, 0, 7, 0, 'A')
+    t.rect(0, 0, 0, 7, 'A')
+    t.rect(7, 1, 7, 7, 'J')
+    t.rect(1, 7, 7, 7, 'J')
+    t.rect(1, 1, 6, 3, 'U')
+    t.rect(2, 2, 5, 2, 'n')
+    t.set(3, 1, 'n')
+    for x in (2, 4):
+        t.set(x, 5, 'I')
+    t.rect(1, 6, 6, 6, 'Y')
+    return rows(t)
+
+
 def liner():
     """The pool's steel liner, seen inside: plain plate welded in squares of eight."""
     t = Tex()
@@ -397,7 +468,7 @@ def console():
 
 CONCEPT = {
     'water': water, 'rack': rack, 'paint': paint, 'trefoil': trefoil, 'console': console, 'liner': liner,
-    'rod_side': rod_side, 'rod_top': rod_top,
+    'rod_side': rod_side, 'rod_top': rod_top, 'monitor': monitor,
 }
 EXISTING = {
     'casing': 'block/microreactor/steel', 'trim': 'block/microreactor/steel_dark',
@@ -423,7 +494,9 @@ class Textures(dict):
             'mitreup': lambda a, b: mitre(a, True), 'mitredown': lambda a, b: mitre(a, False),
             'yellow': yellow, 'girder': girder, 'stripes': stripes, 'deck': deck, 'truck': truck,
             'hoist': hoist, 'rope': rope, 'rail': rail, 'racktop': racktop, 'rackside': rackside,
-            'hatch': hatch,
+            'hatch': hatch, 'base': base,
+            'gaugewet': lambda a, b: gauge(a, b, True), 'gaugedry': lambda a, b: gauge(a, b, False),
+            'thermo': thermo,
         }[kind]
         self[name] = make(w, h)
         return self[name]
@@ -469,8 +542,10 @@ class Box:
 STATES = ('dry', 'wet', 'active')
 
 
-# Rows of panels, bottom to top: the hazard skid under the first, frames between, the coping on top.
-ROWS = [(2, 15), (17, 31), (33, 47)]
+# Rows of panels, bottom to top: the hazard skid under the first, frames between, the coping on top
+# (y 42 to 43), and above it the walkway's railing to the top of the blocks.
+ROWS = [(2, 15), (17, 31), (33, 42)]
+COPING = 42
 # The back wall's outer face, set in so the cooling loop fits behind it inside the footprint.
 BACK = 43
 
@@ -591,39 +666,42 @@ def design(state='active'):
     add('skid', 0, 0, 0, LONG, 2, WIDE).sides('hazard')
     add('liner', 3, 2, 3, LONG - 3, 4, BACK - 2)
 
-    # Front: a plate per block face, windows in the second and fourth bays' lower two rows, the
-    # trefoil signs on the end bays and the controller in the middle, all centred on their plates.
+    # Front: a plate per block face, set a pixel and a half in behind the frame so the frame stands
+    # proud and throws its shadow; the bottom course heavy ribbed plinth plates; windows in the second
+    # and fourth bays' lower two rows, the trefoil signs on the end bays and the controller in the
+    # middle, all centred on their plates.
     for i, (a, b) in enumerate(bays(0, LONG)):
         for r, row in enumerate(ROWS):
             if i in (1, 3) and r < 2:
                 pane = 'glass_' + size(a, b, row)
-                add(pane, a, row[0], 1.5, b, row[1], 2).decal('north', pane)
+                add(pane, a, row[0], 2, b, row[1], 2.5).decal('north', pane)
             else:
-                add('liner', a, row[0], 0.5, b, row[1], 3).decal('north', 'panel_' + size(a, b, row))
-    # Back: the same, set in to BACK, between the end walls.
+                add('liner', a, row[0], 1.5, b, row[1], 3).decal('north', ('base_' if r == 0 else 'panel_') + size(a, b, row))
+    # Back: the same, set in to BACK, between the end walls (the cooling loop's flanges meet these
+    # plates, so they are not set in further).
     for a, b in bays(3, LONG - 3):
-        for row in ROWS:
-            add('liner', a, row[0], BACK - 2, b, row[1], BACK - 0.5).decal('south', 'panel_' + size(a, b, row))
+        for r, row in enumerate(ROWS):
+            add('liner', a, row[0], BACK - 2, b, row[1], BACK - 0.5).decal('south', ('base_' if r == 0 else 'panel_') + size(a, b, row))
     # Ends: full depth, so they frame the recess the cooling loop sits in.
-    for x1, x2, side, inward in ((0.5, 3, 'west', 'east'), (LONG - 3, LONG - 0.5, 'east', 'west')):
+    for x1, x2, side, inward in ((1.5, 3, 'west', 'east'), (LONG - 3, LONG - 1.5, 'east', 'west')):
         for a, b in bays(0, WIDE):
-            for row in ROWS:
-                add('liner', x1, row[0], a, x2, row[1], b).decal(side, 'panel_' + size(a, b, row)) \
+            for r, row in enumerate(ROWS):
+                add('liner', x1, row[0], a, x2, row[1], b).decal(side, ('base_' if r == 0 else 'panel_') + size(a, b, row)) \
                     .face(inward, 'trim' if b > BACK - 2 else 'liner')
-    add('trim', 1, 2, WIDE - 1, 3, 47, WIDE)
-    add('trim', LONG - 3, 2, WIDE - 1, LONG - 1, 47, WIDE)
+    add('trim', 1, 2, WIDE - 1, 3, COPING, WIDE)
+    add('trim', LONG - 3, 2, WIDE - 1, LONG - 1, COPING, WIDE)
 
     # Frames on every block edge: corner posts, joins, and rails between the rows (set a quarter
     # pixel behind the joins, so no two faces share a plane).
     for x in (0, LONG - 1):
         for z in (0, WIDE - 1):
-            add('trim', x, 2, z, x + 1, 47, z + 1)
+            add('trim', x, 2, z, x + 1, COPING, z + 1)
     for x in (16, 32, 48, 64):
-        add('trim', x - 1, 2, 0, x + 1, 47, 3)
-        add('trim', x - 1, 2, BACK - 2, x + 1, 47, BACK)
+        add('trim', x - 1, 2, 0, x + 1, COPING, 3)
+        add('trim', x - 1, 2, BACK - 2, x + 1, COPING, BACK)
     for z in (16, 32):
-        add('trim', 0, 2, z - 1, 3, 47, z + 1)
-        add('trim', LONG - 3, 2, z - 1, LONG, 47, z + 1)
+        add('trim', 0, 2, z - 1, 3, COPING, z + 1)
+        add('trim', LONG - 3, 2, z - 1, LONG, COPING, z + 1)
     for y1, y2 in ((15, 17), (31, 33)):
         add('trim', 1, y1, 0.25, LONG - 1, y2, 3)
         add('trim', 3, y1, BACK - 2, LONG - 3, y2, BACK - 0.25)
@@ -631,10 +709,27 @@ def design(state='active'):
         add('trim', LONG - 3, y1, 1, LONG - 0.25, y2, WIDE - 1)
 
     # Coping round the rim, and a cyan light strip along the front on the upper rail.
-    add('trim', 0, 47, 0, LONG, 48, 3)
-    add('trim', 3, 47, BACK - 2, LONG - 3, 48, BACK)
-    add('trim', 0, 47, 3, 3, 48, WIDE)
-    add('trim', LONG - 3, 47, 3, LONG, 48, WIDE)
+    add('trim', 0, COPING, 0, LONG, COPING + 1, 3)
+    add('trim', 3, COPING, BACK - 2, LONG - 3, COPING + 1, BACK)
+    add('trim', 0, COPING, 3, 3, COPING + 1, WIDE)
+    add('trim', LONG - 3, COPING, 3, LONG, COPING + 1, WIDE)
+
+    # The walkway's handrail round the rim, safety yellow, open to the sky: a post every half block
+    # on the coping, a top rail and a knee rail, a hair wider than the posts so no faces share a
+    # plane. Along the front and the back wall, and down both ends to the back.
+    top, knee, post_to = (47, 48), (44.75, 45.5), 47
+    for x in [1] + [8 * k - 0.5 for k in range(1, 10)] + [LONG - 2]:
+        add('paint', x, COPING + 1, 1, x + 1, post_to, 2)
+        if 3 < x < LONG - 3:
+            add('paint', x, COPING + 1, BACK - 1.5, x + 1, post_to, BACK - 0.5)
+    for y1, y2 in (top, knee):
+        add('paint', 0.9, y1, 0.9, LONG - 0.9, y2, 2.1)
+        add('paint', 3, y1, BACK - 1.6, LONG - 3, y2, BACK - 0.4)
+    for x0 in (1, LONG - 2):
+        for z in [8 * k - 0.5 for k in range(1, 6)] + [WIDE - 2]:
+            add('paint', x0, COPING + 1, z, x0 + 1, post_to, z + 1)
+        for y1, y2 in (top, knee):
+            add('paint', x0 - 0.1, y1, 2.1, x0 + 1.1, y2, WIDE - 0.9)
     if state == 'dry':
         add('glow_off', 1, 31.5, -0.25, LONG - 1, 32.5, 0.25)
     else:
@@ -643,14 +738,30 @@ def design(state='active'):
     # Signs and the controller, centred on the middle row's plates (x 1 to 15 and 33 to 47, y 17
     # to 31).
     for x0 in (2, 66):
-        add('bright', x0, 18, 0.25, x0 + 12, 30, 0.5).decal('north', 'trefoil')
-    add('trim', 35, 19, -0.5, 45, 29, 0.5).decal('north', 'console').glow('north')
+        add('bright', x0, 18, 1.25, x0 + 12, 30, 1.5).decal('north', 'trefoil')
+    add('trim', 35, 19, 0.5, 45, 29, 1.5).decal('north', 'console').glow('north')
 
     # Ports, centred on their block faces in the middle row: hot fuel and water in on the east
     # end (your left as you face the front), cooled fuel out on the west.
-    add('metal', LONG - 0.5, 19, 3, LONG, 29, 13).decal('east', 'port_fuel')
-    add('metal', LONG - 0.5, 19, 35, LONG, 29, 45).decal('east', 'port_coolant')
-    add('metal', 0, 19, 19, 0.5, 29, 29).decal('west', 'port_fuel')
+    add('metal', LONG - 1.5, 19, 3, LONG, 29, 13).decal('east', 'port_fuel')
+    add('metal', LONG - 1.5, 19, 35, LONG, 29, 45).decal('east', 'port_coolant')
+    add('metal', 0, 19, 19, 1.5, 29, 29).decal('west', 'port_fuel')
+
+    # The pool's level gauge on the east end, as real pools carry one: a glass tube in brackets,
+    # showing the water up to its level with a float on it.
+    gauge_kind = 'gaugedry' if state == 'dry' else 'gaugewet'
+    add('trim', LONG - 1.75, 4, 22, LONG - 0.15, 42, 26).decal('east', f'{gauge_kind}_4x38')
+    for y in (3, 22, 41):
+        add('bright', LONG - 2, y, 21.5, LONG, y + 1, 26.5)
+    # Beside it the thermometer: the water warms with the decay heat of the fuel cooling in it,
+    # and its red column (drawn by PoolRenderer) climbs as the racks fill with fresh rods.
+    add('trim', LONG - 1.75, 8, 27, LONG - 0.15, 40, 30).decal('east', 'thermo_3x32')
+    for y in (7, 40):
+        add('bright', LONG - 2, y, 26.75, LONG, y + 1, 30.25)
+
+    # The area radiation monitor on the west end's top course, its beacon lit green (all's well).
+    add('liner', 0.25, 33, 20, 1.5, 41, 28).decal('west', 'monitor')
+    add('glow', 0.5, 41, 23, 1.25, 42, 25).glow()
 
     # The rack on the floor, centred in the pool (x 3 to 77, z 3 to 41): a cell per cooling slot.
     # The rods in it are drawn by the controller's renderer, one per filled slot, so the model

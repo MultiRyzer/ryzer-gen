@@ -203,7 +203,7 @@
             "block_light": 15,
             "sky_light": 15
           },
-          "texture": "#screen",
+          "texture": "#screen_on",
           "uv": [
             0.0,
             0.0,
@@ -539,7 +539,7 @@
     "hopper_mouth": "ryzergen:block/machine/core_cracker/hopper_mouth",
     "metal": "ryzergen:block/machine/family/metal",
     "particle": "ryzergen:block/machine/core_cracker/crusher",
-    "screen": "ryzergen:block/machine/family/screen",
+    "screen_on": "ryzergen:block/machine/family/screen_on",
     "skid": "ryzergen:block/machine/family/skid"
   }
 }

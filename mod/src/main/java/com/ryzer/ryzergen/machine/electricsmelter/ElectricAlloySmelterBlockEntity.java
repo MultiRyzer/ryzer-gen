@@ -1,5 +1,7 @@
 package com.ryzer.ryzergen.machine.electricsmelter;
 
+import com.ryzer.ryzergen.machine.AnimatedMachine;
+import com.ryzer.ryzergen.machine.MachineClock;
 import com.ryzer.ryzergen.machine.MachineItemPort;
 import com.ryzer.ryzergen.machine.MachineEnergyStorage;
 import com.ryzer.ryzergen.recipe.AlloyingRecipe;
@@ -33,7 +35,10 @@ import org.jetbrains.annotations.Nullable;
  * The fuel-burning smelter stays the way in; this is what microreactor power buys (design rule 7).
  * Pipes connect on any side: inputs in and the output out, energy in.
  */
-public class ElectricAlloySmelterBlockEntity extends BlockEntity implements MenuProvider {
+public class ElectricAlloySmelterBlockEntity extends BlockEntity implements MenuProvider, AnimatedMachine {
+    /** The client's clock its moving parts follow (MachineMotion). */
+    private final MachineClock clock = new MachineClock();
+
     public static final int INPUT_A = 0;
     public static final int INPUT_B = 1;
     public static final int OUTPUT = 2;
@@ -124,6 +129,8 @@ public class ElectricAlloySmelterBlockEntity extends BlockEntity implements Menu
         if (working != state.getValue(ElectricAlloySmelterBlock.ACTIVE)) {
             level.setBlock(pos, state.setValue(ElectricAlloySmelterBlock.ACTIVE, working), Block.UPDATE_ALL);
         }
+        smelter.clock.show(level, pos, state, working ? MachineClock.Look.WORKING
+                : smelter.energy.getEnergyStored() > 0 ? MachineClock.Look.STANDBY : MachineClock.Look.OFF, 0);
     }
 
     private @Nullable AlloyingRecipe findRecipe(Level level) {
@@ -170,6 +177,37 @@ public class ElectricAlloySmelterBlockEntity extends BlockEntity implements Menu
         for (int slot = 0; slot < SLOTS; slot++) {
             Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), items.getStackInSlot(slot));
         }
+    }
+
+    @Override
+    public MachineClock clock() {
+        return clock;
+    }
+
+    @Override
+    public String motionId() {
+        return "electric_alloy_smelter";
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return clock.write();
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        clock.read(tag);
+    }
+
+    @Override
+    public void onDataPacket(net.minecraft.network.Connection connection,
+                             net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket packet, HolderLookup.Provider registries) {
+        clock.read(packet.getTag());
     }
 
     @Override

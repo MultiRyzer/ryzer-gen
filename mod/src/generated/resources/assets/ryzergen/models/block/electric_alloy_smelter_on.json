@@ -269,7 +269,7 @@
             "block_light": 15,
             "sky_light": 15
           },
-          "texture": "#screen",
+          "texture": "#screen_on",
           "uv": [
             0.0,
             0.0,
@@ -894,7 +894,7 @@
     "metal": "ryzergen:block/machine/family/metal",
     "mouth_on": "ryzergen:block/machine/electric_smelter/mouth_on",
     "particle": "ryzergen:block/machine/family/cabinet",
-    "screen": "ryzergen:block/machine/family/screen",
+    "screen_on": "ryzergen:block/machine/family/screen_on",
     "skid": "ryzergen:block/machine/family/skid",
     "vent": "ryzergen:block/machine/family/vent"
   }

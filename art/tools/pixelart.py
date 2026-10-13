@@ -4,6 +4,7 @@ recurring pieces of the house style (bevelled steel housings, bolts, hazard pain
 Pure Python, no PIL needed. Every texture script in art/tools imports this, so new machines and
 GUIs pick up the same colours and details.
 """
+import json
 import os
 import random
 import struct
@@ -228,6 +229,20 @@ def publish(name, tex):
         out = os.path.join(base, name + '.png')
         os.makedirs(os.path.dirname(out), exist_ok=True)
         save(tex, out)
+
+
+def publish_frames(name, frames, frametime, interpolate):
+    """publish(), for an animated texture: the frames stacked down one PNG, with the .mcmeta that
+    plays them, a frame every frametime ticks (interpolate blends from each frame to the next)."""
+    rows = []
+    for frame in frames:
+        rows += [[frame.rgba(x, y) for x in range(frame.w)] for y in range(frame.h)]
+    for base in (ART_TEXTURES, MOD_TEXTURES):
+        out = os.path.join(base, name + '.png')
+        os.makedirs(os.path.dirname(out), exist_ok=True)
+        write_png(out, rows)
+        with open(out + '.mcmeta', 'w', encoding='utf-8') as f:
+            json.dump({'animation': {'frametime': frametime, 'interpolate': interpolate}}, f, indent=2)
 
 
 # ---------------------------------------------------------------- reading PNGs and vanilla textures

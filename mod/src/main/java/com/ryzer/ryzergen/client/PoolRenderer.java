@@ -48,6 +48,14 @@ public class PoolRenderer implements BlockEntityRenderer<PoolControllerBlockEnti
     private static final float CONTROLLER_X = 32;
     private static final float CONTROLLER_Y = 16;
     /** Cherenkov blue, the tint of a rod fresh in. */
+    /** The thermometer on the east end, in the design (art/tools/pool_concept.py): its column's face, sides, foot and top. */
+    private static final ResourceLocation LAMP = ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, "block/machine/family/lamp");
+    private static final float THERMO_X = 79.87F;
+    private static final float THERMO_Z1 = 28;
+    private static final float THERMO_Z2 = 29;
+    private static final float THERMO_FOOT = 10;
+    private static final float THERMO_TOP = 38;
+    private static final int THERMO_RED = 0xFFE5392B;
     private static final int HOT_R = 0x8F;
     private static final int HOT_G = 0xE3;
     private static final int HOT_B = 0xFF;
@@ -192,7 +200,27 @@ public class PoolRenderer implements BlockEntityRenderer<PoolControllerBlockEnti
             float z = RACK_Z + (slot / COLUMNS) * CELL + 3;
             rod(buffer, matrix, side, top, colour, glow, overlay, x, z);
         }
+        thermometer(pool, buffer, matrix, overlay);
         pose.popPose();
+    }
+
+    /**
+     * The thermometer's column on the east end (design x 79.85, z 28 to 29), lit red from the
+     * bulb up to the water's temperature, as a block model cannot show a level that moves.
+     */
+    private static void thermometer(PoolControllerBlockEntity pool, VertexConsumer buffer, PoseStack.Pose pose, int overlay) {
+        TextureAtlasSprite white = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(LAMP);
+        float top = THERMO_FOOT + (THERMO_TOP - THERMO_FOOT) * Mth.clamp(pool.temperature(), 0, 1);
+        if (top <= THERMO_FOOT + 0.05F) {
+            return;
+        }
+        float x = THERMO_X;
+        float u1 = white.getU(0);
+        float v1 = white.getV(0);
+        float u2 = white.getU(1 / 16F);
+        float v2 = white.getV(1 / 16F);
+        quad(buffer, pose, THERMO_RED, LightTexture.FULL_BRIGHT, overlay, Direction.EAST,
+                new float[][] {{x, top, THERMO_Z2}, {x, top, THERMO_Z1}, {x, THERMO_FOOT, THERMO_Z1}, {x, THERMO_FOOT, THERMO_Z2}}, u1, v1, u2, v2);
     }
 
     /** One rod, 4 x 4 across, its faces mapped from the texture's top left, one texel per pixel. */

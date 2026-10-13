@@ -63,16 +63,17 @@ def column_on():
     return t
 
 
-def window(lit):
+def window(lit, frame=0):
     """The sight window onto the acid, 4 x 2: glass in a dark frame, dark while idle and glowing
     yellow-green while it digests, brightest in the middle."""
     t = Tex()
     t.rect(0, 0, 3, 1, 'U')
     if lit:
-        put(t, 1, 0, ACID)
-        put(t, 2, 0, ACID_HOT)
-        put(t, 1, 1, ACID)
-        put(t, 2, 1, ACID)
+        # The acid boils: the hot bright spot rises and breaks, over and over (frame 0 to 3).
+        for x, y in ((1, 0), (2, 0), (1, 1), (2, 1)):
+            put(t, x, y, ACID)
+        x, y = ((1, 1), (2, 1), (2, 0), (1, 0))[frame % 4]
+        put(t, x, y, ACID_HOT)
     else:
         t.rect(1, 0, 2, 1, 'T')
         t.set(2, 0, 'S')
@@ -84,7 +85,6 @@ TEXTURES = {
     'column': column,
     'column_on': column_on,
     'window': lambda: window(False),
-    'window_on': lambda: window(True),
 }
 
 
@@ -93,6 +93,8 @@ def main():
     for name, fn in TEXTURES.items():
         # Lit textures stay crisp; the rest get the surface finish (pixelart.finish).
         (publish if name.endswith('_on') else publish_finished)(FOLDER + name, fn())
+    # Lit while it digests, and boiling.
+    publish_frames(FOLDER + 'window_on', [window(True, i) for i in range(4)], 4, True)
 
 
 if __name__ == '__main__':

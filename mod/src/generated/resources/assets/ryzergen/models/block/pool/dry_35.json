@@ -13,12 +13,12 @@
               "texture": "#liner"
             },
             "north": {
-              "texture": "#panel_14x14",
+              "texture": "#panel_14x9",
               "uv": [
                 0.0,
                 0.0,
                 14.0,
-                14.0
+                9.0
               ]
             },
             "south": {
@@ -34,11 +34,11 @@
           "from": [
             1,
             1,
-            0.5
+            1.5
           ],
           "to": [
             15,
-            15,
+            10,
             3
           ]
         },
@@ -48,12 +48,12 @@
               "texture": "#liner"
             },
             "east": {
-              "texture": "#panel_14x14",
+              "texture": "#panel_14x9",
               "uv": [
                 0.0,
                 0.0,
                 14.0,
-                14.0
+                9.0
               ]
             },
             "north": {
@@ -75,8 +75,8 @@
             1
           ],
           "to": [
-            15.5,
-            15,
+            14.5,
+            10,
             15
           ]
         },
@@ -107,7 +107,7 @@
           ],
           "to": [
             16,
-            15,
+            10,
             1
           ]
         },
@@ -134,7 +134,7 @@
           ],
           "to": [
             1,
-            15,
+            10,
             3
           ]
         },
@@ -161,7 +161,7 @@
           ],
           "to": [
             16,
-            15,
+            10,
             16
           ]
         },
@@ -234,18 +234,17 @@
               "texture": "#trim"
             },
             "up": {
-              "cullface": "up",
               "texture": "#trim"
             }
           },
           "from": [
             0,
-            15,
+            10,
             0
           ],
           "to": [
             16,
-            16,
+            11,
             3
           ]
         },
@@ -262,7 +261,6 @@
               "texture": "#trim"
             },
             "up": {
-              "cullface": "up",
               "texture": "#trim"
             },
             "west": {
@@ -271,12 +269,284 @@
           },
           "from": [
             13,
-            15,
+            10,
             3
           ],
           "to": [
             16,
+            11,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#paint"
+            },
+            "east": {
+              "texture": "#paint"
+            },
+            "north": {
+              "texture": "#paint"
+            },
+            "south": {
+              "texture": "#paint"
+            },
+            "up": {
+              "texture": "#paint"
+            }
+          },
+          "from": [
+            0,
+            11,
+            1
+          ],
+          "to": [
+            0.5,
+            15,
+            2
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#paint"
+            },
+            "east": {
+              "texture": "#paint"
+            },
+            "north": {
+              "texture": "#paint"
+            },
+            "south": {
+              "texture": "#paint"
+            },
+            "up": {
+              "texture": "#paint"
+            },
+            "west": {
+              "texture": "#paint"
+            }
+          },
+          "from": [
+            7.5,
+            11,
+            1
+          ],
+          "to": [
+            8.5,
+            15,
+            2
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#paint"
+            },
+            "east": {
+              "texture": "#paint"
+            },
+            "north": {
+              "texture": "#paint"
+            },
+            "south": {
+              "texture": "#paint"
+            },
+            "up": {
+              "texture": "#paint"
+            },
+            "west": {
+              "texture": "#paint"
+            }
+          },
+          "from": [
+            14,
+            11,
+            1
+          ],
+          "to": [
+            15,
+            15,
+            2
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#paint"
+            },
+            "east": {
+              "texture": "#paint"
+            },
+            "north": {
+              "texture": "#paint"
+            },
+            "south": {
+              "texture": "#paint"
+            },
+            "up": {
+              "cullface": "up",
+              "texture": "#paint"
+            }
+          },
+          "from": [
+            0,
+            15,
+            0.9
+          ],
+          "to": [
+            15.099998,
             16,
+            2.1
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#paint"
+            },
+            "east": {
+              "texture": "#paint"
+            },
+            "north": {
+              "texture": "#paint"
+            },
+            "south": {
+              "texture": "#paint"
+            },
+            "up": {
+              "texture": "#paint"
+            }
+          },
+          "from": [
+            0,
+            12.75,
+            0.9
+          ],
+          "to": [
+            15.099998,
+            13.5,
+            2.1
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#paint"
+            },
+            "east": {
+              "texture": "#paint"
+            },
+            "north": {
+              "texture": "#paint"
+            },
+            "south": {
+              "texture": "#paint"
+            },
+            "up": {
+              "texture": "#paint"
+            },
+            "west": {
+              "texture": "#paint"
+            }
+          },
+          "from": [
+            14,
+            11,
+            7.5
+          ],
+          "to": [
+            15,
+            15,
+            8.5
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#paint"
+            },
+            "east": {
+              "texture": "#paint"
+            },
+            "north": {
+              "texture": "#paint"
+            },
+            "up": {
+              "texture": "#paint"
+            },
+            "west": {
+              "texture": "#paint"
+            }
+          },
+          "from": [
+            14,
+            11,
+            15.5
+          ],
+          "to": [
+            15,
+            15,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#paint"
+            },
+            "east": {
+              "texture": "#paint"
+            },
+            "north": {
+              "texture": "#paint"
+            },
+            "up": {
+              "cullface": "up",
+              "texture": "#paint"
+            },
+            "west": {
+              "texture": "#paint"
+            }
+          },
+          "from": [
+            13.900002,
+            15,
+            2.1
+          ],
+          "to": [
+            15.099998,
+            16,
+            16
+          ]
+        },
+        {
+          "faces": {
+            "down": {
+              "texture": "#paint"
+            },
+            "east": {
+              "texture": "#paint"
+            },
+            "north": {
+              "texture": "#paint"
+            },
+            "up": {
+              "texture": "#paint"
+            },
+            "west": {
+              "texture": "#paint"
+            }
+          },
+          "from": [
+            13.900002,
+            12.75,
+            2.1
+          ],
+          "to": [
+            15.099998,
+            13.5,
             16
           ]
         },
@@ -347,7 +617,8 @@
         "bright": "ryzergen:block/machine/family/bright",
         "glow_off": "ryzergen:block/microreactor/glow_off",
         "liner": "ryzergen:block/pool/liner",
-        "panel_14x14": "ryzergen:block/pool/panel_14x14",
+        "paint": "ryzergen:block/pool/paint",
+        "panel_14x9": "ryzergen:block/pool/panel_14x9",
         "rail_74x2": "ryzergen:block/pool/rail_74x2",
         "trim": "ryzergen:block/microreactor/steel_dark"
       }

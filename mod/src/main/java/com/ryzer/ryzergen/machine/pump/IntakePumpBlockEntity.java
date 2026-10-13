@@ -4,6 +4,8 @@ import com.ryzer.ryzergen.cable.CableSide;
 import com.ryzer.ryzergen.cable.CableBlock;
 import com.ryzer.ryzergen.cable.FluidPipeBlock;
 import com.ryzer.ryzergen.Config;
+import com.ryzer.ryzergen.machine.AnimatedMachine;
+import com.ryzer.ryzergen.machine.MachineClock;
 import com.ryzer.ryzergen.machine.MachineEnergyStorage;
 import com.ryzer.ryzergen.machine.RedstoneMode;
 import com.ryzer.ryzergen.registry.ModBlockEntities;
@@ -34,7 +36,10 @@ import org.jetbrains.annotations.Nullable;
  * The intake pump's workings: a small energy buffer, a water tank that fills while it has water
  * and power, and a push out of every side but the bottom every tick, the way the microreactor pushes power.
  */
-public class IntakePumpBlockEntity extends BlockEntity implements MenuProvider {
+public class IntakePumpBlockEntity extends BlockEntity implements MenuProvider, AnimatedMachine {
+    /** The client's clock its moving parts follow (MachineMotion). */
+    private final MachineClock clock = new MachineClock();
+
     public static final int ENERGY_CAPACITY = 10_000;
     public static final int MAX_INPUT = 200;
     public static final int WATER_CAPACITY = 8_000;
@@ -203,6 +208,16 @@ public class IntakePumpBlockEntity extends BlockEntity implements MenuProvider {
 
     private static final Direction[] PUSH_SIDES = {Direction.UP, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
     private int pushFrom;
+
+    @Override
+    public MachineClock clock() {
+        return clock;
+    }
+
+    @Override
+    public String motionId() {
+        return "intake_pump";
+    }
 
     @Override
     public Component getDisplayName() {

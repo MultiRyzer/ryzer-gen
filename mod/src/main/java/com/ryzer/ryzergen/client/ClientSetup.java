@@ -1,5 +1,6 @@
 package com.ryzer.ryzergen.client;
 
+import com.ryzer.ryzergen.machine.processing.ProcessingMachine;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import com.ryzer.ryzergen.registry.ModParticles;
@@ -99,10 +100,14 @@ public final class ClientSetup {
         event.registerBlockEntityRenderer(ModBlockEntities.STATION_CORE.get(), StationRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.BREEDER_CORE.get(), BreederRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.POOL_CONTROLLER.get(), PoolRenderer::new);
-        event.registerBlockEntityRenderer(ModBlockEntities.CORE_CRACKER.get(), CoreCrackerRenderer::new);
-        event.registerBlockEntityRenderer(ModBlockEntities.FUEL_FABRICATOR.get(), FuelFabricatorRenderer::new);
-        event.registerBlockEntityRenderer(ModBlockEntities.LITHIUM_EXTRACTOR.get(), LithiumExtractorRenderer::new);
-        event.registerBlockEntityRenderer(ModBlockEntities.MONAZITE_PROCESSOR.get(), MonaziteProcessorRenderer::new);
+        // The single-block machines' moving parts, glows and lamps, for those that have any (MachineMotion).
+        for (ProcessingMachine machine : ProcessingMachine.values()) {
+            if (!MachineMotion.of(machine.id()).isEmpty()) {
+                event.registerBlockEntityRenderer(machine.blockEntityType(), MachinePartsRenderer::new);
+            }
+        }
+        event.registerBlockEntityRenderer(ModBlockEntities.ELECTRIC_ALLOY_SMELTER.get(), MachinePartsRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.INTAKE_PUMP.get(), MachinePartsRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.BATTERY_CONTROLLER.get(), ContainerFanRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.FUSION_PREVIEW.get(), FusionPreviewRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.SUN_GATE_PREVIEW.get(), SunGateRenderer::new);
@@ -118,12 +123,13 @@ public final class ClientSetup {
 
     /**
      * Each tier's fitting on each side, a small model of its own, added to cables that have one; and
-     * the models machines' renderers turn (the Core Cracker's flywheels).
+     * the single-block machines' moving parts (MachineMotion).
      */
     @SubscribeEvent
     public static void registerFittingModels(ModelEvent.RegisterAdditional event) {
-        event.register(CoreCrackerRenderer.FLYWHEEL);
-        event.register(FuelFabricatorRenderer.RAM);
+        for (ModelResourceLocation part : MachineMotion.models()) {
+            event.register(part);
+        }
         for (ModelResourceLocation part : PoolRenderer.CRANE_PARTS) {
             event.register(part);
         }

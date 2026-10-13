@@ -63,7 +63,7 @@ def flywheel():
     """A flywheel seen side on. Its faces map by position, and the wheel spans z 3 to 13 and y 2.5
     to 12.5, so it is drawn round (8, 8.5) there: a gunmetal rim with eight bolts, four spokes lit
     along their top edges, dark between them, and an orange hub round a dark socket. It turns with
-    the wheel (CoreCrackerRenderer)."""
+    the wheel (MachineMotion)."""
     t = Tex()
     cx, cy = 8, 8.5
     for y in range(16):
