@@ -5,7 +5,10 @@ import net.minecraft.core.Direction;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Which part goes where in a fission station (design section 8). The design is drawn facing north
@@ -89,6 +92,46 @@ public final class StationLayout {
         parts.put(CORE, StationPart.CORE);
         parts.put(ROTOR, StationPart.ROTOR);
         PARTS = Collections.unmodifiableMap(parts);
+    }
+
+    /**
+     * The coolant reserve's spaces on the station's back (design section 8), by ring of bays: 0 the
+     * centre bay, 1 the pair beside it, 2 the outer pair. It grows a ring at a time, so a reserve of
+     * 1, 3 or 5 bays fills rings 0, 0 to 1, or 0 to 2. A space belongs to the bay its centre lies in:
+     * outside the station's ring, out to 7 blocks from the centre (the drawn face is at 6.75), in the
+     * bottom two layers, and in the third only near the station, under the hood. Rings are 30 degrees
+     * a bay, measured from the back's centre either way, so the two sides match.
+     */
+    public static final List<Set<BlockPos>> RESERVE;
+    /** Bays in a reserve with this many complete rings. */
+    private static final int[] RESERVE_BAYS = {0, 1, 3, 5};
+
+    static {
+        List<Set<BlockPos>> rings = List.of(new LinkedHashSet<>(), new LinkedHashSet<>(), new LinkedHashSet<>());
+        for (int y = 0; y < 3; y++) {
+            for (int x = -2; x < SIZE + 2; x++) {
+                for (int z = SIZE / 2; z < SIZE + 4; z++) {
+                    BlockPos cell = new BlockPos(x, y, z);
+                    double dx = x + 0.5 - SIZE / 2.0;
+                    double dz = z + 0.5 - SIZE / 2.0;
+                    double r = Math.hypot(dx, dz);
+                    if (PARTS.containsKey(cell) || r < 5.6 || r > (y < 2 ? 7.0 : 6.6)) {
+                        continue;
+                    }
+                    double fromBack = Math.abs(Math.toDegrees(Math.atan2(dz, dx)) - 90);
+                    int ring = fromBack <= 15 ? 0 : fromBack <= 45 ? 1 : fromBack <= 75 ? 2 : -1;
+                    if (ring >= 0) {
+                        rings.get(ring).add(cell);
+                    }
+                }
+            }
+        }
+        RESERVE = rings.stream().map(Collections::unmodifiableSet).toList();
+    }
+
+    /** Bays in a reserve with {@code rings} complete rings (0 to 3): 0, 1, 3 or 5. */
+    public static int reserveBays(int rings) {
+        return RESERVE_BAYS[Math.max(0, Math.min(RESERVE.size(), rings))];
     }
 
     private StationLayout() {}

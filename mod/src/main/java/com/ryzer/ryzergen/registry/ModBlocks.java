@@ -18,6 +18,7 @@ import com.ryzer.ryzergen.cable.EnergyCableBlock;
 import com.ryzer.ryzergen.creative.CreativeSourceBlock;
 import com.ryzer.ryzergen.creative.CreativeWaterTankBlock;
 import com.ryzer.ryzergen.cable.FluidPipeBlock;
+import com.ryzer.ryzergen.machine.fission.CoolantReserveBlock;
 import com.ryzer.ryzergen.machine.fission.StationCoreBlock;
 import com.ryzer.ryzergen.machine.breeder.BreederCoreBlock;
 import com.ryzer.ryzergen.machine.breeder.BreederPartBlock;
@@ -102,6 +103,9 @@ public final class ModBlocks {
                     .isViewBlocking((state, level, pos) -> false)));
     public static final DeferredBlock<StationPartBlock> TURBINE_ROTOR = BLOCKS.register("turbine_rotor",
             () -> new StationPartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+    /** The station's coolant reserve (emergency core cooling), built onto its back in bays. */
+    public static final DeferredBlock<CoolantReserveBlock> COOLANT_RESERVE = BLOCKS.register("coolant_reserve",
+            () -> new CoolantReserveBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
     public static final DeferredBlock<StationCoreBlock> STATION_CORE = BLOCKS.register("station_core",
             () -> new StationCoreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
     // Breeder reactor parts (design section 9), as the station's: noOcclusion, since once formed they

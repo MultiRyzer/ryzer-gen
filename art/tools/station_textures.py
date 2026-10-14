@@ -84,6 +84,31 @@ def station_core_front():
     return t
 
 
+def coolant_reserve_side():
+    """The coolant reserve before its bay forms: casing with a window on its water (the level two
+    thirds up, a bright surface line), a cyan light line above, a vent strip at the foot."""
+    t = panel(Tex())
+    t.rect(3, 2, 12, 2, 'i')
+    t.rect(3, 4, 12, 11, 'T')
+    t.rect(4, 5, 11, 10, 'U')
+    t.rect(4, 7, 11, 10, 'v')
+    for x in (5, 9):
+        t.rect(x, 8, x, 10, 'V')
+    t.rect(4, 7, 11, 7, 'C')
+    t.rect(4, 10, 11, 10, 'w')
+    for x in range(3, 13):
+        t.set(x, 13, 'b' if x % 2 else 'J')
+    return t
+
+
+def coolant_reserve_top():
+    """Its top: the graphite hood, with the bay's blue lamp in the middle."""
+    t = panel(Tex(), fill='S', light='b', shade='T', rim='T')
+    t.rect(4, 7, 11, 8, 'G')
+    t.rect(4, 7, 11, 7, 'c')
+    return t
+
+
 def creative_top():
     """The creative blocks' top: dark, with a magenta diamond, the usual mark of creative-only kit."""
     t = panel(Tex(), fill='T', light='S', shade='U', rim='U')
@@ -111,6 +136,8 @@ TEXTURES = {
     'block/turbine_rotor_top': turbine_rotor_top,
     'block/turbine_rotor_side': turbine_rotor_side,
     'block/station_core_front': station_core_front,
+    'block/coolant_reserve_side': coolant_reserve_side,
+    'block/coolant_reserve_top': coolant_reserve_top,
     'block/creative_top': creative_top,
     'block/creative_battery_side': lambda: creative_side('x'),
     'block/creative_water_tank_side': lambda: creative_side('i'),

@@ -69,6 +69,7 @@ public final class Config {
     public static final ModConfigSpec.BooleanValue STATION_MELTDOWNS;
     public static final ModConfigSpec.DoubleValue STATION_MELTDOWN_POWER;
     public static final ModConfigSpec.IntValue STATION_TILT_SECONDS;
+    public static final ModConfigSpec.IntValue STATION_RESERVE_SECONDS;
     public static final ModConfigSpec.IntValue BREEDER_OUTPUT;
     public static final ModConfigSpec.BooleanValue BREEDER_SODIUM_FIRE;
     public static final ModConfigSpec.BooleanValue STEADY_STATE_ENABLED;
@@ -169,6 +170,10 @@ public final class Config {
         STATION_TILT_SECONDS = BUILDER
                 .comment("In overdrive, how long a fuel channel may sit without a live rod before the core goes unstable.")
                 .defineInRange("flux_tilt_seconds", 300, 10, 3600);
+        STATION_RESERVE_SECONDS = BUILDER
+                .comment("How long each bay of a station's coolant reserve holds an overdrive core that has lost its cooling,",
+                        "in seconds. A reserve has 1, 3 or 5 bays, so the default gives 2, 6 or 10 minutes.")
+                .defineInRange("reserve_seconds_per_bay", 120, 10, 3600);
         BREEDER_SODIUM_FIRE = BUILDER
                 .comment("With the flow stopped, a hot core's decay heat boils the sodium, which bursts a seal and burns inside the",
                         "bund wall for 30 seconds (setting anyone inside alight; no blocks burn), and the loop must be refilled.",

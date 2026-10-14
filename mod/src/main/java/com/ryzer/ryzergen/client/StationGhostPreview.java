@@ -6,6 +6,8 @@ import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.machine.fission.StationCoreBlockEntity;
 import com.ryzer.ryzergen.machine.fission.StationLayout;
 import com.ryzer.ryzergen.machine.fission.StationPart;
+import com.ryzer.ryzergen.machine.fission.StationReserve;
+import com.ryzer.ryzergen.registry.ModBlocks;
 import com.ryzer.ryzergen.registry.ModItems;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -37,6 +39,8 @@ import java.util.WeakHashMap;
  * station part, every unformed control core nearby outlines the spaces still to fill: blue where a
  * part is missing, green where the right part is in place, red where something else is in the way.
  * With some 340 spaces, the suggested part floats only in empty spaces close to the player.
+ * Holding a Coolant Reserve block beside a formed station outlines the reserve's next ring of bays
+ * on its back the same way (it grows from the centre: 1 bay, then 3, then 5).
  */
 @EventBusSubscriber(modid = RyzerGen.MOD_ID, value = Dist.CLIENT)
 public final class StationGhostPreview {
@@ -59,7 +63,9 @@ public final class StationGhostPreview {
         }
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
-        if (player == null || minecraft.level == null || !holdingPart(player)) {
+        boolean part = player != null && holdingPart(player);
+        boolean reserve = player != null && holding(player, ModItems.COOLANT_RESERVE.get().asItem());
+        if (player == null || minecraft.level == null || (!part && !reserve)) {
             return;
         }
         CORES.removeIf(core -> core.isRemoved() || core.getLevel() != minecraft.level);
@@ -73,13 +79,21 @@ public final class StationGhostPreview {
         pose.pushPose();
         pose.translate(-camera.x, -camera.y, -camera.z);
         for (StationCoreBlockEntity core : CORES) {
-            if (core.isFormed() || core.getBlockPos().distToCenterSqr(player.position()) > RANGE * RANGE) {
+            if (core.getBlockPos().distToCenterSqr(player.position()) > RANGE * RANGE) {
                 continue;
             }
-            drawGuide(pose, buffers, core, player.position(), pulse);
+            if (!core.isFormed() && part) {
+                drawGuide(pose, buffers, core, player.position(), pulse);
+            } else if (core.isFormed() && reserve) {
+                drawReserveGuide(pose, buffers, core, player.position(), pulse);
+            }
         }
         pose.popPose();
         buffers.endBatch();
+    }
+
+    private static boolean holding(Player player, net.minecraft.world.item.Item item) {
+        return player.getMainHandItem().is(item) || player.getOffhandItem().is(item);
     }
 
     private static boolean holdingPart(Player player) {
@@ -93,28 +107,51 @@ public final class StationGhostPreview {
     }
 
     private static void drawGuide(PoseStack pose, MultiBufferSource.BufferSource buffers, StationCoreBlockEntity core, Vec3 player, float pulse) {
-        Minecraft minecraft = Minecraft.getInstance();
         Direction facing = core.facing();
         VertexConsumer lines = buffers.getBuffer(RenderType.lines());
         for (Map.Entry<BlockPos, StationPart> entry : StationLayout.PARTS.entrySet()) {
-            if (entry.getValue() == StationPart.CORE) {
-                continue;
-            }
-            BlockPos pos = StationLayout.toWorld(core.getBlockPos(), facing, entry.getKey());
-            BlockState there = minecraft.level.getBlockState(pos);
-            AABB box = new AABB(pos).deflate(0.03);
-            if (there.is(entry.getValue().block())) {
-                LevelRenderer.renderLineBox(pose, lines, box, 0.27F, 0.84F, 0.37F, 0.5F);
-            } else if (!there.canBeReplaced()) {
-                LevelRenderer.renderLineBox(pose, lines, box, 0.82F, 0.24F, 0.24F, 0.9F);
-            } else {
-                LevelRenderer.renderLineBox(pose, lines, box, 0.21F, 0.78F, 0.96F, pulse);
-                if (pos.distToCenterSqr(player) < ITEM_RANGE * ITEM_RANGE) {
-                    floatingItem(pose, buffers, pos, new ItemStack(entry.getValue().block()));
-                    lines = buffers.getBuffer(RenderType.lines());
-                }
+            if (entry.getValue() != StationPart.CORE) {
+                lines = space(pose, buffers, lines, StationLayout.toWorld(core.getBlockPos(), facing, entry.getKey()),
+                        entry.getValue().block(), player, pulse);
             }
         }
+    }
+
+    /** The coolant reserve's next ring of bays on a formed station's back, if it can still grow. */
+    private static void drawReserveGuide(PoseStack pose, MultiBufferSource.BufferSource buffers, StationCoreBlockEntity core, Vec3 player, float pulse) {
+        Minecraft minecraft = Minecraft.getInstance();
+        int rings = StationReserve.rings(minecraft.level, core.getBlockPos(), core.facing());
+        if (rings >= StationLayout.RESERVE.size()) {
+            return;
+        }
+        VertexConsumer lines = buffers.getBuffer(RenderType.lines());
+        for (BlockPos cell : StationLayout.RESERVE.get(rings)) {
+            lines = space(pose, buffers, lines, StationLayout.toWorld(core.getBlockPos(), core.facing(), cell),
+                    ModBlocks.COOLANT_RESERVE.get(), player, pulse);
+        }
+    }
+
+    /**
+     * One space's outline: green with its part in place, red with something else in the way, a
+     * pulsing blue while empty, with the part floating in it when the player is close. Returns the
+     * lines buffer to carry on with (drawing an item ends it).
+     */
+    private static VertexConsumer space(PoseStack pose, MultiBufferSource.BufferSource buffers, VertexConsumer lines, BlockPos pos,
+                                        net.minecraft.world.level.block.Block part, Vec3 player, float pulse) {
+        BlockState there = Minecraft.getInstance().level.getBlockState(pos);
+        AABB box = new AABB(pos).deflate(0.03);
+        if (there.is(part)) {
+            LevelRenderer.renderLineBox(pose, lines, box, 0.27F, 0.84F, 0.37F, 0.5F);
+        } else if (!there.canBeReplaced()) {
+            LevelRenderer.renderLineBox(pose, lines, box, 0.82F, 0.24F, 0.24F, 0.9F);
+        } else {
+            LevelRenderer.renderLineBox(pose, lines, box, 0.21F, 0.78F, 0.96F, pulse);
+            if (pos.distToCenterSqr(player) < ITEM_RANGE * ITEM_RANGE) {
+                floatingItem(pose, buffers, pos, new ItemStack(part));
+                return buffers.getBuffer(RenderType.lines());
+            }
+        }
+        return lines;
     }
 
     /** The suggested part, small and slowly turning, in the middle of its space. */

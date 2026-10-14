@@ -25,6 +25,7 @@
     "ryzergen:thermal_unit",
     "ryzergen:battery_controller",
     "ryzergen:turbine_rotor",
+    "ryzergen:coolant_reserve",
     "ryzergen:home_battery",
     "ryzergen:reactor_heart",
     "ryzergen:reactor_machine_unit",
