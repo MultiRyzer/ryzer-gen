@@ -27,7 +27,9 @@ import java.util.List;
 
 /**
  * Draws a formed fission station from {@link StationGeometry}: the static body (from a GPU mesh,
- * see {@link StationMesh}), the rods, and the rotor turning about the station's centre. The geometry is drawn facing north from the station's
+ * see {@link StationMesh}), the rods, and the rotor turning about the station's centre. Its coolant
+ * reserve's body joins the mesh for the bays built; its water (at its real level), bay lamps and
+ * floodlights are drawn live. The geometry is drawn facing north from the station's
  * north-west corner, then turned about the footprint's centre to the core's facing.
  */
 public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEntity> {
@@ -45,15 +47,16 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
         Direction facing = core.facing();
         // The static body: from the GPU mesh when we can (built once, redrawn each frame in one
         // call), otherwise sent like everything else.
+        int bays = core.runner().reserveBays();
         if (!StationMesh.shadersInUse()) {
-            StationMesh mesh = core.clientMesh instanceof StationMesh cached && cached.matches(light, facing) ? cached : null;
+            StationMesh mesh = core.clientMesh instanceof StationMesh cached && cached.matches(light, facing, bays) ? cached : null;
             if (mesh == null) {
                 if (core.clientMesh instanceof StationMesh old) {
                     old.close();
                 }
                 PoseStack local = new PoseStack();
                 place(local, facing);
-                mesh = StationMesh.build(StationGeometry.group("static"), local, light, facing);
+                mesh = StationMesh.build(body(bays), local, light, facing, bays);
                 core.clientMesh = mesh;
             }
             mesh.draw(pose.last().pose());
@@ -62,8 +65,9 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
         pose.pushPose();
         place(pose, facing);
         if (StationMesh.shadersInUse()) {
-            draw(buffer, pose, StationGeometry.group("static"), light);
+            draw(buffer, pose, body(bays), light);
         }
+        drawReserve(buffer, pose, core, light);
         draw(buffer, pose, rods(core, partialTick), light);
         // The floodlights round the base: lit while the station runs, grey glass when it stops.
         draw(buffer, pose, StationGeometry.group(core.isRunning() ? "lamp_on" : "lamp_off"), light);
@@ -84,7 +88,86 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
             draw(translucent, pose, plumes(core), light, colour);
         }
         draw(translucent, pose, StationGeometry.group("glass"), light);
+        for (int ring = 0; ring < reserveRings(bays); ring++) {
+            draw(translucent, pose, StationGeometry.group("reserve_glass_" + ring), light);
+        }
         pose.popPose();
+    }
+
+    /** Rings of reserve bays drawn for a reserve of {@code bays}: the centre bay, then a pair each side. */
+    private static int reserveRings(int bays) {
+        return bays >= 5 ? 3 : bays >= 3 ? 2 : bays >= 1 ? 1 : 0;
+    }
+
+    /**
+     * The station's fixed body, with its coolant reserve's for the bays built (art/tools/fission_concept.py):
+     * each ring's bays, the cheeks closing its ends, and the buttresses between its bays.
+     */
+    private static List<StationGeometry.Quad> body(int bays) {
+        if (bays <= 0) {
+            return StationGeometry.group("static");
+        }
+        List<StationGeometry.Quad> quads = new java.util.ArrayList<>(StationGeometry.group("static"));
+        for (int ring = 0; ring < reserveRings(bays); ring++) {
+            quads.addAll(StationGeometry.group("reserve_body_" + ring));
+        }
+        quads.addAll(StationGeometry.group("reserve_end_" + bays));
+        for (int n : new int[] {3, 5}) {
+            if (bays >= n) {
+                quads.addAll(StationGeometry.group("reserve_rib_" + n));
+            }
+        }
+        return quads;
+    }
+
+    /** The reserve's water behind its windows, from their sill up to 32 pixels when full. */
+    private static final float WATER_FOOT = 19 / 16F;
+    private static final float WATER_TOP = 32 / 16F;
+
+    /**
+     * The coolant reserve's live parts: the floodlights on its plinth, each bay's lamp (blue while
+     * ready, flashing red while injecting, red when empty) and the water at its real level. The water
+     * is exported full and squashed to its level here; its texture is the same all the way up.
+     */
+    private static void drawReserve(VertexConsumer buffer, PoseStack pose, StationCoreBlockEntity core, int light) {
+        StationRunner runner = core.runner();
+        int rings = reserveRings(runner.reserveBays());
+        if (rings == 0) {
+            return;
+        }
+        float level = Math.max(0, Math.min(1, runner.reserve() / Math.max(1, runner.reserveCapacity())));
+        boolean injecting = runner.status() == StationRunner.Status.INJECTING;
+        boolean flash = (net.minecraft.Util.getMillis() / 400) % 2 == 0;
+        String lamp = injecting || level <= 0 ? "reserve_alarm_" : "reserve_ready_";
+        for (int ring = 0; ring < rings; ring++) {
+            draw(buffer, pose, StationGeometry.group((core.isRunning() ? "reserve_lamp_on_" : "reserve_lamp_off_") + ring), light);
+            if (!injecting || flash) {
+                draw(buffer, pose, StationGeometry.group(lamp + ring), light);
+            }
+            if (level > 0.01F) {
+                draw(buffer, pose, water(StationGeometry.group("reserve_water_" + ring), level, false), light);
+                draw(buffer, pose, water(StationGeometry.group("reserve_surface_" + ring), level, true), light);
+            }
+        }
+    }
+
+    /**
+     * Water quads at {@code level}: the body's top edge brought down to the level, or (for the surface
+     * line) the whole line lowered with it.
+     */
+    private static List<StationGeometry.Quad> water(List<StationGeometry.Quad> quads, float level, boolean surface) {
+        float drop = (WATER_TOP - WATER_FOOT) * (1 - level);
+        List<StationGeometry.Quad> out = new java.util.ArrayList<>(quads.size());
+        for (StationGeometry.Quad quad : quads) {
+            float[] xyz = quad.xyz().clone();
+            for (int i = 1; i < xyz.length; i += 3) {
+                if (surface || xyz[i] > WATER_FOOT + 0.001F) {
+                    xyz[i] -= drop;
+                }
+            }
+            out.add(new StationGeometry.Quad(xyz, quad.uv(), quad.normal(), quad.emissive()));
+        }
+        return out;
     }
 
     /** From the core's corner to the design's north-west corner, then turned about the centre to the facing. */
@@ -290,7 +373,8 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
         BlockPos a = StationLayout.toWorld(core.getBlockPos(), core.facing(), BlockPos.ZERO);
         BlockPos b = StationLayout.toWorld(core.getBlockPos(), core.facing(),
                 new BlockPos(StationLayout.SIZE - 1, StationLayout.HEIGHT, StationLayout.SIZE - 1));
-        return new AABB(a.getX(), a.getY(), a.getZ(), b.getX(), b.getY(), b.getZ()).inflate(1);
+        // Two blocks over: the coolant reserve reaches past the footprint on the back.
+        return new AABB(a.getX(), a.getY(), a.getZ(), b.getX(), b.getY(), b.getZ()).inflate(2);
     }
 
     @Override

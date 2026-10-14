@@ -54,7 +54,10 @@ public class StationControlMenu extends AbstractContainerMenu {
     public static final int DATA_STREAK = 12;
     public static final int DATA_BONUS = 13;
     public static final int DATA_NEXT = 14;
-    public static final int DATA_PLAN = 15;
+    /** The coolant reserve: seconds of cover its water gives, and its bays (0 for none). */
+    public static final int DATA_RESERVE = 15;
+    public static final int DATA_RESERVE_BAYS = 16;
+    public static final int DATA_PLAN = 17;
     public static final int DATA_COUNT = DATA_PLAN + StationReactor.CHANNELS;
 
     public static final int GRID_X = 8;
@@ -161,6 +164,8 @@ public class StationControlMenu extends AbstractContainerMenu {
                     case DATA_NEXT -> runner.steady.nextTenths();
                     case DATA_SAFETIES -> runner.safeties ? 1 : 0;
                     case DATA_TILT -> (runner.tiltTicksLeft() + 19) / 20;
+                    case DATA_RESERVE -> runner.reserveSeconds();
+                    case DATA_RESERVE_BAYS -> runner.reserveBays;
                     default -> 0;
                 };
             }
@@ -252,6 +257,14 @@ public class StationControlMenu extends AbstractContainerMenu {
 
     public int tiltSeconds() {
         return data.get(DATA_TILT);
+    }
+
+    public int reserveSeconds() {
+        return data.get(DATA_RESERVE);
+    }
+
+    public int reserveBays() {
+        return data.get(DATA_RESERVE_BAYS);
     }
 
     @Override

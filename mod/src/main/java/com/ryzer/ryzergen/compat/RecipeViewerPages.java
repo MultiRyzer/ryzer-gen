@@ -100,6 +100,7 @@ public final class RecipeViewerPages {
                         stack(ModItems.COOLANT_JACKET.get())), lines("microreactor")),
                 new Info("fission_station", List.of(stack(ModItems.STATION_CORE.get()), stack(ModItems.STATION_CASING.get()),
                         stack(ModItems.STATION_GLASS.get()), stack(ModItems.TURBINE_ROTOR.get())), lines("fission_station")),
+                new Info("coolant_reserve", List.of(stack(ModItems.COOLANT_RESERVE.get())), lines("coolant_reserve")),
                 new Info("station_core", List.of(stack(ModItems.GRAPHITE_BLOCK.get()), stack(ModItems.CONTROL_ROD.get())),
                         lines("station_core")),
                 new Info("fittings", List.of(stack(ModItems.SILVER_FITTINGS.get()), stack(ModItems.BUSBAR_FITTINGS.get()),

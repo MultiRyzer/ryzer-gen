@@ -173,6 +173,18 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
                 .save(output);
+        // Coolant reserve (emergency core cooling): cheap structure (rule 3), a steel tank with copper
+        // injection lines and windows, charged with water (the bucket comes back).
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.COOLANT_RESERVE.get(), 8)
+                .pattern("SCS")
+                .pattern("GWG")
+                .pattern("SCS")
+                .define('S', ModTags.INGOTS_STEEL)
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .define('W', Items.WATER_BUCKET)
+                .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
+                .save(output);
         // Control core: lead shielding round advanced boards, with graphite for the neutron sensors.
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.STATION_CORE.get())
                 .pattern("LAL")

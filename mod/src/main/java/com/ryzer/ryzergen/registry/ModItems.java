@@ -76,6 +76,7 @@ public final class ModItems {
     public static final DeferredItem<LfpRackItem> LFP_BATTERY_RACK = ITEMS.registerItem("lfp_battery_rack", LfpRackItem::new);
     public static final DeferredItem<BlockItem> STATION_GLASS = ITEMS.registerSimpleBlockItem(ModBlocks.STATION_GLASS);
     public static final DeferredItem<BlockItem> TURBINE_ROTOR = ITEMS.registerSimpleBlockItem(ModBlocks.TURBINE_ROTOR);
+    public static final DeferredItem<BlockItem> COOLANT_RESERVE = ITEMS.registerSimpleBlockItem(ModBlocks.COOLANT_RESERVE);
     public static final DeferredItem<WrenchItem> WRENCH = ITEMS.registerItem("wrench", WrenchItem::new);
     public static final DeferredItem<BlockItem> HOME_BATTERY = ITEMS.registerSimpleBlockItem(ModBlocks.HOME_BATTERY);
     public static final DeferredItem<BatteryModuleItem> LEAD_ACID_MODULE = ITEMS.registerItem("lead_acid_module",

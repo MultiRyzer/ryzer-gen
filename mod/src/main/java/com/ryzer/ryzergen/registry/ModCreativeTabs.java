@@ -50,7 +50,7 @@ public final class ModCreativeTabs {
                         ModItems.POOL_CONTROLLER, ModItems.POOL_LINER, ModItems.POOL_CRANE,
                         ModItems.ASSEMBLER_CONTROLLER, ModItems.ASSEMBLER_FRAME, ModItems.ASSEMBLER_ARM,
                         ModItems.BATTERY_CONTROLLER, ModItems.CONTAINER_FRAME, ModItems.THERMAL_UNIT,
-                        ModItems.STATION_CORE, ModItems.STATION_CASING, ModItems.STATION_GLASS, ModItems.TURBINE_ROTOR,
+                        ModItems.STATION_CORE, ModItems.STATION_CASING, ModItems.STATION_GLASS, ModItems.TURBINE_ROTOR, ModItems.COOLANT_RESERVE,
                         ModItems.BREEDER_CORE, ModItems.BREEDER_FRAME, ModItems.BREEDER_SHELL,
                         ModItems.MEGA_DRILL_CONTROLLER, ModItems.DRILL_FRAME),
                 // Pipes and cables

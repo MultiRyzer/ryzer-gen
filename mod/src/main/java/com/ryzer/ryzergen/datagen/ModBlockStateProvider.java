@@ -603,6 +603,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 models().cubeAll("station_glass", modLoc("block/station_glass")).renderType("cutout"));
         simpleBlockWithItem(ModBlocks.TURBINE_ROTOR.get(), models().cubeBottomTop("turbine_rotor",
                 modLoc("block/turbine_rotor_side"), modLoc("block/station_casing"), modLoc("block/turbine_rotor_top")));
+        simpleBlockWithItem(ModBlocks.COOLANT_RESERVE.get(), models().cubeBottomTop("coolant_reserve",
+                modLoc("block/coolant_reserve_side"), modLoc("block/station_casing"), modLoc("block/coolant_reserve_top")));
         ModelFile core = models().orientable("station_core", modLoc("block/station_casing"),
                 modLoc("block/station_core_front"), modLoc("block/station_casing"));
         horizontalBlock(ModBlocks.STATION_CORE.get(), core);

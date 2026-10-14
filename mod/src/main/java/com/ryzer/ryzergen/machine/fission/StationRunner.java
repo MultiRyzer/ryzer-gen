@@ -47,6 +47,12 @@ import net.neoforged.neoforge.items.ItemStackHandler;
  * and heats without limit. Only re-arming the safeties (which SCRAMs) saves it then; at 1000°C it
  * melts down. So overdrive rewards automation that swaps spent rods promptly. Real basis: power
  * peaking around a gap in the fuel, with too little control rod margin to hold it.
+ *
+ * <p>The coolant reserve (design section 8), built onto the station's back in bays, fills from the
+ * station's spare water. In overdrive, when the core has lost its cooling and passes 620°C, it floods
+ * the core and holds it there while its water lasts (two minutes a bay by default); dry, the core
+ * heats on as before. It never touches an unstable core: a flux tilt is a reactivity fault, not a
+ * loss of cooling. Real basis: emergency core cooling accumulators, which hold only their own water.
  */
 public class StationRunner {
     public static final int WATER_CAPACITY = 16_000;
@@ -75,17 +81,21 @@ public class StationRunner {
     public static final float MELTDOWN_TEMPERATURE = 1000;
     /** Degrees per tick an unstable core climbs. */
     private static final float RUNAWAY_RATE = 1;
+    /** Water each bay of the coolant reserve holds. */
+    public static final int RESERVE_PER_BAY = 16_000;
+    /** The most water a tick the reserve takes, and only while the station's tank is over half full. */
+    private static final int RESERVE_FILL = 100;
     /** Dose rate in mSv/s one block from the core: a meltdown site, which fades over 40 minutes. */
     private static final float MELTDOWN_RADIATION = 500;
     private static final long MELTDOWN_FADE_TICKS = 48_000;
 
     public enum Status {
         // New statuses go at the end: the status is saved by its position in this list.
-        OFFLINE, NO_FUEL, WARMING, ONLINE, NO_WATER, OVERHEAT, SCRAM, OVERDRIVE, FLUX_TILT, UNSTABLE, RUNAWAY;
+        OFFLINE, NO_FUEL, WARMING, ONLINE, NO_WATER, OVERHEAT, SCRAM, OVERDRIVE, FLUX_TILT, UNSTABLE, RUNAWAY, INJECTING;
 
         /** Whether the alarm sounds. */
         public boolean alarm() {
-            return this == FLUX_TILT || this == UNSTABLE || this == RUNAWAY;
+            return this == FLUX_TILT || this == UNSTABLE || this == RUNAWAY || this == INJECTING;
         }
 
         /** Heading for meltdown, so the alarm climbs with the core's temperature. */
@@ -242,6 +252,10 @@ public class StationRunner {
     /** Ticks since the station last ran: it only says it is online after being down a while. */
     private int downTicks = RESTART_ANNOUNCE_TICKS;
     private static final int RESTART_ANNOUNCE_TICKS = 200;
+    /** Bays of coolant reserve built onto the formed station (0, 1, 3 or 5), set by {@link StationReserve}. */
+    int reserveBays;
+    /** Water in the reserve, in mB. */
+    float reserve;
     int output;
     int efficiencyPermille;
     /** How hard the turbine is turning, 0 to 1, for the renderer. */
@@ -285,6 +299,38 @@ public class StationRunner {
         return temperature;
     }
 
+    public int reserveBays() {
+        return reserveBays;
+    }
+
+    /** A bay was built or lost: the reserve's water over its new capacity is gone. */
+    void setReserveBays(int bays) {
+        if (bays != reserveBays) {
+            reserveBays = bays;
+            reserve = Math.min(reserve, reserveCapacity());
+            changed.run();
+        }
+    }
+
+    public int reserveCapacity() {
+        return reserveBays * RESERVE_PER_BAY;
+    }
+
+    /** Water in the coolant reserve, in mB. */
+    public float reserve() {
+        return reserve;
+    }
+
+    /** mB the reserve drains each tick while it holds the core: a full bay lasts the configured time. */
+    private static float reserveDrain() {
+        return RESERVE_PER_BAY / (Config.get(Config.STATION_RESERVE_SECONDS) * 20F);
+    }
+
+    /** Seconds the reserve's water would hold the core for, from now. */
+    public int reserveSeconds() {
+        return reserve <= 0 ? 0 : (int) Math.ceil(reserve / reserveDrain() / 20);
+    }
+
     /**
      * Ticks a fuel channel may sit without a live rod before the flux tilt counts: time to swap a
      * spent rod by hand without setting off the alarm.
@@ -310,7 +356,7 @@ public class StationRunner {
      * is also the only way to save one gone unstable. {@code byPlayer} is false when the interlock
      * does it: a SCRAM the player chose is a controlled shutdown, so the announcer does not warn.
      */
-    void toggleSafeties(boolean byPlayer) {
+    public void toggleSafeties(boolean byPlayer) {
         safeties = !safeties;
         if (safeties) {
             if (unstable || temperature >= RESET_TEMPERATURE) {
@@ -357,7 +403,7 @@ public class StationRunner {
     }
 
     /** Sets a channel's plan. Whatever no longer fits comes back out, for the player to take. */
-    ItemStack setType(int channel, Channel type) {
+    public ItemStack setType(int channel, Channel type) {
         types[channel] = type;
         ItemStack held = channels.getStackInSlot(channel);
         boolean finishedHere = (type == Channel.FUEL && StationReactor.isSpent(held))
@@ -421,6 +467,15 @@ public class StationRunner {
         if (removed > 0) {
             water.drain((int) Math.ceil(removed / heatPerWater), IFluidHandler.FluidAction.EXECUTE);
         }
+        // The coolant reserve fills from what the core does not need: only while the station's tank
+        // is over half full, so it never starves the core, and never while it is holding the core.
+        if (reserveBays > 0 && status != Status.INJECTING) {
+            int take = (int) Math.min(Math.min(water.getFluidAmount() - WATER_CAPACITY / 2, RESERVE_FILL), reserveCapacity() - reserve);
+            if (take > 0) {
+                water.drain(take, IFluidHandler.FluidAction.EXECUTE);
+                reserve += take;
+            }
+        }
         temperature += (generation - removed) / HEAT_CAPACITY;
         // A stopped core slowly loses its heat to the air. Not while it runs: the plan (and the
         // rating) assume every bit of heat reaches the turbine, and the leak cost about a fifth of it.
@@ -430,6 +485,16 @@ public class StationRunner {
         temperature = Math.max(AMBIENT, temperature);
         if (unstable) {
             temperature += RUNAWAY_RATE;
+        }
+        // The coolant reserve: in overdrive, a core that has lost its cooling is flooded and held at
+        // 620°C while the reserve's water lasts, draining at a steady rate whatever the heat. Never an
+        // unstable core (a flux tilt is a reactivity fault, which only re-arming the safeties stops).
+        boolean injecting = false;
+        if (overdrive && !unstable && reserve > 0 && temperature > RUNAWAY_TEMPERATURE) {
+            temperature = RUNAWAY_TEMPERATURE;
+            reserve = Math.max(0, reserve - reserveDrain());
+            injecting = true;
+            changed.run();
         }
         if (temperature >= SCRAM_TEMPERATURE && !overdrive) {
             scrammed = true;
@@ -473,6 +538,7 @@ public class StationRunner {
         // An overheating core outranks a flux tilt: with no coolant it melts down in about a minute,
         // long before the tilt's countdown runs out.
         status = unstable ? Status.UNSTABLE
+                : injecting ? Status.INJECTING
                 : overdrive && temperature >= RUNAWAY_TEMPERATURE ? Status.RUNAWAY
                 : tilting() ? Status.FLUX_TILT
                 : !allowed ? Status.OFFLINE
@@ -513,6 +579,10 @@ public class StationRunner {
         // Most urgent first: a line only plays if nothing more urgent is already being said.
         if ((status == Status.RUNAWAY || status == Status.UNSTABLE) && before != Status.RUNAWAY && before != Status.UNSTABLE) {
             announcer.say(level, at, Announcer.Line.MELTDOWN_RISK);
+        }
+        // The reserve fires on a loss of cooling, so the control system calls it.
+        if (status == Status.INJECTING && before != Status.INJECTING) {
+            announcer.say(level, at, Announcer.Line.COOLANT_LOSS);
         }
         // Not on the first tick after loading a station that was already scrammed. When the player
         // caused it by re-arming the safeties, it is a controlled shutdown, not an alarm.
@@ -707,6 +777,8 @@ public class StationRunner {
         tag.putInt("tilt_ticks", tiltTicks);
         tag.putBoolean("unstable", unstable);
         tag.putInt("status", status.ordinal());
+        tag.putInt("reserve_bays", reserveBays);
+        tag.putFloat("reserve", reserve);
         steady.save(tag);
     }
 
@@ -727,6 +799,8 @@ public class StationRunner {
         unstable = tag.getBoolean("unstable");
         int id = tag.getInt("status");
         status = id >= 0 && id < Status.values().length ? Status.values()[id] : Status.OFFLINE;
+        reserveBays = tag.getInt("reserve_bays");
+        reserve = tag.getFloat("reserve");
         steady.load(tag);
     }
 }

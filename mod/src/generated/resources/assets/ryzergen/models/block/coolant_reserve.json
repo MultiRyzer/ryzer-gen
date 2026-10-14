@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "ryzergen:block/station_casing",
+    "side": "ryzergen:block/coolant_reserve_side",
+    "top": "ryzergen:block/coolant_reserve_top"
+  }
+}

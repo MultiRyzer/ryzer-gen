@@ -32,17 +32,24 @@ public final class StationMesh implements AutoCloseable {
     private final int light;
     private final Direction facing;
     private final int generation;
+    /** Which body it holds, for one that can change shape: the station's coolant reserve bays. */
+    private final int variant;
 
-    private StationMesh(VertexBuffer buffer, int light, Direction facing, int generation) {
+    private StationMesh(VertexBuffer buffer, int light, Direction facing, int generation, int variant) {
         this.buffer = buffer;
         this.light = light;
         this.facing = facing;
         this.generation = generation;
+        this.variant = variant;
     }
 
     /** Whether this mesh still matches what it would be built as now. */
     public boolean matches(int light, Direction facing) {
-        return this.light == light && this.facing == facing && generation == StationGeometry.generation();
+        return matches(light, facing, 0);
+    }
+
+    public boolean matches(int light, Direction facing, int variant) {
+        return this.light == light && this.facing == facing && this.variant == variant && generation == StationGeometry.generation();
     }
 
     /**
@@ -50,6 +57,10 @@ public final class StationMesh implements AutoCloseable {
      * facing, from the core's block), each with {@code light}.
      */
     public static StationMesh build(List<StationGeometry.Quad> quads, PoseStack transform, int light, Direction facing) {
+        return build(quads, transform, light, facing, 0);
+    }
+
+    public static StationMesh build(List<StationGeometry.Quad> quads, PoseStack transform, int light, Direction facing, int variant) {
         try (ByteBufferBuilder bytes = new ByteBufferBuilder(quads.size() * 4 * DefaultVertexFormat.NEW_ENTITY.getVertexSize())) {
             BufferBuilder builder = new BufferBuilder(bytes, VertexFormat.Mode.QUADS, DefaultVertexFormat.NEW_ENTITY);
             StationRenderer.draw(builder, transform, quads, light);
@@ -61,7 +72,7 @@ public final class StationMesh implements AutoCloseable {
                 buffer.upload(mesh);
             }
             VertexBuffer.unbind();
-            return new StationMesh(buffer, light, facing, StationGeometry.generation());
+            return new StationMesh(buffer, light, facing, StationGeometry.generation(), variant);
         }
     }
 

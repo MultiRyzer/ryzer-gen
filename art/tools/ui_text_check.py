@@ -98,6 +98,8 @@ CHECKS = [
     ('gui.ryzergen.station.status.flux_tilt', ['59:59'], 104),
     ('gui.ryzergen.station.status.unstable', [], 104),
     ('gui.ryzergen.station.status.runaway', [], 104),
+    # The coolant reserve's countdown: at most 5 bays of the longest configured time, 300 minutes.
+    ('gui.ryzergen.station.status.injecting', ['300:00'], 104),
     ('gui.ryzergen.station.live', ['99.9k', '1000'], 104),
     ('gui.ryzergen.station.plan', ['99.9k'], 104),
     ('gui.ryzergen.station.plan_empty', [], 104),

@@ -55,6 +55,11 @@ public final class StationStructure {
         for (BlockPos cell : StationLayout.PARTS.keySet()) {
             setFormed(level, StationLayout.toWorld(core, facing, cell), false);
         }
+        // The coolant reserve is only a reserve on a formed station.
+        StationReserve.release(level, core, facing);
+        if (level.getBlockEntity(core) instanceof StationCoreBlockEntity entity) {
+            entity.runner().setReserveBays(0);
+        }
         level.playSound(null, core.above(5), SoundEvents.IRON_DOOR_OPEN, SoundSource.BLOCKS, 1.0F, 0.6F);
         RyzerGen.LOGGER.debug("Fission station at {} taken apart ({} broken)", core, removed);
     }
@@ -121,6 +126,8 @@ public final class StationStructure {
         // The parts store's job is done: whatever is left pops out in front of the core.
         if (level.getBlockEntity(core) instanceof StationCoreBlockEntity entity) {
             entity.dropContents(level, core.relative(facing));
+            // A reserve built before the station formed joins it now.
+            StationReserve.refresh(level, entity);
         }
         level.playSound(null, core.above(5), SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 1.0F, 0.8F);
         level.playSound(null, core.above(5), SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0F, 1.2F);

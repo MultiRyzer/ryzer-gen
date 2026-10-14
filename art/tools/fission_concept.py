@@ -15,6 +15,8 @@ and the glass light by these numbers, so keep them if the look changes:
     5-6    reactor head: a dark band with a cyan light strip
     6-8    the roof is one giant turbine rotor, seen through open louvres
     8-11   the outer wall rises into a hyperbolic steam stack, open at the top
+    back   the coolant reserve (emergency core cooling), built on in bays of 30 degrees: 1, 3 or 5,
+           its face 6.75 blocks out, 2.75 blocks high (see the section near the end)
 """
 import math
 import os
@@ -42,9 +44,11 @@ STATION = ('skirt', 'deck', 'core_plate', 'pillar', 'rib_web', 'clamp', 'copper_
            'stencil_a', 'stencil_b', 'hatch_a', 'hatch_b',
            'fuel_pin', 'spacer', 'nozzle', 'cherenkov', 'moderator', 'control', 'steam',
            'housing', 'housing_slope', 'housing_cheek', 'hazard_upright', 'tag_coolant', 'tag_fuel', 'tag_energy',
-           'lamp', 'lamp_off')
+           'lamp', 'lamp_off', 'reserve_lintel', 'reserve_face', 'reserve_hood_lo', 'reserve_hood_hi', 'reserve_water',
+           'reserve_surface', 'reserve_void', 'valve')
 TEXTURES.update({name: 'ryzergen:block/station/' + name for name in STATION})
-d = Design(C, TEXTURES, {'glow', 'screen', 'beacon', 'fuel_pin', 'cherenkov', 'tag_coolant', 'tag_fuel', 'tag_energy', 'lamp'},
+d = Design(C, TEXTURES, {'glow', 'screen', 'beacon', 'fuel_pin', 'cherenkov', 'tag_coolant', 'tag_fuel', 'tag_energy', 'lamp',
+                         'reserve_water', 'reserve_surface'},
            concept_only={'rods', 'plumes'})
 FRONT = math.radians(270)   # the angle round the station that faces the front
 
@@ -353,18 +357,283 @@ d.cylinder('glow', 134, 135, stack_r(134) + 0.5, n=48)
 for k in range(4):
     d.post('beacon', math.radians(45 + 90 * k), stack_r(168) + 1, 166, 170, 1.5, 1.5)
 
+# ---------------------------------------------------------------- coolant reserve (design section 8)
+# Emergency core cooling, built onto the station's back in bays of 30 degrees, each between two of
+# the chamber ribs, grown symmetrically from the back's centre: 1 bay, 3 or 5. Everything ties to a
+# line the station already has: it stands on the station's own foundation stepped out (skirt, rim
+# and plinth at the same heights); its section is the port housings' language (a light face, a
+# sloped graphite hood leaning back into the station, hazard-striped cheeks at its ends); the ribs
+# between bays step out over it as buttresses; the hood stops just under the ribs' glass clips; and
+# the floodlights carry on round its plinth at the station's own angles. The back is +z, 90 degrees.
+#
+# Groups, which the game picks by the reserve's size (StationRenderer):
+#   reserve_body_K, reserve_glass_K, reserve_lamp_on_K / _off_K   ring K of bays (0 the centre bay,
+#       1 the pair beside it, 2 the outer pair)
+#   reserve_water_K, reserve_surface_K   the water behind ring K's windows, drawn full; the game
+#       squashes it to the water's level (its texture is the same all the way up) and lowers the
+#       surface line with it
+#   reserve_ready_K / reserve_alarm_K    each bay's lamp on the hood: blue, or red while injecting
+#       or empty
+#   reserve_end_N    the cheeks at the ends of an N-bay reserve; reserve_rib_N  the buttresses an
+#       N-bay reserve adds between its bays
+RO = 108          # the face, 6.75 blocks out (its skirt is flush with its blocks' outer edge)
+RP = 111          # its plinth band (the station's is 92)
+RS = 112          # its skirt (the station's is 93)
+RB = 93.5         # where the hood meets the station, just outside the ribs (91.5)
+FACE_TOP = 36
+HOOD = [(FACE_TOP, RO), (40.5, 100.5), (44, RB)]   # the hood's section, bottom to top, a little convex
+WIN = (19, 33)    # window opening; the water fills it to 32 at most
+DEPTH = 3         # window recess
+STEPS = 4         # per bay: 7.5 degrees a step, as the station's 48-step rings
+RINGS = [[(75, 105)], [(45, 75), (105, 135)], [(15, 45), (135, 165)]]
+SIZES = {1: (75, 105), 3: (45, 135), 5: (15, 165)}
+
+
+def arc(mat, profile, a0, a1, n, inward=False, v0=None):
+    """A part of a surface of revolution through (y, r) points, between angles a0 and a1."""
+    for s in range(len(profile) - 1):
+        (y1, r1), (y2, r2) = profile[s], profile[s + 1]
+        h = min(16, math.hypot(y2 - y1, r2 - r1))
+        top = 16 - h if v0 is None else v0
+        for k in range(n):
+            p0, p1 = a0 + (a1 - a0) * k / n, a0 + (a1 - a0) * (k + 1) / n
+            pm = (p0 + p1) / 2
+            dy, dr = y2 - y1, r2 - r1
+            out = (dy * math.cos(pm), -dr, dy * math.sin(pm))
+            if inward:
+                out = tuple(-v for v in out)
+            d.quad(mat, [d.at(p0, r2, y2), d.at(p0, r1, y1), d.at(p1, r1, y1), d.at(p1, r2, y2)],
+                   [(0, top), (0, top + h), (16, top + h), (16, top)], out)
+
+
+def flat(mat, y, r1, r2, a0, a1, n, up=True):
+    """A flat strip of ring at height y, from radius r1 out to r2 (its texture's foot rows)."""
+    for k in range(n):
+        p0, p1 = a0 + (a1 - a0) * k / n, a0 + (a1 - a0) * (k + 1) / n
+        w = min(16, r2 - r1)
+        d.quad(mat, [d.at(p0, r1, y), d.at(p0, r2, y), d.at(p1, r2, y), d.at(p1, r1, y)],
+               [(0, 16 - w), (0, 16), (16, 16), (16, 16 - w)], (0, 1 if up else -1, 0))
+
+
+def radial(mat, phi, points, facing):
+    """A flat face on the radial plane at phi through four (y, r) points, facing round by +1 or -1."""
+    d.quad(mat, [d.at(phi, r, y) for y, r in points], [(0, 0), (0, 16), (16, 16), (16, 0)],
+           (-math.sin(phi) * facing, 0, math.cos(phi) * facing))
+
+
+def slab(phi, outline, half, hazard_edges):
+    """A plate on the radial plane at phi, `half` thick each way, through a (y, r) outline: a cheek
+    at the reserve's end. The edges listed in `hazard_edges` carry the stripes."""
+    across = (-math.sin(phi), 0, math.cos(phi))
+
+    def p(y, r, side):
+        x, yy, z = d.at(phi, r, y)
+        return (x + side * half * across[0], yy, z + side * half * across[2])
+    for side in (-1, 1):
+        first = p(*outline[0], side)
+        for i in range(1, len(outline) - 1):
+            d.quad('housing_cheek', [first, p(*outline[i], side), p(*outline[i + 1], side), p(*outline[i + 1], side)],
+                   [(0, 0), (0, 16), (16, 16), (16, 16)], tuple(side * v for v in across))
+    cy = sum(y for y, _ in outline) / len(outline)
+    cr = sum(r for _, r in outline) / len(outline)
+    for i in range(len(outline)):
+        (y1, r1), (y2, r2) = outline[i], outline[(i + 1) % len(outline)]
+        length = math.hypot(y2 - y1, r2 - r1)
+        if length < 0.01:
+            continue
+        ny, nr = r2 - r1, -(y2 - y1)
+        if ny * ((y1 + y2) / 2 - cy) + nr * ((r1 + r2) / 2 - cr) < 0:
+            ny, nr = -ny, -nr
+        out = (nr * math.cos(phi), ny, nr * math.sin(phi))
+        mat = 'hazard_upright' if i in hazard_edges else 'housing_cheek'
+        pieces = max(1, math.ceil(length / 16))
+        for j in range(pieces):
+            a = (y1 + (y2 - y1) * j / pieces, r1 + (r2 - r1) * j / pieces)
+            b = (y1 + (y2 - y1) * (j + 1) / pieces, r1 + (r2 - r1) * (j + 1) / pieces)
+            seg = length / pieces
+            d.quad(mat, [p(*a, -1), p(*b, -1), p(*b, 1), p(*a, 1)], [(0, 0), (0, seg), (2 * half, seg), (2 * half, 0)], out)
+
+
+def reserve_lamp(phi, ring):
+    """A floodlight like the station's own, on the reserve's plinth at a bay's centre."""
+    across = (-math.sin(phi), 0, math.cos(phi))
+    d.sweep('steel_dark', [d.at(phi, RP - 1, LAMP_Y), d.at(phi, RP + 3, LAMP_Y)], 2, 2.5,
+            lambda i, v=across: v, closed=False, caps=True)
+    lens = [d.at(phi, RP + 3.05, LAMP_Y + 1.5), d.at(phi, RP + 3.05, LAMP_Y - 1.5)]
+    pts = [tuple(q[i] + side * 2 * across[i] for i in range(3)) for q, side in
+           ((lens[0], -1), (lens[1], -1), (lens[1], 1), (lens[0], 1))]
+    for grp, tex in (('reserve_lamp_on_%d' % ring, 'lamp'), ('reserve_lamp_off_%d' % ring, 'lamp_off')):
+        d.group = grp
+        d.quad(tex, pts, [(0, 0), (0, 3), (4, 3), (4, 0)], (math.cos(phi), 0, math.sin(phi)))
+    d.group = 'reserve_body_%d' % ring
+
+
+def bay(a0, a1, ring):
+    """One bay between the ribs at a0 and a1 (radians), in ring `ring`."""
+    body = 'reserve_body_%d' % ring
+    d.group = body
+    # Foundation, stepped out from the station's.
+    arc('skirt', [(0, RS), (6, RS)], a0, a1, STEPS)
+    flat('rim', 6, RP, RS, a0, a1, STEPS)
+    arc('plinth', [(6, RP), (16, RP)], a0, a1, STEPS, v0=0)
+    flat('rim', 16, RO, RP, a0, a1, STEPS)
+    mid = (a0 + a1) / 2
+    reserve_lamp(mid, ring)
+    # The face: a sill band under the windows, a lintel over them with a light line, then the hood.
+    arc('housing', [(16, RO), (WIN[0], RO)], a0, a1, STEPS)
+    arc('reserve_lintel', [(WIN[1], RO), (FACE_TOP, RO)], a0, a1, STEPS)
+    arc('glow', [(FACE_TOP - 1.4, RO + 0.2), (FACE_TOP - 0.6, RO + 0.2)], a0, a1, STEPS)
+    arc('reserve_hood_lo', HOOD[0:2], a0, a1, STEPS)
+    arc('reserve_hood_hi', HOOD[1:3], a0, a1, STEPS)
+    flat('head_top', HOOD[2][0], 91.6, RB, a0, a1, STEPS)
+    # The bay's lamp, on the hood's lower pitch.
+    (ya, ra), (yb, rb) = HOOD[0], HOOD[1]
+    lo = (ya + (yb - ya) * 0.25 + 0.3, ra + (rb - ra) * 0.25 + 0.1)
+    hi = (ya + (yb - ya) * 0.55 + 0.3, ra + (rb - ra) * 0.55 + 0.1)
+    w = 6 / RO
+    pts = [d.at(mid - w, hi[1], hi[0]), d.at(mid - w, lo[1], lo[0]), d.at(mid + w, lo[1], lo[0]), d.at(mid + w, hi[1], hi[0])]
+    for grp, tex in (('reserve_ready_%d' % ring, 'tag_coolant'), ('reserve_alarm_%d' % ring, 'tag_energy')):
+        d.group = grp
+        d.quad(tex, pts, [(0, 0), (0, 3), (12, 3), (12, 0)], ((yb - ya) * math.cos(mid), ra - rb, (yb - ya) * math.sin(mid)))
+    d.group = body
+    # Two windows either side of a slim mullion, recessed, the water behind glass.
+    edge, mull = 6.5 / RO, 1.2 / RO
+    for b0, b1 in ((a0, a0 + edge), (a1 - edge, a1), (mid - mull, mid + mull)):
+        arc('reserve_face', [(WIN[0], RO), (WIN[1], RO)], b0, b1, 1)
+    back = RO - DEPTH
+    for p0, p1 in ((a0 + edge, mid - mull), (mid + mull, a1 - edge)):
+        arc('reserve_void', [(WIN[0], back - 0.3), (WIN[1], back - 0.3)], p0, p1, 2)
+        flat('steel_dark', WIN[0], back - 0.3, RO, p0, p1, 2)
+        flat('steel_dark', WIN[1], back - 0.3, RO, p0, p1, 2, up=False)
+        jamb = [(WIN[1], RO), (WIN[0], RO), (WIN[0], back - 0.3), (WIN[1], back - 0.3)]
+        radial('steel_dark', p0, jamb, 1)
+        radial('steel_dark', p1, jamb, -1)
+        d.group = 'reserve_water_%d' % ring
+        arc('reserve_water', [(WIN[0], back), (WIN[1] - 1, back)], p0, p1, 2)
+        d.group = 'reserve_surface_%d' % ring
+        arc('reserve_surface', [(WIN[1] - 1, back + 0.05), (WIN[1] - 0.3, back + 0.05)], p0, p1, 2)
+        d.group = 'reserve_glass_%d' % ring
+        arc('glass', [(WIN[0], RO - 0.4), (WIN[1], RO - 0.4)], p0, p1, 2)
+        d.group = body
+
+
+def buttress(phi):
+    """A chamber rib stepping out over the reserve: a light flange down its face on a shoe, up the
+    hood, and a collar where it meets the rib."""
+    d.post('clamp', phi, RO + 1.5, 16, 20, 2.5, 5.5)
+    d.post('pillar', phi, RO + 1, 16, FACE_TOP + 0.5, 1, 4)
+    across = (-math.sin(phi), 0, math.cos(phi))
+    d.sweep('pillar', [d.at(phi, RO + 1, FACE_TOP + 0.5), d.at(phi, 100.9, 41.5), d.at(phi, 93, 45)], 1, 4,
+            lambda i: across, closed=False, caps=True)
+    d.post('clamp', phi, 90.5, 42, 46, 2.5, 5)
+
+
+def end_cheek(phi):
+    """A cheek closing the reserve's end, standing proud of its section, hazard striped on its faces."""
+    outline = [(0, 92), (0, RS + 1.5), (16, RS + 1.5), (16, RO + 2.5), (FACE_TOP + 1.5, RO + 2.5),
+               (HOOD[1][0] + 1.5, HOOD[1][1] + 0.5), (HOOD[2][0] + 1.5, 92.5), (HOOD[2][0] + 1.5, 92)]
+    slab(phi, outline, 2, hazard_edges={1, 3})
+
+
+def valve(phi):
+    """Where a copper downcomer (the station's coolant loop) passes down through the hood: a collar
+    and an orange injection valve. Real accumulators inject into the loops."""
+    d.post('clamp', phi, 90.25, 43.5, 47.5, 2.5, 2.5)
+    d.post('valve', phi, 93.6, 44.5, 47, 1.6, 1.6)
+    d.post('steel_dark', phi, 95.8, 45, 46.5, 0.6, 2.4)
+
+
+for ring, bays in enumerate(RINGS):
+    for a, b in bays:
+        bay(math.radians(a), math.radians(b), ring)
+        # The downcomers stand beside every other rib (15, 75 and 135 degrees on the back).
+        for rib in (15, 75, 135):
+            pipe = math.radians(rib) + 8.5 / 90.5
+            if math.radians(a) < pipe < math.radians(b):
+                d.group = 'reserve_body_%d' % ring
+                valve(pipe)
+for size, (a, b) in SIZES.items():
+    d.group = 'reserve_end_%d' % size
+    end_cheek(math.radians(a))
+    end_cheek(math.radians(b))
+d.group = 'reserve_rib_3'
+for deg in (75, 105):
+    buttress(math.radians(deg))
+d.group = 'reserve_rib_5'
+for deg in (45, 135):
+    buttress(math.radians(deg))
+d.group = 'static'
+
+
+def reserve_groups(size):
+    """The reserve groups drawn for a reserve of `size` bays (0, 1, 3 or 5), as StationRenderer picks them."""
+    rings = {0: 0, 1: 1, 3: 2, 5: 3}[size]
+    groups = set()
+    for k in range(rings):
+        groups |= {'reserve_body_%d' % k, 'reserve_glass_%d' % k, 'reserve_lamp_on_%d' % k,
+                   'reserve_water_%d' % k, 'reserve_surface_%d' % k}
+    if size:
+        groups.add('reserve_end_%d' % size)
+    groups |= {'reserve_rib_%d' % n for n in (3, 5) if size >= n}
+    return groups
+
+
+def with_reserve(size, level=0.9, firing=False):
+    """The station's quads with a reserve of `size` bays, its water at `level` (0 to 1) and its bay
+    lamps blue, or red while firing: what the game draws, for the pictures."""
+    shown = reserve_groups(size)
+    drop = 13 * (1 - level)
+    out = []
+    for tex, verts, n, group in d.quads:
+        if group.startswith('reserve_ready_') or group.startswith('reserve_alarm_'):
+            ring = int(group[-1])
+            if 'reserve_body_%d' % ring in shown and group.startswith('reserve_alarm_' if firing else 'reserve_ready_'):
+                out.append((tex, verts, n, group))
+            continue
+        if group == 'lamp_off' or (group.startswith('reserve_') and group not in shown):
+            continue
+        if group.startswith('reserve_water_'):
+            verts = [(x, y if y < WIN[0] + 0.01 else y - drop, z, u, v) for x, y, z, u, v in verts]
+        elif group.startswith('reserve_surface_'):
+            verts = [(x, y - drop, z, u, v) for x, y, z, u, v in verts]
+        out.append((tex, verts, n, group))
+    return out
+
+
 # ---------------------------------------------------------------- export and picture
 GAME_DATA = os.path.join(mp.ROOT, 'mod', 'src', 'main', 'resources', 'assets', 'ryzergen', 'station', 'fission_station.json')
+
+
+def picture(path, renders):
+    """Renders each (quads, view, scale, rise) side by side into one picture."""
+    every = d.quads
+    images = []
+    for quads, view, scale, rise in renders:
+        d.quads = quads
+        images.append(d.render(view, scale, rise))
+    d.quads = every
+    h = max(len(v) for v in images)
+    rows = [sum((v[y] if y < len(v) else [(40, 44, 52, 255)] * len(v[0]) for v in images), []) for y in range(h)]
+    mp.write_png(path, rows)
+    print('rendered ->', path)
 
 
 def main():
     out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(mp.ROOT, 'art', 'concepts', 'fission_station.png')
     big_machine_textures.publish_all()
     d.export(GAME_DATA)
-    # The picture shows the station running, so its floodlights lit.
-    d.quads = [q for q in d.quads if q[3] != 'lamp_off']
+    # The picture shows the station running, so its floodlights lit, with no reserve.
+    plain = with_reserve(0)
     # From above at the usual angle, and at a player's eye level (looking through the glass).
-    d.save_png(out, [((1, 1), 3, 0.5), ((1, 0.35), 3, 0.15)])
+    picture(out, [(plain, (1, 1), 3, 0.5), (plain, (1, 0.35), 3, 0.15)])
+    # The reserve: growing from 1 bay to 3 and 5, seen from the back; then a close-up of a 3-bay
+    # reserve ready, and injecting with its water low.
+    concepts = os.path.join(mp.ROOT, 'art', 'concepts')
+    picture(os.path.join(concepts, 'fission_reserve.png'), [(with_reserve(n), (0.15, -1), 2, 0.35) for n in (1, 3, 5)])
+    back = lambda q: all(v[2] > 150 and v[1] < 64 for v in q[1])
+    picture(os.path.join(concepts, 'fission_reserve_states.png'),
+            [([q for q in with_reserve(3, level, firing) if back(q)], (0.25, -1), 5, 0.12)
+             for level, firing in ((0.9, False), (0.3, True))])
 
 
 if __name__ == '__main__':

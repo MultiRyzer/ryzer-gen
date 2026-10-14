@@ -15,6 +15,9 @@ plates in half. These are drawn for the shapes they go on instead. Called by the
   1 to 15 show on the 15-pixel face): a graphite plate with a lit bevel, a cyan light line, status
   lamps, a bezel round the screen (the screen itself is a separate glowing box), vents, and a
   hazard band along the foot.
+- station/reserve_*, valve: the coolant reserve on the station's back, drawn for its own bands
+  (lintel, face, the hood's two pitches), its water and the empty tank above it, and the orange
+  injection valves on the downcomers.
 - fusion/plasma_wisp: the plasma's glow shells, animated: soft filaments flowing round the ring,
   white on black (drawn additively and tinted in code, see FusionPlasma).
 - fusion/arc: a soft white streak for the lightning arcs (tinted in code), clear at the edges.
@@ -605,6 +608,68 @@ def tag(colour):
     return letters(fill(colour))
 
 
+# The coolant reserve on the station's back (fission_concept.py): its face and hood are the port
+# housings' language, drawn for the reserve's own band heights.
+def reserve_lintel():
+    # The 3-pixel band over the windows (rows 13 to 15): shadow under the hood's lip, then lit.
+    k = fill('F')
+    k[13] = ['S'] * 16
+    k[14] = ['E'] * 16
+    k[15] = ['F'] * 15 + ['I']
+    return letters(k)
+
+
+def reserve_face():
+    # The light face beside the windows: lit on the left edge, shaded on the right.
+    k = fill('F')
+    for y in range(16):
+        k[y][0] = 'E'
+        k[y][15] = 'I'
+    return letters(k)
+
+
+def reserve_hood(lip):
+    # The hood's two pitches (each about 10 pixels, rows 6 to 15): graphite with a seam per step,
+    # the lower one with a lit front lip, the upper one a lit crease where the pitches meet.
+    k = fill('S')
+    k[15] = ['E' if lip else 'b'] * 16
+    if lip:
+        k[14] = ['b'] * 16
+    for y in range(14 if lip else 15):
+        k[y][15] = 'T'
+    return letters(k)
+
+
+def reserve_water():
+    # The reserve's water behind its windows, softly backlit: calm columns of lighter and deeper
+    # blue, the same all the way up (the game squashes it to the water's level), deeper at the foot.
+    cols = 'vvVVvvwvvVvvvwvv'
+    k = [[cols[x] for x in range(16)] for _ in range(16)]
+    k[14] = ['w' if c != 'V' else 'v' for c in cols]
+    k[15] = ['w'] * 16
+    return letters(k)
+
+
+def reserve_void():
+    # The empty tank above the water: dark, with level marks on its back wall every 4 pixels.
+    k = fill('U')
+    for y in range(0, 16, 4):
+        for x in range(3):
+            k[y][x] = 'S'
+    return letters(k)
+
+
+def valve():
+    # An injection valve's body on a downcomer: orange, lit on top and on the left.
+    k = fill('X')
+    k[0] = ['e'] * 16
+    for y in range(16):
+        k[y][0] = 'e'
+        k[y][15] = 'Z'
+    k[15] = ['Z'] * 16
+    return letters(k)
+
+
 STEAM_FRAMES = 16
 
 
@@ -644,6 +709,11 @@ def publish_station():
                       ('housing_slope', housing_slope()), ('housing_cheek', housing_cheek()),
                       ('hazard_upright', hazard_upright()), ('tag_coolant', tag('G')), ('tag_fuel', tag('X')),
                       ('tag_energy', tag('x')), ('lamp', lamp(True)), ('lamp_off', lamp(False))):
+        write_texture('block/station/' + name, tex)
+    for name, tex in (('reserve_lintel', reserve_lintel()), ('reserve_face', reserve_face()),
+                      ('reserve_hood_lo', reserve_hood(True)), ('reserve_hood_hi', reserve_hood(False)),
+                      ('reserve_water', reserve_water()), ('reserve_surface', letters(fill('C'))),
+                      ('reserve_void', reserve_void()), ('valve', valve())):
         write_texture('block/station/' + name, tex)
     meta = os.path.join(mp.TEXTURES, 'block', 'station', 'steam.png.mcmeta')
     with open(meta, 'w') as fh:

@@ -250,9 +250,10 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
             case ONLINE -> GOOD;
             case WARMING, NO_FUEL, OFFLINE, OVERDRIVE -> WARN;
             case NO_WATER, OVERHEAT, SCRAM -> BAD;
-            case FLUX_TILT, UNSTABLE, RUNAWAY -> flash ? BAD : WARN;
+            case FLUX_TILT, UNSTABLE, RUNAWAY, INJECTING -> flash ? BAD : WARN;
         };
-        int seconds = menu.tiltSeconds();
+        // The countdown on the status: the flux tilt's, or how long the coolant reserve holds out.
+        int seconds = status == StationRunner.Status.INJECTING ? menu.reserveSeconds() : menu.tiltSeconds();
         text(graphics, RichText.tr("gui.ryzergen.station.status." + status.name().toLowerCase(Locale.ROOT),
                 String.format("%d:%02d", seconds / 60, seconds % 60)), 20, colour);
         text(graphics, RichText.tr("gui.ryzergen.station.live", compact(menu.output()), menu.temperature()), 29,
@@ -357,11 +358,11 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
             graphics.renderTooltip(font, wrap(lines), mouseX, mouseY);
         } else if (mx >= TEXT_X && mx < TEXT_X + BAR_W && my >= 67 && my < 77) {
             graphics.renderTooltip(font, RichText.tr("gui.ryzergen.station.rating.tip"), mouseX, mouseY);
+        } else if (mx >= BAR_X && mx < BAR_X + BAR_W && my >= WATER_Y - 1 && my < WATER_Y + 5) {
+            graphics.renderComponentTooltip(font, waterTip(), mouseX, mouseY);
         } else if (mx >= BAR_X && mx < BAR_X + BAR_W) {
             Component tip = my >= HEAT_Y - 1 && my < HEAT_Y + 5
                     ? RichText.tr("gui.ryzergen.station.heat", menu.temperature(), (int) StationRunner.SCRAM_TEMPERATURE)
-                    : my >= WATER_Y - 1 && my < WATER_Y + 5
-                    ? RichText.tr("gui.ryzergen.intake_pump.water", String.format("%,d", menu.water()), String.format("%,d", StationRunner.WATER_CAPACITY))
                     : my >= ENERGY_Y - 1 && my < ENERGY_Y + 5
                     ? RichText.tr("gui.ryzergen.energy", String.format("%,d", menu.energy()), String.format("%,d", StationRunner.ENERGY_CAPACITY))
                     : null;
@@ -369,6 +370,18 @@ public class StationControlScreen extends AbstractContainerScreen<StationControl
                 graphics.renderTooltip(font, tip, mouseX, mouseY);
             }
         }
+    }
+
+    /** The water bar: the station's tank, and its coolant reserve if it has one. */
+    private List<Component> waterTip() {
+        Component tank = RichText.tr("gui.ryzergen.intake_pump.water", String.format("%,d", menu.water()),
+                String.format("%,d", StationRunner.WATER_CAPACITY));
+        if (menu.reserveBays() <= 0) {
+            return List.of(tank);
+        }
+        int seconds = menu.reserveSeconds();
+        return List.of(tank, RichText.tr("gui.ryzergen.station.reserve", menu.reserveBays(),
+                String.format("%d:%02d", seconds / 60, seconds % 60)));
     }
 
     /** What a channel does in this layout, worked out so the player can see why a plan scores as it does. */
