@@ -69,7 +69,7 @@
   .status.planned { color: var(--casing-i); }
 
   /* Roadmap rows. */
-  #roadmap { padding: 0 0 2px; }
+  #roadmap, #roadmap_2 { padding: 0 0 2px; }
   .row { display: grid; grid-template-columns: 84px minmax(0,1fr) 130px; gap: 18px; align-items: start; padding: 16px 28px; background: var(--graphite-t); border-top: 1px solid var(--graphite-b); }
   .row .n { font: 400 22px/1.15 var(--pixel); color: var(--cyan); }
   .row .t { font: 700 18px/1.2 var(--display); color: var(--text-strong); }
@@ -106,6 +106,11 @@
 <div class="banner section" id="section_alpha">
   <div class="eyebrow">What's in the alpha</div>
   <h2>Tiers 1 to 3 are playable.</h2>
+</div>
+
+<div class="banner section" id="section_alpha_2">
+  <div class="eyebrow">What's in the alpha</div>
+  <h2>Tiers 1 to 4 are playable.</h2>
 </div>
 
 <div class="banner section hazard" id="section_radiation">
@@ -149,6 +154,22 @@
   <div class="tile"><img class="pixelated" src="../textures/item/uranium_fuel_rod.png" alt=""></div>
   <div><div class="n">TIER 3</div><h3>The fission power station</h3></div>
   <div class="status alpha">In the alpha</div>
+</div>
+
+<div class="banner tier" id="tier_4">
+  <div class="tile"><img class="pixelated" src="../textures/item/breeder_fuel.png" alt=""></div>
+  <div><div class="n">TIER 4</div><h3>The breeder reactor</h3></div>
+  <div class="status alpha">In the alpha</div>
+</div>
+
+<div class="banner" id="roadmap_2">
+  <div class="row"><div class="n">1</div><div><div class="t">Microreactor, battery, pipes and steam</div></div><div class="status alpha">In the alpha</div></div>
+  <div class="row"><div class="n">2</div><div><div class="t">Fuel cycle: reprocessing, MOX and the Mega Drill</div></div><div class="status alpha">In the alpha</div></div>
+  <div class="row"><div class="n">3</div><div><div class="t">Fission power station</div></div><div class="status alpha">In the alpha</div></div>
+  <div class="row"><div class="n">4</div><div><div class="t">Breeder reactor</div><div class="d">A sodium-cooled fast reactor that burns spent MOX and breeds plutonium or U-233 in its blankets.</div></div><div class="status alpha">In the alpha</div></div>
+  <div class="row"><div class="n">Bridge</div><div><div class="t">Fission to fusion</div><div class="d">Lithium target rods (tritium), heavy water, palladium from waste, superconducting magnets, liquid nitrogen, tungsten.</div></div><div class="status progress">In progress</div></div>
+  <div class="row"><div class="n">5</div><div><div class="t">Fusion</div><div class="d">A deuterium-tritium tokamak built and fuelled by fission.</div></div><div class="status planned">Planned</div></div>
+  <div class="row sun"><div class="n">6</div><div><div class="t">Dyson swarm</div><div class="d">Launch sails round a walkable sun in its own dimension, then beam the power home.</div></div><div class="status planned">Planned</div></div>
 </div>
 
 <div class="banner" id="roadmap">

@@ -2,13 +2,17 @@
 
 <p style="text-align: center;"><a href="https://github.com/MultiRyzer/ryzer-gen"><img src="https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/key_github.png" alt="Source on GitHub"></a> <a href="https://discord.gg/zePm8PTrTa"><img src="https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/key_discord.png" alt="Join the Discord"></a> <a href="https://github.com/MultiRyzer/ryzer-gen/issues"><img src="https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/key_issues.png" alt="Report a bug"></a></p>
 
-<p>Most reactor mods answer "how do I get more power?" with "build it bigger". In Ryzer Gen a small, well-designed machine beats a big sloppy one. Start with a portable microreactor, recycle your spent fuel into MOX, and design a fission station channel by channel, with fusion and a Dyson swarm on the way.</p>
+<p>Most reactor mods answer "how do I get more power?" with "build it bigger". In Ryzer Gen a small, well-designed machine beats a big sloppy one. Start with a portable microreactor, recycle your spent fuel into MOX, design a fission station channel by channel and breed new fuel in a fast reactor, with fusion and a Dyson swarm on the way.</p>
 
-<blockquote><p><strong>Alpha.</strong> Tiers 1 to 3 are playable. Balance is a first pass and may change between versions. Back up your world before updating.</p></blockquote>
+<p><img src="https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/curseforge/07_station_night.jpg" alt="A fission station lighting up the ground at night, its pipes running in"></p>
+
+<blockquote><p><strong>Alpha.</strong> Tiers 1 to 4 are playable. Balance is a first pass and may change between versions. Back up your world before updating.</p></blockquote>
 
 <p>NeoForge 1.21.1 (21.1.249 or newer, so it runs in ATM10). Standalone: it ships every ore it uses. Optional support for JEI, EMI and Accessories.</p>
 
-<p><img src="https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/section_alpha.png" alt="What's in the alpha: tiers 1 to 3 are playable"></p>
+<p><strong>New to it?</strong> You get an Operator's Handbook when you join, and <strong>Y</strong> opens the progression map: every step from ore in the ground to the sun, lit as you reach it, with how each one works.</p>
+
+<p><img src="https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/section_alpha_2.png" alt="What's in the alpha: tiers 1 to 4 are playable"></p>
 
 <p><img src="https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/tier_1.png" alt="Tier 1: the microreactor"></p>
 
@@ -30,6 +34,8 @@
 <li>Every machine moves while it works: flywheels spin, the press strokes, the lithium columns pulse with light.</li>
 <li>Fission waste goes into a Waste Cask that keeps its contents when broken.</li>
 <li>Speed Modules, and cable fittings (silver, busbar, cryogenic) to raise throughput. The processing machines can push their results straight into a chest, a pipe or the next machine.</li>
+<li>The Mega Drill: a quarry tower that fires a beam into the ground, bores a 7 x 7 shaft to the bottom of the world, then keeps going into the deep crust for ore every cycle.</li>
+<li>The Assembler: an open robot cell whose arm carries the real ingredients to a fixture bed and crafts any crafting-table recipe from patterns. Item pipes get filters and priorities.</li>
 </ul>
 
 <p><img src="https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/curseforge/11_machines.jpg" alt="The machine family: the alloy smelters, the Core Cracker, the Intake Pump, the Reprocessor, the Fuel Fabricator and the Lithium Extractor"></p>
@@ -46,6 +52,24 @@
 <li>The core is where the depth is: you plan every channel as fuel, moderator, control rod or coolant. Heat, fuel economy and output all come from the layout, and the planner rates your design against the best possible layouts.</li>
 <li>Coolant is your friend: a strong core boils a lot of water, so it needs a real water supply of several intake pumps.</li>
 <li>MOX fuel makes double the power of uranium. SCRAM at 900°C, or turn the safeties off and risk a flux tilt and a meltdown that leaves a crater.</li>
+<li>Build a coolant reserve onto the station's back, in 1, 3 or 5 bays: in overdrive it holds a core that has lost its cooling for up to 10 minutes while you fix it.</li>
+</ul>
+
+<p><img src="https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/tier_4.png" alt="Tier 4: the breeder reactor"></p>
+
+<ul>
+<li>A sodium-cooled fast reactor in a steel sphere, built round its control core. It burns the transuranics the Electrorefiner recovers from spent MOX: what the station cannot use.</li>
+<li>It makes more fuel than it uses. Blankets round the core catch its spare neutrons: uranium breeds plutonium for MOX, thorium breeds U-233, the station's hottest fuel.</li>
+<li>Plan its 19-position hex core, fill its sodium loop and set the pumps' flow to carry the heat, for up to 38,000 FE/t.</li>
+<li>Keep the pumps running when it stops: with no flow, a hot core's decay heat boils the sodium into a fire inside its bund wall.</li>
+</ul>
+
+<p><strong>Across the mod</strong></p>
+
+<ul>
+<li><strong>Steady state:</strong> a reactor that keeps running builds a streak that raises its output, up to 1.75x for the breeder. Good automation pays.</li>
+<li><strong>The progression map (Y):</strong> the whole production line in tier columns, with the best setups we have found behind spoilers.</li>
+<li><strong>The reactors talk:</strong> an announcer for safeties, SCRAMs, coolant loss and meltdowns, and every noisy machine has a sound switch.</li>
 </ul>
 
 <p><img src="https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/curseforge/14_production_line.jpg" alt="A fuel cycle production line with its batteries and water supply, feeding the fission station"></p>
@@ -72,11 +96,11 @@
 
 <p><img src="https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/section_roadmap.png" alt="Roadmap: from a portable reactor to a star"></p>
 
-<p><img src="https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/roadmap.png" alt="Roadmap: tiers 1 to 3 in the alpha, the fission to fusion bridge in progress, then the breeder reactor, fusion and the Dyson swarm"></p>
+<p><img src="https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/roadmap_2.png" alt="Roadmap: tiers 1 to 4 in the alpha, the fission to fusion bridge in progress, then fusion and the Dyson swarm"></p>
 
 <p>Want an early look at the next tier? Set <code>preview.next_tier = true</code> in <code>ryzergen-common.toml</code>. It is unfinished and its products have no use yet.</p>
 
-<p>Full roadmap and issue tracker on <a href="https://github.com/MultiRyzer/ryzer-gen">GitHub</a>. Join the <a href="https://discord.gg/zePm8PTrTa">Discord</a> for help, core designs, work in progress and a say in what comes next.</p>
+<p>Full roadmap and issue tracker on <a href="https://github.com/MultiRyzer/ryzer-gen">GitHub</a>. Join the <a href="https://discord.gg/zePm8PTrTa">Discord</a> for help, work in progress and a say in what comes next. Test Pilots there get new builds before they are released.</p>
 
 <p><img src="https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/section_packs.png" alt="For pack makers"></p>
 
@@ -84,7 +108,7 @@
 <li>FE energy throughout. Data-driven recipes and worldgen.</li>
 <li>Automation friendly: single-block machines take pipes and cables on any side, and pipes only ever pull results, never ingredients, so AE2 and other storage mods can drive them directly. Multiblocks keep inputs and outputs on separate ports.</li>
 <li>Every recipe asks for common tags (<code>c:ingots/uranium</code>, <code>c:dusts/lead</code>, ...), so other mods' materials just work.</li>
-<li>Every ore's worldgen has a config toggle, so you can turn off ores another mod already supplies.</li>
+<li>Every ore's worldgen has a config toggle (and one switch turns them all off), so you can turn off ores another mod already supplies. Every recipe asks for common tags, so other mods' uranium, lead, silver and the rest work in its place.</li>
 <li>Toggles for radiation, mob radiation, meltdowns, explosion power and crater size, the announcer, the station's water use, fuel cooling and the round sun, plus output and capacity settings.</li>
 <li>Built to stay light in big bases: joined pipes and cables share one network, rebuilt only where something changes, and only pipes that pull from something tick. Moving parts are drawn with plain block models, no animation library.</li>
 <li>Two small client-side mixins, for the sky only (the round sun and the Dyson swarm's darkening). Nothing touches world generation or gameplay code.</li>
@@ -94,6 +118,7 @@
 <p><img src="https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/section_faq.png" alt="FAQ"></p>
 
 <ul>
+<li><strong>Do I need to know any physics?</strong> No. The handbook covers the basics, and the progression map (Y) shows every step and how it works.</li>
 <li><strong>Fabric or Forge?</strong> No: NeoForge 1.21.1 only.</li>
 <li><strong>Older versions?</strong> No plans. The mod is built for 1.21.1, the version ATM10 runs on.</li>
 <li><strong>Can I use it in my modpack?</strong> Yes, any pack. It is MIT licensed.</li>
