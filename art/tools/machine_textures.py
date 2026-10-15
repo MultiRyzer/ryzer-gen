@@ -423,6 +423,37 @@ def home_battery_item():
     return t
 
 
+def handbook_item():
+    """The Operator's Handbook: a graphite manual seen face on, a cyan spine, a label plate, a cyan
+    reactor glow under it and a hazard strip, with cream page edges showing at the side and foot."""
+    t = Tex()
+    t.stamp(0, 0, [
+        "................",
+        "..KKKKKKKKKKK...",
+        "..KifDDDDDDDDK..",
+        "..KifdddddddDK..",
+        "..KifdHHHHHHdK..",
+        "..KifdHkkkkHdK..",
+        "..KifdHHHHHHdK..",
+        "..KifddddddddK..",
+        "..KifdddiidddK..",
+        "..KifddijjiddK..",
+        "..KifddijjiddK..",
+        "..KifdddiidddK..",
+        "..KifYkYkYkYdK..",
+        "..KifDDDDDDDDK..",
+        "...KKKKKKKKKKK..",
+        "................",
+    ])
+    # The page edges, in paper cream (not in the shared palette).
+    for y in range(3, 13):
+        t.px[y][14] = 'ece4cc'
+    t.px[13][14] = t.px[14][14] = 'd4c9a8'
+    for x in range(4, 15):
+        t.px[15][x] = 'b3a57e'
+    return t
+
+
 TEXTURES = {
     'block/machine/body': machine_body,
     'item/wrench': wrench_item,
@@ -435,6 +466,7 @@ TEXTURES = {
     'item/geiger_counter': geiger_counter_item,
     'item/flow_scanner': flow_scanner_item,
     'item/swarm_controller': swarm_controller_item,
+    'item/operators_handbook': handbook_item,
     'block/fitting_silver': lambda: fitting_block('silver'),
     'block/fitting_busbar': lambda: fitting_block('busbar'),
     'block/fitting_cryogenic': lambda: fitting_block('cryogenic'),

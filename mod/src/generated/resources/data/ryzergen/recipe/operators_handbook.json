@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "minecraft:paper"
+    },
+    [
+      {
+        "tag": "c:raw_materials/uranium"
+      },
+      {
+        "tag": "c:ingots/uranium"
+      }
+    ]
+  ],
+  "result": {
+    "count": 1,
+    "id": "ryzergen:operators_handbook"
+  }
+}

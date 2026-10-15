@@ -179,6 +179,21 @@ CHECKS = [
     # Battery bays: label from x 7 to the charge lamp at x 39.
     ('gui.ryzergen.battery.chemistry.lead_acid', [], 30),
     ('gui.ryzergen.battery.chemistry.empty', [], 30),
+    # Operator's Handbook (client/handbook/HandbookScreen): page buttons are 128 px, text centred
+    # with 2 px either side; chapter tabs leave 51 px for their label beside the colour strip.
+    ('handbook.ryzergen.button.map', ['Y'], 124),
+    ('handbook.ryzergen.button.discord', [], 124),
+    ('handbook.ryzergen.button.bug', [], 124),
+    ('handbook.ryzergen.header', [], 128),
+    ('handbook.ryzergen.start.key.sub', [], 100),
+    ('handbook.ryzergen.start.tab', [], 51),
+    ('handbook.ryzergen.basics.tab', [], 51),
+    ('handbook.ryzergen.power.tab', [], 51),
+    ('handbook.ryzergen.heat.tab', [], 51),
+    ('handbook.ryzergen.radiation.tab', [], 51),
+    ('handbook.ryzergen.help.tab', [], 51),
+    # The "Press Y" toast (client/handbook/HandbookToast): text from x 30 to the toast's 160 edge.
+    ('handbook.ryzergen.toast.line', ['Y'], 126),
 ]
 
 

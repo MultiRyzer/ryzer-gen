@@ -78,6 +78,9 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> TURBINE_ROTOR = ITEMS.registerSimpleBlockItem(ModBlocks.TURBINE_ROTOR);
     public static final DeferredItem<BlockItem> COOLANT_RESERVE = ITEMS.registerSimpleBlockItem(ModBlocks.COOLANT_RESERVE);
     public static final DeferredItem<WrenchItem> WRENCH = ITEMS.registerItem("wrench", WrenchItem::new);
+    /** Teaches the basics and the progression map's key; given on first join. */
+    public static final DeferredItem<com.ryzer.ryzergen.item.HandbookItem> OPERATORS_HANDBOOK =
+            ITEMS.registerItem("operators_handbook", com.ryzer.ryzergen.item.HandbookItem::new);
     public static final DeferredItem<BlockItem> HOME_BATTERY = ITEMS.registerSimpleBlockItem(ModBlocks.HOME_BATTERY);
     public static final DeferredItem<BatteryModuleItem> LEAD_ACID_MODULE = ITEMS.registerItem("lead_acid_module",
             properties -> new BatteryModuleItem(BatteryChemistry.LEAD_ACID, properties));

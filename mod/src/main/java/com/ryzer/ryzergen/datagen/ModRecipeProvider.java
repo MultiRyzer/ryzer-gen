@@ -342,6 +342,13 @@ public class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_steel", has(ModTags.INGOTS_STEEL))
                 .save(output);
 
+        // Operator's Handbook: paper bound round a scrap of uranium, raw or smelted, the first thing a player finds.
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, ModItems.OPERATORS_HANDBOOK.get())
+                .requires(Items.PAPER, 3)
+                .requires(Ingredient.fromValues(java.util.stream.Stream.of(
+                        new Ingredient.TagValue(OreType.URANIUM.dropTag()), new Ingredient.TagValue(OreType.URANIUM.ingotTag()))))
+                .unlockedBy("has_uranium", has(OreType.URANIUM.dropTag()))
+                .save(output);
         // Geiger counter: a gas-filled glass tube over a board, with a note block for the speaker.
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.GEIGER_COUNTER.get())
                 .pattern(" G ")
