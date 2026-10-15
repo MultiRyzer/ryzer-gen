@@ -42,7 +42,7 @@ public final class ModCreativeTabs {
         Set<Item> items = new LinkedHashSet<>();
         List<List<DeferredItem<? extends Item>>> types = List.of(
                 // Tools
-                List.of(ModItems.WRENCH, ModItems.FLOW_SCANNER, ModItems.GEIGER_COUNTER, ModItems.DOSIMETER_RING),
+                List.of(ModItems.OPERATORS_HANDBOOK, ModItems.WRENCH, ModItems.FLOW_SCANNER, ModItems.GEIGER_COUNTER, ModItems.DOSIMETER_RING),
                 // Machines and multiblock parts
                 List.of(ModItems.REACTOR_HEART, ModItems.REACTOR_MACHINE_UNIT, ModItems.COOLANT_JACKET,
                         ModItems.ALLOY_SMELTER, ModItems.ELECTRIC_ALLOY_SMELTER, ModItems.INTAKE_PUMP,

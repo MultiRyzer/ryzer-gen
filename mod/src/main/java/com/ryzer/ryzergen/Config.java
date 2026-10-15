@@ -87,6 +87,7 @@ public final class Config {
     public static final ModConfigSpec.IntValue CONTAINER_COOLANT_USE;
     public static final ModConfigSpec.BooleanValue ANNOUNCER_ENABLED;
     public static final ModConfigSpec.BooleanValue REQUIRE_COOLING;
+    public static final ModConfigSpec.BooleanValue GIVE_HANDBOOK;
     public static final ModConfigSpec.IntValue CORE_COOLING_SECONDS;
     public static final ModConfigSpec.IntValue ROD_COOLING_SECONDS;
     public static final ModConfigSpec.IntValue POOL_WATER_USE;
@@ -223,6 +224,12 @@ public final class Config {
                 .comment("Reactors speak when something worth hearing happens (safeties, SCRAM, coolant loss, meltdown).",
                         "Off here turns it off for everyone; each player can also use the Voice/Speech volume slider.")
                 .define("enabled", true);
+        BUILDER.pop();
+
+        BUILDER.comment("New players.").push("players");
+        GIVE_HANDBOOK = BUILDER
+                .comment("Give each player an Operator's Handbook the first time they join a world. It is craftable too.")
+                .define("give_handbook", true);
         BUILDER.pop();
 
         BUILDER.comment("The overworld's sky.").push("sky");

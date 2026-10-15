@@ -204,6 +204,7 @@ The utility reactor: fuel for the stations and the tritium that starts fusion. F
 ## Progression map
 - [x] An in-game map of the whole production line (key Y): tier columns, arrows, steps lit as you reach them and the next ones pulsing, a panel per step with how it works and spoilers for the best setups (3 Oct 2026)
 - [ ] Open a step's recipes in JEI or EMI from its panel
+- [x] Teach the key (15 Oct 2026): a "Press Y" toast until the map is opened, and the Operator's Handbook (given on first join, or 3 paper and a uranium), with links to the Discord and bug reports on the map
 
 ## Automation and retrofits (13 Oct 2026; pipe filters and redstone output are under Polish)
 - [x] The Assembler (14 Oct 2026): a 3 x 3 x 3 open robot cell that crafts any crafting-table recipe from nine patterns, the arm carrying the real items (DESIGN.md section 14)

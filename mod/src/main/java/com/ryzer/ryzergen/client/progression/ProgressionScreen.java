@@ -2,7 +2,11 @@ package com.ryzer.ryzergen.client.progression;
 
 import com.ryzer.ryzergen.client.progression.ProgressionMap.Grid;
 import com.ryzer.ryzergen.client.progression.ProgressionMap.Node;
+import com.ryzer.ryzergen.client.handbook.HandbookHints;
+import com.ryzer.ryzergen.client.handbook.HandbookScreen;
+import com.ryzer.ryzergen.client.handbook.Links;
 import com.ryzer.ryzergen.client.text.RichText;
+import com.ryzer.ryzergen.registry.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -65,6 +69,7 @@ public class ProgressionScreen extends Screen {
         if (minecraft != null && minecraft.getConnection() != null) {
             minecraft.getConnection().send(new ServerboundClientCommandPacket(ServerboundClientCommandPacket.Action.REQUEST_STATS));
         }
+        HandbookHints.onMapOpened();
     }
 
     @Override
@@ -158,10 +163,14 @@ public class ProgressionScreen extends Screen {
         }
         graphics.disableScissor();
         renderHeader(graphics);
+        Link link = renderLinks(graphics, mouseX, mouseY, mapRight);
         if (selected != null) {
             renderPanel(graphics, mouseX, mouseY);
         }
-        if (hovered != null && (selected == null || mouseX < mapRight)) {
+        if (link != null) {
+            graphics.renderComponentTooltip(font, List.of(Component.translatable(link.key + ".hint"),
+                    Component.translatable(link.key + ".hint.2").withStyle(style -> style.withColor(DIM))), mouseX, mouseY);
+        } else if (hovered != null && (selected == null || mouseX < mapRight)) {
             List<Component> lines = new ArrayList<>();
             lines.add(name(hovered));
             lines.add(Component.translatable(reached(hovered) ? "progression.ryzergen.reached"
@@ -189,6 +198,102 @@ public class ProgressionScreen extends Screen {
             graphics.fill(x, 11, x + 8, 19, colours[i]);
             x -= 10;
         }
+    }
+
+    /** The links in the bottom-left corner, over the map: the handbook, the Discord and bug reports. */
+    private enum Link {
+        HANDBOOK("progression.ryzergen.link.handbook"),
+        DISCORD("progression.ryzergen.link.discord"),
+        BUGS("progression.ryzergen.link.bugs");
+
+        final String key;
+
+        Link(String key) {
+            this.key = key;
+        }
+    }
+
+    private static final int LINK_H = 16;
+
+    private int linkW(Link link) {
+        return font.width(Component.translatable(link.key)) + 20;
+    }
+
+    /** Where a link starts, or -1 if the map is too narrow to show it beside the others. */
+    private int linkX(Link link, int mapRight) {
+        int x = 8;
+        for (Link l : Link.values()) {
+            if (l == link) {
+                return x + linkW(l) <= mapRight - 8 ? x : -1;
+            }
+            x += linkW(l) + 4;
+        }
+        return -1;
+    }
+
+    private @Nullable Link linkAt(double mouseX, double mouseY) {
+        int mapRight = width - (selected != null ? PANEL_W : 0);
+        for (Link link : Link.values()) {
+            int x = linkX(link, mapRight);
+            if (x >= 0 && mouseX >= x && mouseX < x + linkW(link) && mouseY >= height - 24 && mouseY < height - 24 + LINK_H) {
+                return link;
+            }
+        }
+        return null;
+    }
+
+    /** Draws the links, and returns the one under the mouse. */
+    private @Nullable Link renderLinks(GuiGraphics graphics, int mouseX, int mouseY, int mapRight) {
+        Link hovered = linkAt(mouseX, mouseY);
+        int y = height - 24;
+        // Above the map's item icons, on a backing so the map does not show between them.
+        graphics.pose().pushPose();
+        graphics.pose().translate(0, 0, 400);
+        int end = 8;
+        for (Link link : Link.values()) {
+            if (linkX(link, mapRight) >= 0) {
+                end = linkX(link, mapRight) + linkW(link);
+            }
+        }
+        graphics.fill(4, y - 4, end + 4, height, BACKGROUND);
+        for (Link link : Link.values()) {
+            int x = linkX(link, mapRight);
+            if (x < 0) {
+                continue;
+            }
+            int w = linkW(link);
+            boolean hot = link == hovered;
+            graphics.fill(x, y, x + w, y + LINK_H, hot ? 0xFF4D545D : NODE);
+            graphics.renderOutline(x, y, w, LINK_H, hot ? CYAN : 0xFF535A64);
+            int ix = x + 4;
+            switch (link) {
+                case HANDBOOK -> {
+                    graphics.pose().pushPose();
+                    graphics.pose().translate(ix - 2, y + 2, 0);
+                    graphics.pose().scale(0.75F, 0.75F, 1);
+                    graphics.renderItem(new ItemStack(ModItems.OPERATORS_HANDBOOK.get()), 0, 0);
+                    graphics.pose().popPose();
+                }
+                case DISCORD -> {
+                    // A speech bubble.
+                    graphics.fill(ix, y + 3, ix + 9, y + 10, CYAN);
+                    graphics.fill(ix + 2, y + 10, ix + 4, y + 12, CYAN);
+                    graphics.fill(ix + 2, y + 6, ix + 3, y + 7, HEADER);
+                    graphics.fill(ix + 6, y + 6, ix + 7, y + 7, HEADER);
+                }
+                case BUGS -> {
+                    // A beetle: body, legs and the split down its back.
+                    int red = 0xFFE0503C;
+                    graphics.fill(ix + 2, y + 3, ix + 7, y + 11, red);
+                    graphics.fill(ix, y + 5, ix + 9, y + 6, red);
+                    graphics.fill(ix, y + 8, ix + 9, y + 9, red);
+                    graphics.fill(ix + 4, y + 4, ix + 5, y + 11, HEADER);
+                }
+            }
+            graphics.drawString(font, Component.translatable(link.key), x + 16, y + 4, hot ? 0xFFFFFFFF : TEXT, false);
+        }
+        graphics.pose().popPose();
+        return hovered;
     }
 
     private void renderColumns(GuiGraphics graphics) {
@@ -532,6 +637,16 @@ public class ProgressionScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
+            Link link = linkAt(mouseX, mouseY);
+            if (link != null) {
+                click();
+                switch (link) {
+                    case HANDBOOK -> HandbookScreen.open();
+                    case DISCORD -> Links.open(this, Links.DISCORD);
+                    case BUGS -> Links.open(this, Links.BUGS);
+                }
+                return true;
+            }
             if (overClose(mouseX, mouseY)) {
                 selected = null;
                 click();

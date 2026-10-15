@@ -760,6 +760,13 @@ An in-game map of the whole production line, from ore in the ground to the sun (
 - **Preview:** with the preview setting off the map ends at fission, with a "more to come" column; on, the breeder, fusion and the swarm appear, with any early step only they use (aluminium, for the target rods).
 - **The mega drill** (11 Oct 2026) sits in the fuel cycle column, fed by tungsten from the ground, steel, advanced boards and the microreactor's power.
 - The steps live in `ProgressionMap` (structure) and the lang file (`progression.ryzergen.<step>.info.N` and `.spoiler.N`); keep them in step with recipes and best layouts as they change.
+- **Links** (15 Oct 2026): three small buttons in the map's bottom-left corner: the Handbook, the Discord (the in-game invite, so joins from the game are counted) and Report a bug (GitHub issues). Links open after the game's own "open this link?" check.
+
+### The Operator's Handbook and the "Press Y" toast (15 Oct 2026)
+Nobody finds the map's key on their own, so two things teach it. `client/handbook/`, `item/HandbookItem`.
+- **The toast:** a few seconds after joining a world, a vanilla-style tutorial toast says "Press Y for the map" (the key as bound), with the handbook as its icon. It shows on every join until the player opens the map once, then never again on that game install (a marker file, `ryzergen/map_opened`).
+- **The Operator's Handbook:** a ring-bound manual in the house style, open on a two-page spread, light casing pages either side of a graphite spine with the cyan light line, and a coloured chapter tab per spread: Start, Basics, Power, Heat, Radiation, Help. The first spread is the map's key as a big keycap, with an Open the map button, and the first five steps. The rest covers how to use the mod, not what each machine does (the map explains steps; "explain once"): Shift for details, key terms, ghost outlines, the Wrench and Flow Scanner, FE, steady state, heat, SCRAM and overdrive, radiation, and where to get help (Discord and bug-report buttons). Every word is in the lang file (`handbook.ryzergen.<chapter>.<left|right>.title` and `.N`); a paragraph starting "1. " is a numbered step.
+- **Getting it:** every player is given one the first time they join a world (once per world, kept in their persisted data; `players.give_handbook` turns it off). Crafted from 3 paper and a uranium (raw or ingot), so a lost one is cheap to replace.
 
 ## 15. Compatibility
 
