@@ -14,7 +14,7 @@ Summary line for the short description field:
 
 ![Ryzer Gen: power from understanding, not volume](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/hero.png)
 
-[![Source on GitHub](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/key_github.png)](https://github.com/MultiRyzer/ryzer-gen) [![Join the Discord](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/key_discord.png)](https://discord.gg/cmUZcRtqfg) [![Report a bug](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/key_issues.png)](https://github.com/MultiRyzer/ryzer-gen/issues)
+[![Source on GitHub](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/key_github.png)](https://github.com/MultiRyzer/ryzer-gen) [![Join the Discord](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/key_discord.png)](https://discord.gg/4UVbQ9BWsB) [![Report a bug](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/key_issues.png)](https://github.com/MultiRyzer/ryzer-gen/issues)
 
 </center>
 
@@ -84,7 +84,7 @@ A swarm of solar panels launches round the sun, closes into a shell that shuts o
 
 Want an early look at the next tier? Set `preview.next_tier = true` in `ryzergen-common.toml`. It is unfinished and its products have no use yet.
 
-Full roadmap and issue tracker on [GitHub](https://github.com/MultiRyzer/ryzer-gen). Join the [Discord](https://discord.gg/cmUZcRtqfg) for help, core designs, work in progress and a say in what comes next.
+Full roadmap and issue tracker on [GitHub](https://github.com/MultiRyzer/ryzer-gen). Join the [Discord](https://discord.gg/4UVbQ9BWsB) for help, core designs, work in progress and a say in what comes next.
 
 ![For pack makers](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/section_packs.png)
 
@@ -104,7 +104,7 @@ Full roadmap and issue tracker on [GitHub](https://github.com/MultiRyzer/ryzer-g
 - **Can I use it in my modpack?** Yes, any pack. It is MIT licensed.
 - **Is radiation dangerous to carry around?** No. Only running reactors and meltdown sites emit it, and it can be turned off.
 - **Shader packs?** Yes, it works with Iris and shader packs. The wormhole's light-bending only shows without one; with a shader pack on it shows as a simpler picture.
-- **Found a bug?** Please open an issue on GitHub with your log and the steps to reproduce it. For questions, ask in `#help` on the [Discord](https://discord.gg/cmUZcRtqfg).
+- **Found a bug?** Please open an issue on GitHub with your log and the steps to reproduce it. For questions, ask in `#help` on the [Discord](https://discord.gg/4UVbQ9BWsB).
 
 ## How it was made
 Ryzer Gen is designed by Ryzer. The code was written with help from Opus 5.5. The textures are drawn in code by the mod's own scripts; the announcer's voice is generated with ElevenLabs and the other sounds are credited below.
