@@ -99,7 +99,18 @@ None needed to start: Onboarding does roles, AutoMod does moderation, the webhoo
 
 ## 8. Put the invite everywhere
 
-The permanent invite: **https://discord.gg/cmUZcRtqfg** (already in the README, `docs/MOD-PAGE.md` and the in-game mod description).
+Each place gets its own permanent invite, all landing in `#rules-and-info`, so the server's invite list shows which places bring people in:
+
+| Where | Invite |
+|---|---|
+| GitHub README | https://discord.gg/4uqhkxGHUt |
+| CurseForge (`docs/MOD-PAGE.html` and the project's Discord field) | https://discord.gg/zePm8PTrTa |
+| Modrinth (`docs/MOD-PAGE.md` and the project's Discord field) | https://discord.gg/4UVbQ9BWsB |
+| In game (`neoforge.mods.toml`) | https://discord.gg/cdbc8CjYgn |
+| Reddit posts and comments | https://discord.gg/nVyNtst6yx |
+| YouTube video descriptions | https://discord.gg/UDSsAxmU6P |
+
+The first invite, **https://discord.gg/cmUZcRtqfg**, still works and must keep working: it is in every jar released so far and brought in most of the first members. It points at `#core-designs`, so that channel stays readable to everyone (read-only, in ARCHIVE). Don't delete it or hide it.
 
 - Modrinth and CurseForge: the Discord link field in the project settings.
 - The Reddit post: edit it, and the pinned comment.

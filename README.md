@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://www.curseforge.com/minecraft/mc-mods/ryzer-gen"><b>Download on CurseForge</b></a> ·
   <a href="https://github.com/MultiRyzer/ryzer-gen/releases">Releases</a> ·
-  <a href="https://discord.gg/cmUZcRtqfg">Discord</a> ·
+  <a href="https://discord.gg/4uqhkxGHUt">Discord</a> ·
   <a href="https://github.com/MultiRyzer/ryzer-gen/issues">Report a bug</a>
 </p>
 
@@ -71,7 +71,7 @@ Most reactor mods answer "how do I get more power?" with "build it bigger". Here
 
 ## Help and bugs
 
-- Questions, core designs and work in progress: the [Discord](https://discord.gg/cmUZcRtqfg) (`#help`).
+- Questions, core designs and work in progress: the [Discord](https://discord.gg/4uqhkxGHUt) (`#help`).
 - Bugs: [open an issue](https://github.com/MultiRyzer/ryzer-gen/issues) with your log, your Minecraft, NeoForge and Ryzer Gen versions, your modpack if you use one, and the steps to make it happen.
 
 ## Building from source
