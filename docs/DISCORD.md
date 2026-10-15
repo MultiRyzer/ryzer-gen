@@ -104,8 +104,8 @@ Each place gets its own permanent invite, all landing in `#rules-and-info`, so t
 | Where | Invite |
 |---|---|
 | GitHub README | https://discord.gg/4uqhkxGHUt |
-| CurseForge (`docs/MOD-PAGE.html` and the project's Discord field) | https://discord.gg/zePm8PTrTa |
-| Modrinth (`docs/MOD-PAGE.md` and the project's Discord field) | https://discord.gg/4UVbQ9BWsB |
+| CurseForge (`docs/MOD-PAGE.md` and `.html`, and the project's Discord field) | https://discord.gg/zePm8PTrTa |
+| Modrinth (not used: the project is CurseForge only for now) | https://discord.gg/4UVbQ9BWsB |
 | In game (`neoforge.mods.toml`) | https://discord.gg/cdbc8CjYgn |
 | Reddit posts and comments | https://discord.gg/nVyNtst6yx |
 | YouTube video descriptions | https://discord.gg/UDSsAxmU6P |

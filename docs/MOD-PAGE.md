@@ -1,12 +1,14 @@
-# Mod page (Modrinth and CurseForge)
+# Mod page (CurseForge)
 
-The text below is the project description. Paste it into Modrinth as it is. CurseForge's normal editor does not read Markdown: either switch its description to the Markdown editor before pasting, or paste `docs/MOD-PAGE.html` (the same page as HTML, written by `python art/tools/mod_page_html.py`; rerun it after editing this file) into the editor's source view.
+The text below is the project description. CurseForge's normal editor does not read Markdown: either switch its description to the Markdown editor before pasting, or paste `docs/MOD-PAGE.html` (the same page as HTML, written by `python art/tools/mod_page_html.py`; rerun it after editing this file) into the editor's source view. Paste it on release day: its pictures load from `main`, so new ones only show once the release is merged.
 
 The page's look comes from pictures, since neither site allows fonts or styles: banners in the design system's web style (Chakra Petch headings, graphite, cyan), drawn in `art/modpage/banners.html` and rendered to `art/gallery/page/` by `python art/tools/mod_page_banners.py` (needs Edge or Chrome, run from PowerShell). Every image links straight to its file on GitHub's `main` branch, so nothing needs uploading by hand: push first, then paste. CurseForge caches each picture by its address, so a changed picture needs a new file name (a new number for a photo, or a suffix like `hero_2.png` for a banner) and the page updated to match. Pictures are at most 840 px wide, under CurseForge's limit.
 
 Summary line for the short description field:
 
-> Nuclear power progression grounded in real physics: a portable microreactor, a real fuel cycle and a fission station you design channel by channel.
+> Nuclear power from real physics: a portable microreactor, a real fuel cycle, a fission station you design rod by rod, and a breeder reactor. Small, smart builds beat big ones.
+
+The summary is what CurseForge search shows, so it leads with what the mod is (nuclear, reactor, fission, breeder) rather than the slogan, which the hero banner already carries.
 
 ---
 
@@ -14,17 +16,21 @@ Summary line for the short description field:
 
 ![Ryzer Gen: power from understanding, not volume](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/hero.png)
 
-[![Source on GitHub](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/key_github.png)](https://github.com/MultiRyzer/ryzer-gen) [![Join the Discord](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/key_discord.png)](https://discord.gg/4UVbQ9BWsB) [![Report a bug](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/key_issues.png)](https://github.com/MultiRyzer/ryzer-gen/issues)
+[![Source on GitHub](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/key_github.png)](https://github.com/MultiRyzer/ryzer-gen) [![Join the Discord](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/key_discord.png)](https://discord.gg/zePm8PTrTa) [![Report a bug](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/key_issues.png)](https://github.com/MultiRyzer/ryzer-gen/issues)
 
 </center>
 
-Most reactor mods answer "how do I get more power?" with "build it bigger". In Ryzer Gen a small, well-designed machine beats a big sloppy one. Start with a portable microreactor, recycle your spent fuel into MOX, and design a fission station channel by channel, with fusion and a Dyson swarm on the way.
+Most reactor mods answer "how do I get more power?" with "build it bigger". In Ryzer Gen a small, well-designed machine beats a big sloppy one. Start with a portable microreactor, recycle your spent fuel into MOX, design a fission station channel by channel and breed new fuel in a fast reactor, with fusion and a Dyson swarm on the way.
 
-> **Alpha.** Tiers 1 to 3 are playable. Balance is a first pass and may change between versions. Back up your world before updating.
+![A fission station lighting up the ground at night, its pipes running in](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/curseforge/07_station_night.jpg)
+
+> **Alpha.** Tiers 1 to 4 are playable. Balance is a first pass and may change between versions. Back up your world before updating.
 
 NeoForge 1.21.1 (21.1.249 or newer, so it runs in ATM10). Standalone: it ships every ore it uses. Optional support for JEI, EMI and Accessories.
 
-![What's in the alpha: tiers 1 to 3 are playable](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/section_alpha.png)
+**New to it?** You get an Operator's Handbook when you join, and **Y** opens the progression map: every step from ore in the ground to the sun, lit as you reach it, with how each one works.
+
+![What's in the alpha: tiers 1 to 4 are playable](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/section_alpha_2.png)
 
 ![Tier 1: the microreactor](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/tier_1.png)
 
@@ -43,6 +49,8 @@ NeoForge 1.21.1 (21.1.249 or newer, so it runs in ATM10). Standalone: it ships e
 - Every machine moves while it works: flywheels spin, the press strokes, the lithium columns pulse with light.
 - Fission waste goes into a Waste Cask that keeps its contents when broken.
 - Speed Modules, and cable fittings (silver, busbar, cryogenic) to raise throughput. The processing machines can push their results straight into a chest, a pipe or the next machine.
+- The Mega Drill: a quarry tower that fires a beam into the ground, bores a 7 x 7 shaft to the bottom of the world, then keeps going into the deep crust for ore every cycle.
+- The Assembler: an open robot cell whose arm carries the real ingredients to a fixture bed and crafts any crafting-table recipe from patterns. Item pipes get filters and priorities.
 
 ![The machine family: the alloy smelters, the Core Cracker, the Intake Pump, the Reprocessor, the Fuel Fabricator and the Lithium Extractor](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/curseforge/11_machines.jpg)
 
@@ -57,6 +65,19 @@ NeoForge 1.21.1 (21.1.249 or newer, so it runs in ATM10). Standalone: it ships e
 - The core is where the depth is: you plan every channel as fuel, moderator, control rod or coolant. Heat, fuel economy and output all come from the layout, and the planner rates your design against the best possible layouts.
 - Coolant is your friend: a strong core boils a lot of water, so it needs a real water supply of several intake pumps.
 - MOX fuel makes double the power of uranium. SCRAM at 900°C, or turn the safeties off and risk a flux tilt and a meltdown that leaves a crater.
+- Build a coolant reserve onto the station's back, in 1, 3 or 5 bays: in overdrive it holds a core that has lost its cooling for up to 10 minutes while you fix it.
+
+![Tier 4: the breeder reactor](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/tier_4.png)
+
+- A sodium-cooled fast reactor in a steel sphere, built round its control core. It burns the transuranics the Electrorefiner recovers from spent MOX: what the station cannot use.
+- It makes more fuel than it uses. Blankets round the core catch its spare neutrons: uranium breeds plutonium for MOX, thorium breeds U-233, the station's hottest fuel.
+- Plan its 19-position hex core, fill its sodium loop and set the pumps' flow to carry the heat, for up to 38,000 FE/t.
+- Keep the pumps running when it stops: with no flow, a hot core's decay heat boils the sodium into a fire inside its bund wall.
+
+**Across the mod**
+- **Steady state:** a reactor that keeps running builds a streak that raises its output, up to 1.75x for the breeder. Good automation pays.
+- **The progression map (Y):** the whole production line in tier columns, with the best setups we have found behind spoilers.
+- **The reactors talk:** an announcer for safeties, SCRAMs, coolant loss and meltdowns, and every noisy machine has a sound switch.
 
 ![A fuel cycle production line with its batteries and water supply, feeding the fission station](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/curseforge/14_production_line.jpg)
 
@@ -80,11 +101,11 @@ A swarm of solar panels launches round the sun, closes into a shell that shuts o
 
 ![Roadmap: from a portable reactor to a star](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/section_roadmap.png)
 
-![Roadmap: tiers 1 to 3 in the alpha, the fission to fusion bridge in progress, then the breeder reactor, fusion and the Dyson swarm](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/roadmap.png)
+![Roadmap: tiers 1 to 4 in the alpha, the fission to fusion bridge in progress, then fusion and the Dyson swarm](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/roadmap_2.png)
 
 Want an early look at the next tier? Set `preview.next_tier = true` in `ryzergen-common.toml`. It is unfinished and its products have no use yet.
 
-Full roadmap and issue tracker on [GitHub](https://github.com/MultiRyzer/ryzer-gen). Join the [Discord](https://discord.gg/4UVbQ9BWsB) for help, core designs, work in progress and a say in what comes next.
+Full roadmap and issue tracker on [GitHub](https://github.com/MultiRyzer/ryzer-gen). Join the [Discord](https://discord.gg/zePm8PTrTa) for help, work in progress and a say in what comes next. Test Pilots there get new builds before they are released.
 
 ![For pack makers](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/section_packs.png)
 
@@ -99,12 +120,13 @@ Full roadmap and issue tracker on [GitHub](https://github.com/MultiRyzer/ryzer-g
 
 ![FAQ](https://raw.githubusercontent.com/MultiRyzer/ryzer-gen/main/art/gallery/page/section_faq.png)
 
+- **Do I need to know any physics?** No. The handbook covers the basics, and the progression map (Y) shows every step and how it works.
 - **Fabric or Forge?** No: NeoForge 1.21.1 only.
 - **Older versions?** No plans. The mod is built for 1.21.1, the version ATM10 runs on.
 - **Can I use it in my modpack?** Yes, any pack. It is MIT licensed.
 - **Is radiation dangerous to carry around?** No. Only running reactors and meltdown sites emit it, and it can be turned off.
 - **Shader packs?** Yes, it works with Iris and shader packs. The wormhole's light-bending only shows without one; with a shader pack on it shows as a simpler picture.
-- **Found a bug?** Please open an issue on GitHub with your log and the steps to reproduce it. For questions, ask in `#help` on the [Discord](https://discord.gg/4UVbQ9BWsB).
+- **Found a bug?** Please open an issue on GitHub with your log and the steps to reproduce it. For questions, ask in `#help` on the [Discord](https://discord.gg/zePm8PTrTa).
 
 ## How it was made
 Ryzer Gen is designed by Ryzer. The code was written with help from Opus 5.5. The textures are drawn in code by the mod's own scripts; the announcer's voice is generated with ElevenLabs and the other sounds are credited below.
