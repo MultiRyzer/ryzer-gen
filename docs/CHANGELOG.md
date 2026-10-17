@@ -2,6 +2,28 @@
 
 Player-facing changes, newest first. Paste each release's section into the Modrinth and CurseForge changelog and the GitHub release notes.
 
+## 0.2.2-alpha (18 October 2026)
+
+### New
+- **The Assembler.** An open robot cell that crafts: a 3 x 3 x 3 multiblock where an orange six-axis arm carries the real ingredients from the in-feed belt to a fixture bed, lays them out as the recipe needs, and takes the result to the out-feed. It holds nine patterns of any crafting-table recipe, taking turns, and a pattern takes any item its recipe takes (another mod's lead works where ours was set). 40 FE/t; Speed Modules craft more per cycle. Its stack light and readout show what it is waiting for.
+- **Pipe filters.** Each side of an item pipe can take a filter of up to 7 items (only these, or all but these) and a priority, set in the pipe's panel.
+- **The coolant reserve**, emergency core cooling for the fission station. Build Coolant Reserve blocks onto the station's back in bays (1, 3 or 5, growing out from the back's centre). It fills from the station's spare water, and in overdrive it holds a core that has lost its cooling at 620°C while its water lasts, 2 minutes a bay, with INJECTING and a countdown on the control screen. Dry, the core heats on as before. It does nothing for a flux tilt.
+- **The Operator's Handbook.** A ring-bound manual you get the first time you join a world (or craft from 3 paper and a uranium), with a chapter for each of Start, Basics, Power, Heat, Radiation and Help. A "Press Y for the map" hint shows after joining until you have opened the progression map once, and the map has Handbook, Discord and Report a bug links in its corner.
+- **A sound switch** on every machine that makes a running sound. Muted, it is quiet, but meltdown alarms and spoken warnings still sound.
+- **Creative Sodium Tank**: endless liquid sodium, for trying out the breeder.
+
+### Changed
+- **Machines come alive.** Every single-block machine shows what it is doing: moving parts that ease in and out and speed up with Speed Modules, glows that brighten with its heat, a status lamp (green working, amber on standby, red short of power), and dust, fumes, embers, drips or smoke while it works.
+- **The Electrorefiner is rebuilt** as a real pyroprocessing cell: a pot of molten salt behind a sight glass, four anode baskets turning in it, and a cathode lifting its plated metal out.
+- **The Spent Fuel Pool** has a new look, with a railing round its rim, a radiation monitor, a level gauge and a thermometer that climbs with the decay heat of the rods cooling in it.
+- **The Mega Drill** has service lines from its ports up to the deck, roof fans that turn, beacons that sweep while it runs, an aviation light on its crown and floodlights into the pit.
+- **The Alloy Smelter is a plain block** now, like vanilla's furnaces: banded firebrick in a steel frame with a copper flue on top, and its fire glowing in the door while it burns.
+
+### Fixed
+- **Power-hungry machines can no longer be run on a weak supply through a redstone clock.** A gated machine now works only when its full draw has arrived.
+- **The round sun is white hot without shader packs.** Its light was drawn under its disc, so it looked dull.
+- The Electrorefiner's top takes a pipe again, and the pool's radiation signs show whole.
+
 ## 0.2.1-alpha (11 October 2026)
 
 ### New
