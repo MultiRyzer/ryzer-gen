@@ -1,0 +1,41 @@
+{
+ "textures": {
+  "front": "minecraft:block/furnace_front",
+  "side": "minecraft:block/furnace_side",
+  "top": "minecraft:block/furnace_top"
+ },
+ "elements": [
+  {
+   "from": [
+    0,
+    0,
+    0
+   ],
+   "to": [
+    16,
+    16,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#front"
+    },
+    "south": {
+     "texture": "#side"
+    },
+    "east": {
+     "texture": "#side"
+    },
+    "west": {
+     "texture": "#side"
+    },
+    "up": {
+     "texture": "#top"
+    },
+    "down": {
+     "texture": "#top"
+    }
+   }
+  }
+ ]
+}

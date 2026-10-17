@@ -16,6 +16,7 @@ import com.ryzer.ryzergen.RyzerGen;
 import com.ryzer.ryzergen.battery.HomeBatteryBlock;
 import com.ryzer.ryzergen.cable.EnergyCableBlock;
 import com.ryzer.ryzergen.creative.CreativeSourceBlock;
+import com.ryzer.ryzergen.creative.CreativeSodiumTankBlock;
 import com.ryzer.ryzergen.creative.CreativeWaterTankBlock;
 import com.ryzer.ryzergen.cable.FluidPipeBlock;
 import com.ryzer.ryzergen.machine.fission.CoolantReserveBlock;
@@ -148,6 +149,8 @@ public final class ModBlocks {
             () -> new CreativeSourceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
     public static final DeferredBlock<CreativeWaterTankBlock> CREATIVE_WATER_TANK = BLOCKS.register("creative_water_tank",
             () -> new CreativeWaterTankBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
+    public static final DeferredBlock<CreativeSodiumTankBlock> CREATIVE_SODIUM_TANK = BLOCKS.register("creative_sodium_tank",
+            () -> new CreativeSodiumTankBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
     // Creative-only: draws the fusion reactor's concept design round itself (next-tier preview).
     public static final DeferredBlock<FusionPreviewBlock> FUSION_PREVIEW = BLOCKS.register("fusion_preview",
             () -> new FusionPreviewBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));

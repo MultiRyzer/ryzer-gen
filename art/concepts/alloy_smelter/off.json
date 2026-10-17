@@ -1,0 +1,173 @@
+{
+ "textures": {
+  "front": "ryzergen:block/machine/alloy_smelter/front",
+  "side": "ryzergen:block/machine/alloy_smelter/side",
+  "top": "ryzergen:block/machine/alloy_smelter/top",
+  "bottom": "ryzergen:block/machine/alloy_smelter/bottom",
+  "firebox": "ryzergen:block/machine/alloy_smelter/firebox",
+  "reveal": "ryzergen:block/machine/family/metal",
+  "particle": "ryzergen:block/machine/alloy_smelter/side"
+ },
+ "elements": [
+  {
+   "from": [
+    0,
+    0,
+    1
+   ],
+   "to": [
+    16,
+    16,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#firebox"
+    },
+    "south": {
+     "texture": "#side"
+    },
+    "east": {
+     "texture": "#side"
+    },
+    "west": {
+     "texture": "#side"
+    },
+    "up": {
+     "texture": "#top"
+    },
+    "down": {
+     "texture": "#bottom"
+    }
+   }
+  },
+  {
+   "from": [
+    0,
+    0,
+    0
+   ],
+   "to": [
+    4,
+    16,
+    1
+   ],
+   "faces": {
+    "north": {
+     "texture": "#front"
+    },
+    "south": {
+     "texture": "#reveal"
+    },
+    "east": {
+     "texture": "#reveal"
+    },
+    "west": {
+     "texture": "#side"
+    },
+    "up": {
+     "texture": "#top"
+    },
+    "down": {
+     "texture": "#bottom"
+    }
+   }
+  },
+  {
+   "from": [
+    12,
+    0,
+    0
+   ],
+   "to": [
+    16,
+    16,
+    1
+   ],
+   "faces": {
+    "north": {
+     "texture": "#front"
+    },
+    "south": {
+     "texture": "#reveal"
+    },
+    "east": {
+     "texture": "#side"
+    },
+    "west": {
+     "texture": "#reveal"
+    },
+    "up": {
+     "texture": "#top"
+    },
+    "down": {
+     "texture": "#bottom"
+    }
+   }
+  },
+  {
+   "from": [
+    4,
+    0,
+    0
+   ],
+   "to": [
+    12,
+    3,
+    1
+   ],
+   "faces": {
+    "north": {
+     "texture": "#front"
+    },
+    "south": {
+     "texture": "#reveal"
+    },
+    "east": {
+     "texture": "#reveal"
+    },
+    "west": {
+     "texture": "#reveal"
+    },
+    "up": {
+     "texture": "#reveal"
+    },
+    "down": {
+     "texture": "#bottom"
+    }
+   }
+  },
+  {
+   "from": [
+    4,
+    8,
+    0
+   ],
+   "to": [
+    12,
+    16,
+    1
+   ],
+   "faces": {
+    "north": {
+     "texture": "#front"
+    },
+    "south": {
+     "texture": "#reveal"
+    },
+    "east": {
+     "texture": "#reveal"
+    },
+    "west": {
+     "texture": "#reveal"
+    },
+    "up": {
+     "texture": "#top"
+    },
+    "down": {
+     "texture": "#reveal"
+    }
+   }
+  }
+ ]
+}

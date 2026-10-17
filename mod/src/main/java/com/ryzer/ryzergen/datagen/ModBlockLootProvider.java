@@ -47,6 +47,7 @@ public class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.GRAPHITE_BLOCK.get());
         dropSelf(ModBlocks.CREATIVE_BATTERY.get());
         dropSelf(ModBlocks.CREATIVE_WATER_TANK.get());
+        dropSelf(ModBlocks.CREATIVE_SODIUM_TANK.get());
         dropSelf(ModBlocks.FUSION_PREVIEW.get());
         dropSelf(ModBlocks.SUN_GATE_PREVIEW.get());
         dropSelf(ModBlocks.MEGA_DRILL_PREVIEW.get());

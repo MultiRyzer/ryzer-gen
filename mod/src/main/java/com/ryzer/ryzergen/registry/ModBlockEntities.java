@@ -80,7 +80,8 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreativeSourceBlockEntity>> CREATIVE_SOURCE =
             BLOCK_ENTITIES.register("creative_source",
                     () -> BlockEntityType.Builder.of(CreativeSourceBlockEntity::new,
-                            ModBlocks.CREATIVE_BATTERY.get(), ModBlocks.CREATIVE_WATER_TANK.get()).build(null));
+                            ModBlocks.CREATIVE_BATTERY.get(), ModBlocks.CREATIVE_WATER_TANK.get(),
+                            ModBlocks.CREATIVE_SODIUM_TANK.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluidPipeBlockEntity>> FLUID_PIPE =
             BLOCK_ENTITIES.register("fluid_pipe",

@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.Sheets;
@@ -127,7 +128,8 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
     /**
      * The coolant reserve's live parts: the floodlights on its plinth, each bay's lamp (blue while
      * ready, flashing red while injecting, red when empty) and the water at its real level. The water
-     * is exported full and squashed to its level here; its texture is the same all the way up.
+     * is vanilla's, animated and tinted with the biome's water colour as real water is, exported full
+     * and cut down to its level here; its surface line is a paler tint of the same.
      */
     private static void drawReserve(VertexConsumer buffer, PoseStack pose, StationCoreBlockEntity core, int light) {
         StationRunner runner = core.runner();
@@ -139,35 +141,56 @@ public class StationRenderer implements BlockEntityRenderer<StationCoreBlockEnti
         boolean injecting = runner.status() == StationRunner.Status.INJECTING;
         boolean flash = (net.minecraft.Util.getMillis() / 400) % 2 == 0;
         String lamp = injecting || level <= 0 ? "reserve_alarm_" : "reserve_ready_";
+        int tint = core.getLevel() == null ? 0x3F76E4 : BiomeColors.getAverageWaterColor(core.getLevel(), core.getBlockPos());
+        int waterColour = 0xFF000000 | tint;
+        int surfaceColour = 0xFF000000 | mix(tint, 0xFFFFFF, 0.35F);
         for (int ring = 0; ring < rings; ring++) {
             draw(buffer, pose, StationGeometry.group((core.isRunning() ? "reserve_lamp_on_" : "reserve_lamp_off_") + ring), light);
             if (!injecting || flash) {
                 draw(buffer, pose, StationGeometry.group(lamp + ring), light);
             }
             if (level > 0.01F) {
-                draw(buffer, pose, water(StationGeometry.group("reserve_water_" + ring), level, false), light);
-                draw(buffer, pose, water(StationGeometry.group("reserve_surface_" + ring), level, true), light);
+                draw(buffer, pose, water(StationGeometry.group("reserve_water_" + ring), level, false), light, waterColour);
+                draw(buffer, pose, water(StationGeometry.group("reserve_surface_" + ring), level, true), light, surfaceColour);
             }
         }
     }
 
     /**
-     * Water quads at {@code level}: the body's top edge brought down to the level, or (for the surface
-     * line) the whole line lowered with it.
+     * Water quads at {@code level}: the body's top edge brought down to the level, its texture cut off
+     * with it rather than squashed, or (for the surface line) the whole line lowered with it.
      */
     private static List<StationGeometry.Quad> water(List<StationGeometry.Quad> quads, float level, boolean surface) {
         float drop = (WATER_TOP - WATER_FOOT) * (1 - level);
         List<StationGeometry.Quad> out = new java.util.ArrayList<>(quads.size());
         for (StationGeometry.Quad quad : quads) {
             float[] xyz = quad.xyz().clone();
-            for (int i = 1; i < xyz.length; i += 3) {
-                if (surface || xyz[i] > WATER_FOOT + 0.001F) {
-                    xyz[i] -= drop;
+            float[] uv = quad.uv().clone();
+            float footV = 0;
+            for (int i = 0; i < 4; i++) {
+                if (xyz[i * 3 + 1] <= WATER_FOOT + 0.001F) {
+                    footV = uv[i * 2 + 1];
                 }
             }
-            out.add(new StationGeometry.Quad(xyz, quad.uv(), quad.normal(), quad.emissive()));
+            for (int i = 0; i < 4; i++) {
+                if (surface || xyz[i * 3 + 1] > WATER_FOOT + 0.001F) {
+                    xyz[i * 3 + 1] -= drop;
+                    if (!surface) {
+                        uv[i * 2 + 1] = footV - (footV - uv[i * 2 + 1]) * level;
+                    }
+                }
+            }
+            out.add(new StationGeometry.Quad(xyz, uv, quad.normal(), quad.emissive()));
         }
         return out;
+    }
+
+    /** {@code a} towards {@code b} by {@code t}, per channel (RGB). */
+    private static int mix(int a, int b, float t) {
+        int r = Math.round(((a >> 16) & 0xFF) * (1 - t) + ((b >> 16) & 0xFF) * t);
+        int g = Math.round(((a >> 8) & 0xFF) * (1 - t) + ((b >> 8) & 0xFF) * t);
+        int bl = Math.round((a & 0xFF) * (1 - t) + (b & 0xFF) * t);
+        return r << 16 | g << 8 | bl;
     }
 
     /** From the core's corner to the design's north-west corner, then turned about the centre to the facing. */

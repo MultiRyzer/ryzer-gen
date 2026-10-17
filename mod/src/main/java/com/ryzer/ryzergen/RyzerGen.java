@@ -109,7 +109,7 @@ public class RyzerGen {
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, ModBlockEntities.CREATIVE_SOURCE.get(),
                 CreativeSourceBlockEntity::energyFor);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.CREATIVE_SOURCE.get(),
-                CreativeSourceBlockEntity::waterFor);
+                CreativeSourceBlockEntity::fluidFor);
         // Fission station ports, on a formed station's base: water in, fuel in, power out (pushed,
         // and cables can also pull) on the front, and spent rods out round the side.
         event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {

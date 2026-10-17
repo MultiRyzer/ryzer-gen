@@ -640,14 +640,10 @@ def reserve_hood(lip):
     return letters(k)
 
 
-def reserve_water():
-    # The reserve's water behind its windows, softly backlit: calm columns of lighter and deeper
-    # blue, the same all the way up (the game squashes it to the water's level), deeper at the foot.
-    cols = 'vvVVvvwvvVvvvwvv'
-    k = [[cols[x] for x in range(16)] for _ in range(16)]
-    k[14] = ['w' if c != 'V' else 'v' for c in cols]
-    k[15] = ['w'] * 16
-    return letters(k)
+def buttress():
+    # A rib's flange where it steps out over the reserve's hood: one plain light grey, as the sweep
+    # bends it over the hood's pitches and would make a channelled face band.
+    return letters(fill('E'))
 
 
 def reserve_void():
@@ -712,8 +708,7 @@ def publish_station():
         write_texture('block/station/' + name, tex)
     for name, tex in (('reserve_lintel', reserve_lintel()), ('reserve_face', reserve_face()),
                       ('reserve_hood_lo', reserve_hood(True)), ('reserve_hood_hi', reserve_hood(False)),
-                      ('reserve_water', reserve_water()), ('reserve_surface', letters(fill('C'))),
-                      ('reserve_void', reserve_void()), ('valve', valve())):
+                      ('reserve_void', reserve_void()), ('valve', valve()), ('buttress', buttress())):
         write_texture('block/station/' + name, tex)
     meta = os.path.join(mp.TEXTURES, 'block', 'station', 'steam.png.mcmeta')
     with open(meta, 'w') as fh:

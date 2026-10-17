@@ -141,6 +141,8 @@ TEXTURES = {
     'block/creative_top': creative_top,
     'block/creative_battery_side': lambda: creative_side('x'),
     'block/creative_water_tank_side': lambda: creative_side('i'),
+    # Sodium's port ring is yellow, the colour sodium burns (its D line).
+    'block/creative_sodium_tank_side': lambda: creative_side('Y'),
 }
 
 
