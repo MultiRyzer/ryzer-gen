@@ -10,11 +10,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Creative-only test blocks, with no recipe: the creative battery (endless power) and the creative
- * water tank (endless water). Each pushes into whatever touches it and can be drained without end,
+ * tanks (endless water, or liquid sodium for the breeder). Each pushes into whatever touches it and can be drained without end,
  * so a machine can be tried out without building its supply first.
  */
 public class CreativeSourceBlock extends BaseEntityBlock {
@@ -24,9 +25,9 @@ public class CreativeSourceBlock extends BaseEntityBlock {
         super(properties);
     }
 
-    /** False: the creative battery. The creative water tank says true. */
-    public boolean givesWater() {
-        return false;
+    /** The fluid it gives, or null for the creative battery, which gives power. */
+    public @Nullable Fluid fluid() {
+        return null;
     }
 
     @Override

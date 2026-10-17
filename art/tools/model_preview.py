@@ -129,7 +129,8 @@ def turn(face, origin, eu, ev, quarters):
 def collect_faces(models):
     faces = []
     for name, (dx, dy, dz), rot in models:
-        model = json.load(open(os.path.join(MODELS, name + '.json')))
+        # A generated model by name, or a concept's model JSON by its path.
+        model = json.load(open(name if name.endswith('.json') else os.path.join(MODELS, name + '.json')))
         # A composite model (neoforge:composite) keeps its elements in its children.
         parts = list(model['children'].values()) if 'children' in model else [model]
         for part in parts:

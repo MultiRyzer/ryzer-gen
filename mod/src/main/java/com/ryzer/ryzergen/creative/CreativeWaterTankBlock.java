@@ -2,6 +2,8 @@ package com.ryzer.ryzergen.creative;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 
 /** The creative water tank: endless water for testing. See {@link CreativeSourceBlock}. */
 public class CreativeWaterTankBlock extends CreativeSourceBlock {
@@ -17,7 +19,7 @@ public class CreativeWaterTankBlock extends CreativeSourceBlock {
     }
 
     @Override
-    public boolean givesWater() {
-        return true;
+    public Fluid fluid() {
+        return Fluids.WATER;
     }
 }

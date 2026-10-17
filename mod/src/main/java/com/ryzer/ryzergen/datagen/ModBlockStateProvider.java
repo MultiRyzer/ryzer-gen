@@ -82,6 +82,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 modLoc("block/creative_battery_side"), modLoc("block/creative_top"), modLoc("block/creative_top")));
         simpleBlockWithItem(ModBlocks.CREATIVE_WATER_TANK.get(), models().cubeBottomTop("creative_water_tank",
                 modLoc("block/creative_water_tank_side"), modLoc("block/creative_top"), modLoc("block/creative_top")));
+        simpleBlockWithItem(ModBlocks.CREATIVE_SODIUM_TANK.get(), models().cubeBottomTop("creative_sodium_tank",
+                modLoc("block/creative_sodium_tank_side"), modLoc("block/creative_top"), modLoc("block/creative_top")));
         simpleBlockWithItem(ModBlocks.GRAPHITE_BLOCK.get(), cubeAll(ModBlocks.GRAPHITE_BLOCK.get()));
         tank(ModBlocks.PRESSURE_TANK.get(), "pressure_tank", "steel");
         tank(ModBlocks.FLUID_TANK.get(), "fluid_tank", "copper");
@@ -1265,37 +1267,44 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     /**
      * Alloy Smelter, facing north: tier 1, before any power, so a small fuel-fired furnace as early
-     * blast furnaces were. A firebrick hearth on the family skid, bound with two steel bands and steel
-     * angle guards up its corners, a grated fire door that glows while it burns with an orange latch
-     * above it, and a stepped gunmetal hood rising
-     * to a copper flue with a ring round it. The only brick machine, so it reads as the earliest.
-     * Its own textures: art/tools/alloy_smelter_textures.py.
+     * blast furnaces were, and a plain block as vanilla's furnaces are, since nothing about it is high
+     * tech: banded firebrick in a gunmetal frame, a copper flue ring on top. The fire door sits a
+     * pixel back in an 8 x 5 opening below the band, on the firebox's face, so only the fire glows
+     * while it burns, not the brick round it. Five boxes: the body from a pixel back, and four round
+     * the opening, each face taking its side of the block's texture by position and the opening's
+     * reveal in gunmetal. Its own textures: art/tools/alloy_smelter_textures.py.
      */
     private ModelFile alloySmelterModel(String name, boolean lit) {
         BoxModel boxes = new BoxModel();
-        boxes.add("skid", 0, 0, 0, 16, 2, 16);
-        boxes.add("firebrick", 2, 2, 2, 14, 11, 14);
-        for (float y : new float[] {4, 8}) {
-            boxes.add("metal", 1.75F, y, 1.75F, 14.25F, y + 1, 14.25F);
-        }
-        // Steel angle guards up the hearth's four corners, binding it with the bands.
-        for (float x : new float[] {1.5F, 13.5F}) {
-            for (float z : new float[] {1.5F, 13.5F}) {
-                boxes.add("metal", x, 2, z, x + 1, 11, z + 1);
-            }
-        }
-        BoxModel.Box door = boxes.add("metal", 4, 3, 1.25F, 12, 8, 1.75F).decal(Direction.NORTH, lit ? "fire_door_on" : "fire_door");
+        BoxModel.Box body = boxes.add("side", 0, 0, 1, 16, 16, 16)
+                .face(Direction.UP, "top").face(Direction.DOWN, "bottom").face(Direction.NORTH, lit ? "firebox_on" : "firebox");
         if (lit) {
-            door.glow(Direction.NORTH);
+            body.glow(Direction.NORTH);
         }
-        boxes.add("accent", 7, 8.25F, 1, 9, 8.75F, 1.5F);
-        boxes.add("metal", 2.5F, 11, 2.5F, 13.5F, 12, 13.5F);
-        boxes.add("metal", 4, 12, 4, 12, 13, 12);
-        boxes.add("copper", 6, 13, 6, 10, 16, 10);
-        boxes.add("metal", 5.5F, 14.5F, 5.5F, 10.5F, 15, 10.5F);
-        backConnector(boxes, 14.25F);
+        int x0 = 4, x1 = 12, y0 = 3, y1 = 8;
+        smelterFront(boxes, 0, 0, x0, 16);
+        smelterFront(boxes, x1, 0, 16, 16);
+        smelterFront(boxes, x0, 0, x1, y0);
+        smelterFront(boxes, x0, y1, x1, 16);
         BlockModelBuilder model = boxModel(name);
-        boxes.build(model, "firebrick", machineParts("alloy_smelter"));
+        boxes.build(model, "side", machineParts("alloy_smelter"));
         return model;
+    }
+
+    /** A piece of the smelter's front round the door's opening: the block's faces outside, gunmetal in the reveal. */
+    private static void smelterFront(BoxModel boxes, int x0, int y0, int x1, int y1) {
+        BoxModel.Box box = boxes.add("metal", x0, y0, 0, x1, y1, 1).face(Direction.NORTH, "front");
+        if (x0 == 0) {
+            box.face(Direction.WEST, "side");
+        }
+        if (x1 == 16) {
+            box.face(Direction.EAST, "side");
+        }
+        if (y0 == 0) {
+            box.face(Direction.DOWN, "bottom");
+        }
+        if (y1 == 16) {
+            box.face(Direction.UP, "top");
+        }
     }
 }

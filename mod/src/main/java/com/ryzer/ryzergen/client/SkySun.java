@@ -96,6 +96,11 @@ public final class SkySun {
             disc(solid, last, white, false);
         }
         panels(solid, last, seconds, coverage, closing, dim, atlas.apply(CELL), atlas.apply(BACK));
+        // The solid parts go down first. The glow's render type is not one of the buffer source's
+        // fixed ones, so a plain endBatch would draw it before them, and the disc would paint over its light.
+        if (buffers instanceof MultiBufferSource.BufferSource source) {
+            source.endBatch(Sheets.cutoutBlockSheet());
+        }
         VertexConsumer glow = buffers.getBuffer(RenderType.eyes(InventoryMenu.BLOCK_ATLAS));
         if (open > 0.001F) {
             disc(glow, last, white, true);

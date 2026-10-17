@@ -44,11 +44,12 @@ STATION = ('skirt', 'deck', 'core_plate', 'pillar', 'rib_web', 'clamp', 'copper_
            'stencil_a', 'stencil_b', 'hatch_a', 'hatch_b',
            'fuel_pin', 'spacer', 'nozzle', 'cherenkov', 'moderator', 'control', 'steam',
            'housing', 'housing_slope', 'housing_cheek', 'hazard_upright', 'tag_coolant', 'tag_fuel', 'tag_energy',
-           'lamp', 'lamp_off', 'reserve_lintel', 'reserve_face', 'reserve_hood_lo', 'reserve_hood_hi', 'reserve_water',
-           'reserve_surface', 'reserve_void', 'valve')
+           'lamp', 'lamp_off', 'reserve_lintel', 'reserve_face', 'reserve_hood_lo', 'reserve_hood_hi',
+           'reserve_void', 'valve', 'buttress')
 TEXTURES.update({name: 'ryzergen:block/station/' + name for name in STATION})
-d = Design(C, TEXTURES, {'glow', 'screen', 'beacon', 'fuel_pin', 'cherenkov', 'tag_coolant', 'tag_fuel', 'tag_energy', 'lamp',
-                         'reserve_water', 'reserve_surface'},
+# The reserve's water is vanilla's, animated; the game tints it with the biome's water colour.
+TEXTURES.update({'reserve_water': 'minecraft:block/water_still', 'reserve_surface': 'minecraft:block/water_still'})
+d = Design(C, TEXTURES, {'glow', 'screen', 'beacon', 'fuel_pin', 'cherenkov', 'tag_coolant', 'tag_fuel', 'tag_energy', 'lamp'},
            concept_only={'rods', 'plumes'})
 FRONT = math.radians(270)   # the angle round the station that faces the front
 
@@ -380,6 +381,7 @@ RO = 108          # the face, 6.75 blocks out (its skirt is flush with its block
 RP = 111          # its plinth band (the station's is 92)
 RS = 112          # its skirt (the station's is 93)
 RB = 93.5         # where the hood meets the station, just outside the ribs (91.5)
+INNER = 91.8      # the bay's back wall, facing into the station, between the glass (86) and the hood
 FACE_TOP = 36
 HOOD = [(FACE_TOP, RO), (40.5, 100.5), (44, RB)]   # the hood's section, bottom to top, a little convex
 WIN = (19, 33)    # window opening; the water fills it to 32 at most
@@ -434,16 +436,17 @@ def slab(phi, outline, half, hazard_edges):
         for i in range(1, len(outline) - 1):
             d.quad('housing_cheek', [first, p(*outline[i], side), p(*outline[i + 1], side), p(*outline[i + 1], side)],
                    [(0, 0), (0, 16), (16, 16), (16, 16)], tuple(side * v for v in across))
-    cy = sum(y for y, _ in outline) / len(outline)
-    cr = sum(r for _, r in outline) / len(outline)
+    # Each edge's outward side comes from the outline's winding (its signed area), not from its
+    # centre: the outline is not convex, and a ledge above the centre would face the wrong way.
+    area = sum(outline[i][0] * outline[(i + 1) % len(outline)][1] - outline[(i + 1) % len(outline)][0] * outline[i][1]
+               for i in range(len(outline)))
+    turn = 1 if area > 0 else -1
     for i in range(len(outline)):
         (y1, r1), (y2, r2) = outline[i], outline[(i + 1) % len(outline)]
         length = math.hypot(y2 - y1, r2 - r1)
         if length < 0.01:
             continue
-        ny, nr = r2 - r1, -(y2 - y1)
-        if ny * ((y1 + y2) / 2 - cy) + nr * ((r1 + r2) / 2 - cr) < 0:
-            ny, nr = -ny, -nr
+        ny, nr = turn * (r2 - r1), -turn * (y2 - y1)
         out = (nr * math.cos(phi), ny, nr * math.sin(phi))
         mat = 'hazard_upright' if i in hazard_edges else 'housing_cheek'
         pieces = max(1, math.ceil(length / 16))
@@ -486,6 +489,10 @@ def bay(a0, a1, ring):
     arc('reserve_hood_lo', HOOD[0:2], a0, a1, STEPS)
     arc('reserve_hood_hi', HOOD[1:3], a0, a1, STEPS)
     flat('head_top', HOOD[2][0], 91.6, RB, a0, a1, STEPS)
+    # Its back, facing into the station: the bay sits against the chamber glass, so from inside the
+    # chamber you look out at it, and without this you would see the backs of its faces (culled).
+    # In two even bands, so the texture keeps its scale.
+    arc('housing', [(16, INNER), (30, INNER), (44, INNER)], a0, a1, STEPS, inward=True)
     # The bay's lamp, on the hood's lower pitch.
     (ya, ra), (yb, rb) = HOOD[0], HOOD[1]
     lo = (ya + (yb - ya) * 0.25 + 0.3, ra + (rb - ra) * 0.25 + 0.1)
@@ -523,7 +530,7 @@ def buttress(phi):
     d.post('clamp', phi, RO + 1.5, 16, 20, 2.5, 5.5)
     d.post('pillar', phi, RO + 1, 16, FACE_TOP + 0.5, 1, 4)
     across = (-math.sin(phi), 0, math.cos(phi))
-    d.sweep('pillar', [d.at(phi, RO + 1, FACE_TOP + 0.5), d.at(phi, 100.9, 41.5), d.at(phi, 93, 45)], 1, 4,
+    d.sweep('buttress', [d.at(phi, RO + 1, FACE_TOP + 0.5), d.at(phi, 100.9, 41.5), d.at(phi, 93, 45)], 1, 4,
             lambda i: across, closed=False, caps=True)
     d.post('clamp', phi, 90.5, 42, 46, 2.5, 5)
 
