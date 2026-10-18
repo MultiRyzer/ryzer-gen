@@ -1,0 +1,16 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "ryzergen:font/terminal.png",
+      "ascent": 7,
+      "height": 8,
+      "chars": [
+        "ABCDEFGHIJKLMNOP",
+        "QRSTUVWXYZ012345",
+        "6789.,:/%+-=_><[",
+        "]()!?'*#|\u00b0 \u0000\u0000\u0000\u0000\u0000"
+      ]
+    }
+  ]
+}

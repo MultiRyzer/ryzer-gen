@@ -14,6 +14,7 @@ import sys
 import zipfile
 
 import font_icons
+import terminal_font
 
 from pixelart import ROOT, VANILLA_JAR, read_png
 
@@ -89,27 +90,8 @@ CHECKS = [
     ('gui.ryzergen.container.no_coolant', [], 72),
     ('gui.ryzergen.container.racks', ['20', '20'], 44),
     ('container.ryzergen.battery_controller', [], 160),
-    # Station controls (machine/fission/StationControlScreen): screen x 100 to 210, text from x 104.
-    ('gui.ryzergen.station.status.warming', [], 104),
-    ('gui.ryzergen.station.status.no_water', [], 104),
-    ('gui.ryzergen.station.status.overheat', [], 104),
-    ('gui.ryzergen.station.status.no_fuel', [], 104),
-    ('gui.ryzergen.station.status.overdrive', [], 104),
-    ('gui.ryzergen.station.status.flux_tilt', ['59:59'], 104),
-    ('gui.ryzergen.station.status.unstable', [], 104),
-    ('gui.ryzergen.station.status.runaway', [], 104),
-    # The coolant reserve's countdown: at most 5 bays of the longest configured time, 300 minutes.
-    ('gui.ryzergen.station.status.injecting', ['300:00'], 104),
-    ('gui.ryzergen.station.live', ['99.9k', '1000'], 104),
-    ('gui.ryzergen.station.plan', ['99.9k'], 104),
-    ('gui.ryzergen.station.plan_empty', [], 104),
-    ('gui.ryzergen.station.too_hot', [], 104),
-    ('gui.ryzergen.station.stranded', ['99.9k'], 104),
-    ('gui.ryzergen.station.plan_temperature', ['40', '600'], 104),
-    ('gui.ryzergen.station.rod_life', ['9999'], 104),
-    ('gui.ryzergen.station.rating', ['100'], 104),
-    # Breeder control (machine/breeder/BreederControlScreen): readout text from x 104 to 208, as the
-    # station's; the flow readout between its keys, x 121 to 151.
+    # Breeder control (machine/breeder/BreederControlScreen): readout text from x 104 to 208; the
+    # flow readout between its keys, x 121 to 151.
     ('gui.ryzergen.breeder.status.offline', [], 104),
     ('gui.ryzergen.breeder.status.no_fuel', [], 104),
     ('gui.ryzergen.breeder.status.no_sodium', [], 104),
@@ -195,6 +177,154 @@ CHECKS = [
     # The "Press Y" toast (client/handbook/HandbookToast): text from x 30 to the toast's 160 edge.
     ('handbook.ryzergen.toast.line', ['Y'], 126),
 ]
+
+
+C = 'gui.ryzergen.console.'
+# The station's control screen (machine/fission/StationControlScreen), in the terminal font: 6 units
+# a character on its 960 x 540 grid of half GUI pixels. Each check is the parts drawn on one line
+# (key and worst-case values; a label and its value count a character's gap between them), the room
+# they have in grid units, and the scale they are drawn at.
+SHORT = ['25', '25']
+OUTCOMES = ('injected', 'injected_part', 'no_input', 'nothing_needed', 'ejected', 'ejected_part', 'no_output',
+            'nothing_to_eject', 'draining')
+TERMINAL = [
+    ([(C + 'crumbs.root', []), (C + 'crumbs.path', [])], 330, 1),
+    # The pill holds the status, and the four switches sit left of it: together from x 400 to 946.
+    ([(C + 'status.injecting', ['300:00'])], 190, 2),
+    ([(C + 'status.runaway', [])], 190, 2),
+    ([(C + 'status.flux_tilt', ['59:59'])], 190, 2),
+    ([(C + 'power.off', []), (C + 'redstone.ignored', []), (C + 'safeties.on', []), (C + 'sound.off', [])], 310, 1),
+    # Output box: rows from x 26 to 286.
+    ([(C + 'verdict.won', [])], 260, 2),
+    ([(C + 'verdict.dry', ['13'])], 260, 2),
+    ([(C + 'verdict.wild', ['13'])], 260, 2),
+    ([(C + 'verdict.empty', [])], 260, 2),
+    ([(C + 'stars', ['3'])], 96, 1),
+    ([(C + 'row.best', []), (C + 'unit.heat', ['-47'])], 260, 1),
+    ([(C + 'row.graphite', []), ('', ['99'])], 260, 1),
+    ([(C + 'row.tamed', []), ('', ['13 / 13'])], 260, 1),
+    ([(C + 'row.power', []), (C + 'unit.fet', ['99,999'])], 260, 1),
+    # Load-out box: each rack's label and note on the left, its count (2x) on the right, from x 26 to 286.
+    ([(C + 'loadout', []), (C + 'loadout.paused', [])], 270, 1),
+    ([(C + 'rack.fuel', []), (C + 'rack.note.uranium', [])], 200, 1),
+    ([(C + 'rack.graphite', [])], 200, 1),
+    ([(C + 'rack.control', [])], 200, 1),
+    ([(C + 'rack.none', [])], 260, 1),
+    ([(C + 'row.water', []), ('', ['XXXXXXXXXXXXXXXXXXXXXXXXXXX']), (C + 'unit.mb', ['16,000'])], 260, 1),
+    ([(C + 'port.in', []), (C + 'port.err.input', []), (C + 'port.out', []), (C + 'port.err.output', [])], 260, 1),
+    ([(C + 'port.in', []), (C + 'port.none', []), (C + 'port.out', []), (C + 'port.chest_free', ['9999'])], 260, 1),
+    ([(C + 'port.in', []), (C + 'port.pipe', []), (C + 'port.out', []), (C + 'port.err.full', [])], 260, 1),
+    ([(C + 'inject', [])], 256, 2),
+    ([(C + 'eject', [])], 256, 2),
+    # Core box, x 312 to 648: the tabs on its top line, five tools 50 wide from their swatch, the hint,
+    # the legend on one line (its swatches and gaps padded as X) and the rules on two, all centred.
+    ([(C + 'tab.uranium', []), ('', ['34']), (C + 'tab.mox', []), ('', ['47']), ('', ['XXXXXX'])], 220, 1),
+    ([(C + 'core.live', [])], 100, 1),
+    ([(C + 'tool.fuel', [])], 50, 1),
+    ([(C + 'tool.graphite', [])], 50, 1),
+    ([(C + 'tool.water', [])], 50, 1),
+    ([(C + 'tool.control', [])], 50, 1),
+    ([(C + 'tool.clear', [])], 50, 1),
+    ([(C + 'hint', ['5'])], 330, 1),
+    ([(C + 'legend.water', []), (C + 'legend.dry', []), (C + 'legend.graphite', []), (C + 'legend.mox', []),
+      (C + 'legend.control', []), (C + 'legend.unloaded', []), ('', ['XXXXXXXXXXXXXXX'])], 330, 1),
+    ([(C + 'rules.uranium.1', [])], 330, 1),
+    ([(C + 'rules.uranium.2', [])], 330, 1),
+    ([(C + 'rules.mox.1', [])], 330, 1),
+    ([(C + 'rules.mox.2', [])], 330, 1),
+    # Physics and forecast boxes: rows from x 674 to 934.
+    ([(C + 'physics', []), ('', ['T+99:59:59'])], 270, 1),
+    ([(C + 'row.thermal', []), (C + 'unit.fet', ['999,999'])], 260, 1),
+    ([(C + 'row.efficiency', []), (C + 'unit.percent', ['45.0'])], 260, 1),
+    ([(C + 'row.temperature', []), (C + 'unit.c', ['1000'])], 260, 1),
+    ([(C + 'row.flux', []), (C + 'unit.flux', ['99.99'])], 260, 1),
+    ([(C + 'row.k', []), ('', ['1.0099'])], 260, 1),
+    ([(C + 'row.reactivity', []), (C + 'unit.pcm', ['-990'])], 260, 1),
+    ([(C + 'row.controls', []), ('', ['25'])], 260, 1),
+    ([(C + 'row.channels', []), ('', ['25 / 25'])], 260, 1),
+    ([(C + 'row.draw', []), (C + 'unit.mbt', ['99,999'])], 260, 1),
+    ([(C + 'row.steam', []), (C + 'unit.mbt', ['99,999'])], 260, 1),
+    ([(C + 'row.burnup', []), (C + 'unit.percent', ['100.0'])], 260, 1),
+    ([(C + 'row.tilt', []), ('', ['9.99'])], 260, 1),
+    ([(C + 'row.steady', []), (C + 'steady.value', ['1.25', '999.9'])], 260, 1),
+    ([(C + 'row.reserve', []), (C + 'reserve.value', ['5', '300:00'])], 260, 1),
+    ([(C + 'history', [])], 260, 1),
+    ([(C + 'forecast', []), (C + 'forecast.note', [])], 270, 1),
+    ([(C + 'forecast.settles', ['1000'])], 260, 2),
+    ([(C + 'forecast.rising', ['1000'])], 260, 2),
+    ([(C + 'forecast.cools', ['1000'])], 260, 2),
+    ([(C + 'forecast.scram', ['59:59'])], 260, 2),
+    ([(C + 'forecast.meltdown', ['59:59'])], 260, 2),
+    ([(C + 'forecast.line.meltdown', ['1000'])], 250, 1),
+    ([(C + 'forecast.line.scram', ['900'])], 250, 1),
+    ([(C + 'forecast.mid', []), (C + 'forecast.end', [])], 250, 1),
+    # The switch warning: text from x 284 to 676, its title on the amber bar, the two keys at 2x.
+    ([(C + 'warn.head', ['URANIUM'])], 404, 1),
+    ([(C + 'warn.big', ['25'])], 392, 2),
+    ([(C + 'warn.1', ['URANIUM', '13 FUEL RODS, 12 GRAPHITE, 25 OTHER'])], 392, 1),
+    ([(C + 'warn.2', [])], 392, 1),
+    ([(C + 'warn.3', ['CHEST, 9999 FREE', 'URANIUM'])], 392, 1),
+    ([(C + 'warn.fuel', ['25']), (C + 'warn.graphite', ['25']), (C + 'warn.control', ['25']), (C + 'warn.other', ['25'])], 392, 1),
+    ([(C + 'warn.go', [])], 240, 2),
+    ([(C + 'warn.cancel', [])], 120, 2),
+    # The status bar: the log has what the four readouts on the right leave, about 480 units.
+    ([('', ['> ']), (C + 'log.rule1', [])], 480, 1),
+    ([('', ['> ']), (C + 'log.rule2', [])], 480, 1),
+    ([('', ['> ']), (C + 'log.mox.rule1', [])], 480, 1),
+    ([('', ['> ']), (C + 'log.mox.rule2', [])], 480, 1),
+    ([('', ['> ']), (C + 'log.mox.rule3', [])], 480, 1),
+    ([('', ['> ']), (C + 'log.ready', [])], 480, 1),
+    ([('', ['> ']), (C + 'log.won', ['47'])], 480, 1),
+    ([('', ['> ']), (C + 'log.placed', ['E5', 'CONTROL ROD', '47']), (C + 'log.dry', ['13']), (C + 'log.wild', ['13'])], 480, 1),
+    ([('', ['> ']), (C + 'log.cleared', ['E5', '47']), (C + 'log.dry', ['13'])], 480, 1),
+    ([('', ['> ']), (C + 'log.hover', ['E5', 'CONTROL ROD', '-18']), (C + 'log.hover.needs', ['4'])], 480, 1),
+    ([('', ['> ']), (C + 'log.hover', ['E5', 'CONTROL ROD', '-18']), (C + 'log.hover.control', [])], 480, 1),
+    ([('', ['> ']), (C + 'log.hover', ['E5', 'CONTROL ROD', '-18']), (C + 'log.hover.dries', ['13'])], 480, 1),
+    ([('', ['> ']), (C + 'log.hover', ['E5', 'CLEARING', '-18']), (C + 'log.hover.cools', ['13'])], 480, 1),
+    ([('', ['> ']), (C + 'log.safeties', [])], 480, 1),
+    ([('', ['> ']), (C + 'log.switch_cancelled', [])], 480, 1),
+    ([('', ['> ']), (C + 'result.switched.log', ['URANIUM', '25'])], 480, 1),
+] + [([('', ['> ']), (C + 'result.%s.log' % outcome, SHORT)], 480, 1) for outcome in OUTCOMES] + [
+    ([(C + 'bar.plan', ['47', '47']), (C + 'bar.water', ['99,999']), (C + 'bar.steam', ['99,999']),
+      (C + 'bar.core', ['1000'])], 440, 1),
+] + [([(C + 'status.' + s, [])], 190, 2) for s in ('offline', 'no_fuel', 'warming', 'online', 'no_water', 'overheat',
+                                                  'scram', 'overdrive', 'unstable')] + [
+    ([(C + k, [])], 260, 1) for k in ('part.fuel', 'part.graphite', 'part.water', 'part.control', 'part.clear', 'power.on',
+                                      'safeties.off', 'sound.on', 'redstone.high', 'redstone.low', 'output', 'output.note',
+                                      'loadout.uranium', 'loadout.mox', 'rack.note.mox', 'port.chest', 'water.none',
+                                      'core.plan', 'verdict.dry_one', 'verdict.wild_one', 'verdict.steady')
+]
+
+
+def fill(text, args):
+    """A lang string with its placeholders filled, numbered (%1$s) or in turn (%s)."""
+    for n, arg in enumerate(args, 1):
+        text = text.replace('%%%d$s' % n, arg)
+    for arg in args:
+        text = text.replace('%s', arg, 1)
+    return text.replace('%%', '%')
+
+
+def check_terminal(lang):
+    """The terminal font's lines: width at their scale, and every character in the font."""
+    failed = 0
+    for parts, room, scale in TERMINAL:
+        pieces = []
+        for key, args in parts:
+            if key and key not in lang:
+                print(f'MISSING  {key}')
+                failed += 1
+                continue
+            pieces.append(fill(lang[key], args) if key else ''.join(args))
+        shown = ' '.join(p for p in pieces if p).upper()
+        w = terminal_font.width(shown) * scale
+        unknown = sorted({ch for ch in shown if ch not in terminal_font.GLYPHS})
+        ok = w <= room and not unknown
+        failed += not ok
+        verdict = 'ok      ' if ok else 'NO GLYPH' if unknown else 'TOO LONG'
+        note = '  (not in the font: ' + ''.join(unknown) + ')' if unknown else ''
+        print(f'{verdict} {w:3d}/{room:<3d} {shown}{note}')
+    return failed
 
 
 def glyph_widths():
@@ -294,13 +424,12 @@ def main():
             print(f'MISSING  {key}')
             failed += 1
             continue
-        text = lang[key].replace('%%', '%')
-        for arg in args:
-            text = text.replace('%s', arg, 1)
+        text = fill(lang[key], args)
         w, shown = measure(text, lang, widths, icons)
         ok = w <= room
         failed += not ok
         print(f'{"ok      " if ok else "TOO LONG"} {w:3d}/{room:<3d} {shown}')
+    failed += check_terminal(lang)
     sys.exit(1 if failed else 0)
 
 

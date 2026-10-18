@@ -136,10 +136,11 @@ public final class ProgressionMap {
         add("uranium_rod", ModItems.URANIUM_FUEL_ROD, 4, 0, "fuel_fabricator", "uranium_ingot", "steel");
         add("mox_rod", ModItems.MOX_FUEL_ROD, 4, 1, "fuel_fabricator", "plutonium");
         add("control_rod", ModItems.CONTROL_ROD, 4, 2, "silver", "steel");
+        // Each core puzzle's single best layout (StationReactor.Core's layouts, here C coolant and R control
+        // rod): both the same turned round, as the screen shows them.
         add("station", ModItems.STATION_CORE, 4, 4, List.of(
-                new Grid("uranium_power", flip(new String[] {"FFFFC", "CCCFF", "FFFCF", "FCFCM", "FCFFM"}), false),
-                new Grid("uranium_economy", flip(new String[] {"MRMRM", "RFCMC", "CMFMM", "MFMFM", "MCMCC"}), false),
-                new Grid("mox_power", flip(new String[] {"FCFFF", "FCFCC", "FFCFF", "CCFFF", "FFFCC"}), false)),
+                new Grid("lattice", new String[] {"FCFCF", "CMCMC", "FCFCF", "CMCMC", "FCFCF"}, false),
+                new Grid("mox", new String[] {"FCMCF", "CFCFC", "MCRCM", "CFCFC", "FCMCF"}, false)),
                 "uranium_rod", "mox_rod", "control_rod", "advanced_board", "graphite", "lead_ingot");
         add("lithium_extractor", ModItems.LITHIUM_EXTRACTOR, 4, 6, "salt", "advanced_board");
         add("container_battery", ModItems.BATTERY_CONTROLLER, 4, 7, "lithium_extractor", "advanced_board");
@@ -162,19 +163,6 @@ public final class ProgressionMap {
         // Tier 5 and 6 (preview).
         add("fusion", ModItems.FUSION_PREVIEW, 6, 5, "tritium", "breeder");
         add("swarm", ModItems.SWARM_CONTROLLER, 7, 5, "fusion");
-    }
-
-    /**
-     * The station's best layouts as core_optimiser.py prints them have the front row first and
-     * channel 0 on the left; the control screen shows the front row at the bottom and mirrors x, so
-     * turned half round they read as the screen shows them.
-     */
-    private static String[] flip(String[] rows) {
-        String[] out = new String[rows.length];
-        for (int i = 0; i < rows.length; i++) {
-            out[rows.length - 1 - i] = new StringBuilder(rows[i]).reverse().toString();
-        }
-        return out;
     }
 
     private ProgressionMap() {}

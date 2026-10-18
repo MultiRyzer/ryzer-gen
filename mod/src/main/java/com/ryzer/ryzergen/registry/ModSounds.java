@@ -38,6 +38,26 @@ public final class ModSounds {
     /** One Geiger counter click from the dosimeter ring. */
     public static final DeferredHolder<SoundEvent, SoundEvent> DOSIMETER_CLICK = register("dosimeter_click");
 
+    /**
+     * The fission station's control screen (synthesised by art/tools/console_sounds.py): a tick as the
+     * mouse crosses a channel, a sound for each part placed and for clearing one, a note that climbs
+     * a pentatonic scale as the core's heat rises (one sample an octave apart from the next, which
+     * the screen pitches), a falling blip when it drops, a buzz when a rod loses its water, the
+     * three-star fanfare, and the inject and eject sequences.
+     */
+    public static final DeferredHolder<SoundEvent, SoundEvent> CONSOLE_TICK = register("console_tick");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CONSOLE_PLACE_FUEL = register("console_place_fuel");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CONSOLE_PLACE_GRAPHITE = register("console_place_graphite");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CONSOLE_PLACE_WATER = register("console_place_water");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CONSOLE_CLEAR = register("console_clear");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CONSOLE_NOTE = register("console_note");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CONSOLE_NOTE_HIGH = register("console_note_high");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CONSOLE_DOWN = register("console_down");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CONSOLE_BUZZ = register("console_buzz");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CONSOLE_FANFARE = register("console_fanfare");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CONSOLE_INJECT = register("console_inject");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CONSOLE_EJECT = register("console_eject");
+
     /** The reactor announcer's voice lines (machine/Announcer). */
     public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_REACTOR_ONLINE = register("voice_reactor_online");
     public static final DeferredHolder<SoundEvent, SoundEvent> VOICE_STATION_ONLINE = register("voice_station_online");

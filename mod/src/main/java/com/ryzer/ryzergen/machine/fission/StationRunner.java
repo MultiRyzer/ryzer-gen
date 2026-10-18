@@ -8,7 +8,6 @@ import com.ryzer.ryzergen.machine.RedstoneMode;
 import com.ryzer.ryzergen.machine.fission.StationReactor.Channel;
 import com.ryzer.ryzergen.radiation.RadiationSources;
 import com.ryzer.ryzergen.registry.ModDataComponents;
-import com.ryzer.ryzergen.registry.ModItems;
 import com.ryzer.ryzergen.registry.ModTriggers;
 import com.ryzer.ryzergen.machine.SteadyState;
 import net.minecraft.core.particles.ParticleTypes;
@@ -28,6 +27,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
 /**
@@ -105,7 +105,11 @@ public class StationRunner {
     }
 
     private final Runnable changed;
-    final Channel[] types = new Channel[StationReactor.CHANNELS];
+    /** Each core's plan (uranium, MOX); the station runs the one picked on its screen's tabs. */
+    final Channel[][] plans = {new Channel[StationReactor.CHANNELS], new Channel[StationReactor.CHANNELS]};
+    /** The core picked, and its plan. */
+    StationReactor.Core core = StationReactor.Core.URANIUM;
+    Channel[] types = plans[0];
     private final float[] burnt = new float[StationReactor.CHANNELS];
 
     final ItemStackHandler channels = new ItemStackHandler(StationReactor.CHANNELS) {
@@ -116,7 +120,7 @@ public class StationRunner {
 
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
-            return types[slot].accepts(stack);
+            return types[slot].accepts(stack, core);
         }
 
         @Override
@@ -173,7 +177,8 @@ public class StationRunner {
 
         @Override
         public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            return types[slot].accepts(stack) ? channels.insertItem(slot, stack, simulate) : stack;
+            // After an eject the core takes nothing until the next inject, so a pipe does not refill it.
+            return feeding && types[slot].accepts(stack, core) ? channels.insertItem(slot, stack, simulate) : stack;
         }
 
         @Override
@@ -188,13 +193,14 @@ public class StationRunner {
 
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
-            return types[slot].accepts(stack);
+            return types[slot].accepts(stack, core);
         }
     };
 
     /**
-     * The output port: spent rods come out (pushed into whatever is beside it, or pulled by a pipe);
-     * nothing goes in. Waste from later machines will leave the same way.
+     * The output port: spent rods, and anything a channel's plan no longer takes, come out (pushed
+     * into whatever is beside it, or pulled by a pipe); nothing goes in. Waste from later machines
+     * will leave the same way.
      */
     final IItemHandler outputPort = new IItemHandler() {
         @Override
@@ -204,8 +210,7 @@ public class StationRunner {
 
         @Override
         public ItemStack getStackInSlot(int slot) {
-            ItemStack held = channels.getStackInSlot(slot);
-            return StationReactor.isFinished(held) ? held : ItemStack.EMPTY;
+            return leavingAt(slot) ? channels.getStackInSlot(slot) : ItemStack.EMPTY;
         }
 
         @Override
@@ -215,7 +220,7 @@ public class StationRunner {
 
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            return StationReactor.isFinished(channels.getStackInSlot(slot)) ? channels.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
+            return leavingAt(slot) ? channels.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
         }
 
         @Override
@@ -230,6 +235,23 @@ public class StationRunner {
     };
 
     boolean enabled = true;
+    /**
+     * Whether the fuel port fills the core's empty channels. An eject stops it (so a pipe does not
+     * put the parts straight back), and the next inject starts it again.
+     */
+    boolean feeding = true;
+    /**
+     * An eject still under way: every part in the core counts as leaving, so a pipe pulling from the
+     * output port takes them all, and anything that accepts items beside it is pushed them. Ends
+     * once the core is empty, or with the next inject.
+     */
+    boolean draining;
+
+    /** Whether channel {@code i}'s item leaves by the output port. */
+    boolean leavingAt(int i) {
+        ItemStack held = channels.getStackInSlot(i);
+        return !held.isEmpty() && (draining || StationReactor.leaving(types[i], held, core));
+    }
     RedstoneMode redstoneMode = RedstoneMode.IGNORED;
     /** Interlocks armed. Off means overdrive. */
     boolean safeties = true;
@@ -262,7 +284,9 @@ public class StationRunner {
     float turbine;
 
     StationRunner(Runnable changed) {
-        java.util.Arrays.fill(types, Channel.EMPTY);
+        for (Channel[] plan : plans) {
+            java.util.Arrays.fill(plan, Channel.EMPTY);
+        }
         this.changed = changed;
     }
 
@@ -297,6 +321,16 @@ public class StationRunner {
 
     public float temperature() {
         return temperature;
+    }
+
+    /** The core's plan, a copy. */
+    public Channel[] types() {
+        return types.clone();
+    }
+
+    /** FE/t the turbine made last tick. */
+    public int output() {
+        return output;
     }
 
     public int reserveBays() {
@@ -351,6 +385,65 @@ public class StationRunner {
         return Config.get(Config.STATION_TILT_SECONDS) * 20;
     }
 
+    /** What a forecast ends in, if anything stops it. */
+    public enum Outcome { NONE, SCRAM, MELTDOWN }
+
+    /**
+     * The core's temperature run forward from now with this layout, for the projection's forecast:
+     * the same heat sums as {@link #tick} (keep the two in step), assuming the water holds out.
+     * {@code samples[i]} is the temperature after {@code i * every} ticks. A core that is not running
+     * only cools. A flux tilt makes it unstable after {@code unstableIn} ticks (0 now, below 0 never),
+     * and in overdrive the coolant reserve holds it at 620°C for {@code reserveTicks}.
+     */
+    public static Forecast forecast(StationReactor.Analysis analysis, float temperature, boolean running, boolean overdrive,
+                                    int unstableIn, int reserveTicks, int ticks, int every) {
+        float[] samples = new float[ticks / every + 1];
+        samples[0] = temperature;
+        float t = temperature;
+        boolean on = running;
+        Outcome outcome = Outcome.NONE;
+        int at = -1;
+        for (int tick = 1; tick <= ticks; tick++) {
+            float generation = on ? analysis.generation() : 0;
+            float stored = (t - AMBIENT) * HEAT_CAPACITY;
+            float carryable = generation > 0 ? Math.max(0, generation - analysis.stranded()) : 0;
+            boolean routed = analysis.stranded() <= 0.5F;
+            float reachable = generation > 0 && !routed ? carryable : carryable + stored;
+            int working = generation > 0 && analysis.working() > 0 ? analysis.working() : analysis.coolants();
+            float potential = working * analysis.capacity() * StationReactor.coolingRamp(t);
+            t += (generation - Math.max(0, Math.min(potential, reachable))) / HEAT_CAPACITY;
+            if (generation <= 0) {
+                t -= (t - AMBIENT) * 0.0005F;
+            }
+            t = Math.max(AMBIENT, t);
+            boolean unstable = on && unstableIn >= 0 && tick >= unstableIn;
+            if (unstable) {
+                t += RUNAWAY_RATE;
+            }
+            if (overdrive && !unstable && reserveTicks > 0 && t > RUNAWAY_TEMPERATURE) {
+                t = RUNAWAY_TEMPERATURE;
+                reserveTicks--;
+            }
+            if (outcome == Outcome.NONE && t >= MELTDOWN_TEMPERATURE) {
+                outcome = Outcome.MELTDOWN;
+                at = tick;
+                t = MELTDOWN_TEMPERATURE;
+                on = false;
+            } else if (outcome == Outcome.NONE && on && !overdrive && t >= SCRAM_TEMPERATURE) {
+                outcome = Outcome.SCRAM;
+                at = tick;
+                on = false;
+            }
+            if (tick % every == 0) {
+                samples[tick / every] = t;
+            }
+        }
+        return new Forecast(samples, every, outcome, at);
+    }
+
+    /** A forecast: temperatures every {@code every} ticks, and what stopped it and when ({@code at}, -1 if nothing). */
+    public record Forecast(float[] samples, int every, Outcome outcome, int at) {}
+
     /**
      * The safety switch. Disarming is the player's choice; re-arming SCRAMs the core at once, which
      * is also the only way to save one gone unstable. {@code byPlayer} is false when the interlock
@@ -388,33 +481,218 @@ public class StationRunner {
     }
 
     /**
-     * Right-click on a channel: takes out whatever is in it, or, if it is empty, clears its plan.
-     * Returns what came out, for the player.
+     * Sets a channel's plan (only the types a plan may hold). Whatever no longer fits comes back out,
+     * for the player to take; a spent rod stays in a fuel channel until the output port takes it.
      */
-    ItemStack clear(int channel) {
-        ItemStack held = channels.getStackInSlot(channel);
-        if (!held.isEmpty()) {
-            channels.setStackInSlot(channel, ItemStack.EMPTY);
-        } else {
-            types[channel] = Channel.EMPTY;
-        }
-        changed.run();
-        return held;
-    }
-
-    /** Sets a channel's plan. Whatever no longer fits comes back out, for the player to take. */
     public ItemStack setType(int channel, Channel type) {
+        if (!type.plannable(core)) {
+            return ItemStack.EMPTY;
+        }
         types[channel] = type;
         ItemStack held = channels.getStackInSlot(channel);
-        boolean finishedHere = (type == Channel.FUEL && StationReactor.isSpent(held))
-                || (type == Channel.TARGET && held.is(ModItems.IRRADIATED_TARGET_ROD.get()));
-        if (!held.isEmpty() && !type.accepts(held) && !finishedHere) {
+        boolean spentHere = type == Channel.FUEL && StationReactor.isSpent(held);
+        if (!held.isEmpty() && !type.accepts(held, core) && !spentHere) {
             channels.setStackInSlot(channel, ItemStack.EMPTY);
             changed.run();
             return held;
         }
         changed.run();
         return ItemStack.EMPTY;
+    }
+
+    /** What an inject or eject did, for the screen. */
+    public record Result(Command command, int moved, int missing) {}
+
+    /** The outcomes of the screen's two commands. New ones go at the end: the screen gets them by position. */
+    public enum Command {
+        NONE,
+        /** Every planned part is in. */
+        INJECTED,
+        /** Some parts are still missing; they go in as they reach the input port. */
+        INJECTED_PART,
+        /** Nothing on the input port to take parts from, and parts were needed. */
+        NO_INPUT,
+        /** The core already holds everything its plan needs. */
+        NOTHING_NEEDED,
+        EJECTED,
+        /** What is on the output port is full; some parts are still in the core. */
+        EJECTED_PART,
+        /** Nothing on the output port to send parts to. */
+        NO_OUTPUT,
+        NOTHING_TO_EJECT,
+        /** The other core was picked (after ejecting this one's parts, if there were any). */
+        SWITCHED,
+        /** A pipe pulling from the output port is taking the core's parts out. */
+        DRAINING;
+
+        public static Command byId(int id) {
+            return id >= 0 && id < values().length ? values()[id] : NONE;
+        }
+
+        public boolean error() {
+            return this == NO_INPUT || this == NO_OUTPUT || this == EJECTED_PART;
+        }
+    }
+
+    /** The inventory beside a port's face (a chest, or a pipe), or null. */
+    private static @Nullable IItemHandler beside(ServerLevel level, BlockPos core, Direction facing, StationLayout.Port port) {
+        BlockPos at = StationLayout.portPos(core, facing, port);
+        Direction face = StationLayout.portFace(facing, port);
+        return level.getCapability(Capabilities.ItemHandler.BLOCK, at.relative(face), face.getOpposite());
+    }
+
+    /** What sits beside a port: 0 nothing, 1 an inventory, 2 a pipe. */
+    private static int kindBeside(ServerLevel level, BlockPos core, Direction facing, StationLayout.Port port) {
+        BlockPos at = StationLayout.portPos(core, facing, port);
+        Direction face = StationLayout.portFace(facing, port);
+        if (level.getBlockEntity(at.relative(face)) instanceof com.ryzer.ryzergen.cable.ItemPipeBlockEntity) {
+            return 2;
+        }
+        return beside(level, core, facing, port) != null ? 1 : 0;
+    }
+
+    /**
+     * Inject components: fills every empty channel planned for fuel or graphite from what is beside
+     * the input port (a chest; a pipe delivers on its own), and turns feeding back on, so fresh rods
+     * keep coming in as rods are spent.
+     */
+    public Result inject(ServerLevel level, BlockPos core, Direction facing) {
+        feeding = true;
+        draining = false;
+        IItemHandler source = beside(level, core, facing, StationLayout.Port.FUEL);
+        int needed = 0;
+        int moved = 0;
+        for (int i = 0; i < StationReactor.CHANNELS; i++) {
+            if ((types[i] != Channel.FUEL && types[i] != Channel.MODERATOR && types[i] != Channel.CONTROL)
+                    || types[i].accepts(channels.getStackInSlot(i), this.core)) {
+                continue;
+            }
+            needed++;
+            if (source == null || !channels.getStackInSlot(i).isEmpty()) {
+                continue;
+            }
+            for (int slot = 0; slot < source.getSlots(); slot++) {
+                if (types[i].accepts(source.getStackInSlot(slot), this.core) && types[i].accepts(source.extractItem(slot, 1, true), this.core)) {
+                    channels.setStackInSlot(i, source.extractItem(slot, 1, false));
+                    moved++;
+                    break;
+                }
+            }
+        }
+        changed.run();
+        if (needed == 0) {
+            return new Result(Command.NOTHING_NEEDED, 0, 0);
+        }
+        if (source == null) {
+            return new Result(Command.NO_INPUT, 0, needed);
+        }
+        return new Result(moved == needed ? Command.INJECTED : Command.INJECTED_PART, moved, needed - moved);
+    }
+
+    /**
+     * Eject components: sends every part in the core (rods, graphite, control rods, spent rods) out
+     * of the output port, and stops feeding until the next inject. The plan stays. What is beside
+     * the port and takes items (a chest, a pipe set to carry items away) is pushed them at once; a
+     * pipe pulling from the port takes them as it runs, since the whole core counts as leaving until
+     * it is empty. A full chest keeps the rest until it has room.
+     */
+    public Result eject(ServerLevel level, BlockPos core, Direction facing) {
+        int held = 0;
+        for (int i = 0; i < StationReactor.CHANNELS; i++) {
+            held += channels.getStackInSlot(i).isEmpty() ? 0 : 1;
+        }
+        if (held == 0) {
+            return new Result(Command.NOTHING_TO_EJECT, 0, 0);
+        }
+        int kind = kindBeside(level, core, facing, StationLayout.Port.OUTPUT);
+        if (kind == 0) {
+            return new Result(Command.NO_OUTPUT, 0, held);
+        }
+        feeding = false;
+        draining = true;
+        int moved = 0;
+        IItemHandler target = beside(level, core, facing, StationLayout.Port.OUTPUT);
+        if (target != null) {
+            for (int i = 0; i < StationReactor.CHANNELS; i++) {
+                ItemStack part = channels.getStackInSlot(i);
+                if (!part.isEmpty() && ItemHandlerHelper.insertItem(target, part.copy(), false).isEmpty()) {
+                    channels.setStackInSlot(i, ItemStack.EMPTY);
+                    moved++;
+                }
+            }
+        }
+        changed.run();
+        if (moved == held) {
+            draining = false;
+            return new Result(Command.EJECTED, moved, 0);
+        }
+        return new Result(kind == 2 ? Command.DRAINING : Command.EJECTED_PART, moved, held - moved);
+    }
+
+    /**
+     * Picks the other core. A core holding parts is emptied first (as an eject would: the screen
+     * warns before it asks); if they cannot all leave, nothing switches and the eject's error says why.
+     */
+    public Result switchCore(ServerLevel level, BlockPos at, Direction facing, StationReactor.Core to) {
+        if (to == core) {
+            return new Result(Command.NONE, 0, 0);
+        }
+        // A pipe draining the core may still be taking its parts out: they leave whatever the new plan is.
+        Result ejected = eject(level, at, facing);
+        if (ejected.command() == Command.NO_OUTPUT || ejected.command() == Command.EJECTED_PART) {
+            return ejected;
+        }
+        core = to;
+        types = plans[to.ordinal()];
+        tiltTicks = 0;
+        changed.run();
+        return new Result(Command.SWITCHED, ejected.moved() + ejected.missing(), 0);
+    }
+
+    public StationReactor.Core core() {
+        return core;
+    }
+
+    /** A core's plan, a copy. */
+    public Channel[] plan(StationReactor.Core of) {
+        return plans[of.ordinal()].clone();
+    }
+
+    /** What the ports see, for the screen's components box: refreshed about once a second. */
+    int inputKind;
+    int inputFuel;
+    int inputGraphite;
+    int inputControl;
+    int outputKind;
+    int outputFree;
+
+    private void scanPorts(ServerLevel level, BlockPos core, Direction facing) {
+        inputKind = kindBeside(level, core, facing, StationLayout.Port.FUEL);
+        outputKind = kindBeside(level, core, facing, StationLayout.Port.OUTPUT);
+        inputFuel = 0;
+        inputGraphite = 0;
+        inputControl = 0;
+        outputFree = 0;
+        IItemHandler source = inputKind == 1 ? beside(level, core, facing, StationLayout.Port.FUEL) : null;
+        if (source != null) {
+            // A big storage network can have thousands of slots: count only the first few hundred.
+            for (int slot = 0; slot < Math.min(source.getSlots(), 512); slot++) {
+                ItemStack stack = source.getStackInSlot(slot);
+                if (Channel.FUEL.accepts(stack, this.core)) {
+                    inputFuel += stack.getCount();
+                } else if (Channel.MODERATOR.accepts(stack, this.core)) {
+                    inputGraphite += stack.getCount();
+                } else if (Channel.CONTROL.accepts(stack, StationReactor.Core.MOX)) {
+                    inputControl += stack.getCount();
+                }
+            }
+        }
+        IItemHandler target = outputKind == 1 ? beside(level, core, facing, StationLayout.Port.OUTPUT) : null;
+        if (target != null) {
+            for (int slot = 0; slot < Math.min(target.getSlots(), 512); slot++) {
+                outputFree += target.getStackInSlot(slot).isEmpty() ? 1 : 0;
+            }
+        }
     }
 
     /** One tick. {@code centre} is the middle of the station, for radiation. */
@@ -424,7 +702,7 @@ public class StationRunner {
     void tick(ServerLevel level, BlockPos core, Direction facing, Vec3 centre) {
         announcer.mute(quiet);
         boolean overdrive = !safeties;
-        StationReactor.Analysis analysis = StationReactor.analyse(types, rods(), overdrive);
+        StationReactor.Analysis analysis = StationReactor.analyse(types, rods(), overdrive, this.core);
         boolean allowed = enabled && redstoneMode.allows(level.hasNeighborSignal(core));
         if (scrammed && temperature < RESET_TEMPERATURE) {
             scrammed = false;
@@ -455,6 +733,7 @@ public class StationRunner {
         // core climbs until it SCRAMs, as the control screen warns. (Before, the spare channels also
         // carried off that stored heat, so a core the screen called too hot ran fine.) Heat stored any
         // other way, from warming up or with the reaction stopped, every coolant channel carries off.
+        // The projection's forecast runs these same sums ahead (forecast()): keep the two in step.
         float stored = (temperature - AMBIENT) * HEAT_CAPACITY;
         float heatPerWater = heatPerWater(overdrive);
         float byWater = water.getFluidAmount() * heatPerWater;
@@ -523,12 +802,14 @@ public class StationRunner {
 
         if (generation > 0) {
             burn(analysis);
-            breed(analysis);
             RadiationSources.emit(level, centre, (60 + generation / 300) * (unstable ? 3 : 1));
         }
         pushEnergy(level, core, facing);
         if (level.getGameTime() % 10 == 0) {
-            pushSpent(level, core, facing);
+            pushLeaving(level, core, facing);
+        }
+        if (level.getGameTime() % 20 == 0) {
+            scanPorts(level, core, facing);
         }
         if (unstable && level.getGameTime() % 3 == 0) {
             level.sendParticles(ParticleTypes.LARGE_SMOKE, centre.x, centre.y + 2, centre.z, 6, 3, 1.5, 3, 0.03);
@@ -559,9 +840,9 @@ public class StationRunner {
         if (status != before || (status.critical() && level.getGameTime() % 5 == 0)) {
             changed.run();
         }
-        // A layout as good as the best known, running: worth an advancement for whoever is near.
+        // The best layout, running with every part in place: worth an advancement for whoever is near.
         if ((status == Status.ONLINE || status == Status.OVERDRIVE) && output > 0 && level.getGameTime() % 100 == 0
-                && analysis.rating() >= 0.999F) {
+                && analysis.stars() == 3) {
             ModTriggers.MILESTONE.get().triggerNearby(level, centre, Milestone.STATION_PERFECT);
         }
     }
@@ -637,49 +918,26 @@ public class StationRunner {
         RadiationSources.contaminate(level, centre, MELTDOWN_RADIATION, MELTDOWN_FADE_TICKS);
     }
 
-    /** Pushes spent rods out of the output port into whatever is beside it. */
-    private void pushSpent(ServerLevel level, BlockPos core, Direction facing) {
-        BlockPos port = StationLayout.portPos(core, facing, StationLayout.Port.OUTPUT);
-        Direction face = StationLayout.portFace(facing, StationLayout.Port.OUTPUT);
-        IItemHandler target = level.getCapability(Capabilities.ItemHandler.BLOCK, port.relative(face), face.getOpposite());
+    /** Pushes spent rods, and anything the plan no longer takes (or all of it, while draining), out of the output port into whatever is beside it. */
+    private void pushLeaving(ServerLevel level, BlockPos core, Direction facing) {
+        if (draining) {
+            boolean empty = true;
+            for (int i = 0; i < StationReactor.CHANNELS; i++) {
+                empty &= channels.getStackInSlot(i).isEmpty();
+            }
+            if (empty) {
+                draining = false;
+                changed.run();
+            }
+        }
+        IItemHandler target = beside(level, core, facing, StationLayout.Port.OUTPUT);
         if (target == null) {
             return;
         }
         for (int i = 0; i < StationReactor.CHANNELS; i++) {
-            ItemStack spent = channels.getStackInSlot(i);
-            if (!StationReactor.isFinished(spent)) {
-                continue;
-            }
-            ItemStack left = net.neoforged.neoforge.items.ItemHandlerHelper.insertItem(target, spent.copy(), false);
-            if (left.isEmpty()) {
+            ItemStack held = channels.getStackInSlot(i);
+            if (leavingAt(i) && ItemHandlerHelper.insertItem(target, held.copy(), false).isEmpty()) {
                 channels.setStackInSlot(i, ItemStack.EMPTY);
-            }
-        }
-    }
-
-    /** Heat-ticks bred into each target rod so far, below the thousand that make one unit on the item. */
-    private final float[] bredPart = new float[StationReactor.CHANNELS];
-
-    /** Breeds each target rod by the fuel heat beside it; a rod that is done becomes an irradiated target rod. */
-    private void breed(StationReactor.Analysis analysis) {
-        for (int i = 0; i < StationReactor.CHANNELS; i++) {
-            if (analysis.breed()[i] <= 0) {
-                continue;
-            }
-            bredPart[i] += analysis.breed()[i];
-            int whole = (int) (bredPart[i] / 1000);
-            if (whole <= 0) {
-                continue;
-            }
-            bredPart[i] -= whole * 1000F;
-            ItemStack rod = channels.getStackInSlot(i);
-            int bred = rod.getOrDefault(ModDataComponents.BRED.get(), 0) + whole;
-            if (bred < StationReactor.TARGET_WORK) {
-                ItemStack breeding = rod.copy();
-                breeding.set(ModDataComponents.BRED.get(), bred);
-                channels.setStackInSlot(i, breeding);
-            } else {
-                channels.setStackInSlot(i, new ItemStack(ModItems.IRRADIATED_TARGET_ROD.get()));
             }
         }
     }
@@ -761,17 +1019,24 @@ public class StationRunner {
     };
 
     void save(CompoundTag tag, HolderLookup.Provider registries) {
-        int[] plan = new int[types.length];
-        for (int i = 0; i < types.length; i++) {
-            plan[i] = types[i].ordinal();
+        // The uranium plan keeps the key older worlds used.
+        for (StationReactor.Core of : StationReactor.Core.values()) {
+            Channel[] plan = plans[of.ordinal()];
+            int[] ids = new int[plan.length];
+            for (int i = 0; i < plan.length; i++) {
+                ids[i] = plan[i].ordinal();
+            }
+            tag.putIntArray(of == StationReactor.Core.URANIUM ? "plan" : "plan_mox", ids);
         }
-        tag.putIntArray("plan", plan);
+        tag.putInt("core", core.ordinal());
         tag.put("channels", channels.serializeNBT(registries));
         tag.put("water", water.writeToNBT(registries, new CompoundTag()));
         tag.putInt("energy", energy.getEnergyStored());
         tag.putFloat("temperature", temperature);
         tag.putBoolean("scrammed", scrammed);
         tag.putBoolean("enabled", enabled);
+        tag.putBoolean("feeding", feeding);
+        tag.putBoolean("draining", draining);
         tag.putInt("redstone_mode", redstoneMode.ordinal());
         tag.putBoolean("safeties", safeties);
         tag.putInt("tilt_ticks", tiltTicks);
@@ -783,16 +1048,28 @@ public class StationRunner {
     }
 
     void load(CompoundTag tag, HolderLookup.Provider registries) {
-        int[] plan = tag.getIntArray("plan");
-        for (int i = 0; i < types.length; i++) {
-            types[i] = i < plan.length ? Channel.byId(plan[i]) : Channel.EMPTY;
+        for (StationReactor.Core of : StationReactor.Core.values()) {
+            int[] ids = tag.getIntArray(of == StationReactor.Core.URANIUM ? "plan" : "plan_mox");
+            Channel[] plan = plans[of.ordinal()];
+            for (int i = 0; i < plan.length; i++) {
+                plan[i] = i < ids.length ? Channel.byId(ids[i]) : Channel.EMPTY;
+                // A target rod channel, or an older world's control rod in the uranium plan: the plan
+                // clears, and its rod leaves by the output port like a spent one.
+                if (!plan[i].plannable(of)) {
+                    plan[i] = Channel.EMPTY;
+                }
+            }
         }
+        core = StationReactor.Core.byId(tag.getInt("core"));
+        types = plans[core.ordinal()];
         channels.deserializeNBT(registries, tag.getCompound("channels"));
         water.readFromNBT(registries, tag.getCompound("water"));
         energy.set(tag.getInt("energy"));
         temperature = tag.contains("temperature") ? tag.getFloat("temperature") : AMBIENT;
         scrammed = tag.getBoolean("scrammed");
         enabled = !tag.contains("enabled") || tag.getBoolean("enabled");
+        feeding = !tag.contains("feeding") || tag.getBoolean("feeding");
+        draining = tag.getBoolean("draining");
         redstoneMode = RedstoneMode.byId(tag.getInt("redstone_mode"));
         safeties = !tag.contains("safeties") || tag.getBoolean("safeties");
         tiltTicks = tag.getInt("tilt_ticks");

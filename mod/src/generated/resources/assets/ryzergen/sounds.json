@@ -1,4 +1,76 @@
 {
+  "console_buzz": {
+    "sounds": [
+      "ryzergen:console_buzz"
+    ],
+    "subtitle": "subtitles.ryzergen.console_buzz"
+  },
+  "console_clear": {
+    "sounds": [
+      "ryzergen:console_clear"
+    ],
+    "subtitle": "subtitles.ryzergen.console_clear"
+  },
+  "console_down": {
+    "sounds": [
+      "ryzergen:console_down"
+    ],
+    "subtitle": "subtitles.ryzergen.console_down"
+  },
+  "console_eject": {
+    "sounds": [
+      "ryzergen:console_eject"
+    ],
+    "subtitle": "subtitles.ryzergen.console_eject"
+  },
+  "console_fanfare": {
+    "sounds": [
+      "ryzergen:console_fanfare"
+    ],
+    "subtitle": "subtitles.ryzergen.console_fanfare"
+  },
+  "console_inject": {
+    "sounds": [
+      "ryzergen:console_inject"
+    ],
+    "subtitle": "subtitles.ryzergen.console_inject"
+  },
+  "console_note": {
+    "sounds": [
+      "ryzergen:console_note"
+    ],
+    "subtitle": "subtitles.ryzergen.console_note"
+  },
+  "console_note_high": {
+    "sounds": [
+      "ryzergen:console_note_high"
+    ],
+    "subtitle": "subtitles.ryzergen.console_note_high"
+  },
+  "console_place_fuel": {
+    "sounds": [
+      "ryzergen:console_place_fuel"
+    ],
+    "subtitle": "subtitles.ryzergen.console_place_fuel"
+  },
+  "console_place_graphite": {
+    "sounds": [
+      "ryzergen:console_place_graphite"
+    ],
+    "subtitle": "subtitles.ryzergen.console_place_graphite"
+  },
+  "console_place_water": {
+    "sounds": [
+      "ryzergen:console_place_water"
+    ],
+    "subtitle": "subtitles.ryzergen.console_place_water"
+  },
+  "console_tick": {
+    "sounds": [
+      "ryzergen:console_tick"
+    ],
+    "subtitle": "subtitles.ryzergen.console_tick"
+  },
   "core_cracker": {
     "sounds": [
       {

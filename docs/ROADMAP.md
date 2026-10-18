@@ -106,7 +106,9 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] Draw the static body from a cached GPU buffer (it is about 22,000 faces): `client/StationMesh`, rebuilt only when the light, facing or resources change; drawn the old way while a shader pack is on
 - [x] Auto-build: feed the control core the parts and it builds the station itself
 - [x] Core grid GUI (plan tools, heat tints, live readout, plan preview)
-- [x] Layout rules reworked: local coolant, moderators for fuel economy, load-driven temperature; planning stats, per-channel tooltips and a rating against the best layouts (`art/tools/core_optimiser.py`)
+- [x] Layout rules reworked: local coolant, moderators for fuel economy, load-driven temperature; planning stats, per-channel tooltips and a rating against the best layouts (since replaced by the core puzzle)
+- [x] The core puzzle (design section 8, settled and built 18 Oct 2026, game-tested, not yet played): two rules with one provable best (the lattice, 34 heat) and three stars; one terminal control screen with the core as animated pixel art, a hover preview, physics, a forecast and the three-star sequence; inject and eject through the ports; synthesised console sounds (`art/tools/console_sounds.py`)
+- [x] The MOX core (design section 8, settled and built 18 Oct 2026, game-tested, not yet played): a second tab with its own plan and rules (control rods tame rods over 4 heat, each costs 1), one proven best (the cross, 47 heat); switching warns and ejects; the load-out racks and not-loaded marks on the core
 - [x] Heat, fuel burn, spent rods, turbine and FE out; water, fuel and energy ports at the base; SCRAM at 900°C
 - [x] Silver control rods and graphite block moderators
 - [x] Output port for spent rods (later waste); fuel rods keep their burn when taken out
