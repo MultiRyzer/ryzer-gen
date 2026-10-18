@@ -24,7 +24,7 @@ import java.util.List;
  *   <li>{@code tooltip.ryzergen.<id>}: its role, a few words ("Fission station fuel")</li>
  *   <li>{@code tooltip.ryzergen.<id>.stat.1}, {@code .2} and on: its stat lines, always shown,
  *   number first ({@code <n>2,000</n> FE/t {heat}})</li>
- *   <li>{@code tooltip.ryzergen.<id>.details.1} and on: how it works and its real basis, while
+ *   <li>{@code tooltip.ryzergen.<id>.details.1} and on: how it works in the game, while
  *   Shift is held ("Hold Shift for details" otherwise)</li>
  * </ul>
  * Lines are grey with the mod's markup ({@link RichText}): key terms bold in their colours with

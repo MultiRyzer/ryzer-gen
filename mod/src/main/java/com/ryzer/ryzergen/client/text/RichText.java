@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  *   <li>{@code <n>2,000</n>}: a number, in white, ahead of its grey unit
  *   ({@code <n>2,000</n> FE/t {heat}}). {@code <b>} the same for a key noun.</li>
  *   <li>{@code <k>Use</k>}: a control, in brackets.</li>
- *   <li>{@code <i>Real basis: ...</i>}: a note, dark grey italic.</li>
+ *   <li>{@code <i>...</i>}: a note, dark grey italic.</li>
  * </ul>
  */
 public final class RichText {

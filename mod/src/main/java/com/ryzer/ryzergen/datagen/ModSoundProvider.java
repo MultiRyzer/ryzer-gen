@@ -28,6 +28,15 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         add(ModSounds.MICROREACTOR_HUM, definition()
                 .subtitle("subtitles.ryzergen.microreactor_hum")
                 .with(sound(ResourceLocation.withDefaultNamespace("block/beacon/ambient")).pitch(0.55F).volume(0.8F)));
+        // The station's control screen: synthesised by art/tools/console_sounds.py, so nothing to license.
+        for (var console : List.of(ModSounds.CONSOLE_TICK, ModSounds.CONSOLE_PLACE_FUEL, ModSounds.CONSOLE_PLACE_GRAPHITE,
+                ModSounds.CONSOLE_PLACE_WATER, ModSounds.CONSOLE_CLEAR, ModSounds.CONSOLE_NOTE, ModSounds.CONSOLE_NOTE_HIGH,
+                ModSounds.CONSOLE_DOWN, ModSounds.CONSOLE_BUZZ, ModSounds.CONSOLE_FANFARE, ModSounds.CONSOLE_INJECT, ModSounds.CONSOLE_EJECT)) {
+            String name = console.getId().getPath();
+            add(console, definition()
+                    .subtitle("subtitles.ryzergen." + name)
+                    .with(sound(ResourceLocation.fromNamespaceAndPath(RyzerGen.MOD_ID, name))));
+        }
         // The mega drill: the beacon powering up, slowed, as the charge runs down the shaft; then our own
         // recordings (art/tools/machine_sounds.py): an energy beam's shot as the beam fires, cut at three
         // playback speeds so a faster drill's shot fits its shorter heating, and a boulder's impact as a

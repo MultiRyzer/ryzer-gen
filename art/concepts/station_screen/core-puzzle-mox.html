@@ -1,0 +1,795 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Station Core Tabs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  /* The station's control screen with two core tabs (uranium, MOX), a load-out of racks, and a test input chest. */
+  :root {
+    --ground: #0b0d11; --bar: #0f141a; --box: #1e3a4a; --title: #35c8f5; --label: #5f7c8c; --text: #d6e4ec;
+    --dim: #2a4656; --unlit: #141c24; --green: #44d65e; --yellow: #e2c13a; --amber: #f0a030; --red: #e0503c;
+    --gold: #ffd27a; --silver: #c2c9d2; --mox: #ff7a3d;
+    --pixel: "Silkscreen", "Courier New", monospace;
+    --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", "Consolas", monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--ground); color: var(--text); margin: 0; }
+  body { font: 500 12px/1.45 var(--mono); letter-spacing: 0.04em; text-transform: uppercase; padding: 0 16px; }
+  button { font: inherit; letter-spacing: inherit; text-transform: inherit; }
+  .top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 18px; padding: 12px 0 10px; border-bottom: 1px solid var(--box); }
+  .crumbs b { color: var(--title); font-weight: 600; } .crumbs span { color: var(--label); }
+  .switches { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; } .switches .on { color: var(--green); }
+  .pill { font: 700 14px var(--pixel); color: var(--green); border: 1px solid var(--green); background: #0f2a16; padding: 1px 10px; }
+  .sound { background: none; color: var(--title); border: 1px solid var(--box); padding: 2px 8px; cursor: pointer; }
+  .sound[aria-pressed="false"] { color: var(--label); }
+  .screen { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr) minmax(0, 290px); gap: 14px; padding: 18px 0; align-items: start; max-width: 1220px; margin: 0 auto; }
+  @media (max-width: 1000px) { .screen { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .core-box { grid-column: 1 / -1; order: -1; } }
+  @media (max-width: 640px) { .screen { grid-template-columns: minmax(0, 1fr); } }
+  .box { position: relative; border: 1px solid var(--box); padding: 18px 14px 14px; display: grid; gap: 10px; min-width: 0; transition: border-color .4s, box-shadow .4s; }
+  .box > .t { position: absolute; top: -8px; left: 10px; padding: 0 5px; background: var(--ground); color: var(--title); }
+  .box > .n { position: absolute; top: -8px; right: 10px; padding: 0 5px; background: var(--ground); color: var(--label); }
+  .stack { display: grid; gap: 14px; min-width: 0; }
+  .heat { display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; }
+  .big { font: 400 64px/0.9 var(--pixel); color: var(--text); text-shadow: 4px 4px 0 var(--unlit); font-variant-numeric: tabular-nums; }
+  .of { font: 400 22px var(--pixel); color: var(--label); }
+  .stars { display: flex; gap: 6px; margin-left: auto; align-self: center; }
+  .star { width: 22px; height: 22px; background: var(--unlit); clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+  .star.on { background: var(--amber); }
+  .star.stamp { animation: stamp .45s cubic-bezier(.2, 1.6, .4, 1) both; }
+  @keyframes stamp { 0% { transform: scale(2.4); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  .meter { display: flex; gap: 2px; } .meter i { flex: 1; height: 6px; background: var(--unlit); } .meter i.on { background: var(--title); }
+  .won .meter i.on { background: var(--gold); }
+  .status { font: 400 16px var(--pixel); }
+  .status.good { color: var(--green); } .status.bad { color: var(--red); } .status.warn { color: var(--amber); } .status.gold { color: var(--gold); }
+  dl { margin: 0; display: grid; gap: 3px; } dl div { display: flex; justify-content: space-between; gap: 10px; }
+  dt { color: var(--label); } dd { margin: 0; font-variant-numeric: tabular-nums; text-align: right; }
+  .lv-0 { color: var(--green); } .lv-1 { color: var(--yellow); } .lv-2 { color: var(--amber); } .lv-3 { color: var(--red); }
+
+  /* The load-out: a rack per part, one slot per planned part. */
+  .group { display: grid; gap: 6px; }
+  .group-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .count { font: 400 20px var(--pixel); }
+  .rack { display: flex; flex-wrap: wrap; gap: 4px; min-height: 30px; }
+  .slot { border: 1px solid var(--box); display: grid; place-items: center; }
+  .slot.rod { width: 12px; height: 30px; } .slot.block { width: 22px; height: 22px; }
+  .slot.missing { border-color: #5a2a22; }
+  .slot.rod.in::after { content: ""; width: 4px; height: 24px; background: linear-gradient(var(--fuel-tip, #ff8a3d) 0 18%, var(--silver) 18%); }
+  .slot.rod.input::after { content: ""; width: 4px; height: 24px; background: repeating-linear-gradient(var(--amber) 0 2px, transparent 2px 5px); }
+  .slot.rod.missing::after { content: ""; width: 4px; height: 3px; background: var(--red); margin-top: 22px; }
+  .slot.block.in.M::after { content: ""; width: 14px; height: 14px; background: radial-gradient(#101215 0 2px, transparent 3px), linear-gradient(#5a6068 0 2px, #30343a 2px); }
+  .slot.block.in.C::after { content: ""; width: 14px; height: 14px; background: linear-gradient(var(--silver), var(--silver)) center / 14px 3px no-repeat, linear-gradient(var(--silver), var(--silver)) center / 3px 14px no-repeat; }
+  .slot.block.input::after { content: ""; width: 12px; height: 12px; border: 1px dashed var(--amber); }
+  .slot.block.missing::after { content: ""; width: 6px; height: 2px; background: var(--red); margin-top: 10px; }
+  .gauge { height: 5px; background: var(--unlit); flex: 1; margin: 0 10px; align-self: center; } .gauge i { display: block; height: 100%; width: 78%; background: #2a74c0; }
+  .line { display: flex; justify-content: space-between; gap: 8px; }
+  .cmds { display: grid; gap: 8px; }
+  .cmd { font: 700 13px var(--pixel); letter-spacing: 0.02em; color: var(--title); background: none; border: 1px solid var(--title); padding: 7px; cursor: pointer; }
+  .cmd:hover { background: var(--title); color: var(--ground); }
+  .cmd.ghost { color: var(--label); border-color: var(--box); } .cmd.ghost:hover { background: var(--box); color: var(--text); }
+  .chest { display: grid; grid-template-columns: 1fr auto auto auto; gap: 4px 8px; align-items: center; color: var(--label); }
+  .chest b { color: var(--text); font-weight: 500; text-align: right; min-width: 2ch; }
+  .chest button { background: none; border: 1px solid var(--box); color: var(--title); width: 22px; cursor: pointer; padding: 0; }
+
+  /* The core box, with its tabs cut into the top line. */
+  .tabs { position: absolute; top: -10px; left: 10px; display: flex; gap: 6px; }
+  .tab { background: var(--ground); border: 1px solid var(--box); color: var(--label); padding: 1px 10px; cursor: pointer; }
+  .tab[aria-selected="true"] { background: var(--title); color: var(--ground); border-color: var(--title); }
+  .tools { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin-top: 4px; }
+  .tool { color: var(--text); background: none; border: 1px solid var(--box); padding: 6px 4px; display: flex; gap: 6px; align-items: center; justify-content: center; cursor: pointer; }
+  .tool i { width: 8px; height: 8px; display: block; }
+  .tool[aria-pressed="true"] { background: var(--title); color: var(--ground); border-color: var(--title); }
+  .tool[hidden] { display: none; }
+  .tool:focus-visible, .cmd:focus-visible, .sound:focus-visible, .tab:focus-visible, canvas:focus-visible { outline: 2px solid var(--title); outline-offset: 2px; }
+  .core-wrap { display: grid; justify-items: center; gap: 10px; }
+  canvas#core { width: min(100%, 504px); aspect-ratio: 1; image-rendering: pixelated; cursor: crosshair; }
+  .hint { color: var(--label); text-align: center; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: center; color: var(--label); }
+  .legend i { display: inline-block; width: 10px; height: 3px; vertical-align: middle; margin-right: 6px; }
+  .rules { color: var(--label); display: grid; gap: 2px; }
+  .rules b { color: var(--text); font-weight: 500; }
+  .history { display: grid; grid-template-columns: repeat(48, 1fr); align-items: end; gap: 1px; height: 56px; }
+  .history i { background: var(--title); min-height: 2px; }
+  .bar { position: sticky; bottom: 0; background: var(--bar); border-top: 1px solid var(--box); padding: 8px 0; display: flex; gap: 14px; flex-wrap: wrap; color: var(--label); }
+  .bar .log { color: var(--title); }
+  .bar .cursor { display: inline-block; width: 7px; height: 11px; background: var(--title); vertical-align: -1px; margin-left: 4px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .box.won { border-color: var(--gold); box-shadow: 0 0 0 1px #ffd27a33, 0 0 24px #ffd27a22; }
+
+  /* The switch warning. */
+  .veil { position: fixed; inset: 0; background: #0b0d11cc; display: grid; place-items: center; padding: 16px; }
+  .veil[hidden] { display: none; }
+  .dialog { border: 1px solid var(--amber); background: var(--ground); max-width: 520px; width: 100%; }
+  .dialog .head { background: var(--amber); color: var(--ground); padding: 3px 10px; }
+  .dialog .body { padding: 14px; display: grid; gap: 10px; }
+  .dialog .big-line { font: 400 18px var(--pixel); color: var(--amber); }
+  .dialog .buttons { display: grid; grid-template-columns: 2fr 1fr; gap: 8px; }
+  .cmd.warn { color: var(--ground); background: var(--amber); border-color: var(--amber); } .cmd.warn:hover { background: var(--gold); }
+  @media (prefers-reduced-motion: reduce) { .star.stamp, .bar .cursor { animation: none; } }
+</style>
+
+<div class="top">
+  <div class="crumbs"><b>RYZERGEN</b> <span>&gt; FISSION STATION &gt; CORE PLANNER</span></div>
+  <div class="switches">
+    <span class="on">PWR ON</span><span>RS IGNORED</span><span class="on">SAFETIES ARMED</span>
+    <button class="sound" id="sound" aria-pressed="true">SOUND ON</button>
+    <span class="pill" id="pill">ONLINE</span>
+  </div>
+</div>
+
+<div class="screen">
+  <div class="stack">
+    <section class="box" id="out-box" aria-label="Output">
+      <span class="t">OUTPUT</span><span class="n">HEAT UNITS</span>
+      <div class="heat">
+        <span class="big" id="score">00</span><span class="of" id="of">/34</span>
+        <div class="stars" id="stars"><i class="star"></i><i class="star"></i><i class="star"></i></div>
+      </div>
+      <div class="meter" id="meter"></div>
+      <div class="status warn" id="status">PLACE A FUEL ROD</div>
+      <dl>
+        <div><dt>TO THE BEST</dt><dd id="d-best">-34 HEAT</dd></div>
+        <div><dt>RODS COOLED</dt><dd id="d-rods">00 / 00</dd></div>
+        <div id="row-tamed"><dt>RODS TAMED</dt><dd id="d-tamed">00 / 00</dd></div>
+        <div><dt>POWER OUT</dt><dd id="d-power">0 FE/T</dd></div>
+      </dl>
+    </section>
+    <section class="box" aria-label="Load-out">
+      <span class="t">LOAD-OUT</span><span class="n" id="load-note">URANIUM CORE</span>
+      <div id="groups" class="stack" style="gap:12px"></div>
+      <div class="line"><span style="color:var(--label)">WATER</span><span class="gauge"><i></i></span><span class="lv-0">12,400 MB</span></div>
+      <div class="line"><span><span style="color:var(--label)">IN</span> CHEST</span><span><span style="color:var(--label)">OUT</span> CHEST, 21 FREE</span></div>
+      <div class="cmds">
+        <button class="cmd" id="inject">INJECT COMPONENTS</button>
+        <button class="cmd" id="eject">EJECT COMPONENTS</button>
+      </div>
+    </section>
+    <section class="box" aria-label="Test input chest">
+      <span class="t">TEST: INPUT CHEST</span><span class="n">NOT IN GAME</span>
+      <div class="chest" id="chest"></div>
+      <div style="color:var(--label)">EJECTED PARTS COME BACK HERE, SO YOU CAN KEEP TESTING.</div>
+    </section>
+  </div>
+
+  <section class="box core-box" id="core-box" aria-label="Core map">
+    <div class="tabs" role="tablist" aria-label="Core">
+      <button class="tab" role="tab" id="tab-U" data-tab="U" aria-selected="true">URANIUM <span id="tab-U-score">00</span></button>
+      <button class="tab" role="tab" id="tab-X" data-tab="X" aria-selected="false">MOX <span id="tab-X-score">00</span></button>
+    </div>
+    <span class="n">5 X 5 // LIVE</span>
+    <div class="tools" role="toolbar" aria-label="Parts">
+      <button class="tool" data-tool="F" aria-pressed="true"><i style="background:#f08a24"></i>FUEL</button>
+      <button class="tool" data-tool="M" aria-pressed="false"><i style="background:#5a6068"></i>GRAPHITE</button>
+      <button class="tool" data-tool="W" aria-pressed="false"><i style="background:#2a74c0"></i>WATER</button>
+      <button class="tool" data-tool="C" aria-pressed="false" id="tool-c"><i style="background:#c2c9d2"></i>CONTROL</button>
+      <button class="tool" data-tool="." aria-pressed="false"><i style="background:#2b3036"></i>CLEAR</button>
+    </div>
+    <div class="core-wrap">
+      <canvas id="core" width="168" height="168" tabindex="0" aria-label="The core, 5 by 5 channels. Click a channel to place the picked part; right-click clears it."></canvas>
+      <div class="hint" id="hint">LMB PLACE // RMB CLEAR // 1-4 PICK A PART</div>
+      <div class="legend" id="legend"></div>
+      <div class="rules" id="rules"></div>
+      <div class="cmds" style="grid-template-columns:1fr 1fr">
+        <button class="cmd ghost" id="clear">CLEAR THE PLAN</button>
+        <button class="cmd ghost" id="reveal">SHOW THE BEST</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="stack">
+    <section class="box" aria-label="Reactor physics">
+      <span class="t">REACTOR PHYSICS</span><span class="n" id="clock">T+00:00:00</span>
+      <dl id="physics"></dl>
+      <div style="color:var(--label)">FLUX HISTORY 60S</div>
+      <div class="history" id="history" aria-hidden="true"></div>
+    </section>
+  </div>
+</div>
+
+<div class="bar" aria-live="polite">
+  <span class="log" id="log">&gt; READY</span><span class="cursor" aria-hidden="true"></span>
+  <span id="b-plan">PLAN 00 / 34</span><span>|</span><span id="b-load">LOADED 00 / 00</span>
+</div>
+
+<div class="veil" id="veil" hidden>
+  <div class="dialog" role="alertdialog" aria-labelledby="warn-head">
+    <div class="head" id="warn-head">WARNING // SWITCH CORE</div>
+    <div class="body">
+      <div class="big-line" id="warn-big"></div>
+      <div id="warn-text"></div>
+      <div style="color:var(--label)">THE PLAN FOR THIS CORE IS KEPT.</div>
+      <div class="buttons">
+        <button class="cmd warn" id="warn-go">EJECT AND SWITCH</button>
+        <button class="cmd ghost" id="warn-cancel">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const N = 5, CELL = 32, PAD = 4, SIZE = N * CELL + 2 * PAD;
+  // The two cores. Uranium: 2 heat, +1 per graphite corner. MOX: 3 heat, +2 per graphite corner, +1 per MOX
+  // rod corner; over 4 heat needs a control rod on a corner; every control rod costs 1 heat.
+  const CORES = {
+    U: { name: 'URANIUM', best: 34, two: 28, unit: 590, fuel: 'URANIUM RODS', tip: '#ff8a3d',
+         layout: 'FWFWFWMWMWFWFWFWMWMWFWFWF' },
+    X: { name: 'MOX', best: 47, two: 40, unit: 850, fuel: 'MOX RODS', tip: '#ffd27a',
+         layout: 'FWMWFWFWFWMWCWMWFWFWFWMWF' }
+  };
+  const state = {
+    U: { grid: Array(N * N).fill('.'), loaded: Array(N * N).fill(false), won: false, lastStars: 0, lastTotal: 0, lastBad: 0 },
+    X: { grid: Array(N * N).fill('.'), loaded: Array(N * N).fill(false), won: false, lastStars: 0, lastTotal: 0, lastBad: 0 }
+  };
+  [[12, 'F'], [7, 'W'], [11, 'W'], [13, 'W'], [17, 'W']].forEach(([i, t]) => { state.U.grid[i] = t; state.X.grid[i] = t; });
+  // The test chest on the input port: one MOX rod short of the best, so a part stays missing.
+  const chest = { U: 9, X: 7, M: 8, C: 1 };
+  let tab = 'U', tool = 'F', hover = -1, celebration = null, revealArmed = false, changedIndex = 0;
+  const sparks = [], rings = [];
+  const t0 = performance.now();
+  const cur = () => state[tab];
+  const core = () => CORES[tab];
+
+  const canvas = document.getElementById('core');
+  const ctx = canvas.getContext('2d');
+  const img = ctx.createImageData(SIZE, SIZE);
+  const buf = new Uint32Array(img.data.buffer);
+
+  // ---------------------------------------------------------------- colour and pixels
+  const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  const C = {
+    ground: hex('#0b0d11'), frame: hex('#2a2e35'), deep: hex('#0a2448'), mid: hex('#134a86'), shallow: hex('#2a74c0'),
+    caustic: hex('#6cbcf4'), glint: hex('#d4f0ff'), cher: hex('#3c8cff'), rimDark: hex('#1b1e22'), rim: hex('#2b3036'),
+    graphite: hex('#30343a'), gline: hex('#23272b'), glit: hex('#5a6068'), gside: hex('#474d55'), bore: hex('#101215'),
+    cladLit: hex('#c2c9d2'), clad: hex('#8b939e'), cladDark: hex('#454b54'), amber: hex('#ffb84d'), cyan: hex('#35c8f5'),
+    red: hex('#e0503c'), socket: hex('#14171b'), plate: hex('#1a1e23'), cross: hex('#23282e'), ink: hex('#1a0f08'),
+    white: [255, 255, 255], green: hex('#44d65e'), gold: hex('#ffd27a'), dead: hex('#4a1a10'), mox: hex('#ff7a3d'),
+    steel: hex('#17191d'), steelDot: hex('#1f2328'), hub: hex('#3a3f47'), lamp: hex('#7ad06a'), lampOff: hex('#4a3a1a'),
+    warn: hex('#f0a030')
+  };
+  const clamp = v => v < 0 ? 0 : v > 255 ? 255 : v;
+  function put(x, y, c) { if (x >= 0 && y >= 0 && x < SIZE && y < SIZE) buf[y * SIZE + x] = 0xFF000000 | clamp(c[2] | 0) << 16 | clamp(c[1] | 0) << 8 | clamp(c[0] | 0); }
+  function get(x, y) { const v = buf[y * SIZE + x]; return [v & 255, v >> 8 & 255, v >> 16 & 255]; }
+  function blend(x, y, c, a) { if (x < 0 || y < 0 || x >= SIZE || y >= SIZE || a <= 0) return; const o = get(x, y); put(x, y, [o[0] + (c[0] - o[0]) * a, o[1] + (c[1] - o[1]) * a, o[2] + (c[2] - o[2]) * a]); }
+  function glow(x, y, c, f) { if (x < 0 || y < 0 || x >= SIZE || y >= SIZE || f <= 0) return; const o = get(x, y); put(x, y, [o[0] + c[0] * f, o[1] + c[1] * f, o[2] + c[2] * f]); }
+  function rect(x0, y0, x1, y1, c) { for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) put(x, y, c); }
+  const mix = (a, b, t) => { t = Math.max(0, Math.min(1, t)); return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; };
+  const mul = (a, f) => [a[0] * f, a[1] * f, a[2] * f];
+  const bands = (v, n) => Math.floor(Math.max(0, Math.min(0.999, v)) * n) / (n - 1);
+  const HEAT = [[0, '#5a1f12'], [0.35, '#b2431c'], [0.65, '#f08a24'], [0.85, '#ffd27a'], [1, '#fff6e0']].map(([t, h]) => [t, hex(h)]);
+  function heatColour(t) { t = Math.max(0, Math.min(1, t)); for (let i = 1; i < HEAT.length; i++) if (t <= HEAT[i][0]) return mix(HEAT[i - 1][1], HEAT[i][1], (t - HEAT[i - 1][0]) / (HEAT[i][0] - HEAT[i - 1][0])); return HEAT[4][1]; }
+  const facing = (nx, ny) => Math.max(0, -(nx + ny) * 0.7071);
+  const DIGITS = {
+    0: ['.###.', '#...#', '#..##', '#.#.#', '##..#', '#...#', '.###.'], 1: ['..#..', '.##..', '..#..', '..#..', '..#..', '..#..', '.###.'],
+    2: ['.###.', '#...#', '....#', '...#.', '..#..', '.#...', '#####'], 3: ['####.', '....#', '....#', '.###.', '....#', '....#', '####.'],
+    4: ['...#.', '..##.', '.#.#.', '#..#.', '#####', '...#.', '...#.'], 5: ['#####', '#....', '####.', '....#', '....#', '#...#', '.###.'],
+    6: ['.###.', '#....', '#....', '####.', '#...#', '#...#', '.###.'], 7: ['#####', '....#', '...#.', '..#..', '..#..', '..#..', '..#..'],
+    8: ['.###.', '#...#', '#...#', '.###.', '#...#', '#...#', '.###.'], 9: ['.###.', '#...#', '#...#', '.####', '....#', '....#', '.###.']
+  };
+  function digit(x, y, d, c) { (DIGITS[d] || DIGITS[0]).forEach((row, j) => [...row].forEach((b, i) => { if (b === '#') put(x + i, y + j, c); })); }
+  function number(cx, y, n, c) { const s = String(n); const x = cx - (s.length * 6 - 1) / 2 | 0; [...s].forEach((ch, k) => digit(x + k * 6, y, +ch, c)); }
+
+  // ---------------------------------------------------------------- the rules
+  const at = (g, r, c) => (r < 0 || c < 0 || r >= N || c >= N) ? null : g[r * N + c];
+  const SIDES = [['n', -1, 0], ['s', 1, 0], ['w', 0, -1], ['e', 0, 1]];
+  const CORNERS = [['nw', -1, -1], ['ne', -1, 1], ['sw', 1, -1], ['se', 1, 1]];
+  function rod(g, i, kind) {
+    const r = Math.floor(i / N), c = i % N;
+    const sides = {}; let cooled = true;
+    for (const [k, dr, dc] of SIDES) { const t = at(g, r + dr, c + dc); if (t !== null) { sides[k] = t === 'W'; if (t !== 'W') cooled = false; } }
+    const corner = p => CORNERS.filter(([, dr, dc]) => at(g, r + dr, c + dc) === p).map(([k]) => k);
+    const graphite = corner('M'), fuel = corner('F'), control = corner('C');
+    if (kind === 'U') return { sides, cooled, tamed: true, heat: 2 + graphite.length, marks: graphite.map(k => [k, 'M']), needsControl: false };
+    const heat = 3 + 2 * graphite.length + fuel.length;
+    const needsControl = heat > 4;
+    const tamed = !needsControl || control.length > 0;
+    return { sides, cooled, tamed, heat, needsControl,
+             marks: [...graphite.map(k => [k, 'M']), ...fuel.map(k => [k, 'F']), ...control.map(k => [k, 'C'])] };
+  }
+  function evaluate(g, kind) {
+    let total = 0, fuel = 0, dry = 0, wild = 0, hot = 0; const heat = Array(N * N).fill(0);
+    for (let i = 0; i < N * N; i++) {
+      if (g[i] === 'C' && kind === 'X') total -= 1;
+      if (g[i] !== 'F') continue;
+      fuel++; const r = rod(g, i, kind);
+      if (r.needsControl) hot++;
+      if (!r.cooled) dry++; else if (!r.tamed) wild++; else { total += r.heat; heat[i] = r.heat; }
+    }
+    return { total, fuel, dry, wild, bad: dry + wild, hot, heat };
+  }
+  const starsOf = (e, k) => e.fuel === 0 || e.bad > 0 ? 0 : e.total >= CORES[k].best ? 3 : e.total >= CORES[k].two ? 2 : 1;
+
+  // ---------------------------------------------------------------- the cells
+  function socket(x0, y0) { rect(x0, y0, x0 + CELL - 2, y0 + CELL - 2, C.rimDark); rect(x0 + 1, y0 + CELL - 3, x0 + CELL - 2, y0 + CELL - 3, C.rim); rect(x0 + CELL - 3, y0 + 1, x0 + CELL - 3, y0 + CELL - 3, C.rim); }
+  function floor(a, b, n, base = C.socket, dot = C.plate) { rect(a, b, a + n - 1, b + n - 1, base); for (let k = 0; k < n; k += 4) for (let m = 0; m < n; m += 4) put(a + k, b + m, dot); }
+  function water(x0, y0, touches, t) {
+    socket(x0, y0);
+    const n = CELL - 4, a = x0 + 2, b = y0 + 2;
+    for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
+      const u = (i + 0.5) / n, v = (j + 0.5) / n, edge = Math.min(u, v, 1 - u, 1 - v);
+      let c = mix(C.deep, C.mid, edge * 3.2);
+      c = mix(c, C.shallow, Math.max(0, edge * 3 - 0.75));
+      if (u < 0.08 || v < 0.08) c = mul(c, 0.72);
+      const s = Math.abs(Math.sin((x0 + i) * 0.55 + t * 1.3) + Math.sin((y0 + j) * 0.48 - t) + Math.sin((x0 + i + y0 + j) * 0.31 + t * 0.7));
+      if (s < 0.32) c = mix(c, C.caustic, s < 0.14 ? 0.5 : 0.25);
+      for (const [side, heat] of touches) {
+        const d = side === 'n' ? v : side === 's' ? 1 - v : side === 'w' ? u : 1 - u;
+        c = mix(c, C.cher, 0.5 * bands(Math.pow(Math.max(0, 1 - d / 0.45), 2) * (0.35 + 0.65 * heat), 4));
+      }
+      if (Math.abs(u + v - 0.55) < 0.06 && u < 0.45) c = mix(c, C.glint, 0.18);
+      put(a + i, b + j, c);
+    }
+    for (const [bx, by] of [[0.3, 0.62], [0.68, 0.3], [0.55, 0.78]]) {
+      const rise = ((t * 0.18 + bx * 3) % 1);
+      put(a + Math.floor(bx * n), b + Math.floor((by - rise * 0.5 + 0.5) % 1 * n), C.glint);
+    }
+  }
+  function graphite(x0, y0, warms, t, boost) {
+    socket(x0, y0);
+    const n = CELL - 4, a = x0 + 2, b = y0 + 2;
+    rect(a, b, a + n - 1, b + n - 1, C.graphite);
+    let k = 0;
+    for (let y = b + 6; y < b + n - 1; y += 7, k++) { rect(a + 1, y, a + n - 2, y, C.gline); for (let x = a + (k % 2 ? 5 : 12); x < a + n - 1; x += 14) rect(x, y - 6, x, y - 1, C.gline); }
+    rect(a, b, a + n - 1, b, C.glit); rect(a, b, a, b + n - 1, C.gside);
+    rect(a + 1, b + n - 1, a + n - 1, b + n - 1, C.rimDark); rect(a + n - 1, b + 1, a + n - 1, b + n - 1, C.rimDark);
+    const cx = a + n / 2, cy = b + n / 2;
+    for (let j = -6; j <= 6; j++) for (let i = -6; i <= 6; i++) { const d = Math.hypot(i + 0.5, j + 0.5); if (d <= 4.6) put(Math.floor(cx + i), Math.floor(cy + j), C.bore); else if (d <= 5.6) put(Math.floor(cx + i), Math.floor(cy + j), i + j > 0 ? C.glit : C.rimDark); }
+    const pulse = (0.85 + 0.15 * Math.sin(t * 3)) * (1 + boost);
+    for (const corner of warms) {
+      const ox = corner[1] === 'w' ? a : a + n - 1, oy = corner[0] === 'n' ? b : b + n - 1;
+      for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) { const d = Math.hypot(a + i - ox, b + j - oy); if (d < 9) blend(a + i, b + j, C.amber, Math.min(0.9, 0.55 * bands(Math.pow(1 - d / 9, 1.5) * pulse, 3))); }
+    }
+  }
+  // A control rod from above: a cruciform absorber blade round its drive hub, absorber tubes along the arms,
+  // a silver glow towards each rod it tames; its lamp green while it tames one, amber while idle.
+  function control(x0, y0, tames, t) {
+    socket(x0, y0);
+    const n = CELL - 4, a = x0 + 2, b = y0 + 2, m = n >> 1;
+    floor(a, b, n, C.steel, C.steelDot);
+    const pulse = 0.85 + 0.15 * Math.sin(t * 3);
+    for (const corner of tames) {
+      const ox = corner[1] === 'w' ? a : a + n - 1, oy = corner[0] === 'n' ? b : b + n - 1;
+      for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) { const d = Math.hypot(a + i - ox, b + j - oy); if (d < 9) blend(a + i, b + j, C.cladLit, 0.4 * bands(Math.pow(1 - d / 9, 1.5) * pulse, 3)); }
+    }
+    for (let i = 2; i < n - 2; i++) for (let w = -2; w < 2; w++) {
+      const c = mix(C.cladDark, C.cladLit, w < 0 ? 1 : 0.45);
+      put(a + i, b + m + w, c); put(a + m + w, b + i, c);
+    }
+    for (let i = 4; i < n - 4; i += 3) if (Math.abs(i - m) > 4) { put(a + i, b + m, C.cladDark); put(a + m, b + i, C.cladDark); }
+    rect(a + m - 4, b + m - 4, a + m + 3, b + m + 3, C.rimDark);
+    rect(a + m - 3, b + m - 3, a + m + 2, b + m + 2, C.hub);
+    rect(a + m - 3, b + m - 3, a + m + 2, b + m - 3, C.clad);
+    rect(a + m - 1, b + m - 1, a + m, b + m, tames.length ? C.lamp : C.lampOff);
+  }
+  function fuel(x0, y0, info, kind, t, flash, loaded) {
+    socket(x0, y0);
+    const n = CELL - 4, a = x0 + 2, b = y0 + 2;
+    floor(a, b, n);
+    const cx = a + n / 2, cy = b + n / 2;
+    const ok = info.cooled && info.tamed;
+    const heat01 = kind === 'U' ? info.heat / 6 : Math.min(1, (info.heat - 3) / 9);
+    const wild = info.cooled && !info.tamed;
+    const face = ok ? heatColour(0.45 + 0.55 * heat01) : wild ? mix(C.red, C.white, 0.25 + 0.25 * Math.sin(t * 9)) : C.dead;
+    const breath = 1 + 0.05 * Math.sin(t * 2.2);
+    if (ok || wild) {
+      const bloom = wild ? C.red : heatColour(0.7);
+      for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
+        const d = Math.hypot(a + i + 0.5 - cx, b + j + 0.5 - cy);
+        if (d > 11.5 && d < 16) glow(a + i, b + j, bloom, 0.35 * bands(Math.pow(1 - (d - 11.5) / 4.5, 2) * (0.3 + 0.7 * heat01) * breath, 3));
+      }
+    }
+    for (let j = -13; j <= 13; j++) for (let i = -13; i <= 13; i++) {
+      const d = Math.hypot(i + 0.5, j + 0.5), nx = (i + 0.5) / Math.max(d, 0.1), ny = (j + 0.5) / Math.max(d, 0.1);
+      const X = Math.floor(cx + i), Y = Math.floor(cy + j);
+      if (d <= 8.6) { let c = mul(face, (0.62 + 0.45 * bands(1 - (d / 8.6) ** 2 * 0.45, 5)) * breath); if (flash > 0) c = mix(c, C.white, flash); put(X, Y, c); }
+      else if (d <= 11.4) { let c = mix(C.cladDark, C.cladLit, 0.25 + 0.75 * facing(nx, ny)); if (kind === 'X' && d > 9.9 && d <= 10.6 && ny < -0.3) c = mix(c, C.mox, 0.55); if (d > 10.6) c = mul(c, 0.6); put(X, Y, c); }
+      else if (d <= 12.2) put(X, Y, C.rimDark);
+    }
+    number(Math.floor(cx), Math.floor(cy) - 3, ok ? info.heat : wild ? info.heat : 0, ok ? C.ink : wild ? C.white : C.red);
+    for (const [side, w] of Object.entries(info.sides)) {
+      const c = w ? C.cyan : C.red;
+      if (side === 'n') rect(a + 9, b, a + n - 10, b + 1, c);
+      else if (side === 's') rect(a + 9, b + n - 2, a + n - 10, b + n - 1, c);
+      else if (side === 'w') rect(a, b + 9, a + 1, b + n - 10, c);
+      else rect(a + n - 2, b + 9, a + n - 1, b + n - 10, c);
+    }
+    for (const [corner, part] of info.marks) {
+      const ox = corner[1] === 'w' ? a : a + n - 1, oy = corner[0] === 'n' ? b : b + n - 1;
+      const sx = corner[1] === 'w' ? 1 : -1, sy = corner[0] === 'n' ? 1 : -1;
+      const c = part === 'M' ? C.amber : part === 'F' ? C.mox : C.cladLit, len = part === 'F' ? 3 : 5;
+      for (let k = 0; k < len; k++) { put(ox + k * sx, oy, c); put(ox, oy + k * sy, c); }
+    }
+    // A hot MOX rod with no control rod on a corner: red brackets on its empty corners, asking for one.
+    if (wild) for (const [corner, dr, dc] of CORNERS) {
+      const ox = corner[1] === 'w' ? a : a + n - 1, oy = corner[0] === 'n' ? b : b + n - 1;
+      const sx = corner[1] === 'w' ? 1 : -1, sy = corner[0] === 'n' ? 1 : -1;
+      if (Math.sin(t * 9) > 0) for (let k = 0; k < 5; k++) { put(ox + k * sx, oy, C.red); put(ox, oy + k * sy, C.red); }
+    }
+  }
+  function empty(x0, y0) {
+    socket(x0, y0);
+    const n = CELL - 4, a = x0 + 2, b = y0 + 2, h = n >> 1;
+    floor(a, b, n);
+    rect(a + h - 3, b + h, a + h + 2, b + h, C.cross); rect(a + h, b + h - 3, a + h, b + h + 2, C.cross);
+  }
+  // A planned part not in the core: dimmed, an amber dashed frame and a warning tab in the top right.
+  function notLoaded(x0, y0, t) {
+    for (let y = y0 + 2; y < y0 + CELL - 2; y++) for (let x = x0 + 2; x < x0 + CELL - 2; x++) put(x, y, mul(get(x, y), 0.4));
+    const a = x0 + 1, b = y0 + 1, n = CELL - 3, on = Math.sin(t * 4) > -0.3;
+    if (!on) return;
+    for (let k = 0; k < n; k += 4) for (let d = 0; d < 2; d++) { put(a + k + d, b, C.warn); put(a + k + d, b + n - 1, C.warn); put(a, b + k + d, C.warn); put(a + n - 1, b + k + d, C.warn); }
+    rect(a + n - 9, b, a + n - 1, b + 8, C.warn);
+    rect(a + n - 5, b + 2, a + n - 5, b + 4, C.ground); put(a + n - 5, b + 6, C.ground);
+  }
+
+  // ---------------------------------------------------------------- drawing the core
+  const cellX = i => PAD + (i % N) * CELL, cellY = i => PAD + Math.floor(i / N) * CELL;
+  const needsPart = p => p === 'F' || p === 'M' || p === 'C';
+  function drawCell(g, e, i, t, fx) {
+    const x = cellX(i), y = cellY(i), kind = g[i], r = Math.floor(i / N), c = i % N, s = cur();
+    if (kind === 'W') {
+      const touches = SIDES.filter(([, dr, dc]) => at(g, r + dr, c + dc) === 'F' && e.heat[(r + dr) * N + c + dc] > 0 && s.loaded[(r + dr) * N + c + dc])
+        .map(([k, dr, dc]) => [k, e.heat[(r + dr) * N + c + dc] / (tab === 'U' ? 6 : 12)]);
+      water(x, y, touches, t);
+    } else if (kind === 'M') {
+      graphite(x, y, CORNERS.filter(([, dr, dc]) => at(g, r + dr, c + dc) === 'F').map(([k]) => k), t, fx.graphite);
+    } else if (kind === 'C') {
+      control(x, y, CORNERS.filter(([, dr, dc]) => at(g, r + dr, c + dc) === 'F' && rod(g, (r + dr) * N + c + dc, tab).needsControl).map(([k]) => k), t);
+    } else if (kind === 'F') {
+      fuel(x, y, rod(g, i, tab), tab, t, fx.flash[i] || 0, s.loaded[i]);
+    } else empty(x, y);
+    if (needsPart(kind) && !s.loaded[i]) notLoaded(x, y, t);
+  }
+  function frame(fx) {
+    rect(0, 0, SIZE - 1, SIZE - 1, C.ground);
+    const edge = cur().won ? C.gold : C.frame;
+    for (let k = 0; k < SIZE; k++) { put(k, 1, edge); put(k, SIZE - 2, edge); put(1, k, edge); put(SIZE - 2, k, edge); }
+    if (fx.chase >= 0) {
+      const L = SIZE - 3, per = 4 * L;
+      for (let s = 0; s < 40; s++) {
+        const p = (Math.floor(fx.chase * per) - s + per) % per; let x, y;
+        if (p < L) { x = 1 + p; y = 1; } else if (p < 2 * L) { x = SIZE - 2; y = 1 + p - L; } else if (p < 3 * L) { x = SIZE - 2 - (p - 2 * L); y = SIZE - 2; } else { x = 1; y = SIZE - 2 - (p - 3 * L); }
+        blend(x, y, C.white, 1 - s / 40);
+      }
+    }
+  }
+  function outline(i, c) { const x = cellX(i), y = cellY(i); for (let k = 1; k < CELL - 2; k++) { put(x + k, y + 1, c); put(x + k, y + CELL - 3, c); put(x + 1, y + k, c); put(x + CELL - 3, y + k, c); } }
+  function render(now) {
+    const t = (now - t0) / 1000, g = cur().grid, e = evaluate(g, tab);
+    const fx = { flash: {}, graphite: 0, chase: -1, scan: -1 };
+    if (celebration) {
+      const ct = (now - celebration.start) / 1000;
+      if (ct < 0.4) fx.scan = ct / 0.4;
+      celebration.order.forEach((i, k) => {
+        const at_ = 0.35 + k * 0.08;
+        if (ct >= at_ && ct < at_ + 0.3) fx.flash[i] = 1 - (ct - at_) / 0.3;
+        if (ct >= at_ && !celebration.fired.has(i)) { celebration.fired.add(i); ignite(i, k); }
+      });
+      if (ct > 0.9 && ct < 1.5) fx.graphite = Math.sin((ct - 0.9) / 0.6 * Math.PI) * 1.2;
+      if (ct > 1.0 && ct < 2.2) fx.chase = (ct - 1.0) / 1.2;
+      if (ct > 2.6) celebration = null;
+    }
+    frame(fx);
+    for (let i = 0; i < N * N; i++) drawCell(g, e, i, t + i * 0.37, fx);
+    for (const ring of rings) {
+      const age = (now - ring.start) / 1000; if (age > 0.6) continue;
+      const rad = 4 + age * 70, a = (1 - age / 0.6) * 0.55;
+      for (let k = 0; k < 120; k++) { const ang = k / 120 * Math.PI * 2, x = Math.round(ring.x + Math.cos(ang) * rad), y = Math.round(ring.y + Math.sin(ang) * rad); if (x > 2 && y > 2 && x < SIZE - 3 && y < SIZE - 3) glow(x, y, C.cher, a); }
+    }
+    for (let k = rings.length - 1; k >= 0; k--) if (now - rings[k].start > 700) rings.splice(k, 1);
+    for (let k = sparks.length - 1; k >= 0; k--) {
+      const s = sparks[k], age = (now - s.start) / 1000;
+      if (age > s.life) { sparks.splice(k, 1); continue; }
+      glow(Math.round(s.x + s.vx * age), Math.round(s.y + s.vy * age + 30 * age * age), s.gold ? C.gold : C.glint, 1 - age / s.life);
+    }
+    if (fx.scan >= 0) { const y = Math.floor(fx.scan * SIZE); for (let x = 0; x < SIZE; x++) { glow(x, y, C.cyan, 0.9); glow(x, y - 1, C.cyan, 0.3); } }
+    if (hover >= 0 && g[hover] !== tool && !celebration) {
+      const g2 = g.slice(); g2[hover] = tool;
+      const e2 = evaluate(g2, tab);
+      for (let i = 0; i < N * N; i++) { if (i === hover || g[i] !== 'F') continue; const d = e2.heat[i] - e.heat[i]; if (d !== 0) outline(i, d > 0 ? C.green : C.red); }
+      const x = cellX(hover), y = cellY(hover);
+      const ghost = tool === 'F' ? heatColour(0.6) : tool === 'M' ? C.glit : tool === 'W' ? C.shallow : tool === 'C' ? C.cladLit : C.socket;
+      for (let j = 2; j < CELL - 2; j++) for (let i = 2; i < CELL - 2; i++) blend(x + i, y + j, ghost, 0.4);
+      outline(hover, C.cyan);
+      const delta = e2.total - e.total, label = delta > 0 ? '+' + delta : String(delta), w = label.length * 6 + 2;
+      const tone = delta > 0 ? C.green : delta < 0 ? C.red : C.cross;
+      rect(x + CELL - 3 - w, y + 2, x + CELL - 3, y + 11, C.ground);
+      [...label].forEach((ch, k) => {
+        const gx = x + CELL - 1 - w + k * 6;
+        if (ch === '+' || ch === '-') { rect(gx, y + 6, gx + 4, y + 6, tone); if (ch === '+') rect(gx + 2, y + 4, gx + 2, y + 8, tone); }
+        else digit(gx, y + 3, +ch, tone);
+      });
+    }
+    ctx.putImageData(img, 0, 0);
+    requestAnimationFrame(render);
+  }
+  function ignite(i, k) {
+    const cx = cellX(i) + CELL / 2 - 1, cy = cellY(i) + CELL / 2 - 1;
+    rings.push({ x: cx, y: cy, start: performance.now() });
+    for (let s = 0; s < 12; s++) { const a = Math.random() * Math.PI * 2, v = 20 + Math.random() * 40; sparks.push({ x: cx, y: cy, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 20, start: performance.now(), life: 0.5 + Math.random() * 0.5, gold: s % 3 === 0 }); }
+    sound.note(k + 6, 0.12, 0.25);
+  }
+
+  // ---------------------------------------------------------------- sound
+  const sound = (() => {
+    let ac = null, master = null, on = true;
+    function ensure() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); master = ac.createGain(); master.gain.value = 0.55; master.connect(ac.destination); } catch (e) { ac = null; } } if (ac && ac.state === 'suspended') ac.resume(); return ac && on; }
+    function env(node, t, a, d, peak) { node.gain.setValueAtTime(0.0001, t); node.gain.exponentialRampToValueAtTime(peak, t + a); node.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
+    function tone(freq, type, a, d, peak, when = 0, sweep = null) { if (!ensure()) return; const t = ac.currentTime + when; const o = ac.createOscillator(), g = ac.createGain(); o.type = type; o.frequency.setValueAtTime(freq, t); if (sweep) o.frequency.exponentialRampToValueAtTime(sweep, t + a + d); env(g, t, a, d, peak); o.connect(g); g.connect(master); o.start(t); o.stop(t + a + d + 0.05); }
+    function noise(dur, freq, peak, when = 0) { if (!ensure()) return; const t = ac.currentTime + when; const b = ac.createBuffer(1, Math.floor(ac.sampleRate * dur), ac.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; const s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = b; f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = 1.2; env(g, t, 0.003, dur, peak); s.connect(f); f.connect(g); g.connect(master); s.start(t); }
+    const SCALE = [0, 2, 4, 7, 9];
+    const pitch = k => 261.63 * Math.pow(2, (Math.floor(k / 5) * 12 + SCALE[((k % 5) + 5) % 5]) / 12);
+    function whirr(up) { tone(up ? 90 : 180, 'sawtooth', 0.05, 0.45, 0.05, 0, up ? 180 : 90); noise(0.4, 2600, 0.03); }
+    function clunk(when, low) { tone(low ? 110 : 130, 'sine', 0.003, 0.12, 0.45, when, 55); noise(0.03, 1400, 0.18, when); }
+    return {
+      toggle() { on = !on; return on; }, unlock() { ensure(); },
+      tick() { noise(0.012, 3800, 0.04); },
+      place(part) {
+        if (part === 'F') { tone(150, 'sine', 0.004, 0.16, 0.5, 0, 70); noise(0.02, 2400, 0.08); }
+        else if (part === 'M') { tone(320, 'triangle', 0.002, 0.08, 0.35); noise(0.03, 900, 0.12); }
+        else if (part === 'W') { tone(420, 'sine', 0.01, 0.14, 0.3, 0, 980); }
+        else if (part === 'C') { tone(240, 'square', 0.002, 0.06, 0.08); tone(180, 'triangle', 0.004, 0.18, 0.3, 0.04, 120); noise(0.05, 3200, 0.06); }
+        else { noise(0.09, 600, 0.12); }
+      },
+      note(k, when = 0, peak = 0.22) { const f = pitch(k); tone(f, 'sine', 0.004, 0.55, peak, when); tone(f * 2, 'sine', 0.004, 0.25, peak * 0.3, when); },
+      down() { tone(330, 'square', 0.003, 0.07, 0.06); tone(311, 'square', 0.003, 0.09, 0.06, 0.08); },
+      buzz() { tone(110, 'square', 0.003, 0.08, 0.07); tone(110, 'square', 0.003, 0.08, 0.07, 0.12); },
+      star(n) { for (let k = 0; k < n; k++) this.note(10 + k * 2, k * 0.09, 0.2); },
+      inject() { whirr(true); for (let i = 0; i < 3; i++) clunk(0.32 + i * 0.18); this.note(10, 0.95, 0.18); this.note(12, 1.07, 0.18); },
+      eject() { whirr(false); for (let i = 0; i < 3; i++) clunk(0.32 + i * 0.18, true); this.note(7, 0.95, 0.18); this.note(5, 1.07, 0.18); },
+      fanfare() {
+        if (!ensure()) return;
+        tone(55, 'sine', 0.005, 0.5, 0.7, 0, 38); noise(0.18, 160, 0.4);
+        [0, 2, 4, 5, 7, 10].forEach((k, i) => this.note(10 + k, 1.15 + i * 0.07, 0.2));
+        const t = ac.currentTime + 1.1;
+        [261.63, 329.63, 392, 523.25].forEach(f => { const o = ac.createOscillator(), g = ac.createGain(), lp = ac.createBiquadFilter(); o.type = 'sawtooth'; o.frequency.value = f; lp.type = 'lowpass'; lp.frequency.value = 900; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.05, t + 0.4); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.2); o.connect(lp); lp.connect(g); g.connect(master); o.start(t); o.stop(t + 2.3); });
+      }
+    };
+  })();
+
+  // ---------------------------------------------------------------- the readouts
+  const $ = id => document.getElementById(id);
+  const history = $('history'); const flux = Array(48).fill(0);
+  for (let k = 0; k < 48; k++) history.appendChild(document.createElement('i'));
+  const level = f => f < 0.6 ? 'lv-0' : f < 0.8 ? 'lv-1' : f < 0.92 ? 'lv-2' : 'lv-3';
+  const pad = (v, n) => String(Math.max(0, Math.round(v))).padStart(n, '0');
+  const fmt = v => Math.round(v).toLocaleString('en-GB');
+  const partOf = p => p === 'F' ? tab : p;   // the chest item a planned part needs
+  function plannedParts(k = tab) {
+    const s = state[k], out = { F: [], M: [], C: [] };
+    s.grid.forEach((p, i) => { if (needsPart(p)) out[p].push(i); });
+    return out;
+  }
+  function loadedCount(k = tab) { return state[k].loaded.filter(Boolean).length; }
+
+  function renderLoadout() {
+    const parts = plannedParts(), groups = $('groups');
+    groups.innerHTML = '';
+    const stock = { ...chest };
+    const defs = [['F', core().fuel, 'rod'], ['M', 'GRAPHITE', 'block'], ['C', 'CONTROL RODS', 'block']];
+    for (const [p, label, shape] of defs) {
+      if (p === 'C' && tab === 'U') continue;
+      const cells = parts[p];
+      const loaded = cells.filter(i => cur().loaded[i]).length;
+      const slots = cells.map(i => { if (cur().loaded[i]) return 'in'; const item = partOf(p); if (stock[item] > 0) { stock[item]--; return 'input'; } return 'missing'; });
+      slots.sort((a, b) => ['in', 'input', 'missing'].indexOf(a) - ['in', 'input', 'missing'].indexOf(b));
+      const tone = !cells.length ? 'var(--label)' : loaded === cells.length ? 'var(--green)' : slots.includes('missing') ? 'var(--red)' : 'var(--amber)';
+      const el = document.createElement('div'); el.className = 'group';
+      el.innerHTML = `<div class="group-head"><span style="color:var(--label)">${label}</span><span class="count" style="color:${tone}">${loaded}/${cells.length}</span></div>`
+        + `<div class="rack" style="--fuel-tip:${core().tip}">${slots.map(s => `<i class="slot ${shape} ${s} ${p}"></i>`).join('') || '<span style="color:var(--dim)">NONE PLANNED</span>'}</div>`;
+      groups.appendChild(el);
+    }
+    $('load-note').textContent = core().name + ' CORE';
+    const chestEl = $('chest'); chestEl.innerHTML = '';
+    for (const [k, label] of [['U', 'URANIUM RODS'], ['X', 'MOX RODS'], ['M', 'GRAPHITE'], ['C', 'CONTROL RODS']]) {
+      chestEl.insertAdjacentHTML('beforeend', `<span>${label}</span><button data-k="${k}" data-d="-1" aria-label="One fewer ${label}">-</button><b>${chest[k]}</b><button data-k="${k}" data-d="1" aria-label="One more ${label}">+</button>`);
+    }
+  }
+  $('chest').addEventListener('click', ev => { const b = ev.target.closest('button'); if (!b) return; chest[b.dataset.k] = Math.max(0, chest[b.dataset.k] + +b.dataset.d); sound.tick(); refresh(); });
+
+  function readouts(e) {
+    const s = cur(), k = core(), stars = starsOf(e, tab), steady = e.fuel > 0 && e.bad === 0;
+    $('score').textContent = pad(e.total, 2);
+    $('of').textContent = '/' + k.best;
+    const meter = $('meter'), segs = Math.ceil(k.best / 2);
+    if (meter.children.length !== segs) { meter.innerHTML = ''; for (let i = 0; i < segs; i++) meter.appendChild(document.createElement('i')); }
+    [...meter.children].forEach((m, i) => m.classList.toggle('on', i < Math.floor(e.total / 2)));
+    const st = $('status');
+    if (s.won) { st.textContent = 'OPTIMAL CONFIGURATION'; st.className = 'status gold'; }
+    else if (e.fuel === 0) { st.textContent = 'PLACE A FUEL ROD'; st.className = 'status warn'; }
+    else if (e.dry > 0) { st.textContent = e.dry === 1 ? '1 ROD NEEDS WATER' : e.dry + ' RODS NEED WATER'; st.className = 'status bad'; }
+    else if (e.wild > 0) { st.textContent = e.wild === 1 ? '1 ROD NEEDS CONTROL' : e.wild + ' RODS NEED CONTROL'; st.className = 'status bad'; }
+    else { st.textContent = 'HOLDS STEADY'; st.className = 'status good'; }
+    $('d-best').textContent = (e.total >= k.best ? '+00' : '-' + pad(k.best - e.total, 2)) + ' HEAT';
+    $('d-rods').textContent = pad(e.fuel - e.dry, 2) + ' / ' + pad(e.fuel, 2);
+    $('row-tamed').hidden = tab === 'U';
+    $('d-tamed').textContent = pad(e.hot - e.wild, 2) + ' / ' + pad(e.hot, 2);
+    const thermal = Math.max(0, e.total) * k.unit, load = Math.min(1, e.total / k.best), eff = 0.25 + 0.15 * load, out = steady ? thermal * eff : 0;
+    $('d-power').textContent = fmt(out) + ' FE/T';
+    const water = s.grid.filter(t => t === 'W').length, rods = s.grid.filter(t => t === 'C').length;
+    const temp = steady ? 150 + 450 * load : e.fuel ? 640 : 20;
+    const rows = [
+      ['THERMAL POWER', fmt(thermal) + ' FE/T', load], ['TURBINE EFFICIENCY', (eff * 100).toFixed(1) + ' %', load * 0.7],
+      ['CORE TEMPERATURE', pad(temp, 4) + ' °C', temp / 900], ['NEUTRON FLUX', (thermal / 590 * 0.08).toFixed(2) + 'E13 N/CM2S', load * 0.8],
+      ['K-EFFECTIVE', steady ? '1.0000' : e.fuel ? '1.0071' : '0.0000', steady ? 0.2 : 0.95],
+      ...(tab === 'X' ? [['CONTROL RODS IN', pad(rods, 2), 0.2]] : []),
+      ['COOLANT CHANNELS', pad(water, 2) + ' / 25', water / 25], ['WATER DRAW', fmt(thermal / 50) + ' MB/T', load]
+    ];
+    $('physics').innerHTML = rows.map(([l, v, f]) => `<div><dt>${l}</dt><dd class="${level(f)}">${v}</dd></div>`).join('');
+    const total = Object.values(plannedParts()).reduce((n, a) => n + a.length, 0);
+    $('b-plan').textContent = 'PLAN ' + pad(e.total, 2) + ' / ' + k.best;
+    $('b-load').textContent = 'LOADED ' + pad(loadedCount(), 2) + ' / ' + pad(total, 2);
+    document.querySelectorAll('#stars .star').forEach((el, i) => el.classList.toggle('on', i < stars));
+    $('out-box').classList.toggle('won', s.won); $('core-box').classList.toggle('won', s.won);
+    $('pill').textContent = s.won ? 'OPTIMAL' : steady ? 'ONLINE' : e.fuel ? 'UNSTABLE' : 'STANDBY';
+    for (const t of ['U', 'X']) $('tab-' + t + '-score').textContent = pad(evaluate(state[t].grid, t).total, 2);
+    renderLoadout();
+  }
+
+  function renderRules() {
+    const U = tab === 'U';
+    $('rules').innerHTML = U
+      ? '<div><b>01</b> A FUEL ROD NEEDS WATER ON EVERY SIDE IT HAS</div><div><b>02</b> 2 HEAT, +1 PER GRAPHITE ON ITS CORNERS</div>'
+      : '<div><b>01</b> A FUEL ROD NEEDS WATER ON EVERY SIDE IT HAS</div><div><b>02</b> 3 HEAT, +2 PER GRAPHITE AND +1 PER MOX ROD ON ITS CORNERS</div>'
+        + '<div><b>03</b> OVER 4 HEAT NEEDS A CONTROL ROD ON A CORNER. EACH CONTROL ROD COSTS 1</div>';
+    $('legend').innerHTML = '<span><i style="background:#35c8f5"></i>WATERED SIDE</span><span><i style="background:#e0503c"></i>MISSING</span><span><i style="background:#ffb84d"></i>GRAPHITE</span>'
+      + (U ? '' : '<span><i style="background:#ff7a3d"></i>MOX ROD</span><span><i style="background:#c2c9d2"></i>CONTROL</span>')
+      + '<span><i style="background:#f0a030"></i>NOT LOADED</span>';
+    $('tool-c').hidden = U;
+    $('hint').textContent = 'LMB PLACE // RMB CLEAR // 1-' + (U ? 4 : 5) + ' PICK A PART';
+    if (U && tool === 'C') pick('F');
+    document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
+  }
+
+  function log(text) {
+    const el = $('log'); el.textContent = '> '; let k = 0; clearInterval(log.timer);
+    log.timer = setInterval(() => { el.textContent = '> ' + text.slice(0, ++k); if (k >= text.length) clearInterval(log.timer); }, 18);
+  }
+  const NAMES = { F: 'FUEL ROD', M: 'GRAPHITE', W: 'WATER', C: 'CONTROL ROD', '.': 'CLEARED' };
+  function refresh() { readouts(evaluate(cur().grid, tab)); }
+  function update(changed, part) {
+    const s = cur(), e = evaluate(s.grid, tab), stars = starsOf(e, tab);
+    if (changed) {
+      sound.place(part);
+      const d = e.total - s.lastTotal;
+      if (d > 0) sound.note(Math.min(14, Math.floor(e.total / (tab === 'U' ? 3 : 4))), 0.06); else if (d < 0) sound.down();
+      if (e.bad > s.lastBad) sound.buzz();
+      if (stars > s.lastStars && stars < 3) { sound.star(stars); stamp(stars); }
+      if (stars === 3 && s.lastStars < 3) celebrate();
+      if (stars < 3 && s.won) s.won = false;
+      s.lastStars = stars; s.lastTotal = e.total; s.lastBad = e.bad;
+      if (stars !== 3) {
+        const idx = changedIndex, bad = [e.dry ? e.dry + ' NEED WATER' : '', e.wild ? e.wild + ' NEED CONTROL' : ''].filter(Boolean).join(', ');
+        log(`${'ABCDE'[idx % N]}${Math.floor(idx / N) + 1}: ${NAMES[part]}${part === '.' ? '' : ' PLANNED'} // HEAT ${pad(e.total, 2)}${bad ? ' // ' + bad : ''}`);
+      }
+    }
+    readouts(e);
+  }
+  function stamp(n) { const el = document.querySelectorAll('#stars .star')[n - 1]; if (!el) return; el.classList.remove('stamp'); void el.offsetWidth; el.classList.add('stamp'); }
+  function celebrate() {
+    cur().won = true;
+    const order = [];
+    for (let i = 0; i < N * N; i++) if (cur().grid[i] === 'F') order.push(i);
+    order.sort((a, b) => Math.hypot(a % N - 2, Math.floor(a / N) - 2) - Math.hypot(b % N - 2, Math.floor(b / N) - 2));
+    celebration = { start: performance.now(), order, fired: new Set() };
+    sound.fanfare();
+    [1, 2, 3].forEach((n, k) => setTimeout(() => stamp(n), 1200 + k * 150));
+    setTimeout(() => log(`OPTIMAL CONFIGURATION // ${core().best} HEAT`), 1300);
+  }
+
+  // ---------------------------------------------------------------- inject, eject, switching core
+  function inject() {
+    const s = cur(); let needed = 0, moved = 0;
+    s.grid.forEach((p, i) => {
+      if (!needsPart(p) || s.loaded[i]) return;
+      needed++;
+      const item = partOf(p);
+      if (chest[item] > 0) { chest[item]--; s.loaded[i] = true; moved++; }
+    });
+    if (!needed) { log('NOTHING TO INJECT // THE PLAN IS FULL'); sound.tick(); }
+    else if (!moved) { log(`NOTHING TO INJECT // ${needed} PARTS MISSING FROM THE INPUT PORT`); sound.buzz(); }
+    else { log(`INJECTED ${moved} PARTS` + (needed > moved ? ` // ${needed - moved} STILL MISSING` : ' // THE PLAN IS FULL')); sound.inject(); }
+    refresh();
+  }
+  function eject(silent) {
+    const s = cur(); let moved = 0;
+    s.grid.forEach((p, i) => { if (s.loaded[i]) { chest[partOf(p)]++; s.loaded[i] = false; moved++; } });
+    if (!silent) { log(moved ? `EJECTED ${moved} PARTS` : 'NOTHING TO EJECT // THE CORE IS EMPTY'); moved ? sound.eject() : sound.tick(); }
+    refresh();
+    return moved;
+  }
+  let pendingTab = null;
+  function askSwitch(to) {
+    if (to === tab) return;
+    const n = loadedCount();
+    if (!n) { switchTo(to); return; }
+    const parts = plannedParts(), s = cur();
+    const count = p => parts[p].filter(i => s.loaded[i]).length;
+    const list = [[count('F'), core().fuel], [count('M'), 'GRAPHITE'], [count('C'), 'CONTROL RODS']].filter(([c]) => c).map(([c, l]) => c + ' ' + l).join(', ');
+    $('warn-head').textContent = 'WARNING // SWITCH TO THE ' + CORES[to].name + ' CORE';
+    $('warn-big').textContent = `THE CORE HOLDS ${n} PART${n > 1 ? 'S' : ''}`;
+    $('warn-text').textContent = `FOR THE ${core().name} PLAN: ${list}. SWITCHING EJECTS THEM TO THE OUTPUT PORT (CHEST, 21 FREE).`;
+    pendingTab = to; $('veil').hidden = false; sound.buzz(); $('warn-go').focus();
+  }
+  function switchTo(to) {
+    tab = to; hover = -1; celebration = null;
+    renderRules(); sound.tick();
+    const e = evaluate(cur().grid, tab);
+    log(`${core().name} CORE // ${loadedCount() ? '' : 'EMPTY, '}PLAN ${pad(e.total, 2)} / ${core().best}`);
+    refresh();
+  }
+  $('warn-go').addEventListener('click', () => { const n = eject(true); sound.eject(); $('veil').hidden = true; const to = pendingTab; pendingTab = null; switchTo(to); setTimeout(() => log(`EJECTED ${n} PARTS // ${core().name} CORE SELECTED`), 400); });
+  $('warn-cancel').addEventListener('click', () => { $('veil').hidden = true; pendingTab = null; sound.tick(); log('SWITCH CANCELLED'); });
+  document.addEventListener('keydown', ev => { if (!$('veil').hidden && ev.key === 'Escape') $('warn-cancel').click(); });
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { sound.unlock(); askSwitch(b.dataset.tab); }));
+  $('inject').addEventListener('click', () => { sound.unlock(); inject(); });
+  $('eject').addEventListener('click', () => { sound.unlock(); eject(false); });
+
+  // ---------------------------------------------------------------- input
+  function setCell(i, part) {
+    const s = cur();
+    if (s.grid[i] === part) return;
+    // A part the plan no longer wants goes back out (here, back to the test chest).
+    if (s.loaded[i]) { chest[partOf(s.grid[i])]++; s.loaded[i] = false; }
+    s.grid[i] = part; changedIndex = i; update(true, part);
+  }
+  function cellAt(ev) {
+    const r = canvas.getBoundingClientRect();
+    const x = (ev.clientX - r.left) / r.width * SIZE - PAD, y = (ev.clientY - r.top) / r.height * SIZE - PAD;
+    if (x < 0 || y < 0 || x >= N * CELL || y >= N * CELL) return -1;
+    return Math.floor(y / CELL) * N + Math.floor(x / CELL);
+  }
+  canvas.addEventListener('pointermove', ev => { const i = cellAt(ev); if (i !== hover) { hover = i; if (i >= 0) sound.tick(); } });
+  canvas.addEventListener('pointerleave', () => hover = -1);
+  canvas.addEventListener('pointerdown', ev => { sound.unlock(); const i = cellAt(ev); if (i < 0 || !$('veil').hidden) return; setCell(i, ev.button === 2 ? '.' : tool); });
+  canvas.addEventListener('contextmenu', ev => ev.preventDefault());
+  canvas.addEventListener('keydown', ev => {
+    if (hover < 0) hover = 12;
+    const r = Math.floor(hover / N), c = hover % N;
+    if (ev.key === 'ArrowLeft') hover = r * N + Math.max(0, c - 1);
+    else if (ev.key === 'ArrowRight') hover = r * N + Math.min(N - 1, c + 1);
+    else if (ev.key === 'ArrowUp') hover = Math.max(0, r - 1) * N + c;
+    else if (ev.key === 'ArrowDown') hover = Math.min(N - 1, r + 1) * N + c;
+    else if (ev.key === 'Enter' || ev.key === ' ') { sound.unlock(); setCell(hover, tool); }
+    else return;
+    ev.preventDefault();
+  });
+  function pick(t) { tool = t; document.querySelectorAll('.tool').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tool === t))); }
+  document.querySelectorAll('.tool').forEach(b => b.addEventListener('click', () => { sound.unlock(); sound.tick(); pick(b.dataset.tool); }));
+  document.addEventListener('keydown', ev => {
+    if (!$('veil').hidden) return;
+    const m = tab === 'U' ? { '1': 'F', '2': 'M', '3': 'W', '4': '.' } : { '1': 'F', '2': 'M', '3': 'W', '4': 'C', '5': '.' };
+    if (m[ev.key]) pick(m[ev.key]);
+  });
+  $('clear').addEventListener('click', () => {
+    sound.unlock(); const s = cur();
+    s.grid.forEach((p, i) => { if (s.loaded[i]) { chest[partOf(p)]++; s.loaded[i] = false; } });
+    s.grid = Array(N * N).fill('.'); s.won = false; s.lastStars = 0; s.lastTotal = 0; s.lastBad = 0;
+    sound.place('.'); log('PLAN CLEARED // ITS PARTS WENT TO THE OUTPUT PORT'); refresh();
+  });
+  const reveal = $('reveal');
+  reveal.addEventListener('click', () => {
+    sound.unlock();
+    if (!revealArmed) { revealArmed = true; reveal.textContent = 'CLICK AGAIN TO SHOW IT'; return; }
+    revealArmed = false; reveal.textContent = 'SHOW THE BEST';
+    const s = cur();
+    s.grid.forEach((p, i) => { if (s.loaded[i] && core().layout[i] !== p) { chest[partOf(p)]++; s.loaded[i] = false; } });
+    s.grid = core().layout.split(''); changedIndex = 12; update(true, 'F');
+  });
+  $('sound').addEventListener('click', ev => { sound.unlock(); const on = sound.toggle(); ev.currentTarget.setAttribute('aria-pressed', String(on)); ev.currentTarget.textContent = on ? 'SOUND ON' : 'SOUND OFF'; });
+
+  setInterval(() => {
+    const e = evaluate(cur().grid, tab);
+    flux.shift(); flux.push(e.total > 0 && loadedCount() ? Math.min(1, e.total / core().best * (0.85 + Math.random() * 0.15)) : 0);
+    [...history.children].forEach((b, k) => b.style.height = Math.max(4, flux[k] * 100) + '%');
+    const s = Math.floor((performance.now() - t0) / 1000);
+    $('clock').textContent = 'T+' + pad(s / 3600 | 0, 2) + ':' + pad((s / 60 | 0) % 60, 2) + ':' + pad(s % 60, 2);
+  }, 1000);
+
+  for (const k of ['U', 'X']) { const e = evaluate(state[k].grid, k); Object.assign(state[k], { lastStars: starsOf(e, k), lastTotal: e.total, lastBad: e.bad }); }
+  renderRules(); refresh();
+  log('CORE PLANNER READY // PICK A PART AND CLICK A CHANNEL');
+  requestAnimationFrame(render);
+})();
+</script>

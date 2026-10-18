@@ -29,7 +29,7 @@ import java.util.Map;
  * in the ground to the sun, in tier columns with an arrow from each step to the steps it feeds.
  * Steps the player has reached are lit; the steps they can make next are outlined amber; the rest
  * wait, dimmed. Drag or scroll to move round it. Click a step for a panel on how it works, with a
- * spoiler button that shows the best setups found (the optimisers' layouts, as the control screens
+ * spoiler button that shows the best setups known (each core's best layout, as the control screens
  * show them). Opened with its key (Y by default).
  */
 public class ProgressionScreen extends Screen {
