@@ -3,7 +3,6 @@ package com.ryzer.ryzergen.machine.microreactor;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -17,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -30,8 +30,9 @@ import net.neoforged.neoforge.fluids.FluidUtil;
 
 /**
  * One of the four microreactor blocks: heart, machine unit or coolant jacket.
- * Alone it shows its own faces. Once the structure forms, SLOT says which quarter
- * of the combined machine it renders, whatever part it is.
+ * Alone it shows its own faces. Once the structure forms, SLOT says which quarter of the machine
+ * it is, whatever part it is, and the block itself draws nothing: the heart's renderer draws the
+ * whole machine (MicroreactorRenderer), round jar and moving parts included.
  */
 public class MicroreactorPartBlock extends HorizontalDirectionalBlock {
     public static final MapCodec<MicroreactorPartBlock> CODEC = simpleCodec(MicroreactorPartBlock::new);
@@ -69,9 +70,15 @@ public class MicroreactorPartBlock extends HorizontalDirectionalBlock {
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
+    /** Formed, the heart's renderer draws the machine; alone, the part shows its own model. */
+    @Override
+    protected RenderShape getRenderShape(BlockState state) {
+        return state.getValue(SLOT).isFormed() ? RenderShape.INVISIBLE : RenderShape.MODEL;
+    }
+
     /**
-     * Once formed the block draws part of an open 3D model, so it must not hide its neighbours'
-     * faces or block light from its own model. It keeps a full collision box.
+     * Once formed the machine is an open 3D shape, so a block must not hide its neighbours' faces
+     * or block light from the machine. It keeps a full collision box.
      */
     @Override
     protected VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
@@ -109,17 +116,6 @@ public class MicroreactorPartBlock extends HorizontalDirectionalBlock {
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
-    }
-
-    /** Wisps of steam from the coolant intake while running. */
-    @Override
-    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (!state.getValue(RUNNING) || state.getValue(SLOT) != MicroreactorPort.COOLANT_IN.slot() || random.nextInt(3) != 0) {
-            return;
-        }
-        double x = pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.3;
-        double z = pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.3;
-        level.addParticle(ParticleTypes.WHITE_SMOKE, x, pos.getY() + 1.05, z, 0, 0.03, 0);
     }
 
     /** Check for a complete structure a tick later, so every way of placing a part is covered. */

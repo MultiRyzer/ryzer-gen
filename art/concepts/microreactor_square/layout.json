@@ -1,0 +1,14 @@
+{
+  "bounds_pixels": [
+    32,
+    32,
+    32
+  ],
+  "footprint_blocks": [
+    2,
+    2
+  ],
+  "height_blocks": 2,
+  "preview_only": true,
+  "integration": "Requires a new formation layout and port mapping."
+}

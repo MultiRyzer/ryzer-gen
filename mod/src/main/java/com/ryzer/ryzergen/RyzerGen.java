@@ -228,12 +228,12 @@ public class RyzerGen {
             return heart == null ? null : heart.coolantInput();
         }, microreactorParts);
         // Steam outlet: pipes can drain it, and the reactor pushes into them too. The capability is a
-        // fluid handler, like the coolant intake; only the port face differs.
+        // fluid handler, like the water inlet beside it; only the port face differs.
         event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
             ReactorHeartBlockEntity heart = MicroreactorStructure.heartForPort(level, pos, state, MicroreactorPort.STEAM_OUT, side);
             return heart == null ? null : heart.steamOutput();
         }, microreactorParts);
-        // Fuel ports on the vessel's flanks: fresh cores in on the left, spent cores out on the right.
+        // Fuel ports on the fuel bay's flanks: fresh cores in on your left, spent cores out on your right.
         event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
             ReactorHeartBlockEntity heart = MicroreactorStructure.heartForPort(level, pos, state, MicroreactorPort.FUEL_IN, side);
             if (heart != null) {

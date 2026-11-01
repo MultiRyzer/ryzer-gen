@@ -37,8 +37,9 @@ import java.util.WeakHashMap;
  * suggested part floating inside. The heart's own front shows the way the machine will face.
  * Filled spaces turn green, blocked ones red.
  *
- * <p>The suggestion puts the heart at the lower front, machine units above and behind it, and the
- * coolant jacket at the upper back under the coolant intake. Any layout with the right parts works.
+ * <p>The suggestion follows the machine's shape: the heart at the lower front (the jar's pedestal,
+ * where the core sits), the coolant jacket above it (the jar's water), and the machine units behind
+ * them (the plant and the fuel bay). Any layout with the right parts works.
  */
 @EventBusSubscriber(modid = RyzerGen.MOD_ID, value = Dist.CLIENT)
 public final class MicroreactorGhostPreview {
@@ -120,7 +121,7 @@ public final class MicroreactorGhostPreview {
     }
 
     private static ItemStack suggestedPart(MicroreactorSlot slot) {
-        return new ItemStack(slot == MicroreactorSlot.UPPER_BACK ? ModItems.COOLANT_JACKET.get() : ModItems.REACTOR_MACHINE_UNIT.get());
+        return new ItemStack(slot == MicroreactorSlot.UPPER_FRONT ? ModItems.COOLANT_JACKET.get() : ModItems.REACTOR_MACHINE_UNIT.get());
     }
 
     /** The suggested part, small and slowly turning, in the middle of its space. */

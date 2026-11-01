@@ -34,11 +34,13 @@ public class MicroreactorHumSound extends AbstractTickableSoundInstance {
         }
     }
 
-    /** Client ticker for the heart: the placement guide, the alarm, and the hum while running. */
+    /** Client ticker for the heart: the placement guide, the renderer's animation, the alarm, and the hum while running. */
     public static void clientTick(Level level, BlockPos pos, BlockState state, ReactorHeartBlockEntity heart) {
         MicroreactorAlarmSound.update(heart);
         if (!state.getValue(MicroreactorPartBlock.SLOT).isFormed()) {
             MicroreactorGhostPreview.track(heart);
+        } else {
+            MicroreactorRenderer.tick(heart);
         }
         if (!state.getValue(MicroreactorPartBlock.RUNNING) || heart.sound().muted()) {
             return;

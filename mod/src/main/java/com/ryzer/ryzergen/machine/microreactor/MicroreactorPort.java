@@ -7,28 +7,28 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * The fixed connection points on an assembled microreactor. Pipes and cables only connect here,
- * on one face of one block, and only while the structure is formed.
+ * on one face of one block, and only while the structure is formed. They are all on the back
+ * block, the plant behind the jar: as you face the front, inputs on your left and outputs on your
+ * right (the machine's own right and left), energy out on the back.
  */
 public enum MicroreactorPort {
-    /** Cable socket low on the back. */
+    /** Cable socket on the back of the lower back block. */
     ENERGY_OUT(MicroreactorSlot.LOWER_BACK, Side.BACK),
-    /** Intake chute on top. */
-    COOLANT_IN(MicroreactorSlot.UPPER_BACK, Side.UP),
-    /** Steam outlet on the right-hand side: the boiled coolant leaves here as steam. */
-    STEAM_OUT(MicroreactorSlot.LOWER_BACK, Side.RIGHT),
+    /** Water in, on the lower back block's flank to your left: water only, and pipes cannot drain it. */
+    COOLANT_IN(MicroreactorSlot.LOWER_BACK, Side.RIGHT),
+    /** Steam out, on the lower back block's flank to your right: the boiled coolant leaves here as steam. */
+    STEAM_OUT(MicroreactorSlot.LOWER_BACK, Side.LEFT),
+    /** Fuel in, on the fuel bay's flank to your left (the upper back block): fresh cores only, nothing comes out. */
+    FUEL_IN(MicroreactorSlot.UPPER_BACK, Side.RIGHT),
     /**
-     * Fuel in, on the vessel's flank to your left as you face the front (the same side as the fission
-     * station's inputs): fresh cores only, nothing comes out.
+     * Spent cores out, on the fuel bay's flank to your right: the reactor pushes them out, and pipes
+     * can pull them. Two ports, not one hatch, so the pipe bringing fresh cores and the pipe taking
+     * spent ones away are separate lines, and fresh cores can never wander into the spent-core store.
      */
-    FUEL_IN(MicroreactorSlot.LOWER_FRONT, Side.RIGHT),
-    /**
-     * Spent cores out, on the flank to your right as you face the front: the reactor pushes them out, and pipes can pull
-     * them. Two ports, not one hatch, so the pipe bringing fresh cores and the pipe taking spent ones
-     * away are separate lines, and fresh cores can never wander into the spent-core store.
-     */
-    FUEL_OUT(MicroreactorSlot.LOWER_FRONT, Side.LEFT);
+    FUEL_OUT(MicroreactorSlot.UPPER_BACK, Side.LEFT);
 
-    private enum Side { BACK, UP, RIGHT, LEFT }
+    /** A side of the machine, named as the machine faces: its right is your left as you face it. */
+    private enum Side { BACK, RIGHT, LEFT }
 
     private final MicroreactorSlot slot;
     private final Side side;
@@ -46,7 +46,6 @@ public enum MicroreactorPort {
     public Direction face(Direction facing) {
         return switch (side) {
             case BACK -> facing.getOpposite();
-            case UP -> Direction.UP;
             case RIGHT -> facing.getClockWise();
             case LEFT -> facing.getCounterClockWise();
         };

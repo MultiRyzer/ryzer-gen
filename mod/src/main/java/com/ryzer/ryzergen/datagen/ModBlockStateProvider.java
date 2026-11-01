@@ -23,7 +23,6 @@ import com.ryzer.ryzergen.cable.CableUpgrade;
 import com.ryzer.ryzergen.machine.alloysmelter.AlloySmelterBlock;
 import com.ryzer.ryzergen.machine.electricsmelter.ElectricAlloySmelterBlock;
 import com.ryzer.ryzergen.machine.microreactor.MicroreactorPartBlock;
-import com.ryzer.ryzergen.machine.microreactor.MicroreactorSlot;
 import com.ryzer.ryzergen.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -48,8 +47,6 @@ import java.util.function.Function;
 
 public class ModBlockStateProvider extends BlockStateProvider {
     /** Shared by all three part blocks, since a formed quarter looks the same whatever part it is. */
-    private final Map<MicroreactorSlot, ModelFile> microreactorFormed = new EnumMap<>(MicroreactorSlot.class);
-    private final Map<MicroreactorSlot, ModelFile> microreactorRunning = new EnumMap<>(MicroreactorSlot.class);
 
     public ModBlockStateProvider(PackOutput output, ExistingFileHelper existingFiles) {
         super(output, RyzerGen.MOD_ID, existingFiles);
@@ -93,22 +90,20 @@ public class ModBlockStateProvider extends BlockStateProvider {
         microreactorPart(ModBlocks.COOLANT_JACKET.get(), "coolant_jacket");
     }
 
-    /** Each part shows its own faces alone, and its quarter of the combined machine once formed. */
+    /**
+     * Each part shows its own faces alone. Formed, the heart's renderer draws the whole machine
+     * (MicroreactorRenderer, from art/tools/microreactor_concept.py), so the parts draw nothing; their
+     * model only gives the steel that flies off when one is broken.
+     */
     private void microreactorPart(Block block, String name) {
         ModelFile single = models().orientable(name,
                 modLoc("block/" + name + "_side"), modLoc("block/" + name + "_front"), modLoc("block/" + name + "_top"));
-        if (microreactorFormed.isEmpty()) {
-            for (MicroreactorSlot slot : MicroreactorSlot.FORMED) {
-                microreactorFormed.put(slot, formedQuarter(slot, false));
-                microreactorRunning.put(slot, formedQuarter(slot, true));
-            }
-        }
+        ModelFile formed = models().getBuilder("microreactor_formed").texture("particle", modLoc("block/microreactor/steel"));
         getVariantBuilder(block).forAllStates(state -> {
-            MicroreactorSlot slot = state.getValue(MicroreactorPartBlock.SLOT);
-            Map<MicroreactorSlot, ModelFile> formed = state.getValue(MicroreactorPartBlock.RUNNING) ? microreactorRunning : microreactorFormed;
+            boolean whole = state.getValue(MicroreactorPartBlock.SLOT).isFormed();
             return ConfiguredModel.builder()
-                    .modelFile(slot.isFormed() ? formed.get(slot) : single)
-                    .rotationY(((int) state.getValue(MicroreactorPartBlock.FACING).toYRot() + 180) % 360)
+                    .modelFile(whole ? formed : single)
+                    .rotationY(whole ? 0 : ((int) state.getValue(MicroreactorPartBlock.FACING).toYRot() + 180) % 360)
                     .build();
         });
         simpleBlockItem(block, single);
@@ -241,22 +236,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
             });
             simpleBlockItem(block, single);
         });
-    }
-
-    /** The formed microreactor's design (art/tools/microreactor_concept.py), read once. */
-    private DesignModel microreactorDesign;
-
-    /** One quarter of the assembled 3D microreactor, built facing north, cut from its design. */
-    private ModelFile formedQuarter(MicroreactorSlot slot, boolean running) {
-        if (microreactorDesign == null) {
-            microreactorDesign = DesignModel.load("microreactor");
-        }
-        BlockModelBuilder model = models().getBuilder("microreactor_" + slot.getSerializedName() + (running ? "_running" : ""))
-                .parent(models().getExistingFile(mcLoc("block/block")));
-        boolean back = slot == MicroreactorSlot.LOWER_BACK || slot == MicroreactorSlot.UPPER_BACK;
-        boolean upper = slot == MicroreactorSlot.UPPER_FRONT || slot == MicroreactorSlot.UPPER_BACK;
-        microreactorDesign.build(model, running ? "running" : "idle", 0, upper ? 1 : 0, back ? 1 : 0, "steel", models()::nested);
-        return model;
     }
 
     /**

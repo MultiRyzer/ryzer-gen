@@ -376,6 +376,16 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
     public Object clientHum;
     @Nullable
     public Object clientAlarm;
+    /** The client's GPU mesh of the machine's body and its animation state (MicroreactorRenderer), typed loosely too. */
+    @Nullable
+    public Object clientMesh;
+    @Nullable
+    public Object clientAnimation;
+    /** What the clients last saw, packed (see {@link #visualKey}): sent again only when it changes. */
+    private int sentVisual = -1;
+    /** The client's copies of what the renderer shows: the water in the jar, and the core in it. */
+    private int clientCoolant;
+    private int clientFuel;
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -536,6 +546,12 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         // Nearby clients follow a coolant loss closely, so the alarm can speed up with the heat.
         boolean alarmChanged = (before == Status.COOLANT_LOSS) != (heart.status == Status.COOLANT_LOSS);
         if (alarmChanged || (heart.status == Status.COOLANT_LOSS && level.getGameTime() % 5 == 0)) {
+            level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+        }
+        // What the jar shows: sent when the status, the core, the water level or the heat changes enough to see.
+        int visual = heart.visualKey();
+        if (visual != heart.sentVisual) {
+            heart.sentVisual = visual;
             level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
         }
         // Steam only exists while water is boiling. With nothing on the steam outlet to take it, it
@@ -770,12 +786,38 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         return temperature;
     }
 
-    /** Only what the client needs for sound: the status and temperature. */
+    /** The core in the slot, as the jar shows it: 0 none, 1 a core with fuel left, 2 a spent one. */
+    private int fuelKind() {
+        ItemStack core = fuel.getStackInSlot(0);
+        return core.isEmpty() ? 0 : core.is(ModTags.MICROREACTOR_FUEL) ? 1 : 2;
+    }
+
+    /** On the client: the core the jar holds (see {@link #fuelKind}). */
+    public int clientFuel() {
+        return clientFuel;
+    }
+
+    /** On the client: how full the coolant tank is, 0 to 1, which is the water's level in the jar. */
+    public float clientWater() {
+        return clientCoolant / (float) COOLANT_CAPACITY;
+    }
+
+    /**
+     * Everything the renderer shows, in steps it can see: the status, the core, the water in
+     * 32nds of the tank (125 mB) and the heat in 25°C steps. Clients smooth between steps.
+     */
+    private int visualKey() {
+        return status.ordinal() | fuelKind() << 4 | coolant.getFluidAmount() * 32 / COOLANT_CAPACITY << 6 | temperature / 25 << 12;
+    }
+
+    /** What the client needs for sound and the renderer: the status, heat, water and the core. */
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = new CompoundTag();
         tag.putInt("status", status.ordinal());
         tag.putInt("temperature", temperature);
+        tag.putInt("coolant", coolant.getFluidAmount());
+        tag.putInt("fuel", fuelKind());
         sound.save(tag);
         return tag;
     }
@@ -796,6 +838,22 @@ public class ReactorHeartBlockEntity extends BlockEntity implements MenuProvider
         int id = tag.getInt("status");
         status = id >= 0 && id < Status.values().length ? Status.values()[id] : Status.OFFLINE;
         temperature = tag.getInt("temperature");
+        clientCoolant = tag.getInt("coolant");
+        clientFuel = tag.getInt("fuel");
+    }
+
+    /** Frees the client's mesh of the machine when the heart goes (it holds GPU memory). */
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (clientMesh instanceof AutoCloseable mesh) {
+            try {
+                mesh.close();
+            } catch (Exception ignored) {
+                // Only frees GPU memory; nothing to recover.
+            }
+            clientMesh = null;
+        }
     }
 
     @Override

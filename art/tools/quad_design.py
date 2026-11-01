@@ -243,6 +243,69 @@ class Design:
         round_dir = (-math.sin(phi), 0, math.cos(phi))
         self.sweep(mat, path, half_radial, half_round, lambda i: round_dir, closed=False, caps=True, along_v=True)
 
+    # ------------------------------------------------------------ round about any axis
+    def revolve(self, mat, origin, axis, profile, n=16, mats=None, phase=0.0):
+        """A surface of revolution about `axis` through `origin` (for parts not on the machine's
+        upright middle). `profile` is (t along the axis, radius) points; a segment faces to the right
+        of travel, so go out from the axis, along, and back in for a closed solid. Each panel takes
+        its share of the texture across (about its width in pixels), so a pattern keeps its scale."""
+        a = norm(axis)
+        ref = (0, 1, 0) if abs(a[1]) < 0.9 else (0, 0, 1)
+        u = norm(cross(a, ref))
+        v = cross(a, u)
+
+        def point(t, r, phi):
+            c, s = math.cos(phi), math.sin(phi)
+            return tuple(origin[i] + a[i] * t + r * (c * u[i] + s * v[i]) for i in range(3))
+
+        for k_seg in range(len(profile) - 1):
+            (t1, r1), (t2, r2) = profile[k_seg], profile[k_seg + 1]
+            if max(r1, r2) < 1e-6 or (abs(t2 - t1) < 1e-6 and abs(r2 - r1) < 1e-6):
+                continue
+            m = mats[k_seg] if mats else mat
+            length = min(16, math.hypot(t2 - t1, r2 - r1))
+            w = min(16, max(1, 2 * math.pi * max(r1, r2) / n))
+            for k in range(n):
+                p0 = phase + 2 * math.pi * k / n
+                p1 = phase + 2 * math.pi * (k + 1) / n
+                pm = (p0 + p1) / 2
+                radial = tuple(math.cos(pm) * u[i] + math.sin(pm) * v[i] for i in range(3))
+                out = norm(tuple(radial[i] * (t2 - t1) - a[i] * (r2 - r1) for i in range(3)))
+                u0 = (k * w) % 16
+                if u0 + w > 16:
+                    u0 = 16 - w
+                self.quad(m, [point(t2, r2, p0), point(t1, r1, p0), point(t1, r1, p1), point(t2, r2, p1)],
+                          [(u0, 16 - length), (u0, 16), (u0 + w, 16), (u0 + w, 16 - length)], out)
+
+    def rod(self, mat, origin, axis, length, r, n=12, caps=None):
+        """A closed round bar from `origin` along `axis`."""
+        caps = caps or mat
+        self.revolve(mat, origin, axis, [(0, 0), (0, r), (length, r), (length, 0)], n=n, mats=[caps, mat, caps])
+
+    def ball(self, mat, c, r, n=10):
+        self.revolve(mat, c, (0, 1, 0), [(-r * math.cos(math.pi * k / 6), r * math.sin(math.pi * k / 6)) for k in range(7)], n=n)
+
+    def pipe(self, mat, pts, r, n=10):
+        """A round pipe through `pts`, a ball at each bend."""
+        for i in range(len(pts) - 1):
+            d = sub(pts[i + 1], pts[i])
+            self.rod(mat, pts[i], d, math.sqrt(dot(d, d)), r, n)
+        for p in pts[1:-1]:
+            self.ball(mat, p, r * 1.02, n)
+
+    def plate(self, mat, c, n, w, h):
+        """A flat upright picture facing `n`, centred on `c`, its whole texture over w x h."""
+        right = norm(cross(tuple(-x for x in n), (0, 1, 0)))
+        corner = lambda sr, su: tuple(c[i] + sr * right[i] * w / 2 + (su * h / 2 if i == 1 else 0) for i in range(3))
+        self.quad(mat, [corner(-1, 1), corner(-1, -1), corner(1, -1), corner(1, 1)], [(0, 0), (0, 16), (16, 16), (16, 0)], n)
+
+    def hplate(self, mat, cx, y, cz, w, d=None, up=True):
+        """A flat level picture centred on (cx, y, cz), its whole texture over w x d (u along x)."""
+        d = d or w
+        x1, x2, z1, z2 = cx - w / 2, cx + w / 2, cz - d / 2, cz + d / 2
+        self.quad(mat, [(x1, y, z1), (x1, y, z2), (x2, y, z2), (x2, y, z1)], [(0, 0), (0, 16), (16, 16), (16, 0)],
+                  (0, 1 if up else -1, 0))
+
     # ------------------------------------------------------------ output
     def export(self, path, extra=None):
         r = lambda v: round(v, 3)

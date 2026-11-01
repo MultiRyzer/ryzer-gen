@@ -99,6 +99,7 @@ public final class ClientSetup {
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.PRESSURE_TANK.get(), PressureTankRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.REACTOR_HEART.get(), MicroreactorRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.STATION_CORE.get(), StationRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.BREEDER_CORE.get(), BreederRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.POOL_CONTROLLER.get(), PoolRenderer::new);

@@ -75,6 +75,7 @@ Build in thin, playable slices. Each milestone should load in game and be tested
 - [x] Core Cracker flywheels turn while it works (a model of their own on a block entity renderer)
 - [x] Machine animations: Fuel Fabricator press stroke, Lithium Extractor column glow pulse, station rods rise while running and sink halfway when stopped (new rods come in halfway), Spent Fuel Pool crane run when fuel cools (at most every 10 seconds)
 - [x] Microreactor on the design pipeline (`microreactor_concept.py`): staves, bolted flanges, closure head, radiators, plated housing; new logo of the fission station (`mod_icon.py`)
+- [ ] Microreactor redesigned as the Lantern (12 Oct 2026): a pool reactor in a glass jar, drawn by a renderer from `microreactor_concept.py`; the water, glow, rods, core and fan follow the reactor; ports moved to the back block. In game for testing; final texture pass to come
 - [ ] Electric alloy smelter sound: a working loop like the fuel cycle machines (an induction hum), from a recording the user sources into `art/sounds/source/`
 
 ## Polish

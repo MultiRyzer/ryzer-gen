@@ -171,24 +171,36 @@ Inspired by the new generation of transportable microreactors. It gets its own o
 - The coolant block is the player's first introduction to coolant blocks, which become a proper building block in later reactor tiers.
 - All faces are the outside of the machine, so there is no hidden "core" block to place awkwardly inside.
 
+### The look: the Lantern (12 Oct 2026)
+- A pool reactor in a glass jar. The front block is a lead-glass jar on a round pedestal: the sealed fuel core stands under water on its floor, and three control rods hang beside it from drives on the lid. The back block is the plant: the steam generator and turbine below, and the fuel bay above with the generator's cooling fan on its back.
+- Real basis: pool-type research reactors (TRIGA), where the core sits in open water that both cools it and shields it. Lead glass is what real hot-cell windows are made of. The TRISO core carries its own graphite moderator, so it still runs with the jar dry, only hotter.
+- The machine shows its own state (drawn by `MicroreactorRenderer` from `art/tools/microreactor_concept.py`):
+  - The water stands as high as the coolant tank is full, so a coolant loss drains the jar in front of you; dry, the jar is empty.
+  - Running under water, the water round the core glows Cherenkov blue (the real glow of a reactor's water), with a flash as it goes critical. Bubbles rise off the core: a few running, many in overdrive, a boil on a coolant loss.
+  - Past 500°C the core glows with its own heat, dull red to white hot (steel starts to glow at about 525°C): it glows running dry (700°C), and runs up to white hot as a coolant loss heads for a meltdown.
+  - The control rods come out while it runs and further in overdrive, and drop back when it stops.
+  - Now and then while it runs, the core turns in its seat (a sixth or a third of a turn), overshooting a little before it settles. Real basis: fuel is turned and shuffled so it burns evenly; real reactors do it between runs, here it happens on the go.
+  - Light strips round the jar and the plant: cyan running, amber in overdrive, flashing red on a coolant loss, dark when stopped. The status strip on the pedestal matches.
+  - The generator's fan turns while it runs, faster in overdrive.
+
 ### Assembly
-- When the fourth block is placed, the structure snaps together: short animation, particles, sound, and the 4 blocks render as one machine model.
+- When the fourth block is placed, the structure snaps together: short animation, particles, sound, and the 4 blocks render as one machine.
 - Breaking any block drops it back to separate pieces.
-- Ghost preview: while holding any part, each unformed heart nearby shows outlines where the other three blocks go, with the suggested part floating in each (machine units above and behind the heart, the coolant jacket at the upper back under the intake). Filled spaces turn green, blocked ones red.
+- Ghost preview: while holding any part, each unformed heart nearby shows outlines where the other three blocks go, with the suggested part floating in each (the coolant jacket above the heart, where the jar's water is, and the machine units behind them, the plant and the fuel bay). Filled spaces turn green, blocked ones red.
 
 ### Input and output
-- Like Oritech's multiblocks, the assembled model has fixed, visible connection chutes. Pipes and cables only connect at those points, not on any face.
-- The machine faces the way the player was facing when they placed the heart, so the chutes always end up in predictable spots.
-- Port layout (machine facing north):
+- Like Oritech's multiblocks, the assembled machine has fixed, visible ports. Pipes and cables only connect at those points, not on any face.
+- The machine faces the way the player was facing when they placed the heart, so the ports always end up in predictable spots.
+- Every port is on the back block (the plant), so the jar stays clear. As you face the front, inputs are on your left and outputs on your right, as on every machine:
   - **Energy out:** cable socket on the back face of the lower back block. The machine pushes energy out, so it works with cables that do not pull (Mekanism's included).
-  - **Coolant in:** intake chute on the top face of the upper back block. Accepts water only, and pipes cannot drain it.
-  - **Steam out:** outlet on the right-hand face of the lower back block. The water the reactor boils leaves as steam (10 mB of steam per mB of water, config), pushed out of the port into a gas pipe or pressure tank. With nothing connected it blows out as a visible plume; running dry there is no steam and no plume. Steam will drive turbines at the next tier.
-  - **Fuel in:** on the lower front block's flank to your left as you face the front (inputs are on that side for every machine). Fresh cores go in when the slot is free; nothing comes out.
-  - **Spent cores out:** on the lower front block's flank to your right as you face the front. The reactor pushes a spent core out into whatever is beside it, the way the energy port pushes power, and pipes can pull it too. Only spent cores ever come out, so automation never pulls a core with fuel left in it.
+  - **Coolant in:** on the lower back block's flank to your left. Accepts water only, and pipes cannot drain it.
+  - **Steam out:** on the lower back block's flank to your right. The water the reactor boils leaves as steam (10 mB of steam per mB of water, config), pushed out of the port into a gas pipe or pressure tank. With nothing connected it blows out as a visible plume; running dry there is no steam and no plume. Steam will drive turbines at the next tier.
+  - **Fuel in:** on the upper back block's flank to your left (the fuel bay). Fresh cores go in when the slot is free; nothing comes out.
+  - **Spent cores out:** on the upper back block's flank to your right. The reactor pushes a spent core out into whatever is beside it, the way the energy port pushes power, and pipes can pull it too. Only spent cores ever come out, so automation never pulls a core with fuel left in it.
   - Two ports rather than one hatch, so fresh and spent cores travel on separate pipe lines. On one shared line, a pipe carrying fresh cores to a full reactor would deliver them to the spent-core store instead.
 - Every port is a 10x10 flange flush with the block face, centred, around an 8x8 socket. That seats the common 6x6 pipes and cables (Pipez, Mekanism) and their 8x8 end plates. The ring colour says what it carries: red energy, blue coolant, white steam, orange items (fuel).
 - Ports use the standard NeoForge energy and fluid capabilities, only on the port face and only while formed.
-- Front face carries the display panel. Right-click any block to open the GUI.
+- The pedestal's front carries a status strip. Right-click any block to open the GUI.
 
 ### Running it
 - The heart holds one sealed fuel core. No topping up. Steady modest power for a long time, then it depletes.
@@ -206,7 +218,7 @@ Inspired by the new generation of transportable microreactors. It gets its own o
 - Excess power, a toggle in the GUI:
   - Follow load (default): when the energy buffer is full the reactor stands by and saves fuel.
   - Dump: it keeps running on a full buffer and vents the surplus as a steam plume from the steam outlet. It burns fuel nonstop, so it keeps making depleted cores (and later by-products) with no power consumer attached. Real basis: the steam dump (turbine bypass) valves that let a pressurised-water reactor run on when the turbine cannot take its power.
-- Running shows: Cherenkov glow in the porthole (emissive, block light 9), a low hum, steam wisps from the coolant intake.
+- Running shows: the Lantern's glow and moving parts (see The look), block light 9, a low hum.
 - GUI: fuel left, temperature, output, energy, coolant, on/off. Redstone controllable.
 - Balance lives in the common config: output (200 FE/t default), fuel life (48,000 ticks, 40 minutes of running), coolant use.
 

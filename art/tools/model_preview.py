@@ -4,9 +4,8 @@ Reads the model JSON in mod/src/generated and the textures in mod/src/main, so w
 what the game will load. Pure Python, no PIL needed. Run from the repo root after runData:
     python art/tools/model_preview.py [--scale N] OUT.png MODEL[@dx,dy,dz] [MODEL[@dx,dy,dz] ...]
 
-Offsets are in blocks. For example the formed microreactor:
-    python art/tools/model_preview.py preview.png microreactor_lower_front microreactor_upper_front@0,1,0 \
-        microreactor_lower_back@0,0,1 microreactor_upper_back@0,1,1
+Offsets are in blocks. For example two blocks side by side:
+    python art/tools/model_preview.py preview.png pool_controller pool_liner@1,0,0
 """
 import json
 import math
