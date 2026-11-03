@@ -4,6 +4,12 @@ Player-facing changes, newest first. Paste each release's section into the Modri
 
 ## 0.2.3-alpha (4 November 2026)
 
+### New
+- **The core puzzle.** The fission station's core is now a puzzle with one provable best layout per core. Uranium: a rod needs water on every side it has and makes 2 heat, +1 for each graphite on its corners; the best lattice scores 34. MOX has its own tab and its own plan: 3 heat, +2 for each graphite and +1 for each MOX rod on its corners, a rod over 4 heat needs a control rod on a corner, and each control rod costs 1; the best layout, a cross, scores 47. Each core has three stars to earn.
+- **A terminal control screen for the station.** One full-screen console replaces the old slot panel and projection: the core drawn as animated pixel art with a hover preview, readouts, physics, a forecast, the three-star sequence and a typed log, in a new terminal font. A load-out of racks shows what is loaded, waiting or missing, and parts not yet in blink on the core.
+- **Inject and Eject.** Parts go into the core with Inject (taken from a chest on the input port) and out with Eject, and a pipe pulling from the output port drains the core. Switching core type warns you, then ejects.
+- **Console sounds** for the terminal screen.
+
 ### Changed
 - **The microreactor is now the Lantern:** a pool reactor in a glass jar. Its water level, blue glow, bubbles, heat glow, control rods and fan follow what the reactor is doing. All its ports are on the back block.
 - **The uranium blanket needs fission waste.** It is now 1 uranium ingot, 2 fission waste and 1 steel ingot (it was 2 uranium and 1 steel, the same as a uranium fuel rod), so the breeder's blanket draws on the waste of the tiers below. Pipe waste out of a Waste Cask into the Fuel Fabricator.
