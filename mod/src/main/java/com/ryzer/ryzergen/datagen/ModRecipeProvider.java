@@ -808,9 +808,11 @@ public class ModRecipeProvider extends RecipeProvider {
                 List.of(SizedIngredient.of(ModItems.TRANSURANIC_METAL.get(), 1), SizedIngredient.of(OreType.URANIUM.ingotTag(), 1),
                         SizedIngredient.of(ModTags.INGOTS_STEEL, 2)), null,
                 List.of(new ItemStack(ModItems.BREEDER_FUEL.get())), 300);
-        // The breeder's uranium blanket: uranium in a steel tube (real blankets use depleted uranium).
+        // The breeder's uranium blanket: depleted uranium (real blankets use it), which here is the
+        // fission waste of the tiers below, with one ingot of uranium to seed it, in a steel tube.
         machine(output, "fabricating/uranium_blanket", MachineRecipe.Process.FABRICATING,
-                List.of(SizedIngredient.of(OreType.URANIUM.ingotTag(), 2), SizedIngredient.of(ModTags.INGOTS_STEEL, 1)), null,
+                List.of(SizedIngredient.of(OreType.URANIUM.ingotTag(), 1), SizedIngredient.of(ModItems.FISSION_WASTE.get(), 2),
+                        SizedIngredient.of(ModTags.INGOTS_STEEL, 1)), null,
                 List.of(new ItemStack(ModItems.URANIUM_BLANKET.get())), 200);
         // Spent breeder fuel goes back into transuranic metal, but half of it: a fast core burns more
         // than it makes (only the blanket gains), so the breeder never fuels itself. The rest comes

@@ -2,6 +2,12 @@
 
 Player-facing changes, newest first. Paste each release's section into the Modrinth and CurseForge changelog and the GitHub release notes.
 
+## 0.2.3-alpha (4 November 2026)
+
+### Changed
+- **The microreactor is now the Lantern:** a pool reactor in a glass jar. Its water level, blue glow, bubbles, heat glow, control rods and fan follow what the reactor is doing. All its ports are on the back block.
+- **The uranium blanket needs fission waste.** It is now 1 uranium ingot, 2 fission waste and 1 steel ingot (it was 2 uranium and 1 steel, the same as a uranium fuel rod), so the breeder's blanket draws on the waste of the tiers below. Pipe waste out of a Waste Cask into the Fuel Fabricator.
+
 ## 0.2.2-alpha (18 October 2026)
 
 ### New

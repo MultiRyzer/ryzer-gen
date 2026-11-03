@@ -2,8 +2,12 @@
   "type": "ryzergen:fabricating",
   "inputs": [
     {
-      "count": 2,
+      "count": 1,
       "tag": "c:ingots/uranium"
+    },
+    {
+      "count": 2,
+      "item": "ryzergen:fission_waste"
     },
     {
       "count": 1,
