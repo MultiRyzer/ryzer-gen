@@ -5,14 +5,19 @@ Player-facing changes, newest first. Paste each release's section into the Modri
 ## 0.2.3-alpha (4 November 2026)
 
 ### New
-- **The core puzzle.** The fission station's core is now a puzzle with one provable best layout per core. Uranium: a rod needs water on every side it has and makes 2 heat, +1 for each graphite on its corners; the best lattice scores 34. MOX has its own tab and its own plan: 3 heat, +2 for each graphite and +1 for each MOX rod on its corners, a rod over 4 heat needs a control rod on a corner, and each control rod costs 1; the best layout, a cross, scores 47. Each core has three stars to earn.
-- **A terminal control screen for the station.** One full-screen console replaces the old slot panel and projection: the core drawn as animated pixel art with a hover preview, readouts, physics, a forecast, the three-star sequence and a typed log, in a new terminal font. A load-out of racks shows what is loaded, waiting or missing, and parts not yet in blink on the core.
-- **Inject and Eject.** Parts go into the core with Inject (taken from a chest on the input port) and out with Eject, and a pipe pulling from the output port drains the core. Switching core type warns you, then ejects.
-- **Console sounds** for the terminal screen.
+- **The core puzzle.** The fission station's core is now a puzzle with one provable best layout per core. Uranium: a rod needs water on every side it has and makes 2 heat, +1 for each graphite on its corners; the best lattice scores 34 heat (about 8,000 FE/t out of the turbine). MOX has its own tab and its own plan: 3 heat, +2 for each graphite and +1 for each MOX rod on its corners, a rod over 4 heat needs a control rod on a corner, and each control rod costs 1; the best layout, a cross, scores 47 (about 16,000 FE/t). Each core has three stars to earn.
+- **A terminal control screen for the station.** One full-screen console replaces the old slot panel and projection: the core drawn as animated pixel art with a hover preview, readouts, physics, a 120 second forecast, the three-star sequence and a typed log, in a new terminal font. A load-out of racks shows what is loaded, waiting or missing, and parts not yet in blink on the core. The progression map's spoilers show each core's best layout.
+- **Inject and Eject.** Parts go into the core with Inject (taken from a chest or pipe on the input port) and out with Eject, and a pipe pulling from the output port drains the core. There are no item slots any more. Switching core type warns you, then ejects.
+- **Console sounds** for the terminal screen (placing, clearing, heat rising and falling, a buzz for errors, a fanfare for the best layout, inject and eject), with subtitles.
 
 ### Changed
-- **The microreactor is now the Lantern:** a pool reactor in a glass jar. Its water level, blue glow, bubbles, heat glow, control rods and fan follow what the reactor is doing. All its ports are on the back block.
+- **The microreactor is now the Lantern:** a pool reactor in a glass jar. Its water level, blue glow, bubbles, heat glow, control rods and fan follow what the reactor is doing. The jar's coolant jacket sits above the heart, and the build guide suggests that layout.
+- **The microreactor's ports are all on the back block now:** water in on your left, steam out on your right, energy out on the back, and the fuel bay's two ports (fresh cores in on your left, spent cores out on your right) on the upper back. The intake on top is gone, so pipes on an existing microreactor need rerouting. The steam wisps from the old intake are gone too.
+- **The fission station's layout rules are replaced** by the puzzle above. Graphite adds heat to fuel rods on its corners instead of +40% beside it, water carries the heat, control rods belong to the MOX core, and the old layout rating, per-channel tooltips and moderator, control and coolant channel tools are gone. A uranium rod now makes 590 FE/t of heat per unit and a MOX rod 850. The turbine runs from 25% efficiency idle to 40% at full load (45% in overdrive).
 - **The uranium blanket needs fission waste.** It is now 1 uranium ingot, 2 fission waste and 1 steel ingot (it was 2 uranium and 1 steel, the same as a uranium fuel rod), so the breeder's blanket draws on the waste of the tiers below. Pipe waste out of a Waste Cask into the Fuel Fabricator.
+- **Item tooltips say how things work in the game,** not what they are in the real world. The "Real basis" lines are gone, and several items (the Waste Cask, MOX rod, control rod, graphite block, lithium target rod, blankets and others) have new lines describing what they do now.
+- The "perfect station" advancement now asks for a three-star core.
+- **Old worlds:** a station plan holding a part its core no longer takes (a control rod in the uranium core, a retired target rod) loads as empty, and the part leaves by the output port.
 
 ## 0.2.2-alpha (18 October 2026)
 
